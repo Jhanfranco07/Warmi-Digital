@@ -1,14 +1,14 @@
+import Link from "next/link";
+import { ArrowRight, BookOpen, HeartHandshake, Landmark, Smartphone } from "lucide-react";
 import { Container } from "@/shared/components/layout/container";
-import { PageHeader } from "@/shared/components/layout/page-header";
+import { Button } from "@/shared/components/ui/button";
 
-export default function LandingPage() {
-  return (
-    <Container className="py-section-gap">
-      <PageHeader
-        eyebrow="Fase 1"
-        title="Warmi Digital"
-        description="Infraestructura base lista para iniciar el desarrollo del ecosistema."
-      />
-    </Container>
-  );
-}
+const heroImage = "https://lh3.googleusercontent.com/aida-public/AB6AXuAx1EYaB9Blh965Nub9RDokUeqX6dIW3zuusAKDcWEaZwtlK2mZC18YCzYeKF9a-Djz_ft7lsqcXZwhx2VhRwJKAVrSy_sFvB4jp3SUDvQlUCv6MnrH9K1Mc4ABDVTjfK_MJ1a-LfuwRS7yAUAIDk2FRw0xGyGjMeLqKzHh_9FXLAjGR4CmiytIgLLt-fQ2C_3E7DMFWc8ufz2Bop1AckIX-lgdkfKoXK-AITeYCIk8C7ym7G_Ey1TI";
+const handsImage = "https://lh3.googleusercontent.com/aida-public/AB6AXuBhsZgKqsCaGsGN7YHwC1jW4jfjq_2R2fAGAyUUDwSB6T0zv-d-o22kUtvKbdivaO4WHluqIeoVqL5ahZVjgyBllrJj_fWosaBwcjDk9wXdaBG_eBUmwROFB71gGsckDtgfiDWvjxS6yJTK_u_BNUMcBidKYmGkSPBCwDxUDM3AwGyoBUHTzqY8lwmuvRVpZCUST79UZnGpdMMI1sTRdSMspkttpNSgHnybJyOXpWXe87Beuyb3ECCe";
+
+export default function LandingPage() { return <>
+  <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-surface-container-low"><div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:`url(${heroImage})`}}/><div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent"/><div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent"/><Container className="relative flex min-h-[calc(100vh-4rem)] items-center py-16"><div className="max-w-2xl"><p className="mb-5 font-ui text-label-ui text-primary">PATRIMONIO VIVO Y AUTONOMIA DIGITAL</p><h1 className="font-serif text-display-lg text-primary">Cada tejido cuenta una historia.</h1><p className="mt-6 max-w-xl text-body-lg leading-relaxed text-on-surface-variant">Warmi acompana a mujeres artesanas para aprender, documentar sus saberes y compartir su trabajo con dignidad.</p><div className="mt-8 flex flex-wrap gap-3"><Button asChild size="lg"><Link href="/register">Comenzar mi camino <ArrowRight/></Link></Button><Button asChild size="lg" variant="outline"><Link href="/mercado">Conocer las piezas</Link></Button></div></div></Container></section>
+  <section id="patrimonio" className="py-24"><Container className="grid items-center gap-12 md:grid-cols-2"><div><p className="font-ui text-label-ui text-secondary">NUESTRA MISION</p><h2 className="mt-4 font-serif text-headline-lg text-primary">Tecnologia que cuida la memoria.</h2><p className="mt-6 leading-relaxed text-muted-foreground">No somos un mercado tradicional. Somos un espacio de formacion, acompanamiento y registro cultural para que cada artesana sea la narradora de su propio legado.</p><Link href="/mercado" className="mt-6 inline-flex items-center gap-2 font-ui text-label-ui text-secondary">Explorar patrimonio <ArrowRight className="h-4 w-4"/></Link></div><div className="aspect-[3/4] bg-cover bg-center" style={{backgroundImage:`url(${handsImage})`}}/></Container></section>
+  <section id="aprendizaje" className="border-y bg-surface-container-low py-20"><Container><div className="mx-auto max-w-2xl text-center"><p className="font-ui text-label-ui text-secondary">RUTA DE APRENDIZAJE</p><h2 className="mt-3 font-serif text-headline-lg text-primary">Del saber al mundo digital</h2></div><div className="mt-14 grid gap-5 md:grid-cols-4">{[[Smartphone,"Descubrir","El celular como herramienta"],[BookOpen,"Aprender","Herramientas digitales"],[HeartHandshake,"Compartir","Practica y comunidad"],[Landmark,"Preservar","Autonomia y legado"]].map(([Icon,title,text])=>{const I=Icon as typeof Smartphone;return <div key={title as string} className="border-t-2 border-secondary pt-5"><I className="h-7 w-7 text-secondary"/><h3 className="mt-4 font-ui text-label-ui text-primary">{title as string}</h3><p className="mt-2 text-body-md text-muted-foreground">{text as string}</p></div>})}</div></Container></section>
+  <section id="comunidades" className="py-24"><Container className="text-center"><p className="font-ui text-label-ui text-secondary">COMUNIDADES Y SABERES</p><h2 className="mt-3 font-serif text-headline-lg text-primary">El valor esta en el origen.</h2><p className="mx-auto mt-5 max-w-2xl text-muted-foreground">Conoce las historias, tecnicas y piezas que nacen de comunidades artesanas.</p><Button asChild className="mt-8" variant="outline"><Link href="/mercado">Visitar mercado cultural</Link></Button></Container></section>
+</> }

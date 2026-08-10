@@ -10,10 +10,10 @@ export function Navbar() {
           Warmi Digital
         </Link>
         <nav className="hidden items-center gap-6 font-ui text-label-ui text-muted-foreground md:flex">
-          <span>Patrimonio</span>
-          <span>Comunidades</span>
-          <span>Aprendizaje</span>
-          <span>Impacto</span>
+          <Link href="/#patrimonio">Patrimonio</Link>
+          <Link href="/#comunidades">Comunidades</Link>
+          <Link href="/#aprendizaje">Aprendizaje</Link>
+          <Link href="/mercado">Mercado cultural</Link>
         </nav>
       </Container>
     </header>

@@ -25,7 +25,7 @@ function NavigationContent({ role }: { role: UserRole }) {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-8 flex items-start gap-3">
-        <span className="rounded-md bg-primary-fixed p-2 text-primary">
+        <span className="rounded-full bg-primary-fixed p-2 text-primary">
           <RoleIcon className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
@@ -43,8 +43,8 @@ function NavigationContent({ role }: { role: UserRole }) {
               key={item.href}
               href={item.href as Route}
               className={cn(
-                "flex min-h-touch-target items-center gap-3 rounded-md px-3 py-2 text-label-ui text-muted-foreground transition-colors hover:bg-surface-high hover:text-primary",
-                active && "bg-primary-fixed text-primary"
+                "flex min-h-touch-target items-center gap-3 rounded-full px-3 py-2 text-label-ui text-muted-foreground transition-colors hover:bg-primary-fixed/50 hover:text-primary",
+                active && "bg-primary text-primary-foreground shadow-soft"
               )}
               aria-current={active ? "page" : undefined}
             >

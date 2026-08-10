@@ -16,7 +16,7 @@ export function PageHeader({
   actions
 }: PageHeaderProps) {
   return (
-    <header className={cn("max-w-4xl space-y-4", className)}>
+    <header className={cn("max-w-4xl space-y-4 border-l-2 border-secondary pl-5", className)}>
       {actions ? <div className="flex flex-wrap justify-end gap-2">{actions}</div> : null}
       {eyebrow ? (
         <p className="font-ui text-label-ui uppercase tracking-[0.05em] text-primary">

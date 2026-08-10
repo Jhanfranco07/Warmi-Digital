@@ -20,7 +20,7 @@ export function BaseDomainCard({
   children
 }: BaseDomainCardProps & { children?: React.ReactNode }) {
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <Card className={cn("group overflow-hidden border-outline-variant/60 bg-surface-lowest shadow-soft transition-transform duration-drift hover:-translate-y-1", className)}>
       {imageUrl ? (
         <div className="relative aspect-[4/3] bg-surface-high">
           <Image
@@ -39,7 +39,7 @@ export function BaseDomainCard({
             <CardTitle className="text-headline-md">{title}</CardTitle>
           </div>
           {Icon ? (
-            <span className="rounded-md bg-primary-fixed p-2 text-primary">
+            <span className="rounded-full bg-primary-fixed p-2 text-primary">
               <Icon className="h-5 w-5" />
             </span>
           ) : null}

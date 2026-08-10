@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 import { middlewareAuth } from "@/shared/server/auth/middleware-auth";
 import {
-  getDefaultRouteForRole,
   getRequiredRolesForPath,
   hasRole,
   isPublicAuthRoute
@@ -18,10 +17,6 @@ export default middlewareAuth((request) => {
   const { nextUrl } = request;
   const pathname = nextUrl.pathname;
   const user = request.auth?.user ?? null;
-
-  if (isPublicAuthRoute(pathname) && user?.roles?.length) {
-    return NextResponse.redirect(new URL(getDefaultRouteForRole(user.roles[0]), nextUrl));
-  }
 
   if (isPublicRoute(pathname)) {
     return NextResponse.next();

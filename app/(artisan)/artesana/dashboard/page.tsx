@@ -21,7 +21,7 @@ export default async function ArtisanDashboardPage() {
   const currentCourse = data.currentEnrollment?.course;
 
   return (
-    <Container className="space-y-8 py-6 md:py-10">
+    <Container className="space-y-7 bg-[#fffaf8] py-6 md:py-10">
       <PageHeader
         eyebrow="Inicio"
         title={`Hola, ${profile?.displayName ?? session.user.name ?? "artesana"}`}
@@ -29,7 +29,7 @@ export default async function ArtisanDashboardPage() {
       />
 
       <section className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <Card>
+        <Card className="border-[#edc9bd] bg-white shadow-soft">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
               <Badge>{data.routeName}</Badge>
@@ -38,7 +38,7 @@ export default async function ArtisanDashboardPage() {
               </Badge>
               <Badge variant="secondary">{craft}</Badge>
             </div>
-            <CardTitle>Tu avance general</CardTitle>
+            <CardTitle className="font-serif text-headline-md text-[#7a3100]">Tu avance general</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-end gap-3">
@@ -47,7 +47,7 @@ export default async function ArtisanDashboardPage() {
                 de tu ruta actual
               </span>
             </div>
-            <Progress value={data.generalProgress} />
+            <Progress value={data.generalProgress} className="[&>div]:bg-[#e65578]" />
             <p className="text-body-md text-muted-foreground">
               Proximo objetivo: {data.nextObjective}.
             </p>
@@ -62,9 +62,9 @@ export default async function ArtisanDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-[#edc9bd] bg-[#fff8f5] shadow-soft">
           <CardHeader>
-            <CardTitle>Proximo taller</CardTitle>
+            <CardTitle className="font-serif text-headline-md text-[#7a3100]">Proximo taller</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {data.nextWorkshop ? (
@@ -90,7 +90,7 @@ export default async function ArtisanDashboardPage() {
         </Card>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-3 md:grid-cols-3">
         <QuickAccess href="/artesana/aprender" icon={BookOpen} label="Continuar curso" />
         <QuickAccess href="/artesana/talleres" icon={CalendarDays} label="Ver talleres" />
         <QuickAccess
@@ -181,7 +181,7 @@ function QuickAccess({
   label: string;
 }) {
   return (
-    <Button asChild variant="outline" className="min-h-touch-target justify-start">
+    <Button asChild variant="outline" className="min-h-touch-target justify-start border-[#edc9bd] bg-white font-ui text-[#7a3100] hover:bg-[#ffe5eb]">
       <Link href={href as Route}>
         <Icon className="h-5 w-5" />
         {label}
@@ -198,9 +198,9 @@ function DashboardList({
   children: React.ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="border-[#edc9bd] bg-white shadow-soft">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="font-serif text-headline-md text-[#7a3100]">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">{children}</CardContent>
     </Card>
@@ -209,7 +209,7 @@ function DashboardList({
 
 function ListItem({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="rounded-md border border-border p-3">
+    <div className="rounded-md border border-[#edc9bd] bg-[#fffdfb] p-3">
       <p className="font-medium">{title}</p>
       {description ? (
         <p className="text-body-sm mt-1 text-muted-foreground">{description}</p>

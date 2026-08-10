@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Panel de la Artesana</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9f5",
+                        "on-secondary-fixed-variant": "#574500",
+                        "tertiary-container": "#4a5f25",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-background": "#1b1c1a",
+                        "surface-variant": "#e3e2df",
+                        "on-secondary-container": "#745c00",
+                        "inverse-primary": "#ffb68c",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "surface-tint": "#934b19",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#735c00",
+                        "outline": "#877369",
+                        "surface-bright": "#faf9f5",
+                        "on-error": "#ffffff",
+                        "background": "#faf9f5",
+                        "surface-container": "#efeeea",
+                        "secondary-fixed": "#ffe088",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "surface-container-high": "#e9e8e4",
+                        "on-tertiary-fixed": "#131f00",
+                        "on-error-container": "#93000a",
+                        "primary": "#6c2f00",
+                        "secondary-container": "#fed65b",
+                        "primary-container": "#8b4513",
+                        "on-primary-container": "#ffc29f",
+                        "inverse-on-surface": "#f2f1ed",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed": "#321200",
+                        "on-tertiary-container": "#bed890",
+                        "surface-container-highest": "#e3e2df",
+                        "on-surface": "#1b1c1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-fixed": "#d2eca2",
+                        "on-surface-variant": "#54433a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-dim": "#dbdad6",
+                        "outline-variant": "#dac2b6",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ffb68c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#33470f",
+                        "on-primary-fixed-variant": "#753401",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-gap": "120px",
+                        "container-padding": "24px",
+                        "column-count": "12",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md-mobile": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Playfair+Display:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased md:hidden max-w-md mx-auto">
+<nav class="fixed top-0 w-full max-w-md z-50 flex justify-between items-center px-gutter py-4 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/20 hover:opacity-80 transition-opacity duration-300">
+<span class="material-symbols-outlined text-primary text-[24px]">menu</span>
+<h1 class="font-headline-md-mobile text-headline-md-mobile font-bold text-primary">Warmi Digital</h1>
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">notifications</span>
+</nav>
+<main class="pt-[88px] pb-[100px] px-4">
+<header class="mb-8 flex items-center gap-4">
+<img class="w-16 h-16 rounded-full object-cover border border-outline-variant/30" data-alt="A highly detailed close-up portrait of an indigenous Andean artisan woman with a warm, welcoming smile. She is wearing traditional hand-woven textiles with rich earth tones and subtle geometric patterns. Soft, natural daylight illuminates her face, creating a modern, dignified, and professional aesthetic suitable for a high-end cultural application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdsVgDebyUGeqpjgP5mnKmHsW3Dr8GWoThe0NJO7yJhXi5lot_zrt5Hhxyj8WVR6WFKIThZXSRc06PuE2ji22kRC858qGuKPF3xevJdnwDkNOj8h0Fbl4x_YGoMhQv9eO-xT8cb2q1iv7Szq6w1vBsJBqqo8rDJyGrbI3xcvHAetxDnhFBwjnIh4bufuE3rog9CCqpwQANbBu6EB0qsCXe6M8fXXjysQ7H4-qCXBxoU0PIskFbYO1G"/>
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">¡Buenos días, Rosa!</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Lista para continuar tu viaje?</p>
+</div>
+</header>
+<section class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-6 mb-8 flex flex-col items-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #dac2b6 0, #dac2b6 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
+<h3 class="font-label-ui text-label-ui text-secondary uppercase tracking-widest mb-6">Curso Actual</h3>
+<div class="relative w-40 h-40 mb-6 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-tertiary-container transition-all duration-1000 ease-out" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="283" stroke-dashoffset="70" stroke-width="6"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary">75%</span>
+<span class="font-caption text-caption text-on-surface-variant">Completado</span>
+</div>
+</div>
+<h4 class="font-headline-md-mobile text-headline-md-mobile text-center text-on-background mb-6">Técnicas de Teñido Natural</h4>
+<button class="w-full bg-primary text-on-primary font-label-ui text-label-ui rounded-full py-4 hover:bg-primary-container transition-colors duration-200">
+                Continuar mi lección
+            </button>
+</section>
+<section class="mb-10">
+<h3 class="font-headline-md-mobile text-headline-md-mobile text-primary mb-6">Mi Ruta de Aprendizaje</h3>
+<div class="relative pl-6 border-l border-outline-variant/40 ml-4 space-y-8">
+<div class="relative">
+<div class="absolute -left-[35px] top-1 w-6 h-6 bg-tertiary-container rounded-full border-4 border-surface flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[12px] text-on-primary font-bold">check</span>
+</div>
+<h4 class="font-label-ui text-label-ui text-tertiary-container">Módulo 1</h4>
+<p class="font-body-md text-body-md text-on-background">Historia del Telar Andino</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[35px] top-1 w-6 h-6 bg-secondary rounded-full border-4 border-surface flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[12px] text-on-primary">play_arrow</span>
+</div>
+<h4 class="font-label-ui text-label-ui text-secondary">Módulo 2 (Actual)</h4>
+<p class="font-body-md text-body-md text-on-background">Técnicas de Teñido Natural</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[35px] top-1 w-6 h-6 bg-surface-variant rounded-full border-4 border-surface flex items-center justify-center z-10"></div>
+<h4 class="font-label-ui text-label-ui text-on-surface-variant">Módulo 3</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Patrones Geométricos</p>
+</div>
+</div>
+</section>
+<section class="mb-6">
+<h3 class="font-headline-md-mobile text-headline-md-mobile text-primary mb-6">Mis Logros</h3>
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center text-center p-3 bg-surface-container-low border border-outline-variant/20 rounded-xl">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-on-secondary-container filled-icon">local_florist</span>
+</div>
+<span class="font-caption text-caption text-on-background">Semilla</span>
+</div>
+<div class="flex flex-col items-center text-center p-3 bg-surface-container-low border border-outline-variant/20 rounded-xl">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-on-secondary-container filled-icon">palette</span>
+</div>
+<span class="font-caption text-caption text-on-background">Colorista</span>
+</div>
+<div class="flex flex-col items-center text-center p-3 border border-dashed border-outline-variant/50 rounded-xl opacity-50">
+<div class="w-12 h-12 bg-surface-variant rounded-full flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-on-surface-variant">lock</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Maestra</span>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full max-w-md z-50 flex justify-around items-center px-4 py-3 pb-6 bg-surface/80 backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-4px_24px_rgba(139,69,19,0.04)]">
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 hover:bg-surface-container-high transition-colors duration-300 transform scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined filled-icon">home</span>
+<span class="font-label-ui text-[10px] mt-1">Inicio</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 rounded-full px-3 py-1">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-ui text-[10px] mt-1">Aprendizaje</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 rounded-full px-3 py-1">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-ui text-[10px] mt-1">Comunidad</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 rounded-full px-3 py-1">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-ui text-[10px] mt-1">Mensajes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 rounded-full px-3 py-1">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-ui text-[10px] mt-1">Perfil</span>
+</button>
+</nav>
+</body></html>

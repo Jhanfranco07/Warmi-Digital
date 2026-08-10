@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Seguimiento Individual: Elena Quispe - Warmi Digital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&amp;family=Playfair+Display:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#735c00",
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-variant": "#e3e2df",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e3e2df",
+                        "on-surface-variant": "#54433a",
+                        "inverse-on-surface": "#f2f1ed",
+                        "surface-container-high": "#e9e8e4",
+                        "on-secondary-container": "#745c00",
+                        "error-container": "#ffdad6",
+                        "outline": "#877369",
+                        "on-primary-fixed": "#321200",
+                        "surface-tint": "#934b19",
+                        "on-surface": "#1b1c1a",
+                        "on-primary-container": "#ffc29f",
+                        "primary-fixed": "#ffdbc9",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "tertiary": "#33470f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "surface-bright": "#faf9f5",
+                        "on-tertiary-container": "#bed890",
+                        "on-secondary-fixed-variant": "#574500",
+                        "on-background": "#1b1c1a",
+                        "inverse-primary": "#ffb68c",
+                        "inverse-surface": "#2f312e",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#753401",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#4a5f25",
+                        "outline-variant": "#dac2b6",
+                        "background": "#faf9f5",
+                        "surface-dim": "#dbdad6",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary": "#6c2f00",
+                        "secondary-fixed": "#ffe088",
+                        "tertiary-fixed": "#d2eca2",
+                        "secondary-container": "#fed65b",
+                        "surface-container": "#efeeea",
+                        "primary-fixed-dim": "#ffb68c",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-low": "#f4f4f0",
+                        "primary-container": "#8b4513",
+                        "error": "#ba1a1a",
+                        "surface": "#faf9f5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "gutter": "24px",
+                        "column-count": "12"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        .glass-panel {
+            background: rgba(250, 249, 245, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(135, 115, 105, 0.2);
+        }
+        .soft-shadow {
+            box-shadow: 0 12px 32px rgba(139, 69, 19, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen antialiased flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-xl docked full-width top-0 sticky z-50 border-b border-outline-variant/20 h-20 transition-transform duration-500 ease-out hidden md:block">
+<div class="max-w-7xl mx-auto px-container-padding flex justify-between items-center h-full">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md text-primary tracking-tight" href="#">Warmi Digital</a>
+<nav class="flex gap-6">
+<!-- Dashboard context implies 'Dashboard' or similar intent, mapping to a relevant top nav isn't direct, choosing Academy as a fallback for 'learning' context if needed, or keeping them inactive if it's a detail view. As a detail view of a student, we suppress active nav highlight or map to Academy. Let's keep Academy active. -->
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Patrimonio</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Comunidades</a>
+<a class="font-label-ui text-label-ui text-primary border-b-2 border-primary pb-1" href="#">Academia</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Impacto</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/5"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/5"><span class="material-symbols-outlined" data-icon="person">person</span></button>
+</div>
+</div>
+</header>
+<div class="flex flex-1 relative max-w-7xl mx-auto w-full">
+<!-- SideNav (Visible on md+) -->
+<aside class="hidden md:flex flex-col py-8 gap-base w-72 bg-surface-container-low border-r border-outline-variant/20 min-h-full shrink-0 sticky top-20 h-[calc(100vh-5rem)]">
+<div class="px-8 pb-6 border-b border-outline-variant/20 mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-4 border border-outline-variant/30">
+<img alt="Artisan Profile Image" class="w-full h-full object-cover" data-alt="A warm, professional portrait photograph of an Andean female artisan weaver, looking confidently at the camera. She is wearing traditional textile garments with intricate patterns in natural earth tones. Soft, natural sunlight illuminates her face against a softly blurred, light-colored adobe wall background. The aesthetic is bright, dignified, and high-quality, fitting a premium digital platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqpnI7aNpt8kUiU4fS5fr579QQTT-51qvdZG4iLNYcYqy_vfbRUEhwuyWfaoLSK93abN11dL7nmx3jqZQlkXrmQIWehIxspyGLFvZW3nqEbmK7Tn60X2Rai_sBEz_yYWbY-4ZMhhb9uwCz8c1xvxenh3EFYXMFL2uM0uB-elaNpYZ4MsmG66Wl0KcMBvZEFWLQirYQIYdzVZzxPnF9wJ3z2eWS0dj3tBXrERfR3-xAerN4OLCrGfa0">
+</div>
+<h2 class="font-headline-md text-[20px] text-primary">Bienvenida, Elena</h2>
+<p class="font-body-md text-caption text-on-surface-variant">Master Weaver, Cusco</p>
+<button class="mt-4 w-full bg-primary text-on-primary font-label-ui text-label-ui py-2 rounded-full hover:bg-primary/90 transition-colors">Abrir Taller</button>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Intent mapping: Dashboard active for facilitator view -->
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-full mx-4 px-4 py-3 font-bold scale-98 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-ui text-label-ui">Panel de Control</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-ui text-label-ui">Mi Trayectoria</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-ui text-label-ui">Pedidos</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-label-ui text-label-ui">Mi Historia</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-ui text-label-ui">Comunidad</span>
+</a>
+</nav>
+<div class="border-t border-outline-variant/20 pt-4 mt-auto px-4">
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-ui text-label-ui">Configuración</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-primary-fixed/20 rounded-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-ui text-label-ui">Soporte</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 px-4 md:px-container-padding py-12 w-full overflow-hidden">
+<div class="mb-8 flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Seguimiento Individual: Elena Quispe</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Vista de Facilitadora • Cohort 2024</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Progress & Insights -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- Progress Journey -->
+<section class="bg-surface-container-low rounded-xl p-8 soft-shadow border border-outline-variant/30">
+<h2 class="font-headline-md text-[24px] text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">timeline</span>
+                            Ruta de Aprendizaje
+                        </h2>
+<div class="relative">
+<!-- Stepper Line -->
+<div class="absolute left-6 top-4 bottom-4 w-px bg-outline-variant/50"></div>
+<div class="flex flex-col gap-8">
+<!-- Step 1 Completed -->
+<div class="relative flex items-start gap-6">
+<div class="w-12 h-12 rounded-full bg-surface border border-secondary flex items-center justify-center z-10 shrink-0 text-secondary">
+<span class="material-symbols-outlined fill" data-icon="check_circle">check_circle</span>
+</div>
+<div class="pt-2">
+<h3 class="font-label-ui text-[16px] text-on-surface">Módulo 1: Identidad Digital</h3>
+<p class="font-body-md text-caption text-on-surface-variant mt-1">Completado el 12 Oct 2024</p>
+</div>
+</div>
+<!-- Step 2 In Progress -->
+<div class="relative flex items-start gap-6">
+<div class="w-12 h-12 rounded-full bg-primary border-2 border-primary-container flex items-center justify-center z-10 shrink-0 text-on-primary">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+</div>
+<div class="pt-2 w-full">
+<div class="flex justify-between items-center mb-2">
+<h3 class="font-label-ui text-[16px] text-primary">Módulo 2: Fotografía de Producto</h3>
+<span class="font-label-ui text-caption text-tertiary bg-tertiary-fixed px-2 py-1 rounded">En Progreso</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2 mb-2">
+<div class="bg-primary h-2 rounded-full" style="width: 60%"></div>
+</div>
+<p class="font-body-md text-caption text-on-surface-variant">60% completado. Pendiente: Tarea práctica de iluminación.</p>
+</div>
+</div>
+<!-- Step 3 Pending -->
+<div class="relative flex items-start gap-6">
+<div class="w-12 h-12 rounded-full bg-surface border border-outline-variant flex items-center justify-center z-10 shrink-0 text-outline">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+</div>
+<div class="pt-3">
+<h3 class="font-label-ui text-[16px] text-on-surface-variant">Módulo 3: Gestión de Inventario Básico</h3>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Performance Insights -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-surface-bright border border-tertiary-container/30 rounded-xl p-6 soft-shadow">
+<h3 class="font-label-ui text-label-ui text-tertiary-container flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined fill">trending_up</span>
+                                Fortalezas
+                            </h3>
+<ul class="space-y-3 font-body-md text-[14px] text-on-surface">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px] mt-0.5">star</span>
+                                    Excelente composición en fotografía de textiles.
+                                </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px] mt-0.5">star</span>
+                                    Fuerte narrativa cultural en descripciones de producto.
+                                </li>
+</ul>
+</div>
+<div class="bg-surface-bright border border-outline-variant/50 rounded-xl p-6 soft-shadow">
+<h3 class="font-label-ui text-label-ui text-on-surface flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">lightbulb</span>
+                                Áreas de Mejora
+                            </h3>
+<ul class="space-y-3 font-body-md text-[14px] text-on-surface">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5">arrow_right</span>
+                                    Familiarización con aplicaciones móviles de inventario.
+                                </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5">arrow_right</span>
+                                    Cálculo de costos de envío internacionales.
+                                </li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Right Column: Activity & Feedback -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- Activity Log -->
+<section class="bg-surface-container-low rounded-xl p-6 soft-shadow border border-outline-variant/30">
+<h2 class="font-label-ui text-label-ui text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">history</span>
+                            Actividad Reciente
+                        </h2>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+</div>
+<div>
+<p class="font-body-md text-[14px] text-on-surface">Subió 3 fotos a la galería</p>
+<p class="font-body-md text-caption text-on-surface-variant">Hace 2 horas</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+</div>
+<div>
+<p class="font-body-md text-[14px] text-on-surface">Completó Quiz: Luz Natural</p>
+<p class="font-body-md text-caption text-on-surface-variant">Ayer</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-full bg-outline/10 text-outline flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</div>
+<div>
+<p class="font-body-md text-[14px] text-on-surface">Descargó PDF 'Guía de Precios'</p>
+<p class="font-body-md text-caption text-on-surface-variant">Hace 3 días</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Feedback -->
+<section class="bg-surface-container-highest rounded-xl p-6 soft-shadow flex-1 flex flex-col">
+<h2 class="font-label-ui text-label-ui text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">forum</span>
+                            Retroalimentación
+                        </h2>
+<div class="flex-1 space-y-4 mb-4 overflow-y-auto max-h-[300px] pr-2">
+<!-- Message from facilitator -->
+<div class="bg-surface p-3 rounded-lg border border-outline-variant/30 w-[85%] ml-auto shadow-sm">
+<p class="font-body-md text-[13px] text-on-surface">Hola Elena, vi tus fotos recientes. ¡La iluminación ha mejorado mucho! Intenta acercarte un poco más para mostrar la textura del tejido.</p>
+<p class="font-body-md text-[10px] text-on-surface-variant text-right mt-1">Tú • 14 Oct</p>
+</div>
+<!-- Message from Elena -->
+<div class="bg-primary/5 p-3 rounded-lg border border-primary/20 w-[85%] shadow-sm">
+<p class="font-body-md text-[13px] text-on-surface">Gracias profesora. Lo intentaré con la luz de la mañana mañana.</p>
+<p class="font-body-md text-[10px] text-on-surface-variant mt-1">Elena • 15 Oct</p>
+</div>
+</div>
+<div class="mt-auto">
+<div class="relative border-b border-outline-variant pb-2 focus-within:border-primary transition-colors">
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-[14px] text-on-surface placeholder:text-on-surface-variant p-0" placeholder="Escribir Retroalimentación..." type="text">
+<button class="absolute right-0 top-0 text-primary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full relative mt-section-gap border-t border-outline-variant/30 bg-surface-container-highest flex-shrink-0">
+<div class="max-w-7xl mx-auto px-container-padding py-20 flex flex-col md:flex-row justify-between items-start gap-12 soft-fade duration-500">
+<div>
+<a class="font-headline-md text-headline-md text-primary block mb-4" href="#">Warmi Digital</a>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">© 2024 Warmi Digital. Preserving Global Cultural Heritage under UNESCO Guidelines.</p>
+</div>
+<nav class="flex flex-col md:flex-row gap-6 md:gap-12">
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Our Mission</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Impact Report</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Artisan Rights</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Privacy Policy</a>
+</nav>
+</div>
+</footer>
+
+
+</body></html>

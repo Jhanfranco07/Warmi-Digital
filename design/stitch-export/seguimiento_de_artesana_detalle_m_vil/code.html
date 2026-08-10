@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Seguimiento de Artesana - Detalle (Móvil)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f4f4f0",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "outline-variant": "#dac2b6",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d2eca2",
+                        "on-surface": "#1b1c1a",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#54433a",
+                        "surface-variant": "#e3e2df",
+                        "surface-container-high": "#e9e8e4",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary-fixed": "#241a00",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#574500",
+                        "outline": "#877369",
+                        "inverse-primary": "#ffb68c",
+                        "surface": "#faf9f5",
+                        "on-primary-fixed-variant": "#753401",
+                        "inverse-on-surface": "#f2f1ed",
+                        "background": "#faf9f5",
+                        "surface-container": "#efeeea",
+                        "on-tertiary-container": "#bed890",
+                        "on-secondary-container": "#745c00",
+                        "tertiary": "#33470f",
+                        "secondary-fixed": "#ffe088",
+                        "surface-dim": "#dbdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#321200",
+                        "surface-bright": "#faf9f5",
+                        "secondary": "#735c00",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-container": "#ffc29f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "primary": "#6c2f00",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#fed65b",
+                        "primary-fixed-dim": "#ffb68c",
+                        "primary-container": "#8b4513",
+                        "on-background": "#1b1c1a",
+                        "surface-tint": "#934b19",
+                        "tertiary-container": "#4a5f25"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "container-padding": "24px",
+                        "column-count": "12",
+                        "section-gap": "120px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+                        "headline-lg": ["48px", { lineHeight: "56px", fontWeight: "600" }],
+                        "caption": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "label-ui": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "headline-md": ["32px", { lineHeight: "40px", fontWeight: "500" }],
+                        "display-lg": ["64px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-header {
+            background: rgba(250, 249, 245, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col md:hidden">
+<!-- Header (Detail View, Nav Suppressed per guidelines) -->
+<header class="glass-header sticky top-0 z-50 px-container-padding h-20 flex items-center justify-between border-b border-outline-variant/10">
+<button aria-label="Volver" class="text-on-surface hover:text-primary transition-colors flex items-center justify-center w-10 h-10 -ml-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<span class="font-label-ui text-label-ui text-on-surface">Seguimiento</span>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</header>
+<main class="flex-1 flex flex-col pb-12">
+<!-- Artisan Profile Hero -->
+<section class="px-container-padding pt-8 pb-6 flex flex-col items-center text-center">
+<div class="relative w-28 h-28 mb-4">
+<img class="w-full h-full rounded-full object-cover border-4 border-surface-container-lowest shadow-sm" data-alt="A close-up portrait photograph of a dignified indigenous Andean woman master weaver. She has warm, weathered skin and is wearing a traditional, finely woven textile over her shoulders in earthy tones of rust, ochre, and deep blue. The lighting is soft and natural, highlighting her serene and resilient expression against a softly blurred, warm minimalist background. High-quality editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUPetEaMxB1ErZaUPeFZGBwGXavpI_fnPrDblPxgdGmSCCQimA_6GB7AaRV0gRCMt3Jx1o3K4t4uMYRlW-v0RfeWUBprarxQAQyMMG09u815exMwWPVSGC9xgu_Z2FyjfhQlqY3S0yE8ReJtKFjnjFbxkdo-ysrNn7rsTRlQmkcqtUCgiuTdIyKjWk4KNKck80Gbs8tytSB3bj1O3U5HWNTG8cICubMum_p2opVjnFmzjaJO7q8YzN"/>
+<div class="absolute bottom-0 right-0 bg-tertiary text-on-tertiary w-8 h-8 rounded-full flex items-center justify-center border-2 border-surface">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-1">Rosa Huamán</h1>
+<p class="font-label-ui text-label-ui text-secondary mb-6">MAESTRA TEJEDORA</p>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary py-4 rounded-full font-label-ui text-label-ui flex justify-center items-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 shadow-sm">
+<span class="material-symbols-outlined">chat</span>
+                Enviar Mensaje
+            </button>
+</section>
+<!-- Progress Section -->
+<section class="px-container-padding mt-4">
+<div class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/20 relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute top-0 right-0 opacity-5 w-32 h-32 transform translate-x-8 -translate-y-8 pointer-events-none">
+<svg class="text-primary" fill="currentColor" viewbox="0 0 100 100"><path d="M50 0L100 50L50 100L0 50Z"></path></svg>
+</div>
+<div class="flex justify-between items-end mb-4 relative z-10">
+<div>
+<h2 class="font-label-ui text-label-ui text-on-surface-variant mb-1">PROGRESO ACTUAL</h2>
+<p class="font-body-md text-body-md text-on-surface">Técnicas de Teñido Natural</p>
+</div>
+<span class="font-headline-md text-headline-md text-tertiary">75%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2.5 relative z-10 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 75%;"></div>
+</div>
+<div class="mt-4 flex gap-4 text-secondary">
+<div class="flex items-center gap-1 font-caption text-caption">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+<span>3 Módulos listos</span>
+</div>
+<div class="flex items-center gap-1 font-caption text-caption">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>1 Pendiente</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Shared Files Section -->
+<section class="px-container-padding mt-8">
+<h3 class="font-label-ui text-label-ui text-on-surface-variant mb-4 pl-1">ARCHIVOS COMPARTIDOS</h3>
+<div class="flex flex-col gap-3">
+<!-- File Item 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface line-clamp-1">Guía_Teñido_Cochinilla.pdf</p>
+<p class="font-caption text-caption text-on-surface-variant">Modificado hace 2 días</p>
+</div>
+</div>
+<button class="text-secondary hover:text-primary p-2">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<!-- File Item 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface line-clamp-1">Muestra_Hilos_Final.jpg</p>
+<p class="font-caption text-caption text-on-surface-variant">Modificado hace 5 días</p>
+</div>
+</div>
+<button class="text-secondary hover:text-primary p-2">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<!-- File Item 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface line-clamp-1">Certificado_Modulo1.pdf</p>
+<p class="font-caption text-caption text-on-surface-variant">Modificado hace 1 semana</p>
+</div>
+</div>
+<button class="text-secondary hover:text-primary p-2">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+</body></html>

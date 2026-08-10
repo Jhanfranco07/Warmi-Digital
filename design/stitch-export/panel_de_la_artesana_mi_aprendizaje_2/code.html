@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warmi Digital - Dashboard Artesana</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#d2eca2",
+                        "on-tertiary-fixed": "#131f00",
+                        "inverse-primary": "#ffb68c",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-primary-container": "#ffc29f",
+                        "surface-bright": "#faf9f5",
+                        "secondary-container": "#fed65b",
+                        "tertiary-container": "#4a5f25",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#2f312e",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#54433a",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1c1a",
+                        "outline-variant": "#dac2b6",
+                        "on-secondary-fixed": "#241a00",
+                        "outline": "#877369",
+                        "surface": "#faf9f5",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary-fixed": "#321200",
+                        "inverse-on-surface": "#f2f1ed",
+                        "on-tertiary-container": "#bed890",
+                        "surface-container-high": "#e9e8e4",
+                        "surface-container": "#efeeea",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#934b19",
+                        "surface-container-highest": "#e3e2df",
+                        "primary-container": "#8b4513",
+                        "on-background": "#1b1c1a",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f4f4f0",
+                        "surface-dim": "#dbdad6",
+                        "primary-fixed-dim": "#ffb68c",
+                        "primary": "#6c2f00",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "on-primary-fixed-variant": "#753401",
+                        "surface-variant": "#e3e2df",
+                        "background": "#faf9f5",
+                        "on-secondary-container": "#745c00",
+                        "tertiary": "#33470f",
+                        "secondary": "#735c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .glass-panel { background: rgba(250, 249, 245, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(218, 194, 182, 0.3); }
+        .progress-ring__circle { transition: stroke-dashoffset 1s ease-in-out; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(139, 69, 19, 0.08); }
+        
+        .pulse-soft { animation: pulse-soft 3s infinite; }
+        @keyframes pulse-soft {
+            0% { box-shadow: 0 0 0 0 rgba(254, 214, 91, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(254, 214, 91, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(254, 214, 91, 0); }
+        }
+
+        /* Decorative background pattern */
+        .bg-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(135, 115, 105, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar (Mobile Only) -->
+<header class="md:hidden fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding h-20 bg-surface/90 backdrop-blur-md border-b border-outline-variant/10">
+<div class="font-headline-md text-headline-md italic text-primary">Warmi Digital</div>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<div class="flex h-screen pt-20 md:pt-0">
+<!-- Side Navigation (Desktop) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-72 rounded-r-full bg-surface shadow-sm bg-surface-container-low z-40 p-4 pt-12 overflow-y-auto" style="scrollbar-width: none;">
+<div class="flex flex-col items-center mb-12">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-outline-variant/30">
+<img alt="Perfil de Artesana" class="w-full h-full object-cover" data-alt="Portrait of Rosa, an indigenous artisan woman from the Andes, smiling warmly in natural sunlight. She wears a traditional woven shawl in earthy terracotta and ochre tones. The lighting is soft and golden, reflecting a dignified and professional aesthetic suitable for a high-end educational platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzjDBMD908MBX8KRwWOTCBEVfkAXrBHfeOzslDrr2238OqRLURACSsQUKCZnpDncHZWmBfhRD8N8j57kwF8f4Znh009a4IyJcrIPUT-fTDNdYStNFMi_iLyKP3dgqVZAlqKHDre2XbPXHMUU4i9VfdaHnasADZeRXVTzB_iwl2lmrHW_H2sIAD4_obVrFddd8VPWyfxOzdCCVWlAiCu5n2HnmCMl8APRu6hm-sMUv9w87b774KZ6uh"/>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary text-center">Warmi Digital</h1>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mt-1">Portal de Artesanas</p>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<!-- Active Item: Mi Aprendizaje -->
+<button class="flex flex-col items-center justify-center bg-tertiary-container text-on-tertiary-container rounded-full p-6 my-2 scale-95 active:scale-90 transition-transform duration-500 w-full group">
+<span class="material-symbols-outlined text-3xl mb-1" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-label-ui text-label-ui">Mi Aprendizaje</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-6 my-2 hover:bg-tertiary-fixed-dim transition-colors duration-300 rounded-full scale-95 active:scale-90 transition-transform duration-500 w-full group">
+<span class="material-symbols-outlined text-3xl mb-1 group-hover:text-tertiary-container">groups</span>
+<span class="font-label-ui text-label-ui group-hover:text-tertiary-container">Mi Comunidad</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-6 my-2 hover:bg-tertiary-fixed-dim transition-colors duration-300 rounded-full scale-95 active:scale-90 transition-transform duration-500 w-full group">
+<span class="material-symbols-outlined text-3xl mb-1 group-hover:text-tertiary-container">auto_stories</span>
+<span class="font-label-ui text-label-ui group-hover:text-tertiary-container">Mi Historia</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 p-container-padding md:p-12 overflow-y-auto">
+<div class="max-w-[1000px] mx-auto">
+<!-- Greeting & Global Progress -->
+<section class="mb-section-gap opacity-0 translate-y-4 transition-all duration-1000 ease-out" id="greeting-section">
+<div class="flex flex-col md:flex-row items-center gap-8 bg-surface-container-low rounded-3xl p-8 md:p-12 border border-outline-variant/20 hover-lift relative overflow-hidden">
+<!-- Decorative bg -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-fixed/20 rounded-full blur-3xl"></div>
+<div class="flex-1 z-10 text-center md:text-left">
+<span class="font-label-ui text-label-ui text-secondary uppercase tracking-wider mb-2 block">Nivel 2: Exploradora</span>
+<h2 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary mb-4">Buenos días, Rosa.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+                                Continúa tu camino digital. Estás a punto de completar el módulo de Fotografía de Producto.
+                            </p>
+<button class="mt-8 bg-primary text-on-primary font-label-ui text-label-ui px-8 py-4 rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2 mx-auto md:mx-0">
+<span class="material-symbols-outlined">play_circle</span>
+                                Continuar Módulo
+                            </button>
+</div>
+<!-- Big Circular Progress -->
+<div class="relative w-48 h-48 z-10 flex-shrink-0 mx-auto pulse-soft rounded-full">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle class="text-surface-container-high stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="8"></circle>
+<circle class="text-secondary stroke-current progress-ring__circle" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-lg text-headline-lg text-primary">75%</span>
+<span class="font-caption text-caption text-on-surface-variant">Completado</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Learning Path (Visual Journey) -->
+<section class="mb-section-gap relative">
+<h3 class="font-headline-md text-headline-md text-primary mb-12 text-center md:text-left">Tu Ruta de Aprendizaje</h3>
+<div class="relative">
+<!-- Connecting Line -->
+<div class="absolute top-1/2 left-0 w-full h-1 bg-surface-container-high -translate-y-1/2 hidden md:block z-0"></div>
+<div class="absolute top-1/2 left-0 w-2/3 h-1 bg-secondary -translate-y-1/2 hidden md:block z-0 transition-all duration-1000 ease-in-out" id="path-progress"></div>
+<!-- Vertical line for mobile -->
+<div class="absolute left-8 top-0 w-1 h-full bg-surface-container-high md:hidden z-0"></div>
+<div class="absolute left-8 top-0 w-1 h-2/3 bg-secondary md:hidden z-0"></div>
+<div class="flex flex-col md:flex-row justify-between gap-8 md:gap-4 relative z-10">
+<!-- Step 1: Completed -->
+<div class="flex flex-row md:flex-col items-center gap-4 group">
+<div class="w-16 h-16 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md flex-shrink-0 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="bg-surface p-4 rounded-xl border border-outline-variant/20 shadow-sm md:text-center w-full md:w-48 hover-lift">
+<span class="font-caption text-caption text-secondary block mb-1">Mes 1</span>
+<h4 class="font-label-ui text-label-ui text-on-surface">Redes Sociales Básico</h4>
+</div>
+</div>
+<!-- Step 2: Current -->
+<div class="flex flex-row md:flex-col items-center gap-4 group">
+<div class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md flex-shrink-0 ring-4 ring-primary-fixed/50 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">photo_camera</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-primary/30 shadow-sm md:text-center w-full md:w-48 hover-lift transform md:-translate-y-2">
+<span class="font-caption text-caption text-primary block mb-1">Mes 2 (Actual)</span>
+<h4 class="font-label-ui text-label-ui text-primary font-bold">Fotografía de Producto</h4>
+</div>
+</div>
+<!-- Step 3: Locked -->
+<div class="flex flex-row md:flex-col items-center gap-4 group opacity-60">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center border-2 border-outline-variant/30 flex-shrink-0">
+<span class="material-symbols-outlined text-3xl">lock</span>
+</div>
+<div class="bg-surface p-4 rounded-xl border border-outline-variant/20 md:text-center w-full md:w-48">
+<span class="font-caption text-caption text-on-surface-variant block mb-1">Mes 3</span>
+<h4 class="font-label-ui text-label-ui text-on-surface-variant">Ventas por WhatsApp</h4>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Next Workshop & Achievements -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-section-gap">
+<!-- Next Workshop Card -->
+<div class="md:col-span-7 bg-surface rounded-3xl overflow-hidden shadow-sm border border-outline-variant/20 hover-lift flex flex-col group">
+<div class="h-48 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<img alt="Taller de Fotografía" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A warm, high-quality editorial photograph of artisan hands skillfully shaping a clay pot or weaving vibrant textiles. The setting is a bright, airy workshop with natural light illuminating the textures of the materials. The color palette leans towards earth tones, terracotta, and soft cream, exuding dignity and craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaffYlfRhoVdj_CQohj0m4Qzy42lelzp8-VoB6SwbO8JzgzKR4S0cDZJIJO9CnTfEfO3WmnbTVYekQxuIcFrD8cit5IqIc8CRZxiThh_NHeAeXkE2ptjgXKcWtvqIlgwDbLKe_b75PP9P7Btr0dlkXXTS3F74e_VPqYiVILLEkzizkn0QkR8yLo8IYJnk55-Iufrx5lYqTTAKCnevhueYD_lUQv8oOhXlRywUXmzjfRQ55o2GLi-jl"/>
+<div class="absolute bottom-4 left-4 z-20">
+<span class="bg-tertiary-container text-on-tertiary-container font-caption text-caption px-3 py-1 rounded-full uppercase tracking-wide">En Vivo</span>
+</div>
+</div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Taller: Luz Natural para tus Fotos</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Aprende a usar la luz del sol para resaltar los detalles de tus tejidos.</p>
+<div class="flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Jueves, 15 de Octubre • 16:00 hrs</span>
+</div>
+</div>
+<button class="mt-6 w-full py-3 border-2 border-accent_sand text-primary font-label-ui text-label-ui rounded-full hover:bg-surface-container-low transition-colors">
+                                Agendar Recordatorio
+                            </button>
+</div>
+</div>
+<!-- Achievements & Community Messages -->
+<div class="md:col-span-5 flex flex-col gap-6">
+<!-- Mis Logros -->
+<div class="bg-secondary-container/20 rounded-3xl p-6 border border-secondary/20 hover-lift flex-1">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-secondary-container">Mis Logros</h3>
+<button class="text-secondary hover:text-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center text-center gap-2">
+<div class="w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant leading-tight">Primera<br/>Venta</span>
+</div>
+<div class="flex flex-col items-center text-center gap-2">
+<div class="w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant leading-tight">Racha<br/>7 días</span>
+</div>
+<div class="flex flex-col items-center text-center gap-2 opacity-50 grayscale">
+<div class="w-14 h-14 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center border border-outline-variant/50">
+<span class="material-symbols-outlined text-2xl">stars</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant leading-tight">Maestra<br/>Tejedora</span>
+</div>
+</div>
+</div>
+<!-- Motivación Comunidad -->
+<div class="bg-tertiary-container/10 rounded-3xl p-6 border border-tertiary/10 hover-lift flex-1 relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-8xl">forum</span>
+</div>
+<h3 class="font-label-ui text-label-ui text-tertiary uppercase tracking-wider mb-4">Mensaje de la Comunidad</h3>
+<p class="font-headline-md text-headline-lg-mobile md:text-headline-md italic text-on-surface mb-4">
+                                "Tus telares de la semana pasada me inspiraron a probar nuevos colores. ¡Sigue así, Rosa!"
+                            </p>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-label-ui text-label-ui">M</div>
+<span class="font-caption text-caption text-on-surface-variant">María de Cusco • Hace 2 horas</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script>
+        // Simple entrance animation
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const greeting = document.getElementById('greeting-section');
+                if(greeting) {
+                    greeting.classList.remove('opacity-0', 'translate-y-4');
+                }
+            }, 100);
+
+            // Animate progress path line on desktop
+            setTimeout(() => {
+                const path = document.getElementById('path-progress');
+                if(path) {
+                    path.style.width = '50%'; // Animates from initial state
+                }
+            }, 500);
+        });
+    </script>
+</body></html>

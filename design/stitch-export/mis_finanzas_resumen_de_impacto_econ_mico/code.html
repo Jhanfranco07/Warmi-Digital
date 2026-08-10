@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Finanzas - Warmi Digital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#ffb68c",
+                        "primary": "#6c2f00",
+                        "on-surface-variant": "#54433a",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed-variant": "#753401",
+                        "surface-container-highest": "#e3e2df",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#4a5f25",
+                        "surface-container-low": "#f4f4f0",
+                        "on-tertiary-container": "#bed890",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#934b19",
+                        "outline-variant": "#dac2b6",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdbc9",
+                        "outline": "#877369",
+                        "secondary": "#735c00",
+                        "on-background": "#1b1c1a",
+                        "primary-container": "#8b4513",
+                        "on-surface": "#1b1c1a",
+                        "surface-bright": "#faf9f5",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e9e8e4",
+                        "surface": "#faf9f5",
+                        "tertiary-fixed": "#d2eca2",
+                        "tertiary": "#33470f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "inverse-primary": "#ffb68c",
+                        "inverse-on-surface": "#f2f1ed",
+                        "surface-dim": "#dbdad6",
+                        "on-tertiary-fixed": "#131f00",
+                        "on-primary-container": "#ffc29f",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "surface-container": "#efeeea",
+                        "on-secondary-fixed": "#241a00",
+                        "on-secondary-container": "#745c00",
+                        "on-error-container": "#93000a",
+                        "background": "#faf9f5",
+                        "on-secondary-fixed-variant": "#574500",
+                        "secondary-container": "#fed65b",
+                        "on-primary-fixed": "#321200",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e3e2df"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "section-gap": "120px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    fontFamily: {
+                        "caption": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"]
+                    },
+                    fontSize: {
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .glass-panel { background: rgba(250, 249, 245, 0.7); backdrop-filter: blur(20px); border: 1px solid theme('colors.outline-variant'); }
+        .gentle-drift { transition: transform 500ms ease-out; }
+        .gentle-drift:hover { transform: translateY(-4px); }
+        .soft-fade { transition: opacity 500ms ease; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Side Nav (Desktop) -->
+<nav class="hidden md:flex flex-col py-8 gap-base h-screen w-72 fixed left-0 top-0 z-40 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant/30">
+<div class="px-8 mb-8">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Warmi Digital</h1>
+</div>
+<div class="px-8 mb-8 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="A warm, professional portrait of a female artisan from Cusco, Peru. She is wearing traditional Andean textiles with intricate patterns. The lighting is soft and natural, emphasizing the rich earthy tones and subtle dignity of her expression. The background is a gently blurred workshop setting, consistent with a premium National Geographic editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC40XKyToJax1wKsU15XREYTL-jNFtXyCDQsXfbh-ncS1H2OXsaKPiMZJvAxEXyAEGUcB4o-PjJ2jCRdRw6SPQCcgemrSLh63wyxSUfv-0hfeXpuE8ss6TJH5_ct5QdnE76_CbNfIVKUgRnRuVb9JaqsqSdwcyk8hU3UdP-9ysDUYA7T54y2bxni0qdIGpHAdgb3eo23SaOlNUgAHVjPNIapycgeStH7uTZx4lXxs9r6zgbsuPpy5tK"/>
+</div>
+<div>
+<p class="font-label-ui text-label-ui text-primary">Bienvenida, Elena</p>
+<p class="font-caption text-caption text-on-surface-variant">Maestra Tejedora, Cusco</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full mx-4" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-ui text-label-ui">Panel</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-full mx-4 px-4 py-3 font-bold" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-ui text-label-ui">Mis Finanzas</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full mx-4" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-ui text-label-ui">Pedidos</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full mx-4" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-ui text-label-ui">Mi Historia</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full mx-4" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-ui text-label-ui">Comunidad</span>
+</a>
+</div>
+<div class="mt-auto px-4 flex flex-col gap-2">
+<button class="w-full py-3 px-4 bg-primary text-on-primary font-label-ui text-label-ui rounded-full hover:bg-primary/90 transition-colors">
+                Abrir Taller
+            </button>
+<a class="flex items-center gap-4 text-on-surface-variant hover:text-primary px-4 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-ui text-label-ui">Configuración</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-72 min-h-screen bg-background px-container-padding py-12 md:py-20 max-w-7xl mx-auto w-full">
+<!-- Header -->
+<header class="mb-12 flex justify-between items-end border-b border-outline-variant/30 pb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Mis Finanzas</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Resumen de ingresos y movimientos recientes.</p>
+</div>
+<div class="hidden md:flex gap-4">
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-high text-primary font-label-ui text-label-ui rounded-full hover:bg-surface-variant transition-colors border border-outline-variant/30">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                    Ver reporte de ventas
+                </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary font-label-ui text-label-ui rounded-full hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+                    Transferir fondos
+                </button>
+</div>
+</header>
+<!-- Bento Grid: Financial Summary -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-section-gap">
+<!-- Available Balance (Hero Card) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/40 shadow-sm relative overflow-hidden gentle-drift">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed opacity-10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-4">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-ui text-label-ui uppercase tracking-wider">SALDO DISPONIBLE</span>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary">S/ 4,250.00</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Actualizado hace 2 horas</p>
+</div>
+<div class="mt-8 flex gap-4 md:hidden">
+<button class="flex-1 flex justify-center items-center gap-2 py-3 bg-primary text-on-primary font-label-ui text-label-ui rounded-full hover:bg-primary/90 transition-colors">
+                            Transferir
+                        </button>
+</div>
+</div>
+</div>
+<!-- Pending / Expected -->
+<div class="md:col-span-4 flex flex-col gap-6">
+<!-- Pending Payments -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-sm gentle-drift flex-1">
+<div class="flex items-center gap-2 text-on-surface-variant mb-2">
+<span class="material-symbols-outlined text-secondary">pending_actions</span>
+<span class="font-label-ui text-label-ui uppercase tracking-wider">PAGOS PENDIENTES</span>
+</div>
+<p class="font-headline-md text-headline-md text-on-surface">S/ 850.00</p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">De 3 órdenes en proceso</p>
+</div>
+<!-- This Month Earnings -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-sm gentle-drift flex-1">
+<div class="flex items-center gap-2 text-on-surface-variant mb-2">
+<span class="material-symbols-outlined text-tertiary">trending_up</span>
+<span class="font-label-ui text-label-ui uppercase tracking-wider">INGRESOS (ESTE MES)</span>
+</div>
+<p class="font-headline-md text-headline-md text-on-surface">S/ 1,200.00</p>
+<p class="font-caption text-caption text-tertiary-container mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                        +15% vs mes anterior
+                    </p>
+</div>
+</div>
+</section>
+<!-- Recent Transactions List -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Movimientos Recientes</h3>
+<button class="font-label-ui text-label-ui text-primary hover:underline decoration-primary/30 underline-offset-4">Ver Todos</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm">
+<!-- List Header (Desktop only) -->
+<div class="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-outline-variant/30 bg-surface-container-low text-on-surface-variant font-label-ui text-label-ui text-sm uppercase tracking-wider">
+<div class="col-span-4">DETALLE / PRODUCTO</div>
+<div class="col-span-3">COMUNIDAD / CLIENTE</div>
+<div class="col-span-2">FECHA</div>
+<div class="col-span-2 text-right">MONTO</div>
+<div class="col-span-1 text-center">ESTADO</div>
+</div>
+<!-- Transaction Items -->
+<div class="divide-y divide-outline-variant/20">
+<!-- Item 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 md:p-6 items-center hover:bg-surface-bright transition-colors duration-300">
+<div class="col-span-1 md:col-span-4 flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Poncho de Alpaca - Diseño Inti</p>
+<p class="font-caption text-caption text-on-surface-variant md:hidden">24 Nov 2024 • S/ 350.00</p>
+</div>
+</div>
+<div class="hidden md:block col-span-3">
+<p class="font-body-md text-body-md text-on-surface">Comunidad Chinchero</p>
+<p class="font-caption text-caption text-on-surface-variant">Venta Directa</p>
+</div>
+<div class="hidden md:block col-span-2 text-on-surface-variant font-body-md text-body-md">
+                            24 Nov, 2024
+                        </div>
+<div class="hidden md:block col-span-2 text-right font-body-md text-body-md font-medium text-tertiary-container">
+                            + S/ 350.00
+                        </div>
+<div class="col-span-1 flex justify-end md:justify-center">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-container/10 text-tertiary-container font-caption text-caption font-medium border border-tertiary-container/20">
+                                Completado
+                            </span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 md:p-6 items-center hover:bg-surface-bright transition-colors duration-300">
+<div class="col-span-1 md:col-span-4 flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined">inventory</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Lote Textil - Camino Inca</p>
+<p class="font-caption text-caption text-on-surface-variant md:hidden">20 Nov 2024 • S/ 850.00</p>
+</div>
+</div>
+<div class="hidden md:block col-span-3">
+<p class="font-body-md text-body-md text-on-surface">Taller Central Cusco</p>
+<p class="font-caption text-caption text-on-surface-variant">Pedido Mayorista</p>
+</div>
+<div class="hidden md:block col-span-2 text-on-surface-variant font-body-md text-body-md">
+                            20 Nov, 2024
+                        </div>
+<div class="hidden md:block col-span-2 text-right font-body-md text-body-md font-medium text-secondary">
+                            + S/ 850.00
+                        </div>
+<div class="col-span-1 flex justify-end md:justify-center">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container font-caption text-caption font-medium border border-secondary-container/30">
+                                En Proceso
+                            </span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 md:p-6 items-center hover:bg-surface-bright transition-colors duration-300">
+<div class="col-span-1 md:col-span-4 flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded flex items-center justify-center text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Transferencia a Cuenta BCP</p>
+<p class="font-caption text-caption text-on-surface-variant md:hidden">15 Nov 2024 • - S/ 1,200.00</p>
+</div>
+</div>
+<div class="hidden md:block col-span-3">
+<p class="font-body-md text-body-md text-on-surface">Retiro de Fondos</p>
+<p class="font-caption text-caption text-on-surface-variant">Cuenta ****4567</p>
+</div>
+<div class="hidden md:block col-span-2 text-on-surface-variant font-body-md text-body-md">
+                            15 Nov, 2024
+                        </div>
+<div class="hidden md:block col-span-2 text-right font-body-md text-body-md font-medium text-on-surface-variant">
+                            - S/ 1,200.00
+                        </div>
+<div class="col-span-1 flex justify-end md:justify-center">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-caption text-caption font-medium border border-outline-variant/30">
+                                Liquidado
+                            </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 z-50 px-4 py-2 flex justify-between items-center shadow-[0_-4px_20px_rgba(139,69,19,0.05)]">
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined mb-1">dashboard</span>
+<span class="text-[10px] font-label-ui">Inicio</span>
+</a>
+<a class="flex flex-col items-center p-2 text-primary font-bold" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="text-[10px] font-label-ui">Finanzas</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined mb-1">inventory_2</span>
+<span class="text-[10px] font-label-ui">Pedidos</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="text-[10px] font-label-ui">Perfil</span>
+</a>
+</nav>
+</body></html>

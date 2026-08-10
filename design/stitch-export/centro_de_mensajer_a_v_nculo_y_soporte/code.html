@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro de Mensajería - Facilitadora</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600&amp;family=Inter:wght@400&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f2f1ed",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#ffc29f",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2f312e",
+                      "tertiary": "#33470f",
+                      "surface-dim": "#dbdad6",
+                      "background": "#faf9f5",
+                      "on-primary-fixed": "#321200",
+                      "secondary-fixed-dim": "#e9c349",
+                      "surface-container-high": "#e9e8e4",
+                      "on-tertiary-fixed-variant": "#394d14",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e3e2df",
+                      "tertiary-fixed": "#d2eca2",
+                      "on-surface-variant": "#54433a",
+                      "on-secondary-container": "#745c00",
+                      "on-tertiary-container": "#bed890",
+                      "surface-container": "#efeeea",
+                      "primary-fixed": "#ffdbc9",
+                      "secondary-fixed": "#ffe088",
+                      "outline-variant": "#dac2b6",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#e3e2df",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#ffb68c",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#fed65b",
+                      "surface-tint": "#934b19",
+                      "surface": "#faf9f5",
+                      "on-surface": "#1b1c1a",
+                      "tertiary-container": "#4a5f25",
+                      "primary-container": "#8b4513",
+                      "on-secondary-fixed": "#241a00",
+                      "on-background": "#1b1c1a",
+                      "inverse-primary": "#ffb68c",
+                      "surface-container-low": "#f4f4f0",
+                      "on-primary-fixed-variant": "#753401",
+                      "primary": "#6c2f00",
+                      "tertiary-fixed-dim": "#b6d088",
+                      "secondary": "#735c00",
+                      "error": "#ba1a1a",
+                      "outline": "#877369",
+                      "surface-bright": "#faf9f5",
+                      "on-tertiary-fixed": "#131f00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "column-count": "12",
+                      "base": "8px",
+                      "container-padding": "24px",
+                      "section-gap": "120px"
+              },
+              "fontFamily": {
+                      "label-ui": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "caption": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "label-ui": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "72px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #dac2b6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-surface-dim h-screen w-20 hover:w-64 transition-all duration-300 fixed left-0 top-0 overflow-hidden group border-r border-outline-variant/20 z-50 flex flex-col py-8 px-2">
+<div class="mb-8 px-4 flex items-center gap-4 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a female facilitator in a professional, warm setting. Soft natural lighting highlights her approachability. Warm, earthy tones dominate the background, complementing the minimalist, professional aesthetic of the interface. The image evokes a sense of institutional trust and human connection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmQxpmJDq8qLzVcqUTmCy5a-kqMIi2wO1VAB0Am2CpsM4GQ8sbvD--LD5qeSp6bPI7WJEvGaa3xFxx_NJZpjRwLoSXeiuf8_VuMDyqjMQ-bB5kBt__t1zNa5CGdFPvpibwC6-vySLe8S1tBo5IWI_L6-gRlIolkSwLwd-feBonU_v-i3LGKeRfjEVhozgCAtsqI1ZIS0wolbWhf-5lFJIzp4ofPFKyyVgSU9i-wvFTQwqp9BjCAbI_"/>
+<div>
+<h2 class="font-label-ui text-label-ui text-tertiary">Management</h2>
+<p class="font-caption text-caption text-on-surface-variant">Global Facilitator</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">dashboard</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-tertiary border-r-4 border-tertiary bg-tertiary-fixed/10 transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">diversity_3</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Artisan CRM</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">analytics</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Impact Data</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">receipt_long</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Orders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">inventory_2</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Inventory</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">description</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Reports</span>
+</a>
+</li>
+</ul>
+<ul class="flex flex-col gap-2 mt-auto">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">admin_panel_settings</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Admin</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined flex-shrink-0">logout</span>
+<span class="font-label-ui text-label-ui whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Logout</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-20 flex-1 flex h-screen bg-surface-container-lowest transition-all duration-300 relative">
+<!-- Artisan List Panel -->
+<aside class="w-80 border-r border-outline-variant/20 bg-surface flex flex-col h-full shrink-0 relative z-10">
+<div class="p-6 border-b border-outline-variant/20">
+<h1 class="font-headline-md text-headline-md text-primary mb-4">Mensajería</h1>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none border-b border-accent_sand focus:ring-0 focus:border-primary text-body-md font-body-md rounded-t-sm transition-colors" placeholder="Buscar artesana..." type="text"/>
+</div>
+</div>
+<div class="overflow-y-auto custom-scrollbar flex-1">
+<ul class="flex flex-col divide-y divide-outline-variant/10">
+<!-- Active Artisan -->
+<li class="bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer p-4 border-l-4 border-primary">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of Rosa, a weaver, in a well-lit workshop. Soft, warm natural light from a window illuminates her face. The environment reflects artisanal heritage with earthy tones. The image is professional, conveying dignity and warmth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa1o16mvqRxPsp9pRiIp_09SsDSfOh1YJDBN_mwIgpqVDWOKg4t2kC4cC_LV-JVztemssxbSosL7bmOKzMhHwevRIFtZEgqcueFeWccbo6BCGEO5nTaSN8hxdhd4ndUl83S5QfuaInsa9PHcvuQSrQjobXMt8K2bUguo-YFHDKcKf2jdkgRw1AB53SZcm-Sou8Dc6Lpchwi4hXv1alZC9GA4vmjAzPO38xxAby_7qllsXazx7K1iyX"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-surface-container"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-label-ui text-label-ui text-on-surface truncate">Rosa Huanca</h3>
+<span class="font-caption text-caption text-on-surface-variant text-xs">10:42 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm truncate">Tengo una duda con el patrón del telar.</p>
+</div>
+</div>
+</li>
+<!-- Unread Artisan -->
+<li class="hover:bg-surface-container-low transition-colors cursor-pointer p-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of Maria, a ceramicist, with a warm smile. Lighting is soft and natural, emphasizing the organic textures of her craft. The background is a minimalist, earth-toned studio space. The mood is calm and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKXjwSZp37QhXuksB9KvOsnVbVwaRpAhD9PDZCeWCoBlmHqMieNuCXJc_E9gKrQ5V2YcixzoQud42QXLYv-i-BdVLg9szct4pzxXQDOdmWeNK5gVUnokPYP8rQqV2KXcVRmxWPzJ1qRZMnRj-zGaC-dD17AffKuUNwvos7pGEQxlXGyC8UQVbzucjoMZZsbfcIOSU4Ogp8SwiWyVkPlDPd8YPXMgVB95LRSZo5oIlfql_BH9RHEfB_"/>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-caption text-[10px] w-4 h-4 rounded-full flex items-center justify-center">2</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-label-ui text-label-ui text-on-surface font-semibold truncate">María Condori</h3>
+<span class="font-caption text-caption text-error font-semibold text-xs">Ayer</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface text-sm truncate font-medium">¿Cuándo llega el nuevo pedido de lana?</p>
+</div>
+</div>
+</li>
+<!-- Read Artisan -->
+<li class="hover:bg-surface-container-low transition-colors cursor-pointer p-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of Elena, focusing intently. The lighting is diffused, casting soft shadows that highlight the textures of natural materials around her. The setting is clean, bright, and organized, reflecting a premium editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdXy1BA2LIYbN6JCNBO0leazPK0dVhk01KNHPHQcG3HSu5z1FK9bDUDfCyWLLo2voRhNJZIgfZFNPIIPTbQRp218t3-xDqRfYXRiqfyFNUNC-V9WDmrT1MjswKjJPNeY5raZRpRUejtGfDcRBP23h9AGZ0AgiYKrGGRfx2m6qbEyWEcEZxnibnyBaS5AG3y7FPMeuAMMtbzqzdVP1JcXPQbjG0iHMw4JiBPixoKzW_7G9mRJI0R3gC"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h3 class="font-label-ui text-label-ui text-on-surface-variant truncate">Elena Quispe</h3>
+<span class="font-caption text-caption text-on-surface-variant text-xs">Lun</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm truncate">Gracias por la información enviada.</p>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</aside>
+<!-- Chat Area -->
+<section class="flex-1 flex flex-col bg-surface-container-lowest relative z-0">
+<!-- Chat Header -->
+<header class="px-8 py-6 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest/80 backdrop-blur-md z-10 sticky top-0">
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Close up portrait of Rosa Huanca. The lighting is soft and flattering, highlighting her expressive eyes. The background is slightly blurred to keep focus on her. The mood is dignified and professional, fitting an institutional platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsJLUTi4kyy9-aLtPBSq2bKPocnNPptyN4xOBS8hkUVpSltXXJOtvWcp4L_zTEkEo80IVizOwJ1bJCTxG_wUDtqpYxd3v1hM47BgYnRfFqAX2B9_JPlRHvPBThMfaSwhn980E4bKTA4sCmgJd5GsgeKm1dv0yoRqJuwWLUgERQkt9SsRypvggaKyvSrnJpQ53SfrdlsKSEq3inX2Ju4K9SH93XMAlMIrs48yCSCd3XIQ6-HKdxzbxm"/>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface text-2xl">Rosa Huanca</h2>
+<span class="font-caption text-caption text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Activa ahora
+                        </span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">call</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmFmOWY1IiAvPgo8Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMSIgZmlsbD0iI2RhYzJiNiIgZmlsbC1vcGFjaXR5PSIwLjEiIC8+Cjwvc3ZnPg==')]">
+<div class="flex flex-col gap-6 max-w-3xl mx-auto">
+<!-- Date Divider -->
+<div class="flex justify-center my-4">
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-low px-4 py-1 rounded-full text-xs">Hoy</span>
+</div>
+<!-- Facilitator Message (Right) -->
+<div class="flex justify-end">
+<div class="max-w-[70%] bg-primary-container text-on-primary-container p-4 rounded-2xl rounded-tr-sm shadow-sm border border-outline-variant/10">
+<p class="font-body-md text-body-md mb-1">Hola Rosa, ¿cómo vas con el nuevo patrón que revisamos ayer? ¿Necesitas que te envíe el video otra vez?</p>
+<span class="font-caption text-caption text-on-primary-container/70 text-xs flex justify-end">09:15 AM</span>
+</div>
+</div>
+<!-- Artisan Audio Message (Left) -->
+<div class="flex justify-start items-end gap-2">
+<img class="w-8 h-8 rounded-full object-cover mb-1" data-alt="Small thumbnail profile of Rosa." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB74UgGcOeABnC2_DnJTQmFPTiRwM5fbW7WiSWOBK7d9Sdl1pHllnieGaUmGL_FkqaiLbYHicJ1skSzb4gt-Pcfi6RZOYjobxAS4SB38Bk8QznzIyPPyKeYbT79gsxQCxHhwN4rOkqHbf1_dPBh1Fb4TrJyrhul8e9OB8TyGhvLsXbAln4MEXc1OfwGxbVOtcWZ6_grDX0jzi7YMI8-oogxceOUliwhJkbXCSS0gXd3gNZgGiuqoQYd"/>
+<div class="max-w-[70%] bg-surface-container-low text-on-surface p-4 rounded-2xl rounded-tl-sm border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-2">
+<button class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-secondary hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+<div class="flex-1">
+<div class="h-1 bg-outline-variant/30 rounded-full w-32 relative">
+<div class="absolute left-0 top-0 h-full bg-secondary rounded-full w-0"></div>
+</div>
+<div class="flex justify-between mt-1">
+<span class="font-caption text-caption text-on-surface-variant text-[10px]">0:00</span>
+<span class="font-caption text-caption text-on-surface-variant text-[10px]">0:45</span>
+</div>
+</div>
+</div>
+<span class="font-caption text-caption text-on-surface-variant text-xs flex justify-end">10:40 AM</span>
+</div>
+</div>
+<!-- Artisan Text Message (Left) -->
+<div class="flex justify-start items-end gap-2">
+<div class="w-8 h-8 opacity-0"></div> <!-- Spacer -->
+<div class="max-w-[70%] bg-surface-container-low text-on-surface p-4 rounded-2xl border border-outline-variant/20">
+<p class="font-body-md text-body-md mb-1">Tengo una duda con el patrón del telar. La parte central no me está quedando igual a la foto.</p>
+<span class="font-caption text-caption text-on-surface-variant text-xs flex justify-end">10:42 AM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-6 bg-surface-container-lowest border-t border-outline-variant/20">
+<div class="max-w-3xl mx-auto flex items-end gap-4">
+<button class="p-3 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors mb-1">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<div class="flex-1 bg-surface-container-low rounded-2xl border border-outline-variant/30 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all p-1 flex items-end">
+<textarea class="w-full bg-transparent border-none focus:ring-0 resize-none font-body-md text-body-md py-3 px-4 max-h-32 custom-scrollbar" placeholder="Escribe un mensaje..." rows="1"></textarea>
+<button class="p-3 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">mood</span>
+</button>
+</div>
+<button class="p-4 bg-primary text-on-primary rounded-full hover:bg-primary/90 transition-colors shadow-sm mb-1 flex items-center justify-center group relative overflow-hidden">
+<span class="material-symbols-outlined relative z-10 transition-transform group-hover:scale-110">mic</span>
+</button>
+<button class="p-4 bg-surface-container-high text-on-surface rounded-full hover:bg-surface-variant transition-colors mb-1 hidden">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="max-w-3xl mx-auto mt-2 text-center">
+<span class="font-caption text-caption text-on-surface-variant text-xs">Mantén presionado el micrófono para grabar un audio corto.</span>
+</div>
+</div>
+</section>
+<!-- Right Info Panel -->
+<aside class="w-80 border-l border-outline-variant/20 bg-surface flex flex-col h-full shrink-0 hidden xl:flex overflow-y-auto custom-scrollbar">
+<div class="p-8 flex flex-col items-center border-b border-outline-variant/20 text-center">
+<img class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-surface-container" data-alt="A portrait of Rosa Huanca. Soft natural light, warm minimal background. Dignified expression. High quality, editorial style photography suited for a premium institutional platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh2wOn9lr6k2Q6W1jvnBrXWS6znVYUl0aTb7uYohTpQ0tHuHnCzgPWRSqmrLERx6rTMnVEwYy2JHAniyD8x-hkSd7B5AkD2HC-Ip3lErqripYH4GGkZAS_lu7L4gMBLphwoEIcqScnle1amLqWVQNaITkjEJOwObPUyU4zG87wwP_Ujbq_Hg0rekOa-HQ0xLWPMBSY51M66rw9nK9jmBayxuShZhUiLlpn0-SmOTd6doUXKvM-vubz"/>
+<h3 class="font-headline-md text-headline-md text-on-surface text-xl mb-1">Rosa Huanca</h3>
+<p class="font-label-ui text-label-ui text-on-surface-variant">Maestra Tejedora</p>
+<div class="mt-4 flex gap-2">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary font-caption text-caption rounded-full text-xs font-semibold">Cusco, Perú</span>
+<span class="px-3 py-1 bg-secondary-container/30 text-on-secondary-container font-caption text-caption rounded-full text-xs font-semibold">Activa</span>
+</div>
+</div>
+<div class="p-6">
+<h4 class="font-label-ui text-label-ui text-on-surface mb-4">Progreso del Programa</h4>
+<div class="mb-6">
+<div class="flex justify-between mb-2">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Módulo Actual</span>
+<span class="font-body-md text-body-md text-primary font-semibold text-sm">75%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 75%;"></div>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mt-2 text-xs">Técnicas de Teñido Natural Avanzado</p>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-secondary text-xl">auto_stories</span>
+<h5 class="font-label-ui text-label-ui text-on-surface text-sm">Última técnica aprendida</h5>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Teñido con cochinilla - Nivel 2</p>
+<span class="font-caption text-caption text-outline mt-1 block text-xs">Completado hace 3 días</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-tertiary text-xl">workspace_premium</span>
+<h5 class="font-label-ui text-label-ui text-on-surface text-sm">Próximo objetivo</h5>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Entrega de muestra final para catálogo.</p>
+<span class="font-caption text-caption text-outline mt-1 block text-xs">Vence en 5 días</span>
+</div>
+</div>
+<div class="mt-8">
+<h4 class="font-label-ui text-label-ui text-on-surface mb-4">Archivos Compartidos</h4>
+<ul class="space-y-3">
+<li class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer group">
+<div class="w-10 h-10 bg-error-container text-on-error-container rounded flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface text-sm truncate">patron_telar_v2.pdf</p>
+<p class="font-caption text-caption text-on-surface-variant text-xs">2.4 MB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">download</span>
+</li>
+<li class="flex items-center gap-3 p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer group">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container rounded flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface text-sm truncate">muestra_color_referencia.jpg</p>
+<p class="font-caption text-caption text-on-surface-variant text-xs">1.1 MB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">download</span>
+</li>
+</ul>
+<button class="w-full mt-4 py-2 text-primary font-label-ui text-label-ui hover:bg-primary/5 rounded-lg transition-colors">Ver todos los archivos</button>
+</div>
+</div>
+</aside>
+</main>
+<script>
+        // Simple script to auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            
+            // Toggle mic/send button based on input
+            const micBtn = this.parentElement.nextElementSibling;
+            const sendBtn = micBtn.nextElementSibling;
+            
+            if(this.value.trim().length > 0) {
+                micBtn.classList.add('hidden');
+                sendBtn.classList.remove('hidden');
+            } else {
+                micBtn.classList.remove('hidden');
+                sendBtn.classList.add('hidden');
+            }
+        });
+    </script>
+</body></html>

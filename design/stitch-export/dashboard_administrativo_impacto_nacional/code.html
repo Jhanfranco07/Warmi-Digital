@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warmi Digital - Executive Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600&amp;family=Inter:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "surface-tint": "#934b19",
+                            "outline-variant": "#dac2b6",
+                            "tertiary-fixed-dim": "#b6d088",
+                            "inverse-on-surface": "#f2f1ed",
+                            "secondary-fixed": "#ffe088",
+                            "on-tertiary-fixed-variant": "#394d14",
+                            "primary": "#6c2f00",
+                            "on-tertiary-container": "#bed890",
+                            "on-surface": "#1b1c1a",
+                            "on-tertiary-fixed": "#131f00",
+                            "on-error-container": "#93000a",
+                            "on-secondary": "#ffffff",
+                            "on-secondary-fixed": "#241a00",
+                            "on-secondary-fixed-variant": "#574500",
+                            "inverse-surface": "#2f312e",
+                            "surface-container-high": "#e9e8e4",
+                            "error": "#ba1a1a",
+                            "tertiary-container": "#4a5f25",
+                            "secondary": "#735c00",
+                            "surface-variant": "#e3e2df",
+                            "on-surface-variant": "#54433a",
+                            "primary-fixed-dim": "#ffb68c",
+                            "on-primary-fixed-variant": "#753401",
+                            "surface-container": "#efeeea",
+                            "on-background": "#1b1c1a",
+                            "background": "#faf9f5",
+                            "primary-container": "#8b4513",
+                            "tertiary": "#33470f",
+                            "surface-container-low": "#f4f4f0",
+                            "secondary-container": "#fed65b",
+                            "surface-container-highest": "#e3e2df",
+                            "tertiary-fixed": "#d2eca2",
+                            "on-primary-fixed": "#321200",
+                            "primary-fixed": "#ffdbc9",
+                            "inverse-primary": "#ffb68c",
+                            "outline": "#877369",
+                            "on-secondary-container": "#745c00",
+                            "error-container": "#ffdad6",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-bright": "#faf9f5",
+                            "on-tertiary": "#ffffff",
+                            "on-primary-container": "#ffc29f",
+                            "on-error": "#ffffff",
+                            "surface-dim": "#dbdad6",
+                            "secondary-fixed-dim": "#e9c349",
+                            "surface": "#faf9f5",
+                            "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.125rem",
+                            "lg": "0.25rem",
+                            "xl": "0.5rem",
+                            "full": "0.75rem"
+                    },
+                    "spacing": {
+                            "container-padding": "24px",
+                            "gutter": "24px",
+                            "column-count": "12",
+                            "section-gap": "120px",
+                            "base": "8px"
+                    },
+                    "fontFamily": {
+                            "headline-lg": ["Playfair Display"],
+                            "label-ui": ["Plus Jakarta Sans"],
+                            "headline-lg-mobile": ["Playfair Display"],
+                            "display-lg": ["Playfair Display"],
+                            "caption": ["Inter"],
+                            "headline-md": ["Playfair Display"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                            "headline-lg": ["48px", {"lineHeight": "56px", "fontWeight": "600"}],
+                            "label-ui": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                            "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                            "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                            "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "500"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #faf9f5; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .soft-gradient { background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.0) 100%); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex antialiased">
+<!-- SideNavBar (from JSON) -->
+<nav class="hidden md:flex h-screen w-72 fixed left-0 top-0 z-40 bg-surface-container-low dark:bg-surface-container-lowest flex-col py-8 gap-base border-r border-outline-variant/30">
+<div class="px-8 mb-8">
+<h1 class="font-headline-md text-headline-md text-primary">Warmi Digital</h1>
+<div class="mt-8 flex items-center gap-4">
+<img alt="Artisan Profile Image" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" data-alt="A professional headshot of Elena, a master weaver from Cusco, Peru, smiling warmly. She is wearing traditional, beautifully patterned Andean clothing in rich reds and earth tones. The lighting is soft and natural, emphasizing dignity and heritage." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAddOgr9oMbQVEL8PL5plirlkQ9MJO7vpIpehaxsDO12qBMtzChl7S9S0_DlEoDK_0GNwHjwxsydfjJd0vYEdixiJ4vTLma58k6qM2n24UreqsmKsSfeeNR6Uw9q5NYmUywxU5ChQnHgLaDx3i3Wl1RS2VR8Vkxf8PyO7H1dtaZIfdmB62YK-hce3Lf_CNNPH1bdDKq8OhqH1JQCtHRncJ_bU_562Kc0A_k8_PRyeu4CqBw3rv5VR2Z"/>
+<div>
+<h2 class="font-label-ui text-label-ui text-on-surface">Bienvenida, Elena</h2>
+<p class="font-caption text-caption text-on-surface-variant">Maestra Tejedora, Cusco</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 flex flex-col gap-2">
+<!-- Active Tab -->
+<a class="bg-primary-container text-on-primary-container rounded-full mx-4 px-4 py-3 font-bold flex items-center gap-4 scale-98 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-ui text-label-ui">Panel</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-ui text-label-ui">Mi Camino</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-ui text-label-ui">Pedidos</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-ui text-label-ui">Mi Historia</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-ui text-label-ui">Comunidad</span>
+</a>
+</div>
+<div class="px-8 mt-auto mb-4">
+<button class="w-full bg-primary text-on-primary font-label-ui text-label-ui py-3 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 shadow-sm flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">storefront</span>
+                 Abrir Taller
+             </button>
+</div>
+<div class="px-4 flex flex-col gap-2 mt-4 border-t border-outline-variant/30 pt-4">
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-ui text-label-ui">Configuración</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary px-8 py-3 transition-all duration-300 hover:bg-primary-fixed/20 rounded-full flex items-center gap-4 scale-98 ease-in-out" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-ui text-label-ui">Soporte</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 p-6 md:p-12 max-w-[1280px] mx-auto w-full">
+<!-- Header -->
+<header class="flex justify-between items-end mb-12 border-b border-outline-variant/30 pb-6">
+<div>
+<p class="font-label-ui text-label-ui text-primary uppercase tracking-widest mb-2">Resumen del Administrador Nacional</p>
+<h2 class="font-display-lg text-display-lg text-on-background">Tablero de Impacto</h2>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-body-md text-body-md text-on-surface-variant">Última actualización: Hoy, 09:00 AM</span>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-primary">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</header>
+<!-- KPI Grid (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-section-gap">
+<!-- KPI 1 -->
+<div class="bg-surface-container rounded-xl p-8 border border-outline-variant/20 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<div class="p-3 bg-primary-fixed rounded-lg text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<span class="font-label-ui text-label-ui text-tertiary-container bg-tertiary-fixed-dim/30 px-2 py-1 rounded">+12% YoY</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface relative z-10">2,450+</h3>
+<p class="font-label-ui text-label-ui text-on-surface-variant mt-2 relative z-10">Total Artesanas</p>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container rounded-xl p-8 border border-outline-variant/20 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary-container/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<div class="p-3 bg-secondary-container rounded-lg text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface relative z-10">84</h3>
+<p class="font-label-ui text-label-ui text-on-surface-variant mt-2 relative z-10">Comunidades Alcanzadas</p>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container rounded-xl p-8 border border-outline-variant/20 relative overflow-hidden group lg:col-span-2">
+<div class="absolute inset-0 bg-gradient-to-br from-tertiary-container/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<div class="p-3 bg-tertiary-fixed rounded-lg text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<span class="font-label-ui text-label-ui text-tertiary-container bg-tertiary-fixed-dim/30 px-2 py-1 rounded">+24% MoM</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between relative z-10">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">S/ 450,000+</h3>
+<p class="font-label-ui text-label-ui text-on-surface-variant mt-2">Ventas Culturales Totales</p>
+</div>
+<div class="mt-4 md:mt-0 text-right">
+<p class="font-body-md text-body-md text-primary font-medium">+32% Crecimiento Promedio de Alfabetización Digital</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Dashboard Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-section-gap">
+<!-- Impact Map (Left Column) -->
+<div class="lg:col-span-8 bg-surface rounded-xl border border-outline-variant/30 p-8 shadow-sm flex flex-col h-[600px]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Mapa de Densidad de Participantes</h3>
+<button class="text-primary font-label-ui text-label-ui hover:underline underline-offset-4 flex items-center gap-1">
+                        Ver Reporte Detallado <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Map Container -->
+<div class="flex-1 bg-surface-container-low rounded-lg relative overflow-hidden border border-outline-variant/20">
+<!-- Replacing raw map with a placeholder background to represent an earth-toned stylized map -->
+<div class="w-full h-full bg-cover bg-center absolute inset-0" data-alt="A minimalist, stylized digital map of Peru using an earth-toned color palette of sand, clay, and olive. The map features subtle, pulsing markers in clay red indicating high density artisan clusters in regions like Cusco, Puno, and Ayacucho. The aesthetic is clean, professional, and visually aligns with a high-end cultural institution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDyOU9J7D6ILft616Xxae3XsxUizs3dtC9bf6hvN4w52s1prubFIhA1G0QIN9u8qXIEAXfYUogblFMuX4PszNYfK6O1VQpolEH6QeyypmvXz_be-v6Tne_GRJqIl1fXWdn9BGMeAONILX1pgR79nBNbl4HEBkqJCIAJ9HpG_1hsQ2QWT2Ai4pOYkcJFvPavfE9kMKlJ-NSS8BWhlwRwbpQo8y5NoxFudZ0MXaYKV0pdpZwX05zEEV-N')"></div>
+<!-- Simulated Map Controls -->
+<div class="absolute bottom-4 right-4 flex flex-col gap-2 bg-surface p-2 rounded-lg border border-outline-variant/30 shadow-sm">
+<button class="p-1 hover:bg-surface-container text-on-surface rounded"><span class="material-symbols-outlined">add</span></button>
+<button class="p-1 hover:bg-surface-container text-on-surface rounded"><span class="material-symbols-outlined">remove</span></button>
+</div>
+</div>
+</div>
+<!-- Recent Milestones (Right Column) -->
+<div class="lg:col-span-4 bg-surface rounded-xl border border-outline-variant/30 p-8 shadow-sm h-[600px] flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">campaign</span>
+                    Hitos Recientes
+                </h3>
+<div class="flex-1 overflow-y-auto pr-2 space-y-6 relative before:absolute before:inset-y-0 before:left-[11px] before:w-[2px] before:bg-outline-variant/30">
+<!-- Feed Item 1 -->
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center border-4 border-surface shadow-sm">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mb-1">Hace 2 horas</p>
+<h4 class="font-label-ui text-label-ui text-on-surface font-bold">Pedido Institucional Asegurado</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">El Gremio de Tejedoras de Cusco aseguró un pedido importante del Ministerio de Cultura para 50 ponchos tradicionales.</p>
+</div>
+<!-- Feed Item 2 -->
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center border-4 border-surface shadow-sm">
+<span class="material-symbols-outlined text-[12px]">school</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mb-1">Ayer</p>
+<h4 class="font-label-ui text-label-ui text-on-surface font-bold">Hito de Alfabetización Digital</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">El grupo de Bordado de Ayacucho logró el 100% de finalización en el Módulo 2: Conceptos Básicos de Comercio Electrónico.</p>
+</div>
+<!-- Feed Item 3 -->
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center border-4 border-surface shadow-sm">
+<span class="material-symbols-outlined text-[12px]">storefront</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mb-1">Hace 3 días</p>
+<h4 class="font-label-ui text-label-ui text-on-surface font-bold">Nueva Comunidad Integrada</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">Bienvenida al Colectivo de Cerámica de Puno (24 artesanas) que se une a la plataforma Warmi Digital.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,2 @@
+import { Container } from "@/shared/components/layout/container"; import { PageHeader } from "@/shared/components/layout/page-header"; import { OrderForm } from "@/features/marketplace/order-form";
+export default async function Page({params}:{params:Promise<{productId:string}>}){const {productId}=await params;return <Container className="max-w-xl space-y-6 py-10"><PageHeader title="Solicitar una pieza" description="La artesana confirmara disponibilidad, coordinacion y entrega directamente contigo."/><OrderForm productId={productId}/></Container>}

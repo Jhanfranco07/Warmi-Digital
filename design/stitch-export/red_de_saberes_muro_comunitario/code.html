@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comunidad - Red de Saberes Ancestrales</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600&amp;family=Inter:wght@400&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f2f1ed",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#ffc29f",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2f312e",
+                      "tertiary": "#33470f",
+                      "surface-dim": "#dbdad6",
+                      "background": "#faf9f5",
+                      "on-primary-fixed": "#321200",
+                      "secondary-fixed-dim": "#e9c349",
+                      "surface-container-high": "#e9e8e4",
+                      "on-tertiary-fixed-variant": "#394d14",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e3e2df",
+                      "tertiary-fixed": "#d2eca2",
+                      "on-surface-variant": "#54433a",
+                      "on-secondary-container": "#745c00",
+                      "on-tertiary-container": "#bed890",
+                      "surface-container": "#efeeea",
+                      "primary-fixed": "#ffdbc9",
+                      "secondary-fixed": "#ffe088",
+                      "outline-variant": "#dac2b6",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#e3e2df",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#ffb68c",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#fed65b",
+                      "surface-tint": "#934b19",
+                      "surface": "#faf9f5",
+                      "on-surface": "#1b1c1a",
+                      "tertiary-container": "#4a5f25",
+                      "primary-container": "#8b4513",
+                      "on-secondary-fixed": "#241a00",
+                      "on-background": "#1b1c1a",
+                      "inverse-primary": "#ffb68c",
+                      "surface-container-low": "#f4f4f0",
+                      "on-primary-fixed-variant": "#753401",
+                      "primary": "#6c2f00",
+                      "tertiary-fixed-dim": "#b6d088",
+                      "secondary": "#735c00",
+                      "error": "#ba1a1a",
+                      "outline": "#877369",
+                      "surface-bright": "#faf9f5",
+                      "on-tertiary-fixed": "#131f00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "column-count": "12",
+                      "base": "8px",
+                      "container-padding": "24px",
+                      "section-gap": "120px"
+              },
+              "fontFamily": {
+                      "label-ui": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "caption": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "label-ui": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "72px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/20 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center px-gutter h-16 max-w-[1280px] mx-auto">
+<div class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">
+                Heritage Portal
+            </div>
+<div class="hidden md:flex gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Our Story</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Impact</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Directory</a>
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Community Hub</a>
+</div>
+<div class="flex gap-4 items-center">
+<button class="text-primary dark:text-primary-fixed-dim hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant/20" data-alt="A small circular profile picture of an artisan user, featuring a warm smile, set against a neutral, well-lit background. The style is professional yet approachable, fitting a warm community platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxAQ4tnL9-MiqXoRgeQhvqz_AOkaAgDaABYYQVgaEzR8djV5lZkQO6oy0lLTJRM5YiJjvz0nRkukcee_7spP74dzaJcpa9hmrchvdVMDlCRDwLffOjA3RQb0k3k1nk1KPcuG0yFi65SdXg9F-zMKOM5-WtNUt9Z9ubT8qwMsDfS5-yjWH94-kLJeLeX5PCNfrRrMHONE6faNU6mFgyE-Z4Xvg4sclmYNYkTUjLTwtzbjN7_qqZDG43"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex bg-surface-container-low dark:bg-surface-container-lowest h-screen w-64 flex-col fixed left-0 top-0 py-6 px-4 gap-4 z-40 pt-24">
+<div class="mb-8 px-4">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Welcome, Elena</h2>
+<p class="font-label-ui text-label-ui text-on-surface-variant">Master Weaver</p>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-4 px-4 py-3 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full hover:bg-surface-container-highest transition-colors duration-200 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home_work">home_work</span>
+                My Workshop
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full hover:bg-surface-container-highest transition-colors duration-200 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+                Learning Journey
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 font-label-ui text-label-ui bg-secondary-container text-on-secondary-container rounded-full hover:bg-surface-container-highest transition-colors duration-200 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                Community Hub
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full hover:bg-surface-container-highest transition-colors duration-200 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+                Marketplace
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full hover:bg-surface-container-highest transition-colors duration-200 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+                Artisan Support
+            </a>
+</nav>
+<button class="bg-primary text-on-primary font-label-ui text-label-ui py-3 px-6 rounded-full w-full hover:bg-primary-fixed-dim transition-colors duration-200 mt-4 mb-8">
+            New Entry
+        </button>
+<div class="mt-auto flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-2 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-4 px-4 py-2 font-label-ui text-label-ui text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help
+            </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:ml-64 pt-24 px-4 md:px-12 max-w-[1280px] mx-auto pb-32 md:pb-12">
+<!-- Header Section -->
+<header class="mb-16 mt-8">
+<h1 class="font-display-lg text-display-lg text-primary mb-4 md:hidden">Plaza Digital</h1>
+<h1 class="font-display-lg text-display-lg text-primary mb-4 hidden md:block">Red de Saberes Ancestrales</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Un espacio cálido para compartir historias, resolver dudas técnicas y celebrar el progreso diario de nuestras manos.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Community Feed -->
+<div class="lg:col-span-8 flex flex-col gap-12">
+<!-- Share Progress Input -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-[0_12px_32px_rgba(139,69,19,0.03)] relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-low to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+<div class="flex gap-4">
+<img alt="Elena's profile" class="w-12 h-12 rounded-full object-cover border border-outline-variant/50" data-alt="A portrait of Elena, an artisan, looking thoughtfully towards the camera. Natural warm lighting, neutral background, professional and welcoming style suitable for a community profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8gfGd9vSC2Hp0Jl_0U77KoipOLLixDtc1hZ7squlDFziXmBquVlsAIb3sm5ydZoOmsYfbrvw3hkp3rtTH86za216Nv0Q93YGe7A9IGhesogwwEfifboziyxJ0-OitvsIISfSYB1Fl_wha9-x29en-70cP6WEWFTxXCZl06tFFSwwuFJA4uj1qp-0I0FICIwWCnfXM5dK_ZvXzMjjA8jNV2PFgbQlUgbYjEci2LWzYgCeLyoUuXbWB"/>
+<div class="flex-grow">
+<textarea class="w-full bg-transparent border-b border-accent-sand/50 focus:border-primary focus:ring-0 resize-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 py-2 mb-4" placeholder="Comparte tu progreso de hoy o una técnica que estés practicando..." rows="2"></textarea>
+<div class="flex justify-between items-center">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="photo_camera">photo_camera</span>
+<span class="font-label-ui text-label-ui">Añadir foto</span>
+</button>
+<button class="bg-primary text-on-primary font-label-ui text-label-ui px-6 py-2 rounded-full hover:bg-primary/90 transition-colors duration-200">
+                                    Compartir
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Community Wall Feed -->
+<div class="flex flex-col gap-8">
+<!-- Post 1 -->
+<article class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-8 shadow-[0_4px_24px_rgba(139,69,19,0.02)] transition-transform duration-300 hover:-translate-y-1">
+<div class="flex justify-between items-start mb-6">
+<div class="flex gap-4 items-center">
+<img alt="Maria's profile" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" data-alt="Profile picture of Maria, a weaver, smiling warmly. Soft, diffused lighting, earthy tones, conveying trust and community." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq3-Swzv4cWxXx6uuUezfJEBFfA2dLr_7AvzKAZe-copeZA3loPbQtWlb4jzLR1gYECVNLwZ1hENntLW2AmJhhiqc35DBXxVF2KtCtJIOrHWYpfwW0KdRb1C0uzrJx3aCRDBVEiGfPtmV9rTuJG_m_hrKfZSxy2_avalrL1l7toLXvWUpclV3BKME5BBVNc8PrlgTnhaDDGxlN2P3BSUauZaP039KoCXtm24bOiQRHbFcy-gqqA8R1"/>
+<div>
+<h3 class="font-label-ui text-label-ui text-on-surface">Maria Quispe</h3>
+<p class="font-caption text-caption text-on-surface-variant">Tejedora de cintura • Hace 2 horas</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-6 leading-relaxed">
+                            Hoy terminé esta pieza utilizando la técnica de teñido natural con cochinilla que me enseñó mi abuela. El rojo quedó mucho más vibrante después de dejarlo reposar con alumbre extra. ¿Alguien más ha experimentado con diferentes tiempos de reposo?
+                        </p>
+<div class="rounded-lg overflow-hidden mb-6 h-64 border border-outline-variant/20 relative group">
+<div class="bg-cover bg-center w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="A close-up photograph of deeply vibrant red yarn being dyed naturally with cochinilla. The texture of the wool is evident, sitting in a rustic earthen bowl. The lighting is warm and natural, highlighting the rich, saturated color and the handmade process." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoOBCGTL3-7J3h2vExv8vfWnc0CUpnAKwURO0bcIOYjZEhlQWKzQ_BA5tF5BkSXPOE6DEoWmu5hY4ixUUsE_JLbzUY5R_JQh7doeVh6RP_GGLKznZIe44bzDj62E1VIMdazEyPqHg_NPVfbVVHVDMIlSoCYlVJH-nYRyyWKz7p9QgU8cX1iJ5KygMmzdG0-3jcOEwXrwEPAirwJ5nLC12xcydleGsF6cVgdJPK0maFZFAPlnTW6_zl')"></div>
+</div>
+<div class="flex gap-6 border-t border-outline-variant/20 pt-4">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors font-label-ui text-label-ui">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+                                24
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-ui text-label-ui">
+<span class="material-symbols-outlined" data-icon="chat_bubble_outline">chat_bubble_outline</span>
+                                5 Comentarios
+                            </button>
+</div>
+</article>
+<!-- Post 2 (Dudas y Saberes) -->
+<article class="bg-surface-container-low border border-secondary-fixed-dim/30 rounded-xl p-8 shadow-[0_4px_24px_rgba(139,69,19,0.02)] transition-transform duration-300 hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-secondary-container text-on-secondary-container px-4 py-1 rounded-bl-lg font-caption text-caption font-bold">
+                            Dudas y Saberes
+                        </div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex gap-4 items-center">
+<img alt="Rosa's profile" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" data-alt="Profile image of Rosa, a ceramicist, looking slightly curious. Natural light, subtle warm tones in the background, professional community aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJDFCN3pxhLkR92hpPNhD9O_EtNoBhFCreruRqDJhPW82tQaSliqgU-uQ-7EiBvOVVo9QOV_qaZ_o7H-h9-um_FxBEt4A3FDcFTSPh0kdBSR_Cizk-Mx97HzHjdHhkiCtXJy0NxovbSymaCtPtqCWZLe57TF32ZJbbE9FKHuBu5c87lDIYwArI2_4f0eTPTn1sxFmgh3rJPpFChXUZgbCd6ZS47EA2K3WAlQYEt0L2SB-eiQ5aFZ2B"/>
+<div>
+<h3 class="font-label-ui text-label-ui text-on-surface">Rosa Mamani</h3>
+<p class="font-caption text-caption text-on-surface-variant">Ceramista • Hace 5 horas</p>
+</div>
+</div>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">¿Cómo fijar mejor el color azul índigo?</h4>
+<p class="font-body-md text-body-md text-on-surface mb-6 leading-relaxed">
+                            He estado teniendo problemas con mis últimos lotes de lana. El color azul índigo se desvanece un poco después del primer lavado suave. He seguido las proporciones de ceniza habituales. ¿Alguna maestra tintorera tiene un secreto para mejorar la fijación sin usar químicos fuertes?
+                        </p>
+<div class="flex gap-6 border-t border-outline-variant/20 pt-4">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-ui text-label-ui">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+                                Compartir Saber (12)
+                            </button>
+</div>
+</article>
+</div>
+</div>
+<!-- Right Column: Sidebar Features -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<!-- Historias de Éxito Bento -->
+<section class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-6 shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome">auto_awesome</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Historias de Éxito</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2 relative group overflow-hidden rounded-lg cursor-pointer h-48">
+<div class="bg-cover bg-center w-full h-full absolute inset-0 transition-transform duration-700 group-hover:scale-110" data-alt="A portrait of an elderly artisan woman proudly holding a finely woven, intricate tapestry. Warm, golden hour lighting illuminating her face and the textures of the textile. The mood is triumphant and deeply dignified, reflecting a success story." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLaoHiQEQBlL0wnddk5clFyEPE-5WF6pCsJOwf-44EpsQC5RzSLrmzXGpbF29JkNmf14V_ES3N2oPfm4GQTQ-I38EhxtpKr3WEYw9zx8E0Tqc3TKZZYWD08J6qiNiPt841ppSi_YOaLi7QKFv2XioWhwkwmuyfTv5tV6O0v3A8MdAp4BusJwXhP72wGPskjbQ8BlK4flU5jenZ2sscWmsoEfAZd4rEifqdaOrz6MkztvKTjzT60TwX')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+<p class="font-label-ui text-label-ui text-white">El telar de Carmen llega a París</p>
+<span class="font-caption text-caption text-white/80">Leer historia</span>
+</div>
+</div>
+<div class="col-span-1 relative group overflow-hidden rounded-lg cursor-pointer h-32">
+<div class="bg-cover bg-center w-full h-full absolute inset-0 transition-transform duration-700 group-hover:scale-110" data-alt="Close up shot of beautifully crafted pottery with intricate geometric designs. The lighting highlights the smooth curves and the earthy clay tones. The image conveys mastery and success in craft." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBMMiJ_1n73nvb7pbr8NOflr-7pJfFJHOI104btuj4_Nn0Tss62gH0jF9m6iKHH0U05dkKqQFW-LzY29H8990tciQsdg_HOLz1WWXCSvS8T4Y7D-wnjI6Tc14sIp-EXgiWhCwCvIoqWfKDrd-Kd05W6AjrZvxvN73oj31bmQ1ezfpMt25OxsRgj6gPmu6Lb_Mx5I3E-FR9WryIbJwCHP21i-2Pf6qak3VBhPX1dmJk60xqLHFG2V9h1')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-3">
+<p class="font-caption text-caption text-white font-bold">Nueva Colección</p>
+</div>
+</div>
+<div class="col-span-1 relative group overflow-hidden rounded-lg cursor-pointer h-32">
+<div class="bg-cover bg-center w-full h-full absolute inset-0 transition-transform duration-700 group-hover:scale-110" data-alt="A group of smiling artisan women working collaboratively around a large table, weaving baskets. Bright, natural, airy lighting, signifying community growth and shared success." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA79l3B5znp1jP_oB0YQkkOZcfutWbFN6Wg4Hmw2tScggObqCQqbly8M-Fy1ZCDe0c9xO7qIO8rPS2IlylKpmEtP5amh8GMomFOQTKi8PQiK29BEvcA3J1sag-e_qSrXugmuZKf_Boe8DrD3g4wo2PoJqWv6mQFky8lyDS69GrfYnrOzLHypt0weHZwFieETxI9bDnk7IG9R4uX48a3x6fCR4n7KwufsKNDdgVjK1c0LH0INfU2XTd_')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-3">
+<p class="font-caption text-caption text-white font-bold">Cooperativa Sur</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-2 text-center text-primary font-label-ui text-label-ui hover:bg-surface-container-low rounded transition-colors">
+                        Ver todas las historias
+                    </button>
+</section>
+<!-- Temas Populares -->
+<section class="bg-surface-container-low border border-outline-variant/10 rounded-xl p-6">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 text-xl">Temas en la Plaza</h2>
+<ul class="flex flex-col gap-3">
+<li>
+<a class="flex justify-between items-center group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Teñido Natural</span>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded-full">45 post</span>
+</a>
+</li>
+<li>
+<a class="flex justify-between items-center group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Diseños Andinos</span>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded-full">32 post</span>
+</a>
+</li>
+<li>
+<a class="flex justify-between items-center group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Cerámica de Alta Temperatura</span>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded-full">18 post</span>
+</a>
+</li>
+<li>
+<a class="flex justify-between items-center group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Proveedores de Hilo</span>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded-full">12 post</span>
+</a>
+</li>
+</ul>
+</section>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Navigation (Visible only on md:hidden) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/20 z-50 flex justify-around py-3 px-2 shadow-[0_-4px_16px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home_work">home_work</span>
+<span class="font-caption text-caption">Taller</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-caption text-caption">Aprender</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined bg-secondary-container text-on-secondary-container rounded-full px-4 py-1" data-icon="groups">groups</span>
+<span class="font-caption text-caption font-bold">Comunidad</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-caption text-caption">Mercado</span>
+</a>
+</nav>
+</body></html>

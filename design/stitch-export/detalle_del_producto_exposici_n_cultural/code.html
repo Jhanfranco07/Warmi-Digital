@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warmi Digital - Product Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&amp;family=Playfair+Display:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#745c00",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-container": "#4a5f25",
+                        "primary": "#6c2f00",
+                        "inverse-primary": "#ffb68c",
+                        "tertiary": "#33470f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-surface-variant": "#54433a",
+                        "on-background": "#1b1c1a",
+                        "on-surface": "#1b1c1a",
+                        "surface-bright": "#faf9f5",
+                        "outline": "#877369",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#735c00",
+                        "on-tertiary-container": "#bed890",
+                        "tertiary-fixed": "#d2eca2",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-dim": "#dbdad6",
+                        "surface-container": "#efeeea",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#fed65b",
+                        "on-secondary": "#ffffff",
+                        "surface": "#faf9f5",
+                        "surface-tint": "#934b19",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed-variant": "#753401",
+                        "primary-container": "#8b4513",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ed",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary-fixed-dim": "#ffb68c",
+                        "outline-variant": "#dac2b6",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#321200",
+                        "secondary-fixed": "#ffe088",
+                        "surface-container-high": "#e9e8e4",
+                        "background": "#faf9f5",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary-container": "#ffc29f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "display-lg": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gentle-drift:hover {
+            transform: translateY(-4px);
+        }
+        .soft-fade {
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/20 flat no shadows gentle-drift transition-transform duration-500 ease-out">
+<div class="max-w-7xl mx-auto px-container-padding flex justify-between items-center h-20">
+<div class="font-headline-md text-headline-md text-primary dark:text-inverse-primary tracking-tight">
+                Warmi Digital
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300" href="#">Patrimonio</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300" href="#">Comunidades</a>
+<a class="font-label-ui text-label-ui text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1" href="#">Academia</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300" href="#">Impacto</a>
+</div>
+<div class="flex gap-4 items-center text-primary dark:text-inverse-primary">
+<button class="p-2 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 rounded-full">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto">
+<!-- Cinematic Hero -->
+<section class="relative w-full h-[716px] min-h-[600px] mb-section-gap">
+<div class="absolute inset-0 bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="A sweeping, cinematic high-resolution photograph of a traditional 'Poncho de lana de alpaca' displayed in a minimalist museum setting. The poncho is woven with intricate earth-tone patterns, predominantly deep brown and terracotta, lit dramatically by a single, warm spotlight against a dark, textured museum wall. The lighting highlights the rich texture of the baby alpaca wool and the fine details of the geometric weaving symbols. The overall mood is deeply respectful, conveying profound dignity and cultural heritage within a modern editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs2m796E27XuLHfHFYFlcjy4s-GMVKjpNn_es1WfC3Dbs_P3DbdGnthPZEAnm5_GQ6LINldSELMLcwzo_dicfFx46DUckXtfnHaOuzKlHRMh5N3pdxjvyxmGDRD0Gf9emP_AQ3rkS6kTxj0sjJYaRpgM0dGBh_dls0rO3bsMQvmEFcckDstDAXasWsAY1wTGoZqFa7f16tiAmRbOh9vWuAZXpwJhCqUrRwlLRNUVyRW0-3hypXKg68"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full px-container-padding pb-20">
+<div class="max-w-3xl">
+<h1 class="font-display-lg text-display-lg text-primary mb-4">Poncho de lana de alpaca</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Una obra maestra del tejido andino, portadora de siglos de conocimiento ancestral.</p>
+</div>
+</div>
+</section>
+<div class="px-container-padding flex flex-col gap-section-gap pb-section-gap">
+<!-- La Historia -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-5 order-2 md:order-1">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6">La Historia</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
+                        Cada hilo tejido en esta pieza cuenta una historia. Los patrones geométricos, conocidos como 'Pallay', no son meramente decorativos. Son un lenguaje antiguo, que transmite la relación de la comunidad con las montañas (Apus), los ríos y las estrellas. Los motivos centrales representan la Chakana, la cruz andina, que simboliza la conexión entre los reinos terrenal y divino.
+                    </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Este diseño específico es único de la comunidad de Huilloc, custodiado y transmitido de generación en generación por mujeres tejedoras, asegurando que su memoria cultural permanezca viva y vibrante en cada fibra meticulosamente elaborada.
+                    </p>
+</div>
+<div class="md:col-span-6 md:col-start-7 order-1 md:order-2">
+<img class="w-full aspect-square object-cover rounded-xl shadow-[0_12px_32px_rgba(139,69,19,0.08)]" data-alt="A close-up, editorial macro photograph focusing on the intricate woven geometric patterns of a Peruvian alpaca poncho. The deep earthy reds, warm browns, and subtle gold threads interlock beautifully, showing the texture of the natural fibers. The lighting is soft and warm, reminiscent of late afternoon sun, highlighting the craftsmanship and precision of the ancient 'Pallay' symbols. The aesthetic is clean, tactile, and professional, akin to a high-end cultural heritage publication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr3NBztTrHp1gOvTRgZix1jmzmBuIVgTqZ61ocRxNFwQAt4wuQW-oVBzNW6givt0HMX-PYeV4ctGwyG_IIObghQGfkYeZIwyhYvpeUYsIR_axo-p4vzDSykFt6tr_ZFVFTIjkX8ftNjsFiunY6Wi0-585Btj-pvgepT2UFgd8ZWFePtNNI4FfXU_fp5SxO22mMBEoYtTgrdJuPCfZExCnp63MUC-H-OT-m5BD_wd3vyELrIyXITcUa"/>
+</div>
+</section>
+<!-- La Artesana -->
+<section class="bg-surface-container-low rounded-xl p-8 md:p-16 border border-outline-variant/30">
+<div class="flex flex-col md:flex-row gap-12 items-center">
+<div class="w-48 h-48 md:w-64 md:h-64 flex-shrink-0">
+<img class="w-full h-full object-cover rounded-full grayscale border-4 border-surface shadow-sm" data-alt="A dignified, black and white editorial portrait of an indigenous Andean master weaver named Elena, from the community of Huilloc. She is wearing traditional clothing, looking directly at the camera with a profound sense of pride and quiet strength. The background is softly blurred, showing a hint of a high-altitude mountain landscape. The lighting is natural and flattering, emphasizing the wisdom in her features and embodying a documentary style akin to National Geographic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA1hSjsVO2itJ-j_kqOalu00kVYzuyJ0weUCWg25lyKurlHqbFoikqa4XgTUT6-4hgncmU_95KKYgF4KlzdkbLyvhXHRW5fPGA6aLCypDZUcu16G1BdKchRTSd-31KEWzqcxNXXfdFII0uUN11M_YKWoskhyhmCgIk-0aEEVMjWWrQ96uITlCBXsJtnweG1HfVu1Cr0ZrD4afzZepm5x58IdWWvlpTzw-k6TgXGaZaU-AzXP8FjyBP"/>
+</div>
+<div>
+<span class="font-label-ui text-label-ui text-secondary mb-2 block uppercase tracking-widest">Maestra Tejedora</span>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Elena</h2>
+<div class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant mb-6">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="location_on">location_on</span>
+                            Cusco, Comunidad de Huilloc
+                        </div>
+<blockquote class="font-headline-md text-headline-md text-on-surface italic border-l-2 border-secondary pl-6 py-2">
+                            "El tejido es nuestra forma de recordar quiénes somos y de hablar con las montañas sin usar palabras."
+                        </blockquote>
+</div>
+</div>
+</section>
+<!-- El Proceso -->
+<section>
+<div class="mb-12">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4 text-center">El Proceso</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant text-center max-w-2xl mx-auto">Un viaje lento e intencional desde la fibra cruda hasta el artefacto cultural, respetando el ritmo de la naturaleza.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] overflow-hidden rounded-lg mb-4 bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A beautifully composed photograph showing the hands of an Andean woman gently spinning raw white baby alpaca wool into fine yarn using a traditional wooden drop spindle (puska). The focus is sharp on the hands and the delicate fibers, with the background softly blurred in warm, earthy tones. The natural light emphasizes the tactile, organic quality of the process, conveying an atmosphere of calm and ancient tradition in a premium editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrbPV8eXcb5REgUXJH5FIJWb1Lmma8hN2hFIjfLD2q-1xkxzTTB1eZY70-QwDg8JTf2YeXRls5mAZFuPO1o0pJjYqnFnqVyuKG8VNSOemWKQAEzlh3IKpkzSJC3SdwY6lsW9oVGjfeywkXUwxAbOwsHOC2tpN57iJsKnxYTy7AQT8-VU6dqOXHifQT98MB2gAcgtFcQeL3Z002U_mKaHEQbr5jQ23zJLagzoB9rsEyRp_G229NRNHH"/>
+</div>
+<h3 class="font-label-ui text-label-ui text-primary uppercase">01. Hilado</h3>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] overflow-hidden rounded-lg mb-4 bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A vivid, editorial photograph capturing the natural dyeing process of alpaca wool. Skeins of wool are soaking in a ceramic pot filled with a rich, vibrant crimson dye derived from cochineal insects. Steam rises gently from the pot, illuminated by warm sunlight filtering through a rustic workshop setting. The scene feels authentic and deeply connected to nature, with the bright red contrasting beautifully against the earthy stone and wood surroundings." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB56h_5rmqlEgExSTbUR9jtwgnmVJc_NKVOtRhnFIbYTMfYZkdc3jqI_5gbq_mp2U0nNwGHPXo9nDmkEfK8cSp-YddXKovo6wO7ZzbXNOHjZ4K6PCtoU4kJ5VZf98jB0zifR2ytpB92j-oKKJxXlWf-7KODHtZsHFQCUlM5_uRS2K-mNbgFnvMMH9N0ST47isTbclKa0o4pYneT3wZCLpVzqgL9wVGyTIt14xUKMeMe9C0PxtnqTP4I"/>
+</div>
+<h3 class="font-label-ui text-label-ui text-primary uppercase">02. Teñido Natural</h3>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] overflow-hidden rounded-lg mb-4 bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up, dramatic shot of an intricate backstrap loom being operated by an Andean weaver. The tension of the colorful warp threads—deep reds, browns, and golds—is clearly visible as a wooden shuttle passes through. The focus is tight on the weaving action, demonstrating the complex geometry of the patterns emerging on the textile. The lighting is warm and directional, emphasizing the texture and precision of this ancient artisanal technique." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5lOBOSVaD1RHZX_-tYPyPRGp9jmcU57gBgxTd-z2N63xmhe893QTbBI8jD6vBjy7zmP43rf1MrgpfMGoT-VoZloo2uzShhLVqSNDztMDfmM-Jz0Vx04fpuTOuOz9mH188LFxECFA5ano9Ni06Z8jWg-m3Y8rqf87dyuCM0qdjZDNKH_Iup8ehogWDbzJfvXszvJMzj-NLrxsVdw93lo7bH0BwIQBtQxa7uhGr4_RmgPcJXiUlSve9"/>
+</div>
+<h3 class="font-label-ui text-label-ui text-primary uppercase">03. Tejido</h3>
+</div>
+</div>
+</section>
+<!-- Details & Purchase (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 pt-12 border-t border-outline-variant/30">
+<div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 border border-outline-variant/20 rounded-xl flex flex-col justify-center">
+<span class="material-symbols-outlined text-secondary mb-4" data-icon="grass">grass</span>
+<h4 class="font-label-ui text-label-ui text-on-surface-variant mb-1">Materiales</h4>
+<p class="font-body-md text-body-md text-primary font-medium">100% Baby Alpaca, Tintes Naturales de Plantas e Insectos</p>
+</div>
+<div class="bg-surface-container-low p-6 border border-outline-variant/20 rounded-xl flex flex-col justify-center">
+<span class="material-symbols-outlined text-secondary mb-4" data-icon="straighten">straighten</span>
+<h4 class="font-label-ui text-label-ui text-on-surface-variant mb-1">Dimensiones</h4>
+<p class="font-body-md text-body-md text-primary font-medium">160cm x 120cm (aprox.)</p>
+</div>
+<div class="bg-surface-container-low p-6 border border-outline-variant/20 rounded-xl flex flex-col justify-center sm:col-span-2">
+<span class="material-symbols-outlined text-secondary mb-4" data-icon="schedule">schedule</span>
+<h4 class="font-label-ui text-label-ui text-on-surface-variant mb-1">Tiempo de Elaboración</h4>
+<p class="font-body-md text-body-md text-primary font-medium">Más de 350 horas de dedicación continua</p>
+</div>
+</div>
+<div class="md:col-span-4 bg-primary-container text-on-primary-container p-8 rounded-xl flex flex-col justify-between shadow-[0_12px_32px_rgba(139,69,19,0.08)]">
+<div>
+<h3 class="font-headline-md text-headline-md mb-2">Adquirir Patrimonio</h3>
+<p class="font-body-md text-body-md opacity-90 mb-8">Al adquirir esta pieza, apoyas directamente a la comunidad de Elena y aseguras la transmisión de estas técnicas antiguas a la próxima generación.</p>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between items-end mb-6">
+<span class="font-label-ui text-label-ui uppercase tracking-wider opacity-80">Valor Cultural</span>
+<span class="font-headline-lg text-headline-lg font-bold">S/ 450.00</span>
+</div>
+<button class="w-full bg-secondary hover:bg-secondary/90 text-on-secondary font-label-ui text-label-ui py-4 px-6 rounded-full transition-colors duration-200 flex justify-center items-center gap-2">
+                            Adquirir Patrimonio
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full relative mt-section-gap border-t border-outline-variant/30 flat no shadows bg-surface-container-highest dark:bg-surface-dim text-primary dark:text-inverse-primary font-body-md text-body-md soft-fade duration-500">
+<div class="max-w-7xl mx-auto px-container-padding py-20 flex flex-col md:flex-row justify-between items-start gap-12">
+<div class="flex-1">
+<div class="font-headline-md text-headline-md text-primary mb-4">
+                    Warmi Digital
+                </div>
+<p class="text-on-surface-variant max-w-md">
+                    © 2024 Warmi Digital. Preservando el Patrimonio Cultural Global bajo los lineamientos de la UNESCO.
+                </p>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Nuestra Misión</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Reporte de Impacto</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Derechos de la Artesana</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Política de Privacidad</a>
+</div>
+</div>
+</footer>
+</body></html>

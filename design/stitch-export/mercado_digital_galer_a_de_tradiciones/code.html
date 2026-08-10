@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mercado Digital - Warmi Digital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#745c00",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-container": "#4a5f25",
+                        "primary": "#6c2f00",
+                        "inverse-primary": "#ffb68c",
+                        "tertiary": "#33470f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-surface-variant": "#54433a",
+                        "on-background": "#1b1c1a",
+                        "on-surface": "#1b1c1a",
+                        "surface-bright": "#faf9f5",
+                        "outline": "#877369",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#735c00",
+                        "on-tertiary-container": "#bed890",
+                        "tertiary-fixed": "#d2eca2",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-dim": "#dbdad6",
+                        "surface-container": "#efeeea",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#fed65b",
+                        "on-secondary": "#ffffff",
+                        "surface": "#faf9f5",
+                        "surface-tint": "#934b19",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed-variant": "#753401",
+                        "primary-container": "#8b4513",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ed",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary-fixed-dim": "#ffb68c",
+                        "outline-variant": "#dac2b6",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#321200",
+                        "secondary-fixed": "#ffe088",
+                        "surface-container-high": "#e9e8e4",
+                        "background": "#faf9f5",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary-container": "#ffc29f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "display-lg": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #faf9f5; /* bg-background */
+            color: #1b1c1a; /* text-on-background */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .texture-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/200.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .soft-fade {
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .gentle-drift {
+            transition: transform 0.5s ease-out;
+        }
+
+        .card-hover:hover .gentle-drift {
+            transform: scale(1.02);
+        }
+        
+        .card-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col">
+<!-- Texture Overlay for overall body -->
+<div class="fixed inset-0 texture-overlay z-[-1]"></div>
+<!-- TopAppBar (from JSON) -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl font-headline-md text-headline-md. Labels: font-label-ui text-label-ui docked full-width top-0 sticky z-50 border-b border-outline-variant/20 flat no shadows gentle-drift transition-transform duration-500 ease-out">
+<div class="max-w-7xl mx-auto px-container-padding flex justify-between items-center h-20">
+<!-- Brand -->
+<div class="font-headline-md text-headline-md text-primary dark:text-inverse-primary tracking-tight">
+                Warmi Digital
+            </div>
+<!-- Navigation (Desktop) -->
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 px-3 py-2 rounded-md" href="#">Patrimonio</a>
+<!-- Active State Example (Since this is a market/community showcase, 'Communities' is the closest fit) -->
+<a class="font-label-ui text-label-ui text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 px-3 pt-2" href="#">Comunidades</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 px-3 py-2 rounded-md" href="#">Academia</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant dark:text-on-surface-variant/80 hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 px-3 py-2 rounded-md" href="#">Impacto</a>
+</nav>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4 text-primary dark:text-inverse-primary">
+<button aria-label="Notifications" class="p-2 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Profile" class="p-2 hover:bg-primary/5 dark:hover:bg-primary-fixed/10 transition-all duration-300 rounded-full">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col relative z-0">
+<!-- Hero Section -->
+<section class="relative w-full pt-32 pb-24 px-container-padding flex flex-col items-center justify-center text-center overflow-hidden border-b border-outline-variant/30">
+<!-- Subtle background tone for hero -->
+<div class="absolute inset-0 bg-surface-container-low z-[-2]"></div>
+<h1 class="font-display-lg text-display-lg text-primary max-w-4xl mx-auto mb-6">
+                Mercado Digital:<br/>
+<span class="text-secondary font-headline-lg italic font-normal">El Alma de nuestras Comunidades</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                Explore una exposición curada de artesanía ancestral. Cada hilo cuenta una historia de patrimonio, resiliencia y las manos maestras de mujeres artesanas andinas.
+            </p>
+</section>
+<!-- Filters / Controls -->
+<section class="max-w-7xl mx-auto w-full px-container-padding py-12 flex flex-col md:flex-row justify-between items-center gap-6 border-b border-outline-variant/20 mb-16">
+<div class="flex flex-wrap gap-4 items-center w-full md:w-auto">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-widest">Filtrar por:</span>
+<div class="relative">
+<select class="appearance-none bg-transparent border-b border-outline-variant text-on-surface font-body-md py-2 pr-8 pl-2 focus:outline-none focus:border-primary focus:ring-0 transition-colors cursor-pointer">
+<option value="">Comunidad</option>
+<option value="chinchero">Chinchero</option>
+<option value="pisac">Pisac</option>
+<option value="olleros">Olleros</option>
+</select>
+<span class="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-transparent border-b border-outline-variant text-on-surface font-body-md py-2 pr-8 pl-2 focus:outline-none focus:border-primary focus:ring-0 transition-colors cursor-pointer">
+<option value="">Técnica</option>
+<option value="telar">Telar de cintura</option>
+<option value="bordado">Bordado a mano</option>
+<option value="tinte">Tinte natural</option>
+</select>
+<span class="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<div class="text-on-surface-variant font-label-ui text-label-ui flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">view_cozy</span>
+                Viendo 12 Exposiciones
+            </div>
+</section>
+<!-- Product Grid (Bento/Editorial Style) -->
+<section class="max-w-7xl mx-auto w-full px-container-padding pb-section-gap grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter">
+<!-- Large Featured Card (Spans 8 cols on LG) -->
+<article class="col-span-1 md:col-span-2 lg:col-span-8 group relative overflow-hidden bg-surface-container rounded-xl flex flex-col h-[600px] border border-outline-variant/20 shadow-sm card-hover cursor-pointer">
+<div class="absolute inset-0 w-full h-full overflow-hidden">
+<img class="w-full h-full object-cover gentle-drift transform scale-100 group-hover:scale-105 transition-transform duration-700" data-alt="A striking digital installation art piece featuring a beautifully woven Andean blanket, rich in deep reds, vibrant yellows, and earthy browns, displayed expansively across a clean, minimalist gallery space. The high-key, soft white lighting emphasizes the intricate geometric patterns and the raw, tactile texture of the natural wool. The mood is reverent and culturally rich, elevating the traditional textile to high art within a modern, light-mode aesthetic setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxqQs2n05-zA-CUuMBp3gs33g-G6HMvA1vMqtB6TzE4oR7IVbl6ec4vZmHS4QdYP421CmKIIlk9do1GyQ6CGaFhrMAUiyItjTfKR7nnEyypnL4Dv0Xn3zCZD5_D3ZkxyW5tjwy5dbVKS8B6cQH6T4Tb_a1MEgYDV-ylYnWS05WxrjkHF1kNMdFU5E1psqCcnHkRI2j4jpvMpFi_ers-tIT2VQknnp411QtbVL3JJBJhc_XZ8ADs1Sr"/>
+<div class="absolute inset-0 card-overlay transition-opacity duration-500 opacity-60 group-hover:opacity-80"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-end h-full p-8 text-on-primary">
+<div class="mb-4 flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-label-ui border border-on-primary/30">Chinchero</span>
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-label-ui border border-on-primary/30">Telar de cintura</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-2">Manta Ancestral de Chinchero</h2>
+<p class="font-body-lg text-body-lg text-surface-bright/90 mb-4 max-w-2xl">
+                        "Un tejido que conecta el cielo con la tierra."
+                    </p>
+<div class="flex items-center gap-2 font-caption text-caption text-surface-bright/70 uppercase tracking-widest mt-4">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                        15 días de labor
+                    </div>
+</div>
+</article>
+<!-- Standard Card (Spans 4 cols on LG) -->
+<article class="col-span-1 md:col-span-1 lg:col-span-4 group relative overflow-hidden bg-surface-container rounded-xl flex flex-col h-[600px] border border-outline-variant/20 shadow-sm card-hover cursor-pointer">
+<div class="absolute inset-0 w-full h-full overflow-hidden">
+<img class="w-full h-full object-cover gentle-drift transform scale-100 group-hover:scale-105 transition-transform duration-700" data-alt="A focused, editorial-style photograph of an artisan's hands carefully dyeing alpaca yarn in a terracotta pot. The scene is illuminated by soft, natural, diffused daylight pouring into a rustic studio with adobe walls. The color palette focuses on rich earth tones, deep indigos, and vibrant cochineal reds against the warm neutral background. The composition is intimate and respectful, highlighting the timeless technique and deep cultural connection to the craft." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi69sK1qetg5oCg6owkgAtpke21xj0cWZI-vXdr_VcQFmDDqhEgB7_UdgFkBn0hjhTvWIm0AhKyusJFKy7vvaXdC-srupV-Ad6pHbfbq88fQsO9_HnJhAr60TiX3K2leNNsZtNYpfDs80vMaowe3dJMbE8vOWRHBJT8RPsjE_Ez4M3WINSp6Wbzu_76owLkGaU4DG2mH6jH8c9GlCZfLQ7O0CRHc65i0tzRQ8XHPJowFmuXG8mubvp"/>
+<div class="absolute inset-0 card-overlay transition-opacity duration-500 opacity-60 group-hover:opacity-80"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-end h-full p-6 text-on-primary">
+<div class="mb-3 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-[12px] border border-on-primary/30">Pisac</span>
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-[12px] border border-on-primary/30">Tinte natural</span>
+</div>
+<h2 class="font-headline-md text-headline-md mb-2">Hilos del Sol Naciente</h2>
+<p class="font-body-md text-body-md text-surface-bright/90 mb-4">
+                        "El color extraído de las entrañas de los Andes."
+                    </p>
+<div class="flex items-center gap-2 font-caption text-caption text-surface-bright/70 uppercase tracking-widest mt-auto">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                        7 días de labor
+                    </div>
+</div>
+</article>
+<!-- Standard Card (Spans 6 cols on LG) -->
+<article class="col-span-1 md:col-span-1 lg:col-span-6 group relative overflow-hidden bg-surface-container rounded-xl flex flex-col h-[500px] border border-outline-variant/20 shadow-sm card-hover cursor-pointer mt-4">
+<div class="absolute inset-0 w-full h-full overflow-hidden bg-surface-container-high flex items-center justify-center p-8">
+<!-- Example of using a non-full-bleed image layout for variety -->
+<img class="w-3/4 h-3/4 object-contain gentle-drift transform scale-100 group-hover:scale-105 transition-transform duration-700 shadow-xl" data-alt="A highly detailed still-life studio shot of a beautifully embroidered traditional Andean vest (chaleco) laid flat on a pristine, textured linen surface. The embroidery features vibrant floral motifs in magentas, greens, and yellows, contrasting sharply against the dark fabric of the vest. The lighting is soft and directional, casting subtle shadows that highlight the raised texture of the hand-stitched threads. The aesthetic is clean, modern, and catalog-like, emphasizing the exquisite craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyAMLwaDsmltuo7M6lCxZwPJ6zylt2dtc6k2S-avj4mODj8lQoa89KNt6pKciuIKm9UONDhqUg5fQH4dlWrOogDCOqAsitKDpPh02WHZ9vWb95NwqaQfJH9vezYh_gP5O0W3Tds67Lx7gYjiXxO5X9_MIAKCv64X9npsNhg6NPm5i1N1Q-j6ngFha0DSctymbF4HjY8SJ_TMuY17Rj9K3dnzRbXQj5hzsu9fvLX2TrCpUS5UGES2m6"/>
+</div>
+<!-- Bottom text pane on lighter background for contrast -->
+<div class="absolute bottom-0 left-0 right-0 bg-surface-bright/95 backdrop-blur-xl p-6 border-t border-outline-variant/20">
+<div class="mb-2 flex flex-wrap gap-2">
+<span class="font-label-ui text-label-ui text-secondary">Olleros</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-ui text-label-ui text-on-surface-variant">Bordado a mano</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Chaleco de Flores Silvestres</h2>
+<p class="font-body-md text-body-md text-on-surface-variant italic mb-3">
+                        "Cada puntada es una semilla plantada en la tela."
+                    </p>
+<div class="flex items-center gap-2 font-caption text-caption text-outline uppercase tracking-widest">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                        21 días de labor
+                    </div>
+</div>
+</article>
+<!-- Standard Card (Spans 6 cols on LG) -->
+<article class="col-span-1 md:col-span-1 lg:col-span-6 group relative overflow-hidden bg-surface-container rounded-xl flex flex-col h-[500px] border border-outline-variant/20 shadow-sm card-hover cursor-pointer mt-4">
+<div class="absolute inset-0 w-full h-full overflow-hidden">
+<img class="w-full h-full object-cover gentle-drift transform scale-100 group-hover:scale-105 transition-transform duration-700" data-alt="A sweeping, cinematic landscape shot of the Sacred Valley in Peru at golden hour, overlaid softly with a semi-transparent layer of intricate weaving patterns. The warm, angled sunlight bathes the terraced fields and distant mountains in a golden glow, while the subtle overlay suggests the deep connection between the land and the artisanal traditions. The mood is expansive, awe-inspiring, and deeply rooted in nature, fitting a premium cultural narrative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtqbJ5YtCh7Y-wG-BqZ_ixHrKXLQIzu9k0JZHNdXndHB-CZXtazzBsrKPe0BKyw6ep321xC9GuTJ0DvQWJIf3kaIqjrDv62xmgnTwjfGWXxIMKD0WGrNUCQJH9RGHFg0diVoafR26mAqFnbeveArNjoFNBIF4zIaDAT5zFmqCMgoSnGss-jVkhzuqgWAp46Y1H_-8qSoPiJKJrTE9LDCufiY_euf5AYylqRrlQMpwhDkLFeyRZsnLV"/>
+<div class="absolute inset-0 bg-primary/20 transition-opacity duration-500 group-hover:bg-primary/30 mix-blend-multiply"></div>
+<div class="absolute inset-0 card-overlay opacity-80"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-end h-full p-6 text-on-primary">
+<div class="mb-3 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-[12px] border border-on-primary/30">Valle Sagrado</span>
+<span class="px-3 py-1 bg-surface-bright/20 backdrop-blur-md rounded-full font-label-ui text-[12px] border border-on-primary/30">Cerámica</span>
+</div>
+<h2 class="font-headline-md text-headline-md mb-2">Vasija del Viento Sagrado</h2>
+<p class="font-body-md text-body-md text-surface-bright/90 mb-4">
+                        "Barro moldeado con el aliento de los apus."
+                    </p>
+<div class="flex items-center gap-2 font-caption text-caption text-surface-bright/70 uppercase tracking-widest mt-auto">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                        10 días de labor
+                    </div>
+</div>
+</article>
+</section>
+<!-- CTA Section to load more / support -->
+<section class="max-w-4xl mx-auto w-full px-container-padding pb-section-gap text-center">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Preservar el Legado</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">
+                Al explorar y adquirir estas piezas, usted participa directamente en el empoderamiento económico de mujeres indígenas y la salvaguarda de conocimientos ancestrales.
+            </p>
+<button class="bg-primary text-on-primary font-label-ui text-label-ui px-8 py-4 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 shadow-md">
+                Ver Colección Completa
+            </button>
+</section>
+</main>
+<!-- Footer (from JSON) -->
+<footer class="bg-surface-container-highest dark:bg-surface-dim font-body-md text-body-md. Labels: font-label-ui text-label-ui w-full relative mt-section-gap border-t border-outline-variant/30 flat no shadows soft-fade duration-500">
+<div class="max-w-7xl mx-auto px-container-padding py-20 flex flex-col md:flex-row justify-between items-start gap-12">
+<!-- Brand / Copyright -->
+<div class="flex flex-col gap-4 max-w-sm">
+<div class="font-headline-md text-headline-md text-primary">
+                    Warmi Digital
+                </div>
+<p class="text-on-surface-variant text-sm">
+                    © 2024 Warmi Digital. Preservando el Patrimonio Cultural Global bajo los lineamientos de la UNESCO.
+                </p>
+</div>
+<!-- Links -->
+<nav class="flex flex-col md:flex-row gap-8 md:gap-16">
+<div class="flex flex-col gap-4">
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Nuestra Misión</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Reporte de Impacto</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Derechos de la Artesana</a>
+<a class="font-label-ui text-label-ui text-on-surface-variant hover:text-primary transition-colors hover:underline decoration-primary/30 underline-offset-4" href="#">Política de Privacidad</a>
+</div>
+</nav>
+</div>
+</footer>
+</body></html>

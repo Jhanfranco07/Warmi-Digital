@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro de Mensajería - Warmi Digital</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected from instructions -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9f5",
+                        "on-secondary-fixed-variant": "#574500",
+                        "tertiary-container": "#4a5f25",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-background": "#1b1c1a",
+                        "surface-variant": "#e3e2df",
+                        "on-secondary-container": "#745c00",
+                        "inverse-primary": "#ffb68c",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "surface-tint": "#934b19",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#735c00",
+                        "outline": "#877369",
+                        "surface-bright": "#faf9f5",
+                        "on-error": "#ffffff",
+                        "background": "#faf9f5",
+                        "surface-container": "#efeeea",
+                        "secondary-fixed": "#ffe088",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "surface-container-high": "#e9e8e4",
+                        "on-tertiary-fixed": "#131f00",
+                        "on-error-container": "#93000a",
+                        "primary": "#6c2f00",
+                        "secondary-container": "#fed65b",
+                        "primary-container": "#8b4513",
+                        "on-primary-container": "#ffc29f",
+                        "inverse-on-surface": "#f2f1ed",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed": "#321200",
+                        "on-tertiary-container": "#bed890",
+                        "surface-container-highest": "#e3e2df",
+                        "on-surface": "#1b1c1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-fixed": "#d2eca2",
+                        "on-surface-variant": "#54433a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-dim": "#dbdad6",
+                        "outline-variant": "#dac2b6",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ffb68c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#33470f",
+                        "on-primary-fixed-variant": "#753401",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-gap": "120px",
+                        "container-padding": "24px",
+                        "column-count": "12",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+        
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle woven texture background for chat area */
+        .woven-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%238b4513' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="h-full flex flex-col md:hidden relative overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface/90 dark:bg-surface-container/90 text-primary dark:text-primary-fixed-dim font-headline-md-mobile text-headline-md-mobile fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 backdrop-blur-xl border-b border-outline-variant/20">
+<button class="flex items-center justify-center p-2 hover:opacity-80 transition-opacity rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<!-- Facilitator Profile Area -->
+<div class="flex flex-col items-center flex-grow">
+<div class="flex items-center space-x-3">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant/50" data-alt="A close-up portrait of a professional, empathetic woman with warm lighting, wearing a simple textured blouse. The background is a soft, out-of-focus earth-toned studio, conveying trust, support, and institutional reliability in a warm professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDX_R4RxJ0nwDqZz6uOUZGAIXkdeT1dqdmVklS5e-qt6zGU9GNspzQ7BAbAJNKEDBaD6DKtvoC0yHN6CARRK8X_0HN_m_If0sLKgp4M3XFTjrtp-NS0T1mjTXS81C-TcORtAy3FEsJsgnKHzM2s640ewg5pLzU8xDjTEeFviUujDmYKRdKlOF9KgzpFNSeQHmzrZi3l9WOURoW2ok92Wo6zWnhCgIws4guk5Mu0D3E8tAVwevkXVY_-"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-tertiary-container rounded-full border-2 border-surface"></div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-background">Elena Rojas</span>
+<span class="font-caption text-caption text-tertiary-container">Activa ahora</span>
+</div>
+</div>
+</div>
+<button class="flex items-center justify-center p-2 hover:opacity-80 transition-opacity rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</header>
+<!-- Chat Canvas -->
+<main class="flex-grow pt-[88px] pb-[160px] overflow-y-auto woven-bg px-4 flex flex-col space-y-6">
+<!-- Timestamp -->
+<div class="flex justify-center mt-6">
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container px-3 py-1 rounded-full opacity-80">Hoy, 10:42 AM</span>
+</div>
+<!-- Received Message (Facilitator) -->
+<div class="flex items-start space-x-3 max-w-[85%]">
+<img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1" data-alt="A small thumbnail portrait of a professional, empathetic woman with warm lighting, matching the profile picture above. The aesthetic is clean, warm, and professional, reinforcing the supportive relationship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnXjFqi5ce6RK-8WZlDSZ1Xbf3IfTqfJOSewWNs4Pse145bAoeozHGGOAD38JLs-8Qx6bfjazzRXxx9tJbP023RBKQt5plb3s9PmaJ5zm5p3nD5VWmUceMfv-Mbrmvnu1LapRqk35vTSGpxFl7Yof6goBrq46BnMLcpjURHkQHAM9qjXum9QxHJ3fb392GWXOaszxq51NJmwcqC5FPOrbOpTXb8Rno4lscoXDaCGp2_sA3yYYyJK-Y"/>
+<div class="flex flex-col space-y-1">
+<div class="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-sm px-4 py-3 shadow-[0_4px_12px_rgba(139,69,19,0.02)] border border-outline-variant/20">
+<p class="font-body-md text-body-md">¡Hola María! ¿Cómo va el avance del telar que conversamos ayer? Recuerda que el patrón andino es la prioridad para esta colección.</p>
+</div>
+<span class="font-caption text-caption text-on-surface-variant pl-1">10:42 AM</span>
+</div>
+</div>
+<!-- Sent Message (Artisan) -->
+<div class="flex items-end justify-end space-x-3 max-w-[85%] self-end">
+<div class="flex flex-col space-y-1 items-end">
+<div class="bg-primary text-on-primary rounded-2xl rounded-tr-sm px-4 py-3 shadow-[0_4px_12px_rgba(139,69,19,0.05)]">
+<p class="font-body-md text-body-md">Hola señorita Elena. Sí, ya terminé la primera franja. Le mando una foto ahora mismo.</p>
+</div>
+<span class="font-caption text-caption text-on-surface-variant pr-1 flex items-center space-x-1">
+<span>10:45 AM</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">done_all</span>
+</span>
+</div>
+</div>
+<!-- Sent Image (Artisan) -->
+<div class="flex items-end justify-end space-x-3 max-w-[85%] self-end">
+<div class="flex flex-col space-y-1 items-end">
+<div class="bg-primary p-1 rounded-2xl rounded-tr-sm shadow-[0_4px_12px_rgba(139,69,19,0.05)]">
+<img class="w-[200px] h-[150px] object-cover rounded-[12px]" data-alt="A close-up, high-quality editorial photograph of an intricate Andean textile in progress on a wooden loom. The weaving features vibrant earthy tones like terracotta, gold, and deep green. The lighting highlights the texture of the natural wool fibers, embodying a tactile, premium craftsmanship aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMevUR9SiJHPUkmcvbDmUkEv3XlmBNL2xM6jrZiPxY7B1CgSKtb0K37VKcKhxRyVHnCPLU7pWhvb5PAQDR6yVRPtwyF5esgdSlBvBYEn8FlhRjGVzLlm5VjfFb7GoATrQSQ3CMPiJ7jHeiO_sLhysNtOS3DDBmh7-zZR_UAYpg_YEWLLvb_nfvwUDkCOSRkYxfsdZ-_rzR8dMKwwke8R4_eYo2R-qb89983AFnELjkqbIMWsy3Bp7L"/>
+</div>
+<span class="font-caption text-caption text-on-surface-variant pr-1 flex items-center space-x-1">
+<span>10:46 AM</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">done_all</span>
+</span>
+</div>
+</div>
+<!-- Received Voice Note (Facilitator) -->
+<div class="flex items-start space-x-3 max-w-[85%] mt-4">
+<img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1" data-alt="A small thumbnail portrait of a professional, empathetic woman with warm lighting, matching the profile picture above. Clean, warm, and professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDjORoX4Bk8k3KIw-kS7hORhhGafrLQ6R54CqZtXRvx4E3RtKCZ5xGjRD6YOwg8CkfzGTctg3NRle5Hd6OxkSHeJeGGfcmKvS9uUYEhPC5puL8UpDHBqdwzIvyORB11jgn91ccOVtuArRbWlexJOHt53Aa327_eo5l5VoQNwSLvG939m5CBnJ4P58lT7_dK6eDr8gZ0mpSKLNZYc8zZVdlbcWpkSDQ_4hEcnHcmkMo6i9ZzUKLJdO2"/>
+<div class="flex flex-col space-y-1">
+<div class="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-sm px-4 py-3 shadow-[0_4px_12px_rgba(139,69,19,0.02)] border border-outline-variant/20 flex items-center space-x-3 w-[220px]">
+<button class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex-grow flex flex-col">
+<div class="h-1 bg-outline-variant/30 rounded-full w-full overflow-hidden flex items-center relative">
+<!-- Fake waveform representation -->
+<div class="absolute left-0 h-full bg-secondary w-1/3 rounded-full"></div>
+</div>
+<span class="font-caption text-[10px] text-on-surface-variant mt-1">0:24</span>
+</div>
+</div>
+<span class="font-caption text-caption text-on-surface-variant pl-1">10:50 AM</span>
+</div>
+</div>
+</main>
+<!-- Chat Input Area (Fixed above BottomNav) -->
+<div class="fixed bottom-[80px] w-full bg-surface/95 backdrop-blur-md border-t border-outline-variant/20 p-4 z-40">
+<div class="flex items-center space-x-3 max-w-lg mx-auto">
+<!-- Add attachment/photo button -->
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200 flex-shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">add_photo_alternate</span>
+</button>
+<!-- Text Input -->
+<div class="flex-grow relative">
+<input class="w-full bg-surface-container-low border-b-2 border-outline-variant focus:border-accent-sand focus:ring-0 rounded-t-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder-on-surface-variant/60 transition-colors" placeholder="Escribe un mensaje..." type="text"/>
+</div>
+<!-- Prominent Voice Note Button (As requested) -->
+<button class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_4px_16px_rgba(108,47,0,0.3)] hover:scale-95 transition-transform duration-200 flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-6 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-4px_24px_rgba(139,69,19,0.04)] font-label-ui text-label-ui text-primary dark:text-primary-fixed-dim rounded-t-full docked full-width bottom-0">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 w-16 rounded-xl py-1" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="text-[10px] truncate w-full text-center">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 w-16 rounded-xl py-1" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">school</span>
+<span class="text-[10px] truncate w-full text-center">Aprendizaje</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 w-16 rounded-xl py-1" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] truncate w-full text-center">Comunidad</span>
+</a>
+<!-- ACTIVE TAB: Mensajes -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-1 hover:bg-surface-container-high transition-colors duration-300 scale-95 w-20" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="text-[10px] font-bold truncate w-full text-center">Mensajes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high transition-colors duration-300 w-16 rounded-xl py-1" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="text-[10px] truncate w-full text-center">Perfil</span>
+</a>
+</nav>
+</body></html>

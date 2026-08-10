@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Panel de la Facilitadora - Seguimiento</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f4f4f0",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "outline-variant": "#dac2b6",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d2eca2",
+                        "on-surface": "#1b1c1a",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#54433a",
+                        "surface-variant": "#e3e2df",
+                        "surface-container-high": "#e9e8e4",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary-fixed": "#241a00",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#574500",
+                        "outline": "#877369",
+                        "inverse-primary": "#ffb68c",
+                        "surface": "#faf9f5",
+                        "on-primary-fixed-variant": "#753401",
+                        "inverse-on-surface": "#f2f1ed",
+                        "background": "#faf9f5",
+                        "surface-container": "#efeeea",
+                        "on-tertiary-container": "#bed890",
+                        "on-secondary-container": "#745c00",
+                        "tertiary": "#33470f",
+                        "secondary-fixed": "#ffe088",
+                        "surface-dim": "#dbdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#321200",
+                        "surface-bright": "#faf9f5",
+                        "secondary": "#735c00",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-container": "#ffc29f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "primary": "#6c2f00",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#fed65b",
+                        "primary-fixed-dim": "#ffb68c",
+                        "primary-container": "#8b4513",
+                        "on-background": "#1b1c1a",
+                        "surface-tint": "#934b19",
+                        "tertiary-container": "#4a5f25"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-padding": "24px",
+                        "column-count": "12",
+                        "section-gap": "120px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Subtle shadow for shell separation without borders */
+        .shell-shadow {
+            box-shadow: 0 4px 32px rgba(139, 69, 19, 0.08);
+        }
+        .shell-shadow-top {
+            box-shadow: 0 -4px 32px rgba(139, 69, 19, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden pb-24 md:hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 h-20 bg-surface/90 backdrop-blur-md shell-shadow transition-all duration-500">
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md italic text-primary font-bold">Warmi Admin</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant relative p-2">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<img alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant/30" data-alt="A professional close-up portrait of an Andean woman facilitator, wearing modern minimalist earth-toned clothing with a subtle woven scarf, soft warm lighting, light mode aesthetic, confident and approachable expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDBHfHYCAVjnEwMWm1rlvm5a3ACxJ3GCs24qUMnYQRZ9F5zzlUljYqqiyrX9r6ccPhfP5wQKOAmcFuR9n_Fl0tkcrW3FGrvbv7CcQ7yN01-IGUqa8M7DzgfGRntkXrML2saBl1aX0BUeIGH0tDrDeW52DVn7bRs3H8RVjogoufkvr1RVPMNLqEqbv7laL2Hy2ZJSL_yL5ZeOtnaPBDijWne1t1kB79ZG1gZJ1fJjy7cP47VVn-Ylli"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-4 flex flex-col gap-8 max-w-md mx-auto">
+<!-- Header / Context -->
+<div>
+<h2 class="font-headline-md text-headline-md text-primary-container mb-1">Seguimiento</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Resumen de impacto y progreso del grupo.</p>
+</div>
+<!-- High Level Summary (Bento Grid Style) -->
+<section class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container-low rounded-xl p-6 relative overflow-hidden flex flex-col justify-between min-h-[140px] border border-outline-variant/10">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-fixed/30 rounded-full blur-2xl"></div>
+<div class="z-10">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">Artesanas Activas</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary">45</span>
+<span class="font-body-md text-body-md text-on-surface-variant">en camino</span>
+</div>
+</div>
+<div class="z-10 mt-4 flex items-center gap-2 text-tertiary-container">
+<span class="material-symbols-outlined text-sm filled">trending_up</span>
+<span class="font-caption text-caption">+3 esta semana</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center gap-2 border border-outline-variant/20 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-1">
+<span class="material-symbols-outlined">school</span>
+</div>
+<span class="font-label-ui text-label-ui text-on-surface">Talleres</span>
+</button>
+<button class="bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center gap-2 border border-outline-variant/20 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center mb-1">
+<span class="material-symbols-outlined">assessment</span>
+</div>
+<span class="font-label-ui text-label-ui text-on-surface">Reportes</span>
+</button>
+</div>
+</section>
+<!-- Recent Activities List -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">Actividad Reciente</h3>
+<button class="text-primary font-label-ui text-label-ui">Ver todo</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Activity Item 1 (Alert) -->
+<div class="bg-surface-container-lowest rounded-lg p-4 flex items-start gap-4 border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined filled">help</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-medium truncate">Rosa envió una duda</p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Módulo: Finanzas Básicas</p>
+</div>
+<span class="font-caption text-caption text-on-surface-variant whitespace-nowrap">Hace 2h</span>
+</div>
+<!-- Activity Item 2 (Success) -->
+<div class="bg-surface-container-lowest rounded-lg p-4 flex items-start gap-4 border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined filled">check_circle</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-medium truncate">Nueva entrega de María</p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Inventario actualizado</p>
+</div>
+<span class="font-caption text-caption text-on-surface-variant whitespace-nowrap">Ayer</span>
+</div>
+<!-- Activity Item 3 (Neutral) -->
+<div class="bg-surface-container-lowest rounded-lg p-4 flex items-start gap-4 border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-medium truncate">Reunión grupal programada</p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Comunidad Huilloc</p>
+</div>
+<span class="font-caption text-caption text-on-surface-variant whitespace-nowrap">Ayer</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile Pivot) -->
+<nav class="fixed bottom-0 left-0 w-full h-20 bg-surface-bright shell-shadow-top flex justify-around items-center px-2 z-50">
+<!-- Tab 1: Dashboard (Inactive) -->
+<a class="flex flex-col items-center justify-center w-16 text-on-surface-variant opacity-80 active:opacity-100 transition-opacity" href="#">
+<div class="px-4 py-1 mb-1 rounded-full hover:bg-surface-container-high transition-all duration-200">
+<span class="material-symbols-outlined text-2xl">dashboard</span>
+</div>
+<span class="font-caption text-caption text-[10px]">Dashboard</span>
+</a>
+<!-- Tab 2: Artesanas (Inactive) -->
+<a class="flex flex-col items-center justify-center w-16 text-on-surface-variant opacity-80 active:opacity-100 transition-opacity" href="#">
+<div class="px-4 py-1 mb-1 rounded-full hover:bg-surface-container-high transition-all duration-200">
+<span class="material-symbols-outlined text-2xl">person_search</span>
+</div>
+<span class="font-caption text-caption text-[10px]">Artesanas</span>
+</a>
+<!-- Tab 3: Seguimiento (Active) -->
+<a class="flex flex-col items-center justify-center w-16 text-primary" href="#">
+<!-- Translated style_active_navigation to mobile pill -->
+<div class="px-4 py-1 mb-1 rounded-full bg-primary-fixed/20 font-bold transition-all duration-200">
+<span class="material-symbols-outlined text-2xl filled">analytics</span>
+</div>
+<span class="font-caption text-caption font-bold text-[10px]">Seguimiento</span>
+</a>
+<!-- Tab 4: Reportes (Inactive) -->
+<a class="flex flex-col items-center justify-center w-16 text-on-surface-variant opacity-80 active:opacity-100 transition-opacity" href="#">
+<div class="px-4 py-1 mb-1 rounded-full hover:bg-surface-container-high transition-all duration-200">
+<span class="material-symbols-outlined text-2xl">assessment</span>
+</div>
+<span class="font-caption text-caption text-[10px]">Reportes</span>
+</a>
+</nav>
+</body></html>

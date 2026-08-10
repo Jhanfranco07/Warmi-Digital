@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warmi Digital - Login</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Playfair+Display:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#745c00",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-container": "#4a5f25",
+                        "primary": "#6c2f00",
+                        "inverse-primary": "#ffb68c",
+                        "tertiary": "#33470f",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-surface-variant": "#54433a",
+                        "on-background": "#1b1c1a",
+                        "on-surface": "#1b1c1a",
+                        "surface-bright": "#faf9f5",
+                        "outline": "#877369",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#735c00",
+                        "on-tertiary-container": "#bed890",
+                        "tertiary-fixed": "#d2eca2",
+                        "surface-container-highest": "#e3e2df",
+                        "on-tertiary-fixed": "#131f00",
+                        "surface-dim": "#dbdad6",
+                        "surface-container": "#efeeea",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#fed65b",
+                        "on-secondary": "#ffffff",
+                        "surface": "#faf9f5",
+                        "surface-tint": "#934b19",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "inverse-surface": "#2f312e",
+                        "on-primary-fixed-variant": "#753401",
+                        "primary-container": "#8b4513",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ed",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary-fixed-dim": "#ffb68c",
+                        "outline-variant": "#dac2b6",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#321200",
+                        "secondary-fixed": "#ffe088",
+                        "surface-container-high": "#e9e8e4",
+                        "background": "#faf9f5",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary-container": "#ffc29f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "display-lg": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .soft-fade { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+        .material-input {
+            border-bottom-width: 1px;
+            border-bottom-color: theme('colors.outline');
+        }
+        .material-input:focus {
+            border-bottom-color: theme('colors.primary');
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col md:flex-row font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<div class="hidden md:block md:w-1/2 lg:w-7/12 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A breathtaking, high-resolution editorial photograph of traditional Andean textiles being woven on a wooden loom. The scene is bathed in warm, soft natural sunlight streaming through a window, highlighting the rich textures and vibrant earthy colors of the natural dyed wools. The composition is artistic and minimalist, focusing on the tactile quality of the threads and the intricate craftsmanship. The mood is deeply emotional, respectful, and grounding, perfectly capturing the spirit of female artisans and cultural heritage preservation in a warm professional aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCALyFOMNshlu8spmcZJTvzNV6c0By891ZqDXEBHhPmKcFLhA3xMzyY50ew-aW0BnQE0ss8-gSZ98s-Q5kW52fHNh5NkJp4qEH5Pv8L2p1sxcBVvRnmaZdPcA3WTTI15HVgrQol4UY4_C1EEIUIooGBBiSpRIPVTRNcSavo3TLrQwIqlAFQAJZVxpcNgIpgbxicsiWJaLkadylZrQ2N9C5x6_E2a740t9Sj5ol--qlqt49l9bTsvt-D')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+</div>
+<div class="w-full md:w-1/2 lg:w-5/12 min-h-screen flex items-center justify-center p-container-padding relative">
+<div class="absolute top-8 left-8 md:top-12 md:left-12">
+<span class="font-headline-md text-headline-md text-primary tracking-tight">Warmi Digital</span>
+</div>
+<div class="w-full max-w-md soft-fade">
+<div class="mb-12"><div class="flex bg-surface-container-low p-1 rounded-full mb-8 w-fit mx-auto md:mx-0">
+<button class="px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 bg-primary text-on-primary" id="btn-artesana" onclick="updateRole('artesana')">
+        Soy Artesana
+    </button>
+<button class="px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 text-on-surface-variant hover:text-primary" id="btn-facilitadora" onclick="updateRole('facilitadora')">
+        Soy Facilitadora
+    </button>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" id="role-icon">front_hand</span>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface" id="welcome-title">Bienvenida a tu taller</h1>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Accede a tu cuenta para continuar gestionando tus creaciones y preservando nuestra herencia.</p>
+</div>
+<form action="#" class="space-y-8" method="POST">
+<div class="relative group">
+<input class="material-input w-full bg-transparent border-t-0 border-l-0 border-r-0 py-3 px-0 text-on-surface font-body-md placeholder-transparent focus:ring-0 transition-colors duration-300" id="username" name="username" placeholder="Username/Email" required="" type="text"/>
+<label class="absolute left-0 top-3 text-on-surface-variant font-body-md transition-all duration-300 -translate-y-7 scale-75 origin-left peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-primary pointer-events-none" for="username">Usuario / Correo</label>
+</div>
+<div class="relative group">
+<input class="material-input w-full bg-transparent border-t-0 border-l-0 border-r-0 py-3 px-0 text-on-surface font-body-md placeholder-transparent focus:ring-0 transition-colors duration-300" id="password" name="password" placeholder="Password" required="" type="password"/>
+<label class="absolute left-0 top-3 text-on-surface-variant font-body-md transition-all duration-300 -translate-y-7 scale-75 origin-left peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-primary pointer-events-none" for="password">Contraseña</label>
+</div>
+<div class="pt-6">
+<button class="w-full bg-primary text-on-primary font-label-ui text-label-ui py-4 px-6 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-all duration-300 ease-out shadow-sm hover:shadow-md flex justify-center items-center gap-2" type="submit">
+                        Iniciar Sesión
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+<div class="mt-12 text-center">
+<a class="font-label-ui text-label-ui text-primary hover:text-primary-container hover:underline decoration-primary/30 underline-offset-4 transition-all duration-300" href="#">
+                    Unirse como artesana
+                </a>
+</div>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('.material-input');
+            
+            inputs.forEach(input => {
+                const label = input.nextElementSibling;
+                
+                if(input.value) {
+                    label.classList.add('-translate-y-7', 'scale-75', 'text-primary');
+                }
+
+                input.addEventListener('focus', () => {
+                    label.classList.add('-translate-y-7', 'scale-75', 'text-primary');
+                });
+
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        label.classList.remove('-translate-y-7', 'scale-75', 'text-primary');
+                    } else {
+                        label.classList.remove('text-primary'); 
+                    }
+                });
+            });
+        });
+    </script>
+<script>
+function updateRole(role) {
+    const btnArtesana = document.getElementById('btn-artesana');
+    const btnFacilitadora = document.getElementById('btn-facilitadora');
+    const title = document.getElementById('welcome-title');
+    const icon = document.getElementById('role-icon');
+    const desc = document.querySelector('div.mb-12 > p');
+
+    if (role === 'artesana') {
+        btnArtesana.className = 'px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 bg-primary text-on-primary';
+        btnFacilitadora.className = 'px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 text-on-surface-variant hover:text-primary';
+        title.innerText = 'Bienvenida a tu taller';
+        icon.innerText = 'front_hand';
+        desc.innerText = 'Accede a tu cuenta para continuar gestionando tus creaciones y preservando nuestra herencia.';
+    } else {
+        btnFacilitadora.className = 'px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 bg-primary text-on-primary';
+        btnArtesana.className = 'px-6 py-2 rounded-full font-label-ui text-label-ui transition-all duration-300 text-on-surface-variant hover:text-primary';
+        title.innerText = 'Bienvenida, Facilitadora';
+        icon.innerText = 'groups';
+        desc.innerText = 'Accede a tu cuenta para continuar guiando a nuestra comunidad y midiendo el impacto.';
+    }
+}
+</script></body></html>

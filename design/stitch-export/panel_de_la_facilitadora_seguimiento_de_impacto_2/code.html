@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Warmi Admin - Dashboard Facilitadora</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#d2eca2",
+                        "on-tertiary-fixed": "#131f00",
+                        "inverse-primary": "#ffb68c",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#574500",
+                        "primary-fixed": "#ffdbc9",
+                        "tertiary-fixed-dim": "#b6d088",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-primary-container": "#ffc29f",
+                        "surface-bright": "#faf9f5",
+                        "secondary-container": "#fed65b",
+                        "tertiary-container": "#4a5f25",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#2f312e",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#54433a",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1c1a",
+                        "outline-variant": "#dac2b6",
+                        "on-secondary-fixed": "#241a00",
+                        "outline": "#877369",
+                        "surface": "#faf9f5",
+                        "on-tertiary-fixed-variant": "#394d14",
+                        "on-primary-fixed": "#321200",
+                        "inverse-on-surface": "#f2f1ed",
+                        "on-tertiary-container": "#bed890",
+                        "surface-container-high": "#e9e8e4",
+                        "surface-container": "#efeeea",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#934b19",
+                        "surface-container-highest": "#e3e2df",
+                        "primary-container": "#8b4513",
+                        "on-background": "#1b1c1a",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f4f4f0",
+                        "surface-dim": "#dbdad6",
+                        "primary-fixed-dim": "#ffb68c",
+                        "primary": "#6c2f00",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "on-primary-fixed-variant": "#753401",
+                        "surface-variant": "#e3e2df",
+                        "background": "#faf9f5",
+                        "on-secondary-container": "#745c00",
+                        "tertiary": "#33470f",
+                        "secondary": "#735c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "base": "8px",
+                        "section-gap": "120px",
+                        "column-count": "12",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-ui": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-ui": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #faf9f5; color: #1b1c1a; }
+        /* Soft fade on load */
+        body { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Minimalist scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dac2b6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #877369; }
+        
+        /* Subtle row hover for tables */
+        .table-row-hover:hover { background-color: rgba(233, 232, 228, 0.4); }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased overflow-x-hidden flex h-screen">
+<!-- JSON Scaffold: SideNavBar facilitator -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-8 bg-surface-bright border-r border-outline-variant/20 h-screen w-64 z-40 hidden md:flex">
+<!-- Brand / Header -->
+<div class="px-6 mb-10 flex flex-col gap-2">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container border border-outline-variant/30 flex items-center justify-center shadow-sm">
+<img alt="Avatar de Facilitador" class="w-full h-full object-cover" data-alt="A professional headshot of a facilitator, a woman with a warm and approachable smile, wearing a simple earthy-toned blouse. The background is a softly blurred office setting with natural light, evoking a sense of institutional trust and modern professionalism within a bright, airy environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC_1azoJPzhPOSZbp9dOjyawj2k7iSHYeGDvPU3yTOvk_1rVErh2q_M_OnyjCj3cYe_wS1-WX1mKdz_l4F0PTmWYBm3IZ1ixvalLhH2Q-WrR563W1WgWI0ChKQJ8gO0HYbBayJmHki80sUCZ7ezoGfySNwmYJqswXxEsK6WOOY0I_Mjzl1tv4JbYxJHsEq4XSAtCK4YiUtEZ9ou8x4EngSCuEJEoDDddTKJ5bH4vF8pkKhODk2ZaMN"/>
+</div>
+<div>
+<h1 class="font-label-ui text-label-ui uppercase tracking-widest text-secondary mt-3">Warmi Admin</h1>
+<p class="font-caption text-caption text-on-surface-variant">Gestión Institucional</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col gap-1 w-full flex-grow">
+<!-- Active Tab: Dashboard -->
+<li>
+<a class="flex items-center gap-3 text-primary font-bold border-r-4 border-primary bg-primary-fixed/10 px-4 py-3 hover:bg-surface-container-high transition-all duration-200 opacity-80 active:opacity-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-ui text-label-ui">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all duration-200 opacity-80 active:opacity-100" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="font-label-ui text-label-ui">Artesanas</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all duration-200 opacity-80 active:opacity-100" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-ui text-label-ui">Seguimiento</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all duration-200 opacity-80 active:opacity-100" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-ui text-label-ui">Reportes</span>
+</a>
+</li>
+</ul>
+<!-- Bottom action -->
+<div class="px-6 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 py-2 px-4 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="font-label-ui text-label-ui text-sm">Cerrar Sesión</span>
+</button>
+</div>
+</nav>
+<!-- JSON Scaffold: TopAppBar standard (Mobile Only for this layout to compliment Sidebar) -->
+<header class="md:hidden fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding h-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 fade-in duration-500">
+<div class="font-headline-md text-headline-md italic text-primary">Warmi Digital</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-6 md:p-12 overflow-y-auto mt-20 md:mt-0 pt-24 md:pt-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Visión General</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Resumen de actividad y progreso de tu grupo asignado en el programa de desarrollo.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-primary text-on-primary font-label-ui text-label-ui px-6 py-3 rounded hover:bg-primary-container hover:text-on-primary-container transition-colors duration-300 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Nueva Nota
+                </button>
+</div>
+</div>
+<!-- KPIs Grid (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- KPI 1 -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-[0_4px_20px_rgba(139,69,19,0.03)] flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">Total Artesanas</span>
+<div class="w-10 h-10 rounded-full bg-secondary-fixed/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+</div>
+<div>
+<div class="font-display-lg text-[40px] leading-[48px] font-bold text-on-surface">24</div>
+<div class="flex items-center gap-1 text-tertiary font-caption text-caption mt-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+2 este mes</span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-[0_4px_20px_rgba(139,69,19,0.03)] flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">Progreso Promedio</span>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">donut_large</span>
+</div>
+</div>
+<div>
+<div class="font-display-lg text-[40px] leading-[48px] font-bold text-on-surface">68<span class="text-2xl text-on-surface-variant">%</span></div>
+<!-- Micro Progress Bar -->
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 68%;"></div>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-[0_4px_20px_rgba(139,69,19,0.03)] flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">Talleres Próximos</span>
+<div class="w-10 h-10 rounded-full bg-primary-fixed/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event</span>
+</div>
+</div>
+<div>
+<div class="font-display-lg text-[40px] leading-[48px] font-bold text-on-surface">3</div>
+<div class="font-caption text-caption text-on-surface-variant mt-1">Siguiente en 2 días</div>
+</div>
+</div>
+</div>
+<!-- Main Content Area: Split Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Artesanas Table (Spans 8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-[0_4px_24px_rgba(139,69,19,0.02)] overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-headline-md text-2xl text-on-surface">Mi Grupo</h3>
+<button class="text-primary hover:text-primary-container font-label-ui text-label-ui flex items-center gap-1 transition-colors">
+                        Ver todas <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/20 bg-surface-container-low/50">
+<th class="py-4 px-6 font-label-ui text-label-ui text-on-surface-variant font-medium">Artesana</th>
+<th class="py-4 px-6 font-label-ui text-label-ui text-on-surface-variant font-medium">Comunidad</th>
+<th class="py-4 px-6 font-label-ui text-label-ui text-on-surface-variant font-medium">Nivel</th>
+<th class="py-4 px-6 font-label-ui text-label-ui text-on-surface-variant font-medium">Progreso</th>
+<th class="py-4 px-6 font-label-ui text-label-ui text-on-surface-variant font-medium text-right">Acción</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-sm">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant/10 table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<img alt="Foto" class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A portrait of an indigenous artisan woman from the Andes, wearing traditional colorful woven garments. Soft, natural lighting highlights her weathered, expressive face against a blurred natural background. Modern, minimalist editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuOS-My0wKeRXf4dwUYoyzeJOnoVX_yVr246TupfUwYyVF-G4ztaPf_mIVJBmv2QYaeD1xZKxUasIaxPSoiSFapCFyjGmHharxmqrGGMEcCTCGk7oPDF02XzAyuwsFmK3gPnHxwnKCFaUgJ5ahZ_xCJqpO1aS2XEaB6RkVDC3QGlYJ5QSwk98DhJ1zJIW-EzJ9FyUeSzK_jPPSPFEHQ-7vLzuiJVzfrtyg_k6hBcY3QoXxAQim0Nfp"/>
+<div>
+<div class="font-medium text-on-surface">Rosa Mamani</div>
+<div class="text-on-surface-variant text-xs mt-0.5">Activa hace 2h</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">Chinchero, Cusco</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container/30 text-on-secondary-container border border-secondary-container/50">
+                                        Intermedio
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden max-w-[80px]">
+<div class="bg-tertiary h-full rounded-full" style="width: 85%;"></div>
+</div>
+<span class="text-on-surface-variant text-xs">85%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant/10 table-row-hover transition-colors bg-error-container/5">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="font-medium">MC</span>
+</div>
+<div>
+<div class="font-medium text-on-surface flex items-center gap-2">
+                                                María Condori
+                                                <span class="w-2 h-2 rounded-full bg-error" title="Requiere atención"></span>
+</div>
+<div class="text-error text-xs mt-0.5">Inactiva 5 días</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">Pisac, Cusco</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface border border-outline-variant/50">
+                                        Básico
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden max-w-[80px]">
+<div class="bg-error h-full rounded-full" style="width: 30%;"></div>
+</div>
+<span class="text-on-surface-variant text-xs">30%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-hover transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<img alt="Foto" class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A close-up portrait of a mature female artisan weaving on a backstrap loom. She has a serene expression. The setting is a rustic workshop with warm, diffused sunlight streaming through a window. High-quality editorial photography, earthy tones, soft depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrSo0l5re9kQ0LxxANf5JAIBtC4FFa06tZRDwTft4qBAOO-DxZ4C-3ZMemFkanBp6K29exyn3fvGz1cJXnCnNv7nxseiTcAANb-jwyzgw-PqQYBrt9L1T1wgg0foZKKPvrk1pmgYprETKYJnXrhpGV4JjRSgvao0x0Oq4FHO13IXOtmW1N5FAJnFHYbgM7nIgdbbOeSGJR2jfUVUZDRm4Pgvkkle09GT_WUHiML8Dn6APl5_9KtzQ5"/>
+<div>
+<div class="font-medium text-on-surface">Julia Quispe</div>
+<div class="text-on-surface-variant text-xs mt-0.5">Activa ayer</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">Ollantaytambo</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-fixed/30 text-on-primary-fixed border border-primary-fixed/50">
+                                        Avanzado
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden max-w-[80px]">
+<div class="bg-tertiary h-full rounded-full" style="width: 95%;"></div>
+</div>
+<span class="text-on-surface-variant text-xs">95%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Column: Timeline & Alerts (Spans 4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<!-- Alerts Box -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-[0_4px_24px_rgba(139,69,19,0.02)]">
+<h3 class="font-label-ui text-label-ui uppercase text-on-surface-variant mb-4 tracking-wider">Alertas Pendientes</h3>
+<div class="space-y-3">
+<!-- Alert Item -->
+<div class="flex gap-3 items-start p-3 rounded-lg bg-surface hover:bg-surface-container-high transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="mt-0.5 text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">forum</span>
+</div>
+<div>
+<p class="font-body-md text-sm text-on-surface">3 mensajes sin responder de <span class="font-medium">Comunidad Chinchero</span></p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Hace 2 horas</p>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="flex gap-3 items-start p-3 rounded-lg bg-surface hover:bg-surface-container-high transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="mt-0.5 text-error">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<p class="font-body-md text-sm text-on-surface">Baja participación en módulo 2 (Finanzas Básicas)</p>
+<p class="font-caption text-caption text-on-surface-variant mt-1">Detectado ayer</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity Timeline -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 shadow-[0_4px_24px_rgba(139,69,19,0.02)] flex-1">
+<h3 class="font-label-ui text-label-ui uppercase text-on-surface-variant mb-6 tracking-wider">Actividad Reciente</h3>
+<div class="relative border-l border-outline-variant/30 ml-3 space-y-6 pb-4">
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<span class="absolute -left-[5.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-surface-container-low"></span>
+<p class="font-body-md text-sm text-on-surface font-medium">Taller Completado</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">"Fotografía de producto con celular"</p>
+<p class="font-caption text-[10px] text-outline mt-1 uppercase tracking-wider">Hoy, 10:30 AM</p>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<span class="absolute -left-[5.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-outline-variant ring-4 ring-surface-container-low"></span>
+<p class="font-body-md text-sm text-on-surface font-medium">Material Subido</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">Guía de precios (PDF)</p>
+<p class="font-caption text-[10px] text-outline mt-1 uppercase tracking-wider">Ayer, 16:45 PM</p>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<span class="absolute -left-[5.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-tertiary ring-4 ring-surface-container-low"></span>
+<p class="font-body-md text-sm text-on-surface font-medium">Revisión de Tareas</p>
+<p class="font-caption text-caption text-on-surface-variant mt-0.5">12 entregas aprobadas</p>
+<p class="font-caption text-[10px] text-outline mt-1 uppercase tracking-wider">Lunes, 09:00 AM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -18,7 +18,10 @@ import {
   SelectValue
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
-import { storyFormSchema, type StoryFormInput } from "@/shared/validations";
+import {
+  storyFormSchema,
+  type StoryFormInput
+} from "@/shared/validations/artisan-schemas";
 
 type StoryFormProps = {
   defaultValues: Partial<StoryFormInput>;

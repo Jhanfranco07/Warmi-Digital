@@ -1,7 +1,10 @@
 import { defineConfig, env } from "prisma/config";
+import { existsSync } from "node:fs";
 import process from "node:process";
 
-process.loadEnvFile?.(".env");
+if (existsSync(".env")) {
+  process.loadEnvFile?.(".env");
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

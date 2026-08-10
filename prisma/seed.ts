@@ -376,6 +376,25 @@ async function main() {
       status: "PUBLISHED"
     }
   });
+
+  const showcaseArtisans = [
+    { email: "maria@warmi.test", firstName: "Maria", lastName: "Huaman", name: "Maria Huaman", product: "Chumpi de los caminos", slug: "chumpi-caminos-maria", phrase: "Los caminos de mi comunidad viven en cada figura tejida." },
+    { email: "juana@warmi.test", firstName: "Juana", lastName: "Quispe", name: "Juana Quispe", product: "Manta de amanecer", slug: "manta-amanecer-juana", phrase: "Los colores recuerdan la luz que llega a nuestra comunidad." },
+    { email: "rosa@warmi.test", firstName: "Rosa", lastName: "Condori", name: "Rosa Condori", product: "Bolso de flores andinas", slug: "bolso-flores-andinas-rosa", phrase: "Cada flor bordada celebra a las mujeres que me ensenaron." }
+  ];
+
+  for (const item of showcaseArtisans) {
+    const person = await prisma.user.upsert({
+      where: { email: item.email },
+      update: { passwordHash },
+      create: { email: item.email, passwordHash, userRoles: { create: [{ roleId: artisanRole.id }] }, profile: { create: { firstName: item.firstName, lastName: item.lastName, displayName: item.name, communityId: qantu.id, bio: "Artesana de demostracion de Warmi Digital.", craftTypes: { create: [{ craftTypeId: tejido.id }] } } } }
+    });
+    await prisma.product.upsert({
+      where: { slug: item.slug },
+      update: { status: "PUBLISHED", available: true },
+      create: { artisanId: person.id, categoryId: textiles.id, communityId: qantu.id, craftTypeId: tejido.id, name: item.product, slug: item.slug, description: "Pieza cultural de demostracion creada para la vitrina Warmi.", culturalPhrase: item.phrase, story: "Una pieza creada desde el aprendizaje familiar y el respeto por el patrimonio vivo.", culturalMeaning: "Memoria, cuidado y continuidad entre generaciones.", materials: "Fibra natural y tintes suaves", technique: "Tejido y bordado a mano", makingTime: "8 dias", price: 160, status: "PUBLISHED" }
+    });
+  }
   await prisma.order.create({
     data: {
       buyerId: adminUser.id,

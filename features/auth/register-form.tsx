@@ -53,7 +53,7 @@ export function RegisterForm() {
 
   return (
     <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a]">
-      <section className="mx-auto grid min-h-screen w-full max-w-[1380px] gap-0 px-4 py-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-10 lg:py-6">
+      <section className="mx-auto grid min-h-screen w-full max-w-[1380px] gap-0 px-3 py-3 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-10 lg:py-6">
         <aside className="relative hidden overflow-hidden rounded-l-lg bg-[#fff0f5] lg:block">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -80,19 +80,19 @@ export function RegisterForm() {
         </aside>
 
         <section className="flex items-center justify-center rounded-lg border border-[#e2a0ba] bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] lg:rounded-l-none">
-          <div className="w-full max-w-2xl p-5 md:p-8">
-            <header className="mb-6 flex items-start justify-between gap-4 lg:hidden">
-              <WarmiLogo compact markClassName="w-32" />
+          <div className="w-full max-w-2xl p-4 md:p-8">
+            <header className="mb-5 flex items-start justify-between gap-3 lg:hidden">
+              <WarmiLogo compact markClassName="w-28" />
               <Link href="/login" className="text-sm font-bold text-[#7a3100]">
                 Iniciar sesion
               </Link>
             </header>
 
-            <div className="border-t-4 border-[#5576a7] pt-5">
+            <div className="border-t-4 border-[#5576a7] pt-4 md:pt-5">
               <p className="font-ui text-sm font-bold uppercase text-[#b5245b]">
                 Crea tu cuenta
               </p>
-              <h2 className="mt-2 font-serif text-4xl font-bold leading-tight md:text-5xl">
+              <h2 className="mt-2 font-serif text-3xl font-bold leading-tight md:text-5xl">
                 Registro de artesana
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-[#5b4a42]">
@@ -108,7 +108,7 @@ export function RegisterForm() {
                 return (
                   <div
                     key={step.label}
-                    className="rounded-md bg-[#fff0f5] px-2 py-3 text-center text-[11px] font-bold text-[#b5245b]"
+                    className="flex min-h-[66px] flex-col items-center justify-center rounded-md bg-[#fff0f5] px-1.5 py-2 text-center text-[10px] font-bold leading-tight text-[#b5245b] sm:text-[11px]"
                   >
                     <Icon className="mx-auto mb-1 h-5 w-5" />
                     {step.label}
@@ -117,7 +117,7 @@ export function RegisterForm() {
               })}
             </div>
 
-            <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+            <form className="mt-5 grid gap-4 md:mt-6" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <TextField name="firstName" label="Nombre" placeholder="Maria" />
                 <TextField name="lastName" label="Apellido" placeholder="Quispe" />
@@ -148,7 +148,7 @@ export function RegisterForm() {
                 />
               </div>
 
-              <div className="rounded-md border border-[#f0c3cf] bg-[#fff7f9] p-3 text-sm text-[#5b4a42]">
+              <div className="rounded-md border border-[#f0c3cf] bg-[#fff7f9] p-3 text-sm leading-6 text-[#5b4a42]">
                 <div className="flex gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#b5245b]" />
                   <p>
@@ -171,7 +171,7 @@ export function RegisterForm() {
               </Button>
             </form>
 
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+            <div className="mt-5 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
               <span className="text-[#5b4a42]">Ya tienes una cuenta?</span>
               <Link href="/login" className="font-bold text-[#7a3100] hover:underline">
                 Volver al inicio de sesion

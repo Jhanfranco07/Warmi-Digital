@@ -19,7 +19,7 @@ export function WarmiLogo({ className, markClassName, compact = false }: WarmiLo
         height={250}
         priority
         className={cn(
-          "h-auto object-contain",
+          "max-w-full object-contain",
           compact ? "w-28" : "w-56 md:w-72",
           markClassName
         )}

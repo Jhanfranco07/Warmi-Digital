@@ -107,10 +107,10 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
 
   return (
     <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a] lg:h-screen lg:overflow-hidden">
-      <section className="mx-auto flex min-h-screen w-full max-w-[1380px] flex-col px-4 py-4 sm:px-6 lg:h-screen lg:px-10 lg:py-6">
+      <section className="mx-auto flex min-h-screen w-full max-w-[1380px] flex-col px-3 py-3 sm:px-6 lg:h-screen lg:px-10 lg:py-6">
         <header className="flex shrink-0 items-center justify-between gap-4">
           <Link href="/" aria-label="Ir al inicio">
-            <WarmiLogo compact markClassName="w-32 md:w-36" />
+            <WarmiLogo compact markClassName="w-28 md:w-36" />
           </Link>
           <div className="hidden gap-2 md:flex">
             {["#5576a7", "#b5245b", "#55d2dd", "#fc6b22", "#ff8941", "#f0bf35"].map(
@@ -125,17 +125,17 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           </div>
         </header>
 
-        <div className="mt-4 shrink-0 border-t-4 border-[#5576a7] pt-4 text-center">
+        <div className="mt-3 shrink-0 border-t-4 border-[#5576a7] pt-3 text-center md:mt-4 md:pt-4">
           <p className="font-ui text-sm font-bold uppercase text-[#b5245b]">
             Como deseas ingresar?
           </p>
         </div>
 
         <div
-          className="mt-4 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] lg:min-h-0 lg:grid-cols-[1.06fr_0.94fr]"
+          className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:min-h-0 lg:grid-cols-[1.06fr_0.94fr]"
           style={{ borderColor: activeRole.border }}
         >
-          <div className="relative min-h-[300px] overflow-hidden bg-[#f7efe9] lg:min-h-0">
+          <div className="relative min-h-[330px] overflow-hidden bg-[#f7efe9] sm:min-h-[380px] lg:min-h-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={role}
@@ -150,7 +150,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
               />
             </AnimatePresence>
 
-            <div className="absolute left-5 top-5 flex rounded-full bg-white/90 p-1 shadow-[0_12px_34px_rgba(27,28,26,0.18)]">
+            <div className="absolute left-3 right-3 top-3 flex rounded-full bg-white/90 p-1 shadow-[0_12px_34px_rgba(27,28,26,0.18)] sm:left-5 sm:right-auto sm:top-5">
               {(Object.keys(roles) as Array<keyof typeof roles>).map((item) => {
                 const option = roles[item];
                 const selected = role === item;
@@ -161,7 +161,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                     type="button"
                     onClick={() => setRole(item)}
                     className={cn(
-                      "rounded-full px-4 py-2 font-ui text-sm font-bold transition-colors",
+                      "flex-1 rounded-full px-3 py-2 font-ui text-xs font-bold transition-colors sm:flex-none sm:px-4 sm:text-sm",
                       selected ? "text-white" : "text-[#5b4a42]"
                     )}
                     style={{
@@ -176,7 +176,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
 
             <motion.div
               key={`${role}-copy`}
-              className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8"
+              className="absolute inset-x-0 bottom-0 p-5 text-white md:p-8"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -184,7 +184,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
               <p className="font-ui text-sm font-bold uppercase tracking-[0.08em]">
                 {activeRole.eyebrow}
               </p>
-              <h1 className="mt-2 max-w-xl font-serif text-4xl font-bold leading-tight md:text-6xl">
+              <h1 className="mt-2 max-w-xl font-serif text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">
                 {activeRole.title}
               </h1>
               <p className="mt-3 max-w-lg text-sm leading-6 text-white/90 md:text-base">
@@ -194,7 +194,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           </div>
 
           <div
-            className="flex flex-col justify-center p-5 md:p-8"
+            className="flex flex-col justify-center p-4 md:p-8"
             style={{ backgroundColor: activeRole.soft }}
           >
             <div className="mx-auto w-full max-w-md">
@@ -205,7 +205,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 transition={{ duration: 0.25 }}
               >
                 <RoleIcon className="h-9 w-9" style={{ color: activeRole.accent }} />
-                <h2 className="mt-4 font-serif text-4xl font-bold leading-tight">
+                <h2 className="mt-4 font-serif text-3xl font-bold leading-tight md:text-4xl">
                   Accede a Warmi Digital
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-[#5b4a42]">
@@ -223,7 +223,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                   return (
                     <div
                       key={highlight.label}
-                      className="rounded-md bg-white/80 px-2 py-3 text-center text-[11px] font-bold"
+                      className="flex min-h-[72px] flex-col items-center justify-center rounded-md bg-white/80 px-1.5 py-2 text-center text-[10px] font-bold leading-tight sm:text-[11px]"
                       style={{ color: activeRole.accent }}
                     >
                       <HighlightIcon className="mx-auto mb-1 h-5 w-5" />
@@ -262,7 +262,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                   />
                 </label>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#5b4a42]">
+                <div className="flex flex-col gap-3 text-sm text-[#5b4a42] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                   <label className="flex items-center gap-2">
                     <input
                       name="remember"

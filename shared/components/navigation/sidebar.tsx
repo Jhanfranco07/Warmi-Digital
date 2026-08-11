@@ -21,16 +21,12 @@ function NavigationContent({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const items = roleNavigation[role];
   const meta = roleNavigationMeta[role];
-  const RoleIcon = meta.icon;
 
   return (
     <div className="flex h-full flex-col">
       <div className="mb-8 flex items-start gap-3">
-        <span className="rounded-full bg-primary-fixed p-2 text-primary">
-          <RoleIcon className="h-5 w-5" aria-hidden="true" />
-        </span>
         <div className="min-w-0">
-          <p className="font-serif text-headline-md text-primary">Warmi Digital</p>
+          <WarmiLogo compact markClassName="w-32" />
           <p className="text-caption text-muted-foreground">{meta.label}</p>
         </div>
       </div>

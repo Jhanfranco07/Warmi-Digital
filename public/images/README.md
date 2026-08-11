@@ -2,7 +2,7 @@
 
 Reemplaza estos archivos manteniendo el mismo nombre para actualizar la web sin tocar codigo:
 
-- `brand/warmi-logo.svg`: logo principal de Warmi Digital.
+- `brand/warmi-logo.png`: logo principal de Warmi Digital.
 - `auth/login-artesana.svg`: imagen para la tarjeta e ingreso de artesanas.
 - `auth/login-facilitadora.svg`: imagen para la tarjeta e ingreso de facilitadoras.
 

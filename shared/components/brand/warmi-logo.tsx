@@ -13,7 +13,7 @@ export function WarmiLogo({ className, markClassName, compact = false }: WarmiLo
   return (
     <span className={cn("inline-flex items-center", className)}>
       <Image
-        src="/images/brand/warmi-logo.svg"
+        src="/images/brand/warmi-logo.png"
         alt="Warmi Digital"
         width={560}
         height={250}

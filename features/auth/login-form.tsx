@@ -32,7 +32,7 @@ const roleOptions = {
     accent: "#b5245b",
     soft: "#fff0f5",
     border: "#e2a0ba",
-    image: "/images/auth/login-artesana.svg",
+    image: "/images/auth/artesana.png",
     icon: HandHeart,
     features: [
       { icon: BookOpen, label: "Aprende a tu ritmo" },
@@ -49,7 +49,7 @@ const roleOptions = {
     accent: "#d39a12",
     soft: "#fff7df",
     border: "#e5c067",
-    image: "/images/auth/login-facilitadora.svg",
+    image: "/images/auth/facilitadora.png",
     icon: UsersRound,
     features: [
       { icon: BookOpen, label: "Guias y materiales" },

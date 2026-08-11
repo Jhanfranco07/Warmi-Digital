@@ -36,28 +36,36 @@ const discovery = [
     text: "Cursos y talleres para usar herramientas digitales sin perder la raiz cultural.",
     href: "/login",
     icon: BookOpen,
-    color: "bg-[#fc6b22]"
+    color: "bg-[#5576a7]",
+    image: "/images/discover/aprender.png",
+    cta: "Aprender para crecer"
   },
   {
     title: "Emprender",
     text: "Una vitrina cultural donde primero habla la artesana, su comunidad y su historia.",
     href: "/mercado",
     icon: Sparkles,
-    color: "bg-[#e65578]"
+    color: "bg-[#d497b1]",
+    image: "/images/discover/mercado.png",
+    cta: "Emprende con mi mercado digital"
   },
   {
     title: "Colaborar",
     text: "Acompanamiento de facilitadoras, convocatorias y comunidad activa.",
     href: "/login",
     icon: MessagesSquare,
-    color: "bg-[#b5245b]"
+    color: "bg-[#ea9b62]",
+    image: "/images/discover/talleres.png",
+    cta: "Talleres presenciales"
   },
   {
     title: "Compartir",
     text: "Historias, tecnicas y procesos documentados para preservar patrimonio vivo.",
     href: "/login",
     icon: HandHeart,
-    color: "bg-[#5576a7]"
+    color: "bg-[#f0bf35]",
+    image: "/images/discover/recursos.png",
+    cta: "Recursos y talleres"
   }
 ];
 
@@ -151,29 +159,41 @@ export default function LandingPage() {
 
       <section id="descubre" className="bg-[#f7f3ef]">
         <Container className="py-16">
-          <p className="text-center font-serif text-2xl italic text-[#c22b61]">
-            Un programa con mujeres artesanas para mujeres artesanas
-          </p>
-          <div className="mt-12 flex items-center justify-between gap-6">
-            <h2 className="font-serif text-5xl font-bold uppercase tracking-[0.18em] text-[#7a1042]">
-              Descubre
-            </h2>
-            <Link
-              href="/mercado"
-              className="hidden bg-[#fc6b22] px-6 py-4 font-ui text-label-ui text-white md:inline-flex"
-            >
-              Ver vitrina cultural
-            </Link>
+          <div className="relative border-t-4 border-[#5576a7] pt-7">
+            <div className="absolute -top-9 left-0 bg-[#ea9b62] px-10 py-5">
+              <h2 className="font-ui text-3xl font-extrabold uppercase text-white">
+                Descubre
+              </h2>
+            </div>
+            <p className="pt-9 font-ui text-xl leading-8 text-[#10124f] md:pt-7 md:text-2xl">
+              Con Warmi Digital, tu celular se convierte en tu mejor herramienta para
+              aprender, vender y participar en nuevas oportunidades.
+            </p>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-4">
-            {discovery.map((item) => {
+
+          <div className="mt-8 grid overflow-hidden bg-white shadow-[0_18px_50px_rgba(122,49,0,0.08)] md:grid-cols-4">
+            {discovery.map((item) => (
+              <div
+                key={item.title}
+                className="min-h-[210px] bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${item.image})`
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="mt-10 grid gap-x-8 gap-y-5 md:grid-cols-4">
+            {discovery.map((item, index) => {
               const Icon = item.icon;
 
               return (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group bg-white p-6 shadow-[0_18px_50px_rgba(122,49,0,0.08)] transition-transform hover:-translate-y-1"
+                  className={`group bg-white p-5 shadow-[0_18px_50px_rgba(122,49,0,0.08)] transition-transform hover:-translate-y-1 ${
+                    index === 1 ? "md:mt-12" : index === 3 ? "md:mt-20" : ""
+                  }`}
                 >
                   <span
                     className={`${item.color} inline-flex rounded-full p-3 text-white`}
@@ -184,7 +204,12 @@ export default function LandingPage() {
                     {item.title}
                   </h3>
                   <p className="mt-3 text-body-md text-[#5b4a42]">{item.text}</p>
-                  <ArrowRight className="mt-6 h-5 w-5 text-[#fc6b22]" />
+                  <span
+                    className={`${item.color} mt-6 inline-flex min-h-touch-target items-center justify-center px-5 py-3 text-center font-ui text-sm font-extrabold uppercase text-white`}
+                  >
+                    {item.cta}
+                  </span>
+                  <ArrowRight className="mt-5 h-5 w-5 text-[#fc6b22]" />
                 </Link>
               );
             })}

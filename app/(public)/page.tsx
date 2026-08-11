@@ -37,8 +37,8 @@ const discovery = [
     href: "/login",
     icon: BookOpen,
     color: "bg-[#5576a7]",
-    image: "/images/discover/aprender.png",
-    cta: "Aprender para crecer"
+    image: "/images/discover/aprende.png",
+    cta: "APRENDER PARA CRECER"
   },
   {
     title: "Emprender",
@@ -46,8 +46,8 @@ const discovery = [
     href: "/mercado",
     icon: Sparkles,
     color: "bg-[#d497b1]",
-    image: "/images/discover/mercado.png",
-    cta: "Emprende con mi mercado digital"
+    image: "/images/discover/emprende.png",
+    cta: "EMPRENDE CON MI MERCADO DIGITAL"
   },
   {
     title: "Colaborar",
@@ -55,8 +55,8 @@ const discovery = [
     href: "/login",
     icon: MessagesSquare,
     color: "bg-[#ea9b62]",
-    image: "/images/discover/talleres.png",
-    cta: "Talleres presenciales"
+    image: "/images/discover/taller.png",
+    cta: "TALLERES PRESENCIALES"
   },
   {
     title: "Compartir",
@@ -65,7 +65,7 @@ const discovery = [
     icon: HandHeart,
     color: "bg-[#f0bf35]",
     image: "/images/discover/recursos.png",
-    cta: "Recursos y talleres"
+    cta: "RECURSOS Y TALLERES"
   }
 ];
 

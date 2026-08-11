@@ -2,9 +2,9 @@
 
 Coloca aqui las imagenes de la seccion `Descubre` manteniendo estos nombres:
 
-- `aprender.png`: grupo aprendiendo con celular o capacitacion digital.
-- `talleres.png`: taller presencial o acompanamiento en comunidad.
-- `mercado.png`: artesana usando celular para mostrar o gestionar productos.
+- `aprende.png`: grupo aprendiendo con celular o capacitacion digital.
+- `taller.png`: taller presencial o acompanamiento en comunidad.
+- `emprende.png`: artesana usando celular para mostrar o gestionar productos.
 - `recursos.png`: grupo con laptop, tablet, materiales o taller de recursos.
 
 Recomendacion:

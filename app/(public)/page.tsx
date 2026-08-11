@@ -24,7 +24,7 @@ const actions = [
     color: "bg-[#55d2dd]"
   },
   {
-    href: "/unete",
+    href: "/login",
     label: "UNETE A WARMI",
     color: "bg-[#f0bf35]"
   }
@@ -34,7 +34,7 @@ const discovery = [
   {
     title: "Aprender",
     text: "Cursos y talleres para usar herramientas digitales sin perder la raiz cultural.",
-    href: "/unete",
+    href: "/login",
     icon: BookOpen,
     color: "bg-[#fc6b22]"
   },
@@ -48,14 +48,14 @@ const discovery = [
   {
     title: "Colaborar",
     text: "Acompanamiento de facilitadoras, convocatorias y comunidad activa.",
-    href: "/unete",
+    href: "/login",
     icon: MessagesSquare,
     color: "bg-[#b5245b]"
   },
   {
     title: "Compartir",
     text: "Historias, tecnicas y procesos documentados para preservar patrimonio vivo.",
-    href: "/unete",
+    href: "/login",
     icon: HandHeart,
     color: "bg-[#5576a7]"
   }
@@ -206,7 +206,7 @@ export default function LandingPage() {
           </p>
           <Link
             className="bg-[#55d2dd] px-6 py-4 text-center font-ui text-label-ui text-[#123f78]"
-            href="/unete"
+            href="/login"
           >
             Elegir mi camino
           </Link>

@@ -8,7 +8,7 @@ export default async function ArtisanLayout({ children }: { children: React.Reac
     <div className="min-h-screen bg-surface">
       <MobileNavigation role="ARTESANA" />
       <Sidebar role="ARTESANA" />
-      <main className="min-h-screen lg:pl-72">{children}</main>
+      <main className="min-h-screen pb-20 lg:pb-0 lg:pl-72">{children}</main>
     </div>
   );
 }

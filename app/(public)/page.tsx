@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, HandHeart, MessagesSquare, Sparkles } from "lucide-react";
 
+import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
 import { Container } from "@/shared/components/layout/container";
 
 const hero =
@@ -70,9 +71,13 @@ export default function LandingPage() {
         }}
       >
         <Container className="flex min-h-[430px] items-center justify-center text-center">
-          <div className="max-w-4xl">
-            <p className="font-serif text-4xl font-bold text-[#b5245b]">Warmi</p>
-            <h1 className="mt-2 font-serif text-5xl font-bold leading-tight tracking-[0.12em] text-[#123f78] md:text-7xl">
+          <div className="flex max-w-4xl flex-col items-center">
+            <WarmiLogo
+              className="flex-col gap-2"
+              markClassName="h-28 md:h-36"
+              textClassName="hidden"
+            />
+            <h1 className="mt-5 font-serif text-5xl font-bold leading-tight tracking-[0.12em] text-[#123f78] md:text-7xl">
               WARMI DIGITAL
             </h1>
             <p className="mt-4 text-xl italic text-[#c22b61] md:text-2xl">

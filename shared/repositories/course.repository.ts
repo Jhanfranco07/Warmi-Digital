@@ -22,6 +22,35 @@ export class CourseRepository {
     });
   }
 
+  findEnrolledCourseSummaries(userId: string) {
+    return this.db.enrollment.findMany({
+      where: { userId },
+      select: {
+        status: true,
+        lastActivityAt: true,
+        course: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            level: true,
+            modules: {
+              select: {
+                id: true,
+                durationMin: true,
+                lessons: { select: { id: true } }
+              },
+              orderBy: { order: "asc" }
+            }
+          }
+        },
+        courseProgress: { select: { percentage: true } },
+        lessonProgresses: { select: { completed: true } }
+      },
+      orderBy: { enrolledAt: "desc" }
+    });
+  }
+
   findAvailableCourses(userId: string) {
     return this.db.course.findMany({
       where: {
@@ -31,6 +60,29 @@ export class CourseRepository {
       include: {
         modules: {
           include: { lessons: true },
+          orderBy: { order: "asc" }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+  }
+
+  findAvailableCourseSummaries(userId: string) {
+    return this.db.course.findMany({
+      where: {
+        status: "PUBLISHED",
+        enrollments: { none: { userId } }
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        level: true,
+        modules: {
+          select: {
+            id: true,
+            durationMin: true
+          },
           orderBy: { order: "asc" }
         }
       },

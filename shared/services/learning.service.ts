@@ -20,6 +20,23 @@ function getCourseProgress(
   );
 }
 
+function getCourseSummaryProgress(
+  enrollment: Awaited<ReturnType<CourseRepository["findEnrolledCourseSummaries"]>>[number]
+) {
+  const lessonCount = enrollment.course.modules.reduce(
+    (total, module) => total + module.lessons.length,
+    0
+  );
+  const completedLessons = enrollment.lessonProgresses.filter(
+    (progress) => progress.completed
+  ).length;
+
+  return (
+    enrollment.courseProgress?.percentage ??
+    (lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0)
+  );
+}
+
 export class LearningService {
   constructor(
     private readonly courseRepository = new CourseRepository(),
@@ -28,8 +45,8 @@ export class LearningService {
 
   async getLearningPage(userId: string) {
     const [enrollments, availableCourses] = await Promise.all([
-      this.courseRepository.findEnrolledCourses(userId),
-      this.courseRepository.findAvailableCourses(userId)
+      this.courseRepository.findEnrolledCourseSummaries(userId),
+      this.courseRepository.findAvailableCourseSummaries(userId)
     ]);
 
     return {
@@ -39,7 +56,7 @@ export class LearningService {
         description: enrollment.course.description,
         level: enrollment.course.level,
         status: enrollment.status,
-        progress: getCourseProgress(enrollment),
+        progress: getCourseSummaryProgress(enrollment),
         durationMin: enrollment.course.modules.reduce(
           (total, module) => total + (module.durationMin ?? 0),
           0

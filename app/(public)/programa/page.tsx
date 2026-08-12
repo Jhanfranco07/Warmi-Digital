@@ -33,18 +33,12 @@ export default function ProgramaPage() {
     <main className="bg-white text-[#123f78]">
       <WarmiPublicHeader compact />
 
-      <section className="mx-auto w-full max-w-[1680px] px-4 py-14 md:px-8 md:py-20">
-        <div className="relative border-t-2 border-[#d9d9d9] pt-8">
-          <div className="inline-flex bg-[#5576a7] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
-            <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
-              Programa Warmi
-            </h2>
-          </div>
-
-          <div className="mt-8 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div className="group min-h-[420px] overflow-hidden md:min-h-[640px]">
+      <section className="mx-auto w-full max-w-[1860px] px-4 py-10 md:px-8 md:py-16 lg:px-12">
+        <div className="border-t-2 border-[#d9d9d9] pt-8">
+          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+            <div className="group min-h-[440px] overflow-hidden md:min-h-[700px]">
               <div
-                className="h-full min-h-[420px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 md:min-h-[640px]"
+                className="h-full min-h-[440px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 md:min-h-[700px]"
                 style={{
                   backgroundImage:
                     "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
@@ -71,7 +65,7 @@ export default function ProgramaPage() {
                       />
                     ))}
                   </div>
-                  <p className="mt-5 font-serif text-2xl italic text-[#b5245b]">
+                  <p className="mt-5 max-w-3xl font-serif text-3xl italic leading-tight text-[#b5245b]">
                     La tecnologia no reemplaza la tradicion; la conecta con nuevas
                     oportunidades.
                   </p>
@@ -95,7 +89,7 @@ export default function ProgramaPage() {
                         <h3 className="font-ui text-xl font-extrabold uppercase text-[#b5245b] md:text-2xl">
                           {pillar.title}:
                         </h3>
-                        <p className="mt-2 bg-[#ea9b62] px-4 py-3 text-sm leading-6 text-[#1b1c1a] md:text-base">
+                        <p className="mt-2 bg-[#ea9b62] px-5 py-4 text-base leading-7 text-[#1b1c1a] md:text-lg">
                           {pillar.text}
                         </p>
                       </div>

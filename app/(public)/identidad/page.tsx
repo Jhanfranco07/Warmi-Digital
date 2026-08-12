@@ -2,7 +2,6 @@ import Link from "next/link";
 import { BookOpen, HandHeart, MapPin, Sparkles } from "lucide-react";
 
 import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
-import { Container } from "@/shared/components/layout/container";
 
 const identityItems = [
   {
@@ -37,23 +36,20 @@ export default function IdentidadPage() {
       <WarmiPublicHeader compact />
 
       <section className="border-y-[6px] border-[#55d2dd] bg-[#ecfcfd]">
-        <Container className="grid gap-8 px-4 py-12 md:grid-cols-3 md:items-center md:py-14">
+        <div className="mx-auto grid w-full max-w-[1860px] gap-8 px-4 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:px-8 md:py-16 lg:px-12">
           <div>
-            <p className="font-ui text-label-ui text-[#123f78]">
-              IDENTIDAD WARMI - RIQSICHIQ WARMI
-            </p>
-            <h1 className="mt-3 font-serif text-4xl font-bold text-[#1b1c1a] md:text-6xl">
+            <h1 className="font-serif text-4xl font-bold text-[#1b1c1a] md:text-7xl">
               Nuestra fuerza nace de la comunidad.
             </h1>
           </div>
-          <p className="text-body-lg text-[#4f4037] md:col-span-2">
+          <p className="text-lg leading-8 text-[#4f4037] md:text-2xl md:leading-10">
             Cada tecnica, historia y pieza pertenece a una artesana y a su territorio. La
             tecnologia ayuda a documentar y compartir ese legado con respeto.
           </p>
-        </Container>
+        </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1500px] px-4 py-14 md:px-8 lg:px-12">
+      <section className="mx-auto w-full max-w-[1860px] px-4 py-14 md:px-8 lg:px-12">
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {identityItems.map((item) => {
             const Icon = item.icon;
@@ -61,7 +57,7 @@ export default function IdentidadPage() {
             return (
               <article
                 key={item.title}
-                className="border border-[#ead4ca] bg-white p-6 shadow-[0_18px_42px_rgba(122,49,0,0.07)]"
+                className="border border-[#ead4ca] bg-white p-7 shadow-[0_18px_42px_rgba(122,49,0,0.07)]"
               >
                 <span className={`${item.color} inline-flex rounded-full p-4 text-white`}>
                   <Icon className="h-6 w-6" />
@@ -69,7 +65,9 @@ export default function IdentidadPage() {
                 <h2 className="mt-6 font-serif text-3xl font-bold text-[#7a3100]">
                   {item.title}
                 </h2>
-                <p className="mt-3 text-base leading-7 text-[#5b4a42]">{item.text}</p>
+                <p className="mt-3 text-base leading-7 text-[#5b4a42] md:text-lg md:leading-8">
+                  {item.text}
+                </p>
               </article>
             );
           })}

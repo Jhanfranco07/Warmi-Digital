@@ -47,27 +47,22 @@ export default function DescubrePage() {
     <main className="bg-white text-[#10124f]">
       <WarmiPublicHeader compact />
 
-      <section className="mx-auto w-full max-w-[1680px] px-4 py-14 md:px-8 md:py-16">
-        <div className="relative border-t-2 border-[#d9d9d9] pt-7">
-          <div className="inline-flex bg-[#ea9b62] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-10 md:py-5">
-            <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
-              Descubre
-            </h2>
-          </div>
-          <p className="pt-5 font-ui text-lg leading-7 text-[#10124f] md:pt-9 md:text-2xl">
+      <section className="mx-auto w-full max-w-[1860px] px-4 py-10 md:px-8 md:py-14 lg:px-12">
+        <div className="border-t-2 border-[#d9d9d9] pt-8">
+          <p className="max-w-[1500px] font-ui text-lg leading-7 text-[#10124f] md:text-2xl">
             Con Warmi Digital, tu celular se convierte en tu mejor herramienta para
             aprender, vender y participar en nuevas oportunidades.
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white md:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
           {discovery.map((item) => (
             <div
               key={item.title}
-              className="group min-h-[160px] overflow-hidden sm:min-h-[220px] md:min-h-[310px]"
+              className="group min-h-[180px] overflow-hidden sm:min-h-[260px] md:min-h-[390px]"
             >
               <div
-                className="h-full min-h-[160px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 sm:min-h-[220px] md:min-h-[310px]"
+                className="h-full min-h-[180px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 sm:min-h-[260px] md:min-h-[390px]"
                 style={{
                   backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${item.image})`
                 }}
@@ -76,7 +71,7 @@ export default function DescubrePage() {
           ))}
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 md:mt-10 md:grid-cols-4 md:gap-x-8 md:gap-y-5">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-7">
           {discovery.map((item, index) => {
             const Icon = item.icon;
 
@@ -84,8 +79,8 @@ export default function DescubrePage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className={`group bg-white p-4 transition-transform hover:-translate-y-1 md:p-5 ${
-                  index === 1 ? "md:mt-12" : index === 3 ? "md:mt-20" : ""
+                className={`group bg-white p-5 shadow-[0_14px_36px_rgba(18,63,120,0.06)] transition-transform hover:-translate-y-1 md:p-7 ${
+                  index === 1 ? "xl:mt-10" : index === 3 ? "xl:mt-16" : ""
                 }`}
               >
                 <span className={`${item.color} inline-flex rounded-full p-3 text-white`}>
@@ -94,7 +89,7 @@ export default function DescubrePage() {
                 <h3 className="mt-4 font-serif text-2xl font-bold text-[#1b1c1a] md:mt-5 md:text-3xl">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-body-md text-[#5b4a42]">{item.text}</p>
+                <p className="mt-3 text-base leading-7 text-[#5b4a42]">{item.text}</p>
                 <span
                   className={`${item.color} mt-6 inline-flex min-h-touch-target w-full items-center justify-center px-3 py-3 text-center font-ui text-xs font-extrabold uppercase leading-snug text-white md:px-5 md:text-sm`}
                 >

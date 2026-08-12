@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   BookOpen,
@@ -108,10 +109,13 @@ export default function LandingPage() {
         />
         <Container className="flex min-h-[520px] items-center justify-center px-4 text-center">
           <div className="relative flex max-w-4xl flex-col items-center">
-            <WarmiLogo
-              className="flex-col gap-2"
-              markClassName="w-56 md:w-80"
-              textClassName="hidden"
+            <Image
+              src="/images/brand/warmi-isotipo.png"
+              alt="Isotipo Warmi Digital"
+              width={360}
+              height={360}
+              priority
+              className="h-auto w-44 bg-white/95 p-3 shadow-[0_18px_46px_rgba(0,0,0,0.24)] md:w-64"
             />
             <h1 className="mt-5 font-serif text-4xl font-bold leading-tight tracking-[0.18em] text-white sm:text-5xl md:text-7xl">
               WARMI DIGITAL

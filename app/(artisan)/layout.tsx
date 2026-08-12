@@ -5,7 +5,7 @@ export default async function ArtisanLayout({ children }: { children: React.Reac
   await requireRole("ARTESANA");
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="warmi-module-shell min-h-screen bg-surface">
       <MobileNavigation role="ARTESANA" />
       <Sidebar role="ARTESANA" />
       <main className="min-h-screen pb-20 lg:pb-0 lg:pl-72">{children}</main>

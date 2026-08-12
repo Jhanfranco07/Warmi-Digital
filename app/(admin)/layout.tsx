@@ -5,7 +5,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requirePermission("ACCESS_ADMIN");
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="warmi-module-shell min-h-screen bg-surface">
       <MobileNavigation role="ADMIN" />
       <Sidebar role="ADMIN" />
       <main className="min-h-screen lg:pl-72">{children}</main>

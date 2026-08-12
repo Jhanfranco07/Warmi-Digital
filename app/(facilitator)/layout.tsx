@@ -9,7 +9,7 @@ export default async function FacilitatorLayout({
   await requirePermission("ACCESS_FACILITATOR");
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="warmi-module-shell min-h-screen bg-surface">
       <MobileNavigation role="FACILITADORA" />
       <Sidebar role="FACILITADORA" />
       <main className="min-h-screen lg:pl-72">{children}</main>

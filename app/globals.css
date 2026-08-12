@@ -111,11 +111,35 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-ui text-foreground antialiased;
   }
 
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  .warmi-module-shell {
+    font-family: var(--font-plus-jakarta), Inter, sans-serif;
+  }
+
+  .warmi-module-shell h1,
+  .warmi-module-shell h2,
+  .warmi-module-shell h3,
+  .warmi-module-shell h4,
+  .warmi-module-shell h5,
+  .warmi-module-shell h6 {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+
+  .warmi-module-shell button,
+  .warmi-module-shell input,
+  .warmi-module-shell textarea,
+  .warmi-module-shell select,
+  .warmi-module-shell label,
+  .warmi-module-shell nav {
+    font-family: var(--font-plus-jakarta), Inter, sans-serif;
   }
 }
 

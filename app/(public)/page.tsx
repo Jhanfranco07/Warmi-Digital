@@ -1,5 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, HandHeart, MessagesSquare, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  HandHeart,
+  MessagesSquare,
+  ShoppingBag,
+  Smartphone,
+  Sparkles,
+  Target,
+  UsersRound
+} from "lucide-react";
 
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
 import { Container } from "@/shared/components/layout/container";
@@ -69,6 +79,24 @@ const discovery = [
   }
 ];
 
+const programPillars = [
+  {
+    title: "Objetivo general",
+    icon: Target,
+    text: "Que aprendan a usar su celular para vender sus productos, prepararse para participar en concursos, ferias y hacer sus propios tramites, con la ayuda de una facilitadora y de otras artesanas."
+  },
+  {
+    title: "Mision",
+    icon: ShoppingBag,
+    text: "Ensenarles a usar herramientas digitales de forma practica y con acompanamiento, para que su celular sea una herramienta de trabajo, tengan mas ventas y participen en concursos que les ayuden a crecer."
+  },
+  {
+    title: "Vision",
+    icon: UsersRound,
+    text: "Ser un ejemplo en la region Cajamarca de como las artesanas pueden usar la tecnologia junto al apoyo de su comunidad, para que ninguna se quede atras y todas tengan oportunidades de salir adelante con su trabajo."
+  }
+];
+
 export default function LandingPage() {
   return (
     <main className="bg-white text-[#123f78]">
@@ -108,51 +136,92 @@ export default function LandingPage() {
       </nav>
 
       <section id="programa" className="bg-white">
-        <Container className="grid gap-8 px-4 py-12 md:grid-cols-[0.95fr_1.05fr] md:items-center md:py-14">
-          <div>
-            <div className="flex gap-3">
-              {["#5576a7", "#b5245b", "#55d2dd", "#fc6b22", "#ff8941", "#f0bf35"].map(
-                (color) => (
-                  <span
-                    key={color}
-                    className="h-5 w-5 rounded-full md:h-7 md:w-7"
-                    style={{ backgroundColor: color }}
-                  />
-                )
-              )}
+        <Container className="px-4 py-14 md:py-16">
+          <div className="relative border-t-4 border-[#d9d9d9] pt-8">
+            <div className="inline-flex bg-[#25598f] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
+              <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
+                Programa Warmi
+              </h2>
             </div>
-            <h2 className="mt-6 border-t-4 border-[#123f78] pt-6 font-serif text-3xl font-bold uppercase leading-tight text-[#1b1c1a] md:mt-8 md:pt-8 md:text-5xl">
-              Sllapan wawqaykunaman allin hamuy
-            </h2>
-            <p className="mt-5 max-w-xl text-body-lg text-[#4f4037]">
-              Bienvenidas a un espacio donde la tecnologia acompana la memoria, el
-              aprendizaje y la autonomia economica de las artesanas.
-            </p>
-            <p className="mt-7 inline-block bg-[#d497b1] px-5 py-4 text-center font-ui text-sm font-bold text-white md:text-label-ui">
-              BIENVENIDAS A WARMI
-            </p>
-          </div>
 
-          <div className="grid gap-4">
-            <article className="border-l-[8px] border-[#ea9b62] bg-[#fff6ef] p-5 md:border-l-[10px] md:p-6">
-              <h3 className="font-serif text-2xl font-bold text-[#1b1c1a] md:text-3xl">
-                La venta es una consecuencia, no el centro.
-              </h3>
-              <p className="mt-3 text-body-md text-[#5b4a42]">
-                Warmi acompana primero el proceso: aprender, practicar, narrar la
-                historia, fortalecer la comunidad y luego compartir las piezas con nuevos
-                mercados.
-              </p>
-            </article>
-            <article className="border-l-[8px] border-[#55d2dd] bg-[#edfcfd] p-5 md:border-l-[10px] md:p-6">
-              <h3 className="font-serif text-2xl font-bold text-[#1b1c1a] md:text-3xl">
-                Cada perfil cultural protege un saber.
-              </h3>
-              <p className="mt-3 text-body-md text-[#5b4a42]">
-                La artesana registra su comunidad, tecnica, relato e inspiracion para que
-                cada producto tenga contexto y dignidad.
-              </p>
-            </article>
+            <div className="mt-7 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+              <div
+                className="min-h-[360px] bg-cover bg-center shadow-[0_22px_60px_rgba(37,89,143,0.18)] md:min-h-[520px]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
+                }}
+              />
+
+              <div>
+                <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <div className="flex gap-2">
+                      {[
+                        "#5576a7",
+                        "#b5245b",
+                        "#55d2dd",
+                        "#fc6b22",
+                        "#ff8941",
+                        "#f0bf35"
+                      ].map((color) => (
+                        <span
+                          key={color}
+                          className="h-4 w-4 rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-5 font-serif text-2xl italic text-[#b5245b]">
+                      La tecnologia no reemplaza la tradicion; la conecta con nuevas
+                      oportunidades.
+                    </p>
+                  </div>
+                  <WarmiLogo compact markClassName="w-36 md:w-44" />
+                </div>
+
+                <div className="mt-8 grid gap-5">
+                  {programPillars.map((pillar) => {
+                    const Icon = pillar.icon;
+
+                    return (
+                      <article
+                        key={pillar.title}
+                        className="grid gap-3 md:grid-cols-[58px_1fr]"
+                      >
+                        <div className="grid h-12 w-12 place-items-center rounded-full bg-[#fff0f5] text-[#b5245b] md:h-14 md:w-14">
+                          <Icon className="h-7 w-7" />
+                        </div>
+                        <div>
+                          <h3 className="font-ui text-xl font-extrabold uppercase text-[#b5245b] md:text-2xl">
+                            {pillar.title}:
+                          </h3>
+                          <p className="mt-2 bg-[#ea9b62] px-4 py-3 text-sm leading-6 text-[#1b1c1a] md:text-base">
+                            {pillar.text}
+                          </p>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  {[
+                    ["Descubrir", Smartphone],
+                    ["Aprender", BookOpen],
+                    ["Preservar", HandHeart]
+                  ].map(([label, Icon]) => (
+                    <div
+                      key={label as string}
+                      className="flex min-h-16 items-center justify-center gap-2 bg-[#f0bf35] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78]"
+                    >
+                      <Icon className="h-5 w-5" />
+                      {label as string}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </Container>
       </section>

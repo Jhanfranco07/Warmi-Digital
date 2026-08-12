@@ -99,14 +99,13 @@ const programPillars = [
 
 export default function LandingPage() {
   return (
-    <main className="bg-[#fffaf8] text-[#123f78]">
+    <main className="bg-white text-[#123f78]">
       <section
-        className="relative min-h-[430px] overflow-hidden bg-cover bg-center"
+        className="relative min-h-[430px] bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,246,239,.68),rgba(255,232,239,.58)),url(${hero})`
+          backgroundImage: `linear-gradient(rgba(245,247,246,.72),rgba(245,247,246,.72)),url(${hero})`
         }}
       >
-        <div className="absolute inset-x-0 bottom-0 h-3 bg-gradient-to-r from-[#5576a7] via-[#55d2dd] via-[#b5245b] via-[#fc6b22] to-[#f0bf35]" />
         <Container className="flex min-h-[360px] items-center justify-center px-4 text-center md:min-h-[430px]">
           <div className="flex max-w-4xl flex-col items-center">
             <WarmiLogo
@@ -136,18 +135,10 @@ export default function LandingPage() {
         ))}
       </nav>
 
-      <div className="grid h-3 grid-cols-6">
-        {["#5576a7", "#b5245b", "#55d2dd", "#fc6b22", "#ff8941", "#f0bf35"].map(
-          (color) => (
-            <span key={color} style={{ backgroundColor: color }} />
-          )
-        )}
-      </div>
-
-      <section id="programa" className="bg-[#fff3e8]">
+      <section id="programa" className="bg-white">
         <Container className="px-4 py-14 md:py-16">
-          <div className="relative border-t-4 border-[#25598f] bg-white/70 p-4 pt-8 shadow-[0_22px_70px_rgba(122,16,66,0.08)] md:p-7 md:pt-10">
-            <div className="inline-flex bg-[#25598f] px-8 py-4 shadow-[10px_10px_0_#55d2dd] md:absolute md:-top-9 md:left-7 md:px-12 md:py-5">
+          <div className="relative border-t-4 border-[#d9d9d9] pt-8">
+            <div className="inline-flex bg-[#25598f] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
                 Programa Warmi
               </h2>
@@ -155,7 +146,7 @@ export default function LandingPage() {
 
             <div className="mt-7 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
               <div
-                className="min-h-[360px] border-[10px] border-white bg-cover bg-center shadow-[0_22px_60px_rgba(37,89,143,0.22)] outline outline-4 outline-[#f0bf35] md:min-h-[520px]"
+                className="min-h-[360px] bg-cover bg-center shadow-[0_22px_60px_rgba(37,89,143,0.18)] md:min-h-[520px]"
                 style={{
                   backgroundImage:
                     "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
@@ -196,16 +187,16 @@ export default function LandingPage() {
                     return (
                       <article
                         key={pillar.title}
-                        className="grid gap-3 rounded-md border-l-[8px] border-[#b5245b] bg-[#fff7f9] p-3 shadow-[0_12px_30px_rgba(122,49,0,0.07)] md:grid-cols-[58px_1fr] md:p-4"
+                        className="grid gap-3 md:grid-cols-[58px_1fr]"
                       >
-                        <div className="grid h-12 w-12 place-items-center rounded-full bg-[#b5245b] text-white md:h-14 md:w-14">
+                        <div className="grid h-12 w-12 place-items-center rounded-full bg-[#fff0f5] text-[#b5245b] md:h-14 md:w-14">
                           <Icon className="h-7 w-7" />
                         </div>
                         <div>
                           <h3 className="font-ui text-xl font-extrabold uppercase text-[#b5245b] md:text-2xl">
                             {pillar.title}:
                           </h3>
-                          <p className="mt-2 bg-[#ea9b62] px-4 py-3 text-sm leading-6 text-[#1b1c1a] shadow-[6px_6px_0_#f0bf35] md:text-base">
+                          <p className="mt-2 bg-[#ea9b62] px-4 py-3 text-sm leading-6 text-[#1b1c1a] md:text-base">
                             {pillar.text}
                           </p>
                         </div>
@@ -222,7 +213,7 @@ export default function LandingPage() {
                   ].map(([label, Icon]) => (
                     <div
                       key={label as string}
-                      className="flex min-h-16 items-center justify-center gap-2 bg-[#f0bf35] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78] shadow-[6px_6px_0_#b5245b]"
+                      className="flex min-h-16 items-center justify-center gap-2 bg-[#f0bf35] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78]"
                     >
                       <Icon className="h-5 w-5" />
                       {label as string}
@@ -235,10 +226,10 @@ export default function LandingPage() {
         </Container>
       </section>
 
-      <section id="descubre" className="bg-[#fff0f5]">
+      <section id="descubre" className="bg-[#f7f3ef]">
         <Container className="px-4 py-14 md:py-16">
-          <div className="relative border-t-4 border-[#5576a7] bg-white/60 p-4 pt-7 md:p-6">
-            <div className="inline-flex bg-[#ea9b62] px-8 py-4 shadow-[10px_10px_0_#f0bf35] md:absolute md:-top-9 md:left-6 md:px-10 md:py-5">
+          <div className="relative border-t-4 border-[#5576a7] pt-7">
+            <div className="inline-flex bg-[#ea9b62] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-10 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
                 Descubre
               </h2>
@@ -249,7 +240,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 overflow-hidden border-[8px] border-white bg-white shadow-[0_18px_50px_rgba(122,49,0,0.14)] md:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_50px_rgba(122,49,0,0.08)] md:grid-cols-4">
             {discovery.map((item) => (
               <div
                 key={item.title}
@@ -269,7 +260,7 @@ export default function LandingPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className={`group border-b-[8px] border-[#f0bf35] bg-white p-4 shadow-[0_18px_50px_rgba(122,49,0,0.12)] transition-transform hover:-translate-y-1 md:p-5 ${
+                  className={`group bg-white p-4 shadow-[0_18px_50px_rgba(122,49,0,0.08)] transition-transform hover:-translate-y-1 md:p-5 ${
                     index === 1 ? "md:mt-12" : index === 3 ? "md:mt-20" : ""
                   }`}
                 >

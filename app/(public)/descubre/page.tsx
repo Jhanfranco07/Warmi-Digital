@@ -9,7 +9,7 @@ const discovery = [
     text: "Cursos y talleres para usar herramientas digitales sin perder la raiz cultural.",
     href: "/login",
     icon: BookOpen,
-    color: "bg-[#5576a7]",
+    color: "bg-[#2f62a3]",
     image: "/images/discover/aprende.png",
     cta: "APRENDER PARA CRECER"
   },
@@ -18,7 +18,7 @@ const discovery = [
     text: "Una vitrina cultural donde primero habla la artesana, su comunidad y su historia.",
     href: "/mercado",
     icon: Sparkles,
-    color: "bg-[#d497b1]",
+    color: "bg-[#c02a68]",
     image: "/images/discover/emprende.png",
     cta: "EMPRENDE CON MI MERCADO DIGITAL"
   },
@@ -27,7 +27,7 @@ const discovery = [
     text: "Acompanamiento de facilitadoras, convocatorias y comunidad activa.",
     href: "/login",
     icon: MessagesSquare,
-    color: "bg-[#ea9b62]",
+    color: "bg-[#f17a2a]",
     image: "/images/discover/taller.png",
     cta: "TALLERES PRESENCIALES"
   },
@@ -36,7 +36,7 @@ const discovery = [
     text: "Historias, tecnicas y procesos documentados para preservar patrimonio vivo.",
     href: "/login",
     icon: HandHeart,
-    color: "bg-[#f0bf35]",
+    color: "bg-[#f5b900]",
     image: "/images/discover/recursos.png",
     cta: "RECURSOS Y TALLERES"
   }
@@ -95,7 +95,7 @@ export default function DescubrePage() {
                 >
                   {item.cta}
                 </span>
-                <ArrowRight className="mt-5 h-5 w-5 text-[#fc6b22]" />
+                <ArrowRight className="mt-5 h-5 w-5 text-[#f15a24]" />
               </Link>
             );
           })}

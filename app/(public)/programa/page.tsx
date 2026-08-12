@@ -51,12 +51,12 @@ export default function ProgramaPage() {
                 <div>
                   <div className="flex gap-2">
                     {[
-                      "#5576a7",
+                      "#2f62a3",
                       "#b5245b",
-                      "#55d2dd",
-                      "#fc6b22",
+                      "#17c3cf",
+                      "#f15a24",
                       "#ff8941",
-                      "#f0bf35"
+                      "#f5b900"
                     ].map((color) => (
                       <span
                         key={color}
@@ -89,7 +89,7 @@ export default function ProgramaPage() {
                         <h3 className="font-ui text-xl font-extrabold uppercase text-[#b5245b] md:text-2xl">
                           {pillar.title}:
                         </h3>
-                        <p className="mt-2 bg-[#ea9b62] px-5 py-4 text-base leading-7 text-[#1b1c1a] md:text-lg">
+                        <p className="mt-2 bg-[#f17a2a] px-5 py-4 text-base leading-7 text-[#1b1c1a] md:text-lg">
                           {pillar.text}
                         </p>
                       </div>
@@ -106,7 +106,7 @@ export default function ProgramaPage() {
                 ].map(([label, Icon]) => (
                   <div
                     key={label as string}
-                    className="flex min-h-16 items-center justify-center gap-2 bg-[#f0bf35] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78]"
+                    className="flex min-h-16 items-center justify-center gap-2 bg-[#f5b900] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78]"
                   >
                     <Icon className="h-5 w-5" />
                     {label as string}

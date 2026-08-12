@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
 
-const colors = ["#5576a7", "#b5245b", "#55d2dd", "#fc6b22", "#ff8941", "#f0bf35"];
+const colors = ["#2f62a3", "#b5245b", "#17c3cf", "#f15a24", "#ff8941", "#f5b900"];
 
 export default function LandingPage() {
   return (
@@ -29,7 +29,7 @@ export default function LandingPage() {
               Sllapan wawqaykunaman allin hamuy
             </h2>
 
-            <div className="mt-10 inline-flex bg-[#d497b1] px-8 py-5 md:px-14">
+            <div className="mt-10 inline-flex bg-[#c02a68] px-8 py-5 md:px-14">
               <p className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
                 Bienvenidos a Warmi
               </p>
@@ -55,19 +55,19 @@ export default function LandingPage() {
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           <Link
             href="/programa"
-            className="bg-[#5576a7] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
+            className="bg-[#2f62a3] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
           >
             Programa Warmi
           </Link>
           <Link
             href="/descubre"
-            className="bg-[#ea9b62] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
+            className="bg-[#f17a2a] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
           >
             Descubre
           </Link>
           <Link
             href="/mercado"
-            className="bg-[#f0bf35] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-[#123f78]"
+            className="bg-[#f5b900] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-[#123f78]"
           >
             Mi vitrina virtual
           </Link>

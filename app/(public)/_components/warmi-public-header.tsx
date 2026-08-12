@@ -9,22 +9,22 @@ const actions = [
   {
     href: "/programa",
     label: "PROGRAMA WARMI",
-    color: "bg-[#5576a7]"
+    color: "bg-[#2f62a3]"
   },
   {
     href: "/descubre",
     label: "DESCUBRE",
-    color: "bg-[#ea9b62]"
+    color: "bg-[#f17a2a]"
   },
   {
     href: "/identidad",
     label: "IDENTIDAD WARMI - RIQSICHIQ WARMI",
-    color: "bg-[#55d2dd]"
+    color: "bg-[#17c3cf]"
   },
   {
     href: "/login",
     label: "UNETE A WARMI",
-    color: "bg-[#f0bf35]"
+    color: "bg-[#f5b900]"
   }
 ];
 

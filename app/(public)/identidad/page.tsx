@@ -8,25 +8,25 @@ const identityItems = [
     title: "Historia",
     text: "Cada artesana documenta su camino, su comunidad y el saber recibido.",
     icon: BookOpen,
-    color: "bg-[#5576a7]"
+    color: "bg-[#2f62a3]"
   },
   {
     title: "Territorio",
     text: "La pieza no aparece sola: nace de una comunidad, una tecnica y una memoria.",
     icon: MapPin,
-    color: "bg-[#55d2dd]"
+    color: "bg-[#17c3cf]"
   },
   {
     title: "Tecnica",
     text: "La plataforma ayuda a preservar procesos, materiales y significados culturales.",
     icon: Sparkles,
-    color: "bg-[#ea9b62]"
+    color: "bg-[#f17a2a]"
   },
   {
     title: "Comunidad",
     text: "El aprendizaje se acompana entre artesanas, facilitadoras y familias.",
     icon: HandHeart,
-    color: "bg-[#f0bf35]"
+    color: "bg-[#f5b900]"
   }
 ];
 
@@ -35,7 +35,7 @@ export default function IdentidadPage() {
     <main className="bg-white text-[#123f78]">
       <WarmiPublicHeader compact />
 
-      <section className="border-y-[6px] border-[#55d2dd] bg-[#ecfcfd]">
+      <section className="border-y-[6px] border-[#17c3cf] bg-[#e8fbfc]">
         <div className="mx-auto grid w-full max-w-[1860px] gap-8 px-4 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:px-8 md:py-16 lg:px-12">
           <div>
             <h1 className="font-serif text-4xl font-bold text-[#1b1c1a] md:text-7xl">
@@ -75,7 +75,7 @@ export default function IdentidadPage() {
 
         <div className="mt-10 flex justify-center">
           <Link
-            className="bg-[#55d2dd] px-8 py-5 text-center font-ui text-sm font-bold uppercase text-[#123f78] md:text-label-ui"
+            className="bg-[#17c3cf] px-8 py-5 text-center font-ui text-sm font-bold uppercase text-[#123f78] md:text-label-ui"
             href="/login"
           >
             Elegir mi camino

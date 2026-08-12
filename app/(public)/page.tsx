@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
 
@@ -38,7 +37,7 @@ export default function LandingPage() {
 
           <div className="relative min-h-[280px] overflow-hidden border border-[#ead4ca] bg-[#fffaf8] shadow-[0_18px_42px_rgba(122,49,0,0.08)] md:min-h-[420px]">
             <Image
-              src="/images/programa/programa-warmi.png"
+              src="/images/home/bienvenida-warmi.png"
               alt="Artesanas Warmi"
               fill
               priority
@@ -51,27 +50,6 @@ export default function LandingPage() {
         <p className="mx-auto mt-10 max-w-5xl text-center font-serif text-2xl font-bold italic leading-tight text-[#10124f] md:text-3xl">
           “La tecnologia no reemplaza la tradicion; la conecta con nuevas oportunidades.”
         </p>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <Link
-            href="/programa"
-            className="bg-[#2f62a3] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
-          >
-            Programa Warmi
-          </Link>
-          <Link
-            href="/descubre"
-            className="bg-[#f17a2a] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-white"
-          >
-            Descubre
-          </Link>
-          <Link
-            href="/mercado"
-            className="bg-[#f5b900] px-6 py-5 text-center font-ui text-lg font-extrabold uppercase text-[#123f78]"
-          >
-            Mi vitrina virtual
-          </Link>
-        </div>
       </section>
     </main>
   );

@@ -100,34 +100,35 @@ const programPillars = [
 export default function LandingPage() {
   return (
     <main className="bg-white text-[#123f78]">
-      <section
-        className="relative min-h-[430px] bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(245,247,246,.72),rgba(245,247,246,.72)),url(${hero})`
-        }}
-      >
-        <Container className="flex min-h-[360px] items-center justify-center px-4 text-center md:min-h-[430px]">
-          <div className="flex max-w-4xl flex-col items-center">
+      <section className="relative min-h-[520px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center grayscale"
+          style={{
+            backgroundImage: `linear-gradient(rgba(27,28,26,.42),rgba(27,28,26,.42)),url(${hero})`
+          }}
+        />
+        <Container className="flex min-h-[520px] items-center justify-center px-4 text-center">
+          <div className="relative flex max-w-4xl flex-col items-center">
             <WarmiLogo
               className="flex-col gap-2"
-              markClassName="h-24 w-52 md:h-36 md:w-72"
+              markClassName="w-56 md:w-80"
               textClassName="hidden"
             />
-            <h1 className="mt-5 font-serif text-4xl font-bold leading-tight tracking-[0.06em] text-[#123f78] sm:text-5xl md:text-7xl md:tracking-[0.12em]">
+            <h1 className="mt-5 font-serif text-4xl font-bold leading-tight tracking-[0.18em] text-white sm:text-5xl md:text-7xl">
               WARMI DIGITAL
             </h1>
-            <p className="mt-4 max-w-sm text-lg italic text-[#c22b61] md:max-w-none md:text-2xl">
+            <p className="mt-4 max-w-sm text-lg italic text-white md:max-w-none md:text-2xl">
               Artesanas conectadas, historias que transforman.
             </p>
           </div>
         </Container>
       </section>
 
-      <nav className="grid grid-cols-2 font-ui text-sm font-bold text-white md:grid-cols-4 md:text-label-ui">
+      <nav className="sticky top-0 z-30 grid grid-cols-2 font-ui text-sm font-bold text-white shadow-[0_8px_18px_rgba(27,28,26,0.16)] md:grid-cols-4 md:text-label-ui">
         {actions.map((action) => (
           <Link
             key={action.label}
-            className={`${action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:opacity-90 md:min-h-20 md:px-5 md:py-7`}
+            className={`${action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:brightness-105 md:min-h-20 md:px-5 md:py-7`}
             href={action.href}
           >
             {action.label}
@@ -137,8 +138,8 @@ export default function LandingPage() {
 
       <section id="programa" className="bg-white">
         <Container className="px-4 py-14 md:py-16">
-          <div className="relative border-t-4 border-[#d9d9d9] pt-8">
-            <div className="inline-flex bg-[#25598f] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
+          <div className="relative border-t-2 border-[#d9d9d9] pt-8">
+            <div className="inline-flex bg-[#5576a7] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
                 Programa Warmi
               </h2>
@@ -146,7 +147,7 @@ export default function LandingPage() {
 
             <div className="mt-7 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
               <div
-                className="min-h-[360px] bg-cover bg-center shadow-[0_22px_60px_rgba(37,89,143,0.18)] md:min-h-[520px]"
+                className="min-h-[360px] bg-cover bg-center md:min-h-[520px]"
                 style={{
                   backgroundImage:
                     "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
@@ -189,7 +190,7 @@ export default function LandingPage() {
                         key={pillar.title}
                         className="grid gap-3 md:grid-cols-[58px_1fr]"
                       >
-                        <div className="grid h-12 w-12 place-items-center rounded-full bg-[#fff0f5] text-[#b5245b] md:h-14 md:w-14">
+                        <div className="grid h-12 w-12 place-items-center rounded-full bg-white text-[#b5245b] md:h-14 md:w-14">
                           <Icon className="h-7 w-7" />
                         </div>
                         <div>
@@ -226,9 +227,9 @@ export default function LandingPage() {
         </Container>
       </section>
 
-      <section id="descubre" className="bg-[#f7f3ef]">
+      <section id="descubre" className="bg-white">
         <Container className="px-4 py-14 md:py-16">
-          <div className="relative border-t-4 border-[#5576a7] pt-7">
+          <div className="relative border-t-2 border-[#d9d9d9] pt-7">
             <div className="inline-flex bg-[#ea9b62] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-10 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
                 Descubre
@@ -240,11 +241,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_50px_rgba(122,49,0,0.08)] md:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white md:grid-cols-4">
             {discovery.map((item) => (
               <div
                 key={item.title}
-                className="min-h-[135px] bg-cover bg-center sm:min-h-[180px] md:min-h-[210px]"
+                className="min-h-[135px] bg-cover bg-center sm:min-h-[180px] md:min-h-[250px]"
                 style={{
                   backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${item.image})`
                 }}
@@ -260,7 +261,7 @@ export default function LandingPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className={`group bg-white p-4 shadow-[0_18px_50px_rgba(122,49,0,0.08)] transition-transform hover:-translate-y-1 md:p-5 ${
+                  className={`group bg-white p-4 transition-transform hover:-translate-y-1 md:p-5 ${
                     index === 1 ? "md:mt-12" : index === 3 ? "md:mt-20" : ""
                   }`}
                 >

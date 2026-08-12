@@ -53,7 +53,7 @@ export function RegisterForm() {
 
   return (
     <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a]">
-      <section className="mx-auto grid min-h-screen w-full max-w-[1380px] gap-0 px-3 py-3 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-10 lg:py-6">
+      <section className="mx-auto grid min-h-screen w-full max-w-[1720px] gap-0 px-3 py-3 sm:px-6 lg:grid-cols-[minmax(520px,0.95fr)_minmax(620px,1.05fr)] lg:px-10 lg:py-6 2xl:px-12">
         <aside className="relative hidden overflow-hidden rounded-l-lg bg-[#fff0f5] lg:block">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -80,7 +80,7 @@ export function RegisterForm() {
         </aside>
 
         <section className="flex items-center justify-center rounded-lg border border-[#e2a0ba] bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] lg:rounded-l-none">
-          <div className="w-full max-w-2xl p-4 md:p-8">
+          <div className="w-full max-w-[820px] p-4 sm:p-6 md:p-8 xl:p-10">
             <header className="mb-5 flex items-start justify-between gap-3 lg:hidden">
               <WarmiLogo compact markClassName="w-28" />
               <Link href="/login" className="text-sm font-bold text-[#7a3100]">
@@ -92,23 +92,23 @@ export function RegisterForm() {
               <p className="font-ui text-sm font-bold uppercase text-[#b5245b]">
                 Crea tu cuenta
               </p>
-              <h2 className="mt-2 font-serif text-3xl font-bold leading-tight md:text-5xl">
+              <h2 className="mt-2 font-serif text-3xl font-bold leading-tight md:text-5xl xl:text-6xl">
                 Registro de artesana
               </h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-[#5b4a42]">
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#5b4a42] xl:text-base">
                 Ingresa tus datos para acceder a tu espacio de aprendizaje, historia y
                 comunidad.
               </p>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 gap-2">
+            <div className="mt-5 grid grid-cols-3 gap-2 xl:gap-3">
               {steps.map((step) => {
                 const Icon = step.icon;
 
                 return (
                   <div
                     key={step.label}
-                    className="flex min-h-[66px] flex-col items-center justify-center rounded-md bg-[#fff0f5] px-1.5 py-2 text-center text-[10px] font-bold leading-tight text-[#b5245b] sm:text-[11px]"
+                    className="flex min-h-[66px] flex-col items-center justify-center rounded-md bg-[#fff0f5] px-1.5 py-2 text-center text-[10px] font-bold leading-tight text-[#b5245b] sm:text-[11px] xl:min-h-[82px] xl:text-xs"
                   >
                     <Icon className="mx-auto mb-1 h-5 w-5" />
                     {step.label}
@@ -117,7 +117,7 @@ export function RegisterForm() {
               })}
             </div>
 
-            <form className="mt-5 grid gap-4 md:mt-6" onSubmit={handleSubmit}>
+            <form className="mt-5 grid gap-4 md:mt-6 xl:gap-5" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <TextField name="firstName" label="Nombre" placeholder="Maria" />
                 <TextField name="lastName" label="Apellido" placeholder="Quispe" />

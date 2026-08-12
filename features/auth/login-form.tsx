@@ -106,8 +106,8 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
   };
 
   return (
-    <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a] lg:h-screen lg:overflow-hidden">
-      <section className="mx-auto flex min-h-screen w-full max-w-[1380px] flex-col px-3 py-3 sm:px-6 lg:h-screen lg:px-10 lg:py-6">
+    <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a] xl:h-screen xl:overflow-hidden">
+      <section className="mx-auto flex min-h-screen w-full max-w-[1720px] flex-col px-3 py-3 sm:px-6 lg:px-10 lg:py-6 xl:h-screen 2xl:px-12">
         <header className="flex shrink-0 items-center justify-between gap-4">
           <Link href="/" aria-label="Ir al inicio">
             <WarmiLogo compact markClassName="w-28 md:w-36" />
@@ -132,10 +132,10 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
         </div>
 
         <div
-          className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:min-h-0 lg:grid-cols-[1.06fr_0.94fr]"
+          className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:grid-cols-[minmax(520px,1.08fr)_minmax(480px,0.92fr)] xl:min-h-0"
           style={{ borderColor: activeRole.border }}
         >
-          <div className="relative min-h-[330px] overflow-hidden bg-[#f7efe9] sm:min-h-[380px] lg:min-h-0">
+          <div className="relative min-h-[320px] overflow-hidden bg-[#f7efe9] sm:min-h-[430px] lg:min-h-[680px] xl:min-h-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={role}
@@ -194,10 +194,10 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           </div>
 
           <div
-            className="flex flex-col justify-center p-4 md:p-8"
+            className="flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12"
             style={{ backgroundColor: activeRole.soft }}
           >
-            <div className="mx-auto w-full max-w-md">
+            <div className="mx-auto w-full max-w-[620px]">
               <motion.div
                 key={`${role}-form-head`}
                 initial={{ opacity: 0, y: 10 }}
@@ -205,10 +205,10 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 transition={{ duration: 0.25 }}
               >
                 <RoleIcon className="h-9 w-9" style={{ color: activeRole.accent }} />
-                <h2 className="mt-4 font-serif text-3xl font-bold leading-tight md:text-4xl">
+                <h2 className="mt-4 font-serif text-3xl font-bold leading-tight md:text-4xl xl:text-5xl">
                   Accede a Warmi Digital
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-[#5b4a42]">
+                <p className="mt-2 text-sm leading-6 text-[#5b4a42] xl:text-base">
                   Seleccionaste:{" "}
                   <span className="font-bold" style={{ color: activeRole.accent }}>
                     {activeRole.label}
@@ -216,14 +216,14 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 </p>
               </motion.div>
 
-              <div className="mt-5 grid grid-cols-3 gap-2">
+              <div className="mt-5 grid grid-cols-3 gap-2 xl:gap-3">
                 {activeRole.highlights.map((highlight) => {
                   const HighlightIcon = highlight.icon;
 
                   return (
                     <div
                       key={highlight.label}
-                      className="flex min-h-[72px] flex-col items-center justify-center rounded-md bg-white/80 px-1.5 py-2 text-center text-[10px] font-bold leading-tight sm:text-[11px]"
+                      className="flex min-h-[72px] flex-col items-center justify-center rounded-md bg-white/80 px-1.5 py-2 text-center text-[10px] font-bold leading-tight sm:text-[11px] xl:min-h-[86px] xl:text-xs"
                       style={{ color: activeRole.accent }}
                     >
                       <HighlightIcon className="mx-auto mb-1 h-5 w-5" />
@@ -233,7 +233,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 })}
               </div>
 
-              <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+              <form className="mt-6 grid gap-4 xl:mt-8 xl:gap-5" onSubmit={handleSubmit}>
                 {callbackUrl ? (
                   <input type="hidden" name="callbackUrl" value={callbackUrl} />
                 ) : null}
@@ -242,7 +242,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                     Usuario / Correo
                   </span>
                   <Input
-                    className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 shadow-none focus-visible:ring-0"
+                    className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 shadow-none focus-visible:ring-0 xl:h-12"
                     name="email"
                     type="email"
                     placeholder="nombre@ejemplo.com"
@@ -254,7 +254,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                     Contrasena
                   </span>
                   <Input
-                    className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 shadow-none focus-visible:ring-0"
+                    className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 shadow-none focus-visible:ring-0 xl:h-12"
                     name="password"
                     type="password"
                     placeholder="********"

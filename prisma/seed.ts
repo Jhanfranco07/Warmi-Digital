@@ -51,7 +51,7 @@ async function main() {
       name: "Comunidad Qantu",
       slug: "comunidad-qantu",
       description: "Comunidad de tejido tradicional andino.",
-      location: "Cusco, Perú"
+      location: "San Miguel, Cajamarca"
     }
   });
   await prisma.community.upsert({
@@ -61,7 +61,7 @@ async function main() {
       name: "Comunidad Wayra",
       slug: "comunidad-wayra",
       description: "Comunidad de bordado y textil ancestral.",
-      location: "Puno, Perú"
+      location: "San Miguel, Cajamarca"
     }
   });
   await prisma.community.upsert({
@@ -71,7 +71,7 @@ async function main() {
       name: "Comunidad Kusi",
       slug: "comunidad-kusi",
       description: "Comunidad de cerámica y trabajo con arcilla.",
-      location: "Ayacucho, Perú"
+      location: "San Miguel, Cajamarca"
     }
   });
 
@@ -320,7 +320,7 @@ async function main() {
       facilitatorId: facilitator.id,
       mode: "HYBRID",
       status: "SCHEDULED",
-      location: "Centro comunal Qantu",
+      location: "Centro comunal de San Miguel, Cajamarca",
       startsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
       endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5 + 1000 * 60 * 90)
     }

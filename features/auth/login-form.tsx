@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { BookOpen, Camera, HandHeart, TrendingUp, UsersRound } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Camera,
+  HandHeart,
+  TrendingUp,
+  UsersRound
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -112,20 +119,29 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           <Link href="/" aria-label="Ir al inicio">
             <WarmiLogo compact markClassName="w-28 md:w-36" />
           </Link>
-          <div className="hidden gap-2 md:flex">
-            {["#5576a7", "#b5245b", "#55d2dd", "#fc6b22", "#ff8941", "#f0bf35"].map(
-              (color) => (
-                <span
-                  key={color}
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: color }}
-                />
-              )
-            )}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="inline-flex min-h-touch-target items-center gap-2 rounded-full border border-[#d8b9a8] bg-white/80 px-4 font-ui text-sm font-bold text-[#7a3100] shadow-[0_10px_24px_rgba(122,49,0,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#b5245b] hover:text-[#b5245b] md:px-5 md:text-base"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Volver al inicio
+            </Link>
+            <div className="hidden gap-2 md:flex">
+              {["#2f62a3", "#b5245b", "#17c3cf", "#f15a24", "#ff8941", "#f5b900"].map(
+                (color) => (
+                  <span
+                    key={color}
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                )
+              )}
+            </div>
           </div>
         </header>
 
-        <div className="mt-3 shrink-0 border-t-4 border-[#5576a7] pt-3 text-center md:mt-4 md:pt-4">
+        <div className="mt-3 shrink-0 border-t-4 border-[#2f62a3] pt-3 text-center md:mt-4 md:pt-4">
           <p className="font-ui text-sm font-bold uppercase text-[#b5245b] xl:text-base">
             Como deseas ingresar?
           </p>

@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  ArrowLeft,
   BookOpen,
   Camera,
   HandHeart,
@@ -81,14 +82,18 @@ export function RegisterForm() {
 
         <section className="flex items-center justify-center rounded-lg border border-[#e2a0ba] bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] lg:rounded-l-none">
           <div className="w-full max-w-[980px] p-4 sm:p-6 md:p-8 xl:p-12">
-            <header className="mb-5 flex items-start justify-between gap-3 lg:hidden">
+            <header className="mb-5 flex items-center justify-between gap-3">
               <WarmiLogo compact markClassName="w-28" />
-              <Link href="/login" className="text-sm font-bold text-[#7a3100]">
-                Iniciar sesion
+              <Link
+                href="/"
+                className="inline-flex min-h-touch-target items-center gap-2 rounded-full border border-[#d8b9a8] bg-white/80 px-4 font-ui text-sm font-bold text-[#7a3100] shadow-[0_10px_24px_rgba(122,49,0,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#b5245b] hover:text-[#b5245b] md:px-5 md:text-base"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Volver al inicio
               </Link>
             </header>
 
-            <div className="border-t-4 border-[#5576a7] pt-4 md:pt-5">
+            <div className="border-t-4 border-[#2f62a3] pt-4 md:pt-5">
               <p className="font-ui text-sm font-bold uppercase text-[#b5245b] xl:text-base">
                 Crea tu cuenta
               </p>

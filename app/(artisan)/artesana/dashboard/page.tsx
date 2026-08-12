@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import { EmptyState } from "@/shared/components/feedback/empty-state";
-import { Container } from "@/shared/components/layout/container";
 import { PageHeader } from "@/shared/components/layout/page-header";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -132,167 +131,180 @@ export default async function ArtisanDashboardPage() {
         </div>
       </section>
 
-      <Container className="hidden space-y-7 bg-[#fffaf8] py-6 md:py-10 lg:block">
-        <PageHeader
-          eyebrow="Inicio"
-          title={`Hola, ${displayName}`}
-          description="Este es tu espacio para aprender, fortalecer tu historia y avanzar paso a paso."
-        />
+      <div className="hidden min-h-screen bg-[#fffaf8] px-8 py-8 lg:block xl:px-12 2xl:px-16">
+        <div className="mx-auto w-full max-w-[1680px] space-y-8">
+          <PageHeader
+            eyebrow="Inicio"
+            title={`Hola, ${displayName}`}
+            description="Este es tu espacio para aprender, fortalecer tu historia y avanzar paso a paso."
+          />
 
-        <section className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-          <Card className="border-[#edc9bd] bg-white shadow-soft">
-            <CardHeader>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>{data.routeName}</Badge>
-                <Badge variant="outline">
-                  {profile?.community?.name ?? "Comunidad pendiente"}
-                </Badge>
-                <Badge variant="secondary">{craft}</Badge>
-              </div>
-              <CardTitle className="font-serif text-headline-md text-[#7a3100]">
-                Tu avance general
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-end gap-3">
-                <span className="font-serif text-display-lg">
-                  {data.generalProgress}%
-                </span>
-                <span className="pb-2 text-body-md text-muted-foreground">
-                  de tu ruta actual
-                </span>
-              </div>
-              <Progress value={data.generalProgress} className="[&>div]:bg-[#e65578]" />
-              <p className="text-body-md text-muted-foreground">
-                Proximo objetivo: {data.nextObjective}.
-              </p>
-              {currentCourse ? (
-                <Button asChild size="lg" className="min-h-touch-target">
-                  <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
-                    <BookOpen className="h-5 w-5" />
-                    Continuar mi aprendizaje
-                  </Link>
-                </Button>
-              ) : null}
-            </CardContent>
-          </Card>
-
-          <Card className="border-[#edc9bd] bg-[#fff8f5] shadow-soft">
-            <CardHeader>
-              <CardTitle className="font-serif text-headline-md text-[#7a3100]">
-                Proximo taller
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {data.nextWorkshop ? (
-                <>
-                  <h2 className="font-serif text-headline-md">
-                    {data.nextWorkshop.workshop.title}
-                  </h2>
-                  <p className="text-body-md text-muted-foreground">
-                    {data.nextWorkshop.workshop.startsAt
-                      ? format(data.nextWorkshop.workshop.startsAt, "dd/MM/yyyy HH:mm")
-                      : "Fecha por confirmar"}
-                  </p>
-                  <p className="text-body-md">
-                    {data.nextWorkshop.workshop.location ?? "Lugar por confirmar"}
-                  </p>
-                </>
-              ) : (
-                <p className="text-body-md text-muted-foreground">
-                  Aun no tienes talleres programados.
+          <section className="grid gap-6 xl:grid-cols-[1.45fr_0.95fr]">
+            <Card className="overflow-hidden border-[#edc9bd] bg-white shadow-[0_22px_50px_rgba(122,49,0,0.08)]">
+              <CardHeader className="border-b border-[#f4d8cc] bg-gradient-to-r from-[#fff0f5] via-white to-[#fff7df]">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>{data.routeName}</Badge>
+                  <Badge variant="outline">
+                    {profile?.community?.name ?? "Comunidad pendiente"}
+                  </Badge>
+                  <Badge variant="secondary">{craft}</Badge>
+                </div>
+                <CardTitle className="font-serif text-4xl text-[#7a3100] 2xl:text-5xl">
+                  Tu avance general
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 p-8">
+                <div className="flex items-end gap-3">
+                  <span className="font-serif text-7xl 2xl:text-8xl">
+                    {data.generalProgress}%
+                  </span>
+                  <span className="pb-3 text-lg text-muted-foreground">
+                    de tu ruta actual
+                  </span>
+                </div>
+                <Progress
+                  value={data.generalProgress}
+                  className="h-3 bg-[#eadfe2] [&>div]:bg-[#e65578]"
+                />
+                <p className="text-lg text-muted-foreground">
+                  Proximo objetivo: {data.nextObjective}.
                 </p>
+                {currentCourse ? (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="min-h-[56px] rounded-full px-7 text-base"
+                  >
+                    <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
+                      <BookOpen className="h-5 w-5" />
+                      Continuar mi aprendizaje
+                    </Link>
+                  </Button>
+                ) : null}
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden border-[#edc9bd] bg-[#fff8f5] shadow-[0_22px_50px_rgba(122,49,0,0.08)]">
+              <CardHeader className="border-b border-[#f4d8cc] bg-[#fff0f5]">
+                <CardTitle className="font-serif text-4xl text-[#7a3100] 2xl:text-5xl">
+                  Proximo taller
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 p-8">
+                {data.nextWorkshop ? (
+                  <>
+                    <h2 className="font-serif text-4xl leading-tight 2xl:text-5xl">
+                      {data.nextWorkshop.workshop.title}
+                    </h2>
+                    <p className="text-lg text-muted-foreground">
+                      {data.nextWorkshop.workshop.startsAt
+                        ? format(data.nextWorkshop.workshop.startsAt, "dd/MM/yyyy HH:mm")
+                        : "Fecha por confirmar"}
+                    </p>
+                    <p className="text-lg">
+                      {data.nextWorkshop.workshop.location ?? "Lugar por confirmar"}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-lg text-muted-foreground">
+                    Aun no tienes talleres programados.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+
+          <section className="grid gap-4 xl:grid-cols-3">
+            <QuickAccess
+              href="/artesana/aprender"
+              icon={BookOpen}
+              label="Continuar curso"
+            />
+            <QuickAccess
+              href="/artesana/talleres"
+              icon={CalendarDays}
+              label="Ver talleres"
+            />
+            <QuickAccess
+              href="/artesana/mi-historia"
+              icon={ScrollText}
+              label="Editar mi historia"
+            />
+            <QuickAccess
+              href="/artesana/convocatorias"
+              icon={Bell}
+              label="Convocatorias"
+            />
+            <QuickAccess href="/artesana/mi-vitrina" icon={Store} label="Mi vitrina" />
+            <QuickAccess href="/artesana/logros" icon={BadgeIcon} label="Mis logros" />
+          </section>
+
+          <section className="grid gap-6 xl:grid-cols-2">
+            <DashboardList title="Convocatorias destacadas">
+              {data.opportunities.length ? (
+                data.opportunities.map((item) => (
+                  <ListItem
+                    key={item.id}
+                    title={item.title}
+                    description={
+                      item.endsAt
+                        ? `Cierra el ${format(item.endsAt, "dd/MM/yyyy")}`
+                        : "Fecha abierta"
+                    }
+                  />
+                ))
+              ) : (
+                <EmptyState title="Sin convocatorias por ahora" />
               )}
-            </CardContent>
-          </Card>
-        </section>
+            </DashboardList>
 
-        <section className="grid gap-3 md:grid-cols-3">
-          <QuickAccess
-            href="/artesana/aprender"
-            icon={BookOpen}
-            label="Continuar curso"
-          />
-          <QuickAccess
-            href="/artesana/talleres"
-            icon={CalendarDays}
-            label="Ver talleres"
-          />
-          <QuickAccess
-            href="/artesana/mi-historia"
-            icon={ScrollText}
-            label="Editar mi historia"
-          />
-          <QuickAccess href="/artesana/convocatorias" icon={Bell} label="Convocatorias" />
-          <QuickAccess href="/artesana/mi-vitrina" icon={Store} label="Mi vitrina" />
-          <QuickAccess href="/artesana/logros" icon={BadgeIcon} label="Mis logros" />
-        </section>
+            <DashboardList title="Logros recientes">
+              {data.recentBadges.length ? (
+                data.recentBadges.map((item) => (
+                  <ListItem
+                    key={item.id}
+                    title={item.badge.name}
+                    description={item.reason ?? item.badge.description ?? ""}
+                  />
+                ))
+              ) : (
+                <EmptyState title="Tus logros apareceran aqui" />
+              )}
+            </DashboardList>
 
-        <section className="grid gap-4 lg:grid-cols-2">
-          <DashboardList title="Convocatorias destacadas">
-            {data.opportunities.length ? (
-              data.opportunities.map((item) => (
-                <ListItem
-                  key={item.id}
-                  title={item.title}
-                  description={
-                    item.endsAt
-                      ? `Cierra el ${format(item.endsAt, "dd/MM/yyyy")}`
-                      : "Fecha abierta"
-                  }
-                />
-              ))
-            ) : (
-              <EmptyState title="Sin convocatorias por ahora" />
-            )}
+            <DashboardList title="Productos publicados">
+              <ListItem
+                title={`${data.products.length} piezas registradas`}
+                description="La vitrina muestra tus piezas con historia cultural, no solo como productos."
+              />
+            </DashboardList>
+
+            <DashboardList title="Pedidos recientes">
+              {data.recentOrders.length ? (
+                data.recentOrders.map((order) => (
+                  <ListItem
+                    key={order.id}
+                    title={`Pedido ${order.id.slice(0, 8)}`}
+                    description={`${order.items[0]?.product.name ?? "Pieza cultural"} - ${order.status}`}
+                  />
+                ))
+              ) : (
+                <EmptyState title="Todavia no tienes pedidos" />
+              )}
+            </DashboardList>
+          </section>
+
+          <DashboardList title={`Notificaciones pendientes: ${data.unreadNotifications}`}>
+            {data.notifications.map((notification) => (
+              <ListItem
+                key={notification.id}
+                title={notification.title}
+                description={notification.body}
+              />
+            ))}
           </DashboardList>
-
-          <DashboardList title="Logros recientes">
-            {data.recentBadges.length ? (
-              data.recentBadges.map((item) => (
-                <ListItem
-                  key={item.id}
-                  title={item.badge.name}
-                  description={item.reason ?? item.badge.description ?? ""}
-                />
-              ))
-            ) : (
-              <EmptyState title="Tus logros apareceran aqui" />
-            )}
-          </DashboardList>
-
-          <DashboardList title="Productos publicados">
-            <ListItem
-              title={`${data.products.length} piezas registradas`}
-              description="La vitrina muestra tus piezas con historia cultural, no solo como productos."
-            />
-          </DashboardList>
-
-          <DashboardList title="Pedidos recientes">
-            {data.recentOrders.length ? (
-              data.recentOrders.map((order) => (
-                <ListItem
-                  key={order.id}
-                  title={`Pedido ${order.id.slice(0, 8)}`}
-                  description={`${order.items[0]?.product.name ?? "Pieza cultural"} - ${order.status}`}
-                />
-              ))
-            ) : (
-              <EmptyState title="Todavia no tienes pedidos" />
-            )}
-          </DashboardList>
-        </section>
-
-        <DashboardList title={`Notificaciones pendientes: ${data.unreadNotifications}`}>
-          {data.notifications.map((notification) => (
-            <ListItem
-              key={notification.id}
-              title={notification.title}
-              description={notification.body}
-            />
-          ))}
-        </DashboardList>
-      </Container>
+        </div>
+      </div>
     </>
   );
 }
@@ -357,10 +369,10 @@ function QuickAccess({
     <Button
       asChild
       variant="outline"
-      className="min-h-touch-target justify-start border-[#edc9bd] bg-white font-ui text-[#7a3100] hover:bg-[#ffe5eb]"
+      className="min-h-[58px] justify-start rounded-lg border-[#edc9bd] bg-white px-5 font-ui text-base font-bold text-[#7a3100] shadow-[0_12px_28px_rgba(122,49,0,0.05)] hover:bg-[#ffe5eb]"
     >
       <Link href={href as Route}>
-        <Icon className="h-5 w-5" />
+        <Icon className="h-6 w-6" />
         {label}
       </Link>
     </Button>
@@ -375,23 +387,25 @@ function DashboardList({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border-[#edc9bd] bg-white shadow-soft">
-      <CardHeader>
-        <CardTitle className="font-serif text-headline-md text-[#7a3100]">
+    <Card className="overflow-hidden border-[#edc9bd] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)]">
+      <CardHeader className="border-b border-[#f4d8cc] bg-[#fffdfb]">
+        <CardTitle className="font-serif text-3xl text-[#7a3100] 2xl:text-4xl">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">{children}</CardContent>
+      <CardContent className="space-y-4 p-6">{children}</CardContent>
     </Card>
   );
 }
 
 function ListItem({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="rounded-md border border-[#edc9bd] bg-[#fffdfb] p-3">
-      <p className="font-medium">{title}</p>
+    <div className="rounded-lg border border-[#edc9bd] bg-[#fffdfb] p-5 transition-colors hover:bg-[#fff7f9]">
+      <p className="text-base font-bold text-[#1b1c1a] 2xl:text-lg">{title}</p>
       {description ? (
-        <p className="text-body-sm mt-1 text-muted-foreground">{description}</p>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground 2xl:text-base">
+          {description}
+        </p>
       ) : null}
     </div>
   );

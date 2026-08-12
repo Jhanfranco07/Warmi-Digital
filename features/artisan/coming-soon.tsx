@@ -8,12 +8,12 @@ export function ComingSoon({ title }: { title: string }) {
       <PageHeader
         eyebrow="Proximamente"
         title={title}
-        description="Esta seccion ya tiene ruta y navegacion. Su funcionalidad completa llegara en una fase posterior."
+        description="Esta sección ya tiene ruta y navegación. Su funcionalidad completa llegará en una fase posterior."
       />
       <Card>
         <CardContent className="pt-6 text-body-md text-muted-foreground">
-          Seguiremos construyendo este modulo sin perder el foco en aprendizaje,
-          acompanamiento y patrimonio cultural.
+          Seguiremos construyendo este módulo sin perder el foco en aprendizaje,
+          acompañamiento y patrimonio cultural.
         </CardContent>
       </Card>
     </Container>

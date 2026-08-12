@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const storyFormSchema = z.object({
   title: z.string().min(3, "Escribe un titulo para tu historia.").max(120),
-  publicName: z.string().min(2, "Escribe tu nombre publico.").max(100),
+  publicName: z.string().min(2, "Escribe tu nombre público.").max(100),
   communityId: z.string().uuid("Selecciona una comunidad.").optional().or(z.literal("")),
   craftTypeId: z
     .string()

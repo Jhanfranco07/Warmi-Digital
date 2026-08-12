@@ -26,7 +26,7 @@ export default async function Page() {
               <div>
                 <p className="font-semibold">{course.title}</p>
                 <p className="text-body-sm text-muted-foreground">
-                  {course.modules.length} modulos · {course.enrollments.length} artesanas
+                  {course.modules.length} módulos · {course.enrollments.length} artesanas
                   inscritas · {course.status}
                 </p>
               </div>

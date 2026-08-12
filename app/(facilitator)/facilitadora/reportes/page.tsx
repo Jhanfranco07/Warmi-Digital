@@ -12,7 +12,7 @@ export default async function Page() {
     <Container className="space-y-6 py-8">
       <PageHeader
         title="Reportes operativos"
-        description="Indicadores para orientar el acompanamiento, no para juzgar personas."
+        description="Indicadores para orientar el acompañamiento, no para juzgar personas."
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard title="Progreso promedio" value={`${report.averageProgress}%`} />

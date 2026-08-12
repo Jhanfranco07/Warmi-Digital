@@ -24,7 +24,7 @@ const discovery = [
   },
   {
     title: "Colaborar",
-    text: "Acompanamiento de facilitadoras, convocatorias y comunidad activa.",
+    text: "Acompañamiento de facilitadoras, convocatorias y comunidad activa.",
     href: "/login",
     icon: MessagesSquare,
     color: "bg-[#f17a2a]",
@@ -33,7 +33,7 @@ const discovery = [
   },
   {
     title: "Compartir",
-    text: "Historias, tecnicas y procesos documentados para preservar patrimonio vivo.",
+    text: "Historias, técnicas y procesos documentados para preservar patrimonio vivo.",
     href: "/login",
     icon: HandHeart,
     color: "bg-[#f5b900]",

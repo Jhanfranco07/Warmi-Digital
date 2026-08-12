@@ -19,7 +19,7 @@ export default async function Page({
     <Container className="space-y-6 py-8">
       <PageHeader
         title={`Editar: ${course.title}`}
-        description="Los modulos y lecciones existentes se conservan en esta ruta."
+        description="Los módulos y lecciones existentes se conservan en esta ruta."
       />
       <Card>
         <CardContent className="space-y-3 pt-6">

@@ -136,7 +136,7 @@ export class FollowUpService {
   ) {
     const assignment = await this.monitoring.detail(facilitatorId, artisanId);
     if (!assignment || assignment.status !== "ACTIVE")
-      throw new Error("No tienes acceso de acompanamiento a esta artesana.");
+      throw new Error("No tienes acceso de acompañamiento a esta artesana.");
     return this.repository.create({
       ...input,
       assignmentId: assignment.id,
@@ -179,7 +179,7 @@ export class MessagingService {
       conversationId,
       facilitatorId
     );
-    if (!conversation) throw new Error("No tienes acceso a esta conversacion.");
+    if (!conversation) throw new Error("No tienes acceso a esta conversación.");
     return this.messages.create(conversationId, facilitatorId, content);
   }
 }

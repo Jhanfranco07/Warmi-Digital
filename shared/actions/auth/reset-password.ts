@@ -47,7 +47,7 @@ export async function resetPassword(formData: FormData): Promise<AuthActionState
 
   return {
     success: true,
-    message: "Contrasena restablecida correctamente.",
+    message: "Contraseña restablecida correctamente.",
     redirectTo: "/login"
   };
 }

@@ -34,7 +34,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           return;
         }
 
-        setInfo(result.message ?? "Contrasena restablecida correctamente.");
+        setInfo(result.message ?? "Contraseña restablecida correctamente.");
         window.location.assign(result.redirectTo ?? "/login");
       } catch (error) {
         setError((error as Error)?.message ?? "No se pudo restablecer la contrasena.");
@@ -78,7 +78,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
       <div className="flex flex-col gap-2 pt-4 text-sm text-muted-foreground">
         <Link href="/login" className="text-primary hover:underline">
-          Volver al inicio de sesion
+          Volver al inicio de sesión
         </Link>
       </div>
     </AuthCard>

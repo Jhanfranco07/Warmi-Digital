@@ -23,7 +23,7 @@ export default async function ArtisanLearningPage() {
       <PageHeader
         eyebrow="Mi aprendizaje"
         title="Tu camino de aprendizaje"
-        description="Avanza a tu ritmo. Cada leccion suma a tu autonomia digital y cultural."
+        description="Avanza a tu ritmo. Cada lección suma a tu autonomía digital y cultural."
       />
 
       <Tabs defaultValue="todos">
@@ -51,7 +51,7 @@ export default async function ArtisanLearningPage() {
                   title={course.title}
                   description={course.description ?? "Curso disponible para tu ruta."}
                   level={course.level}
-                  meta={`${course.modulesCount} modulos · ${course.durationMin} min`}
+                  meta={`${course.modulesCount} módulos · ${course.durationMin} min`}
                 />
               ))}
             </div>
@@ -70,7 +70,7 @@ function CourseGrid({
   courses: Awaited<ReturnType<LearningService["getLearningPage"]>>["enrolledCourses"];
 }) {
   if (!courses.length) {
-    return <EmptyState title="Aun no tienes cursos en esta seccion" />;
+    return <EmptyState title="Aún no tienes cursos en esta sección" />;
   }
 
   return (
@@ -82,7 +82,7 @@ function CourseGrid({
             description={course.description ?? "Curso de tu ruta Warmi."}
             level={course.level}
             progress={course.progress}
-            meta={`${course.modulesCount} modulos · ${course.durationMin} min · ${
+            meta={`${course.modulesCount} módulos · ${course.durationMin} min · ${
               course.lastAccessedAt
                 ? `Ultimo acceso ${format(course.lastAccessedAt, "dd/MM/yyyy")}`
                 : "Por comenzar"

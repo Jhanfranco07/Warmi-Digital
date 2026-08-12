@@ -9,12 +9,12 @@ export default function SessionExpiredPage() {
     <Container className="py-10">
       <PageHeader
         eyebrow="Sesion expirada"
-        title="Tu sesion necesita renovarse"
-        description="Por seguridad, vuelve a iniciar sesion para continuar usando Warmi Digital."
+        title="Tu sesión necesita renovarse"
+        description="Por seguridad, vuelve a iniciar sesión para continuar usando Warmi Digital."
       />
       <div className="flex flex-col items-start gap-4 pt-8">
         <Link href="/login">
-          <Button>Iniciar sesion</Button>
+          <Button>Iniciar sesión</Button>
         </Link>
       </div>
     </Container>

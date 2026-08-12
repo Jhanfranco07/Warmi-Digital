@@ -19,7 +19,7 @@ export function OpportunityEditor() {
     >
       <Input name="title" placeholder="Titulo de la convocatoria" required />
       <Input name="institution" placeholder="Institucion" />
-      <Textarea name="body" placeholder="Descripcion" required />
+      <Textarea name="body" placeholder="Descripción" required />
       <select name="type" className="h-10 rounded-md border bg-background px-3">
         <option value="PROGRAM">Programa</option>
         <option value="FAIR">Feria</option>

@@ -34,7 +34,7 @@ export async function completeLessonAction(
   if (!ownsLesson) {
     return {
       ok: false,
-      message: "Esta leccion no pertenece a tu ruta de aprendizaje."
+      message: "Esta lección no pertenece a tu ruta de aprendizaje."
     };
   }
 

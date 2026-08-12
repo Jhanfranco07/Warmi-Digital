@@ -191,7 +191,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                     {story?.summary ??
                       item.profile?.bio ??
                       firstProduct?.culturalPhrase ??
-                      "Cada pieza nace de una historia, una tecnica y una memoria compartida."}
+                      "Cada pieza nace de una historia, una técnica y una memoria compartida."}
                   </p>
                   <p className="mt-4 font-ui text-xs font-bold uppercase tracking-[0.08em] text-[#d39a12]">
                     {item.products.length} piezas en vitrina

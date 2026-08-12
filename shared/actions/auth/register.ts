@@ -75,7 +75,7 @@ export async function register(formData: FormData): Promise<AuthActionState> {
 
   return {
     success: true,
-    message: "Registro exitoso. Ahora puedes iniciar sesion.",
+    message: "Registro exitoso. Ahora puedes iniciar sesión.",
     redirectTo: "/login"
   };
 }

@@ -18,7 +18,7 @@ export function WorkshopEditor() {
       className="grid gap-4"
     >
       <Input name="title" placeholder="Nombre del taller" required />
-      <Textarea name="description" placeholder="Descripcion" />
+      <Textarea name="description" placeholder="Descripción" />
       <select name="mode" className="h-10 rounded-md border bg-background px-3">
         <option value="IN_PERSON">Presencial</option>
         <option value="VIRTUAL">Virtual</option>

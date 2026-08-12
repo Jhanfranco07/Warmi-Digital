@@ -48,7 +48,7 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
     { label: "Convocatorias", href: "/facilitadora/convocatorias", icon: Bell },
     { label: "Mensajes", href: "/facilitadora/mensajes", icon: MessageCircle },
     { label: "Reportes", href: "/facilitadora/reportes", icon: ChartNoAxesCombined },
-    { label: "Configuracion", href: "/facilitadora/configuracion", icon: Settings }
+    { label: "Configuración", href: "/facilitadora/configuracion", icon: Settings }
   ],
   ADMIN: [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -59,7 +59,7 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
     { label: "Pedidos", href: "/admin/orders", icon: Package },
     { label: "Convocatorias", href: "/admin/opportunities", icon: Bell },
     { label: "Reportes", href: "/admin/reports", icon: ChartNoAxesCombined },
-    { label: "Configuracion", href: "/admin/settings", icon: Settings }
+    { label: "Configuración", href: "/admin/settings", icon: Settings }
   ]
 };
 
@@ -69,17 +69,17 @@ export const roleNavigationMeta: Record<
 > = {
   ARTESANA: {
     label: "Artesana",
-    description: "Aprendizaje, comunidad y autonomia digital",
+    description: "Aprendizaje, comunidad y autonomía digital",
     icon: WalletCards
   },
   FACILITADORA: {
     label: "Facilitadora",
-    description: "Seguimiento y acompanamiento",
+    description: "Seguimiento y acompañamiento",
     icon: HandHeart
   },
   ADMIN: {
     label: "Admin",
-    description: "Gestion ejecutiva del ecosistema",
+    description: "Gestión ejecutiva del ecosistema",
     icon: ChartNoAxesCombined
   }
 };

@@ -12,7 +12,7 @@ const identityItems = [
   },
   {
     title: "Territorio",
-    text: "La pieza no aparece sola: nace de una comunidad, una tecnica y una memoria.",
+    text: "La pieza no aparece sola: nace de una comunidad, una técnica y una memoria.",
     icon: MapPin,
     color: "bg-[#17c3cf]"
   },
@@ -24,7 +24,7 @@ const identityItems = [
   },
   {
     title: "Comunidad",
-    text: "El aprendizaje se acompana entre artesanas, facilitadoras y familias.",
+    text: "El aprendizaje se acompaña entre artesanas, facilitadoras y familias.",
     icon: HandHeart,
     color: "bg-[#f5b900]"
   }
@@ -43,8 +43,8 @@ export default function IdentidadPage() {
             </h1>
           </div>
           <p className="text-lg leading-8 text-[#4f4037] md:text-2xl md:leading-10">
-            Cada tecnica, historia y pieza pertenece a una artesana y a su territorio. La
-            tecnologia ayuda a documentar y compartir ese legado con respeto.
+            Cada técnica, historia y pieza pertenece a una artesana y a su territorio. La
+            tecnología ayuda a documentar y compartir ese legado con respeto.
           </p>
         </div>
       </section>

@@ -12,7 +12,7 @@ export default async function Page() {
     <Container className="space-y-6 py-8">
       <PageHeader
         title="Talleres"
-        description="Encuentros que sostienen la practica y el aprendizaje compartido."
+        description="Encuentros que sostienen la práctica y el aprendizaje compartido."
         actions={
           <Button asChild>
             <Link href="/facilitadora/talleres/nuevo">Programar taller</Link>

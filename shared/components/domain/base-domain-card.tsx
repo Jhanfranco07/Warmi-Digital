@@ -20,7 +20,12 @@ export function BaseDomainCard({
   children
 }: BaseDomainCardProps & { children?: React.ReactNode }) {
   return (
-    <Card className={cn("group overflow-hidden border-outline-variant/60 bg-surface-lowest shadow-soft transition-transform duration-drift hover:-translate-y-1", className)}>
+    <Card
+      className={cn(
+        "border-outline-variant/60 group overflow-hidden bg-surface-lowest shadow-soft transition-transform duration-drift hover:-translate-y-1",
+        className
+      )}
+    >
       {imageUrl ? (
         <div className="relative aspect-[4/3] bg-surface-high">
           <Image

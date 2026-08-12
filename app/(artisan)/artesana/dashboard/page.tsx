@@ -79,7 +79,7 @@ export default async function ArtisanDashboardPage() {
           </div>
           <div className="p-3">
             <p className="font-ui text-xs font-bold text-[#1b1c1a]">
-              {currentCourse?.title ?? "Tecnicas de tejido tradicional andino"}
+              {currentCourse?.title ?? "Técnicas de tejido tradicional andino"}
             </p>
             <p className="mt-2 text-[10px] text-[#5b4a42]">
               {data.generalProgress}% completado
@@ -107,17 +107,17 @@ export default async function ArtisanDashboardPage() {
           <MobileCourse
             image="https://lh3.googleusercontent.com/aida-public/AB6AXuCALyFOMNshlu8spmcZJTvzNV6c0By891ZqDXEBHhPmKcFLhA3xMzyY50ew-aW0BnQE0ss8-gSZ98s-Q5kW52fHNh5NkJp4qEH5Pv8L2p1sxcBVvRnmaZdPcA3WTTI15HVgrQol4UY4_C1EEIUIooGBBiSpRIPVTRNcSavo3TLrQwIqlAFQAJZVxpcNgIpgbxicsiWJaLkadylZrQ2N9C5x6_E2a740t9Sj5ol--qlqt49l9bTsvt-D"
             title="Emprendimiento para artesanas"
-            modules="8 modulos"
+            modules="8 módulos"
           />
           <MobileCourse
             image="https://lh3.googleusercontent.com/aida-public/AB6AXuD3zhbC53_wbrVF6X2y_CUyH1DNCoWJeXPudmWHjxueMx03Shxe9NqMFfHP4p1WNxwaBalanl5HRdQ_hQnJUOiL0YVib0WwJb5Husly6guxFR1Hel5CwTyDAheuAIRzorIFYv59_UwG_7FfBEP1qieoxp93GOgWipmF_btFlxKEDYDHQ3osxtSsXoJJtajLe4XGu1RouNDQbRu6SCf-vTZx4Ov8J0bJzrV6dyvougpAOWFb97Qx-ym8"
             title="Fotografia de productos con celular"
-            modules="6 modulos"
+            modules="6 módulos"
           />
           <MobileCourse
             image="https://lh3.googleusercontent.com/aida-public/AB6AXuCxqQs2n05-zA-CUuMBp3gs33g-G6HMvA1vMqtB6TzE4oR7IVbl6ec4vZmHS4QdYP421CmKIIlk9do1GyQ6CGaFhrMAUiyItjTfKR7nnEyypnL4Dv0Xn3zCZD5_D3ZkxyW5tjwy5dbVKS8B6cQH6T4Tb_a1MEgYDV-ylYnWS05WxrjkHF1kNMdFU5E1psqCcnHkRI2j4jpvMpFi_ers-tIT2VQknnp411QtbVL3JJBJhc_XZ8ADs1Sr"
             title="Marketing digital para artesanas"
-            modules="7 modulos"
+            modules="7 módulos"
           />
         </div>
 
@@ -268,7 +268,7 @@ export default async function ArtisanDashboardPage() {
                   />
                 ))
               ) : (
-                <EmptyState title="Tus logros apareceran aqui" />
+                <EmptyState title="Tus logros aparecerán aquí" />
               )}
             </DashboardList>
 

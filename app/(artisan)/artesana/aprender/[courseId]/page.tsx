@@ -48,7 +48,7 @@ export default async function ArtisanCourseDetailPage({
                   `/artesana/aprender/${courseId}/lecciones/${firstIncompleteLesson.id}` as Route
                 }
               >
-                Continuar mi leccion
+                Continuar mi lección
               </Link>
             </Button>
           ) : null}
@@ -98,7 +98,7 @@ export default async function ArtisanCourseDetailPage({
         </CardHeader>
         <CardContent>
           <p className="text-body-md text-muted-foreground">
-            La facilitadora vinculada aparecera en los talleres asociados al curso.
+            La facilitadora vinculada aparecerá en los talleres asociados al curso.
           </p>
         </CardContent>
       </Card>

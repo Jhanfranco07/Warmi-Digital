@@ -11,7 +11,7 @@ export default async function Page() {
     <Container className="space-y-6 py-8">
       <PageHeader
         title="Mensajes"
-        description="Conversaciones de acompanamiento, sin tiempo real en esta etapa."
+        description="Conversaciones de acompañamiento, sin tiempo real en esta etapa."
       />
       <div className="grid gap-4">
         {conversations.map((conversation) => (

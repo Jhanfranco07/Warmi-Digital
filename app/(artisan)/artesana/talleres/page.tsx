@@ -20,7 +20,7 @@ export default async function ArtisanWorkshopsPage() {
       <PageHeader
         eyebrow="Talleres"
         title="Talleres y encuentros"
-        description="Espacios de acompanamiento para practicar, preguntar y compartir avances."
+        description="Espacios de acompañamiento para practicar, preguntar y compartir avances."
       />
       <WorkshopSection title="Proximos talleres" registrations={upcoming} />
       <WorkshopSection title="Talleres completados" registrations={completed} />
@@ -51,7 +51,7 @@ function WorkshopSection({
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-body-md text-muted-foreground">
-                  {registration.workshop.description ?? "Taller de acompanamiento Warmi."}
+                  {registration.workshop.description ?? "Taller de acompañamiento Warmi."}
                 </p>
                 <p className="text-body-md">
                   {registration.workshop.startsAt
@@ -75,7 +75,7 @@ function WorkshopSection({
           ))}
         </div>
       ) : (
-        <EmptyState title="No hay talleres en esta seccion" />
+        <EmptyState title="No hay talleres en esta sección" />
       )}
     </section>
   );

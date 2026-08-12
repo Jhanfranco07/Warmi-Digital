@@ -26,7 +26,7 @@ export default async function ArtisanShowcasePage() {
       <PageHeader
         eyebrow="Mi vitrina"
         title="Mis piezas culturales"
-        description="Este espacio muestra tus piezas con comunidad, tecnica e historia. El marketplace completo vendra despues."
+        description="Este espacio muestra tus piezas con comunidad, técnica e historia. El marketplace completo vendrá después."
       />
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard title="Productos" value={showcase.products.length} />
@@ -67,7 +67,7 @@ export default async function ArtisanShowcasePage() {
       ) : (
         <EmptyState
           title="Aun no tienes piezas registradas"
-          description="Pronto podras agregar una pieza cultural desde este espacio."
+          description="Pronto podrás agregar una pieza cultural desde este espacio."
         />
       )}
     </Container>

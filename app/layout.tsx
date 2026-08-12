@@ -23,7 +23,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Warmi Digital",
   description:
-    "Ecosistema digital para aprendizaje, comunidad, autonomia y preservacion cultural."
+    "Ecosistema digital para aprendizaje, comunidad, autonomía y preservación cultural."
 };
 
 export default function RootLayout({

@@ -48,7 +48,7 @@ export default function LandingPage() {
         </div>
 
         <p className="warmi-scroll-reveal mx-auto mt-10 max-w-5xl text-center font-serif text-2xl font-bold italic leading-tight text-[#10124f] md:text-3xl">
-          “La tecnologia no reemplaza la tradicion; la conecta con nuevas oportunidades.”
+          “La tecnología no reemplaza la tradición; la conecta con nuevas oportunidades.”
         </p>
       </section>
     </main>

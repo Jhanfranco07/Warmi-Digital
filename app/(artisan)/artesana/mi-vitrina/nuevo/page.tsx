@@ -1,2 +1,19 @@
-import { Container } from "@/shared/components/layout/container"; import { PageHeader } from "@/shared/components/layout/page-header"; import { prisma } from "@/shared/server/db/prisma"; import { ProductForm } from "@/features/marketplace/product-form";
-export default async function Page(){const [categories,craftTypes]=await Promise.all([prisma.category.findMany(),prisma.craftType.findMany()]);return <Container className="max-w-2xl space-y-6 py-8"><PageHeader title="Nueva pieza" description="Cuenta primero la historia, despues los detalles de tu pieza."/><ProductForm categories={categories} craftTypes={craftTypes}/></Container>}
+import { Container } from "@/shared/components/layout/container";
+import { PageHeader } from "@/shared/components/layout/page-header";
+import { prisma } from "@/shared/server/db/prisma";
+import { ProductForm } from "@/features/marketplace/product-form";
+export default async function Page() {
+  const [categories, craftTypes] = await Promise.all([
+    prisma.category.findMany(),
+    prisma.craftType.findMany()
+  ]);
+  return (
+    <Container className="max-w-2xl space-y-6 py-8">
+      <PageHeader
+        title="Nueva pieza"
+        description="Cuenta primero la historia, despues los detalles de tu pieza."
+      />
+      <ProductForm categories={categories} craftTypes={craftTypes} />
+    </Container>
+  );
+}

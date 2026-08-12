@@ -24,7 +24,7 @@ export default async function Page({
     <Container className="space-y-6 py-8">
       <PageHeader
         title="Mis artesanas"
-        description="Seguimiento respetuoso de los procesos que acompanias."
+        description="Seguimiento respetuoso de los procesos que acompañas."
       />
       <form>
         <Input

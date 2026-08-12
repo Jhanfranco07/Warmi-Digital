@@ -11,13 +11,13 @@ export default async function Page() {
   return (
     <Container className="space-y-8 py-8">
       <PageHeader
-        eyebrow="Acompanamiento"
+        eyebrow="Acompañamiento"
         title={`Hola, ${session.user.name ?? "facilitadora"}`}
-        description="Una mirada clara para acompanar cada proceso con cercania."
+        description="Una mirada clara para acompañar cada proceso con cercanía."
       />
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="Artesanas acompanadas"
+          title="Artesanas acompañadas"
           value={data.metrics.accompanied}
           icon={HeartHandshake}
         />
@@ -40,7 +40,7 @@ export default async function Page() {
       <section className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Alertas de acompanamiento</CardTitle>
+            <CardTitle>Alertas de acompañamiento</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {data.monitoring
@@ -52,7 +52,7 @@ export default async function Page() {
                   <span className="text-muted-foreground">
                     {item.status === "INACTIVA"
                       ? "Sin actividad reciente"
-                      : "Puede requerir acompanamiento"}
+                      : "Puede requerir acompañamiento"}
                   </span>
                 </div>
               ))}

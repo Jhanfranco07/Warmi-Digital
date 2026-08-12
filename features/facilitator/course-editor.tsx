@@ -22,7 +22,7 @@ export function CourseEditor() {
         <Input name="title" required />
       </label>
       <label className="grid gap-2">
-        Descripcion
+        Descripción
         <Textarea name="description" />
       </label>
       <label className="grid gap-2">

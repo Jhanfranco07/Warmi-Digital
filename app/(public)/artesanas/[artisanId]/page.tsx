@@ -111,7 +111,7 @@ export default async function ArtisanShowcasePage({
               “
               {story?.summary ??
                 artisan.profile?.bio ??
-                "Cada pieza guarda memoria, tecnica y amor por nuestra comunidad."}
+                "Cada pieza guarda memoria, técnica y amor por nuestra comunidad."}
               ”
             </p>
             <p className="mt-6 max-w-3xl text-base leading-8 text-[#6f4c42] md:text-lg">

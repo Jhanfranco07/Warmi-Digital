@@ -31,7 +31,7 @@ export default async function Page({
     <Container className="space-y-6 py-8">
       <PageHeader
         title={artisan.profile?.displayName ?? artisan.email}
-        description={`${artisan.profile?.community?.name ?? "Sin comunidad"} · ${artisan.profile?.phone ?? "Sin telefono registrado"}`}
+        description={`${artisan.profile?.community?.name ?? "Sin comunidad"} · ${artisan.profile?.phone ?? "Sin teléfono registrado"}`}
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline">
@@ -93,7 +93,7 @@ export default async function Page({
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Historial de acompanamiento</CardTitle>
+          <CardTitle>Historial de acompañamiento</CardTitle>
         </CardHeader>
         <CardContent>
           <Timeline
@@ -104,7 +104,7 @@ export default async function Page({
                     {
                       title: "Sin registros todavia",
                       description:
-                        "Registra el primer acompanamiento cuando corresponda.",
+                        "Registra el primer acompañamiento cuando corresponda.",
                       status: "pending"
                     }
                   ]

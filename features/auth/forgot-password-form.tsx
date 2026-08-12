@@ -61,7 +61,7 @@ export function ForgotPasswordForm() {
 
       <div className="flex flex-col gap-2 pt-4 text-sm text-muted-foreground">
         <Link href="/login" className="text-primary hover:underline">
-          Volver al inicio de sesion
+          Volver al inicio de sesión
         </Link>
       </div>
     </AuthCard>

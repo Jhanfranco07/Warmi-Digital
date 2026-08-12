@@ -16,7 +16,7 @@ async function main() {
     update: {},
     create: {
       name: "FACILITADORA",
-      description: "Rol de facilitadoras y acompanamiento"
+      description: "Rol de facilitadoras y acompañamiento"
     }
   });
   const artisanRole = await prisma.role.upsert({
@@ -51,7 +51,7 @@ async function main() {
       name: "Comunidad Qantu",
       slug: "comunidad-qantu",
       description: "Comunidad de tejido tradicional andino.",
-      location: "Cusco, Peru"
+      location: "Cusco, Perú"
     }
   });
   await prisma.community.upsert({
@@ -61,7 +61,7 @@ async function main() {
       name: "Comunidad Wayra",
       slug: "comunidad-wayra",
       description: "Comunidad de bordado y textil ancestral.",
-      location: "Puno, Peru"
+      location: "Puno, Perú"
     }
   });
   await prisma.community.upsert({
@@ -70,8 +70,8 @@ async function main() {
     create: {
       name: "Comunidad Kusi",
       slug: "comunidad-kusi",
-      description: "Comunidad de ceramica y trabajo con arcilla.",
-      location: "Ayacucho, Peru"
+      description: "Comunidad de cerámica y trabajo con arcilla.",
+      location: "Ayacucho, Perú"
     }
   });
 
@@ -84,18 +84,18 @@ async function main() {
     }
   });
   await prisma.category.upsert({
-    where: { name: "Ceramica" },
+    where: { name: "Cerámica" },
     update: {},
     create: {
-      name: "Ceramica",
-      description: "Objetos de barro y piezas ceramicas con valor cultural."
+      name: "Cerámica",
+      description: "Objetos de barro y piezas cerámicas con valor cultural."
     }
   });
   await prisma.category.upsert({
-    where: { name: "Joyeria" },
+    where: { name: "Joyería" },
     update: {},
     create: {
-      name: "Joyeria",
+      name: "Joyería",
       description: "Accesorios y piezas de metal con significado artesanal."
     }
   });
@@ -106,7 +106,7 @@ async function main() {
     create: {
       key: "TEJIDO",
       name: "Tejido",
-      description: "Tecnica de tejido tradicional."
+      description: "Técnica de tejido tradicional."
     }
   });
   await prisma.craftType.upsert({
@@ -115,7 +115,7 @@ async function main() {
     create: {
       key: "BORDADO",
       name: "Bordado",
-      description: "Tecnica de bordado artesanal."
+      description: "Técnica de bordado artesanal."
     }
   });
   await prisma.craftType.upsert({
@@ -123,8 +123,8 @@ async function main() {
     update: {},
     create: {
       key: "CERAMICA",
-      name: "Ceramica",
-      description: "Tecnica de ceramica ritual y utilitaria."
+      name: "Cerámica",
+      description: "Técnica de cerámica ritual y utilitaria."
     }
   });
 
@@ -132,7 +132,7 @@ async function main() {
     where: { slug: "introduccion-patrimonio-textil" },
     update: { status: "PUBLISHED" },
     create: {
-      title: "Introduccion al patrimonio textil",
+      title: "Introducción al patrimonio textil",
       slug: "introduccion-patrimonio-textil",
       description:
         "Ruta inicial para documentar y compartir el valor cultural del tejido.",
@@ -144,7 +144,7 @@ async function main() {
     where: { slug: "gestion-productos-culturales" },
     update: { status: "PUBLISHED" },
     create: {
-      title: "Gestion de productos culturales",
+      title: "Gestión de productos culturales",
       slug: "gestion-productos-culturales",
       description:
         "Curso para presentar piezas culturales con contexto, cuidado y claridad.",
@@ -154,10 +154,10 @@ async function main() {
   });
 
   for (const badge of [
-    ["Semilla Digital", "LEARNING", "Inicio su primera ruta de aprendizaje digital."],
-    ["Colorista Digital", "PROGRESS", "Avanzo en lecciones y talleres de practica."],
-    ["Emprendedora Digital", "IMPACT", "Publico sus primeras piezas culturales."],
-    ["Guardiana de la Tradicion", "CULTURE", "Documento el origen de su saber."],
+    ["Semilla Digital", "LEARNING", "Inició su primera ruta de aprendizaje digital."],
+    ["Colorista Digital", "PROGRESS", "Avanzó en lecciones y talleres de práctica."],
+    ["Emprendedora Digital", "IMPACT", "Publicó sus primeras piezas culturales."],
+    ["Guardiana de la Tradición", "CULTURE", "Documentó el origen de su saber."],
     ["Maestra Warmi", "IMPACT", "Comparte aprendizajes con su comunidad."]
   ] as const) {
     await prisma.badge.upsert({
@@ -205,7 +205,7 @@ async function main() {
           lastName: "Mamani",
           displayName: "Elena Mamani",
           locale: "es",
-          bio: "Artesana textil que preserva tecnicas aprendidas en familia.",
+          bio: "Artesana textil que preserva técnicas aprendidas en familia.",
           communityId: qantu.id,
           craftTypes: { create: [{ craftTypeId: tejido.id }] }
         }
@@ -248,7 +248,7 @@ async function main() {
       slug: "presentar-mi-saber-textil",
       type: "TEXT",
       content:
-        "Escribe una breve presentacion de tu tecnica, tu comunidad y el significado de una pieza importante.",
+        "Escribe una breve presentación de tu técnica, tu comunidad y el significado de una pieza importante.",
       durationMin: 15,
       order: 1
     }
@@ -262,7 +262,7 @@ async function main() {
       slug: "fotografiar-mi-proceso",
       type: "VIDEO",
       content:
-        "Aprende a tomar fotografias claras de tu proceso artesanal usando tu celular.",
+        "Aprende a tomar fotografías claras de tu proceso artesanal usando tu celular.",
       durationMin: 20,
       order: 2
     }
@@ -306,7 +306,7 @@ async function main() {
     create: {
       userId: artisan.id,
       badgeId: semilla.id,
-      reason: "Inicio su camino de aprendizaje en Warmi Digital."
+      reason: "Inició su camino de aprendizaje en Warmi Digital."
     }
   });
 
@@ -314,7 +314,7 @@ async function main() {
     data: {
       title: "Taller: contar la historia de una pieza",
       description:
-        "Encuentro para practicar como narrar el origen y significado de una pieza cultural.",
+        "Encuentro para practicar cómo narrar el origen y significado de una pieza cultural.",
       courseId: course.id,
       moduleId: moduleOne.id,
       facilitatorId: facilitator.id,
@@ -339,18 +339,18 @@ async function main() {
       userId: artisan.id,
       communityId: qantu.id,
       craftTypeId: tejido.id,
-      title: "Los hilos que aprendi de mi abuela",
+      title: "Los hilos que aprendí de mi abuela",
       summary: "Una historia familiar preservada en cada tejido.",
       content:
         "Mi historia nace en mi comunidad y en las manos de mi abuela. Cada pieza conserva memoria familiar y aprendizaje compartido.",
       publicName: "Elena Mamani",
       personalStory:
-        "Aprendi mirando a mi abuela preparar los hilos y contar historias mientras tejia.",
+        "Aprendí mirando a mi abuela preparar los hilos y contar historias mientras tejía.",
       artisanJourney:
-        "Empece con piezas pequenas para mi familia y hoy comparto tejidos de mi comunidad.",
+        "Empecé con piezas pequeñas para mi familia y hoy comparto tejidos de mi comunidad.",
       knowledgeOrigin: "El conocimiento viene de mi familia y de las mujeres mayores.",
       learnedFrom: "Mi abuela y mi madre",
-      techniques: "Tejido en telar, combinacion de colores naturales",
+      techniques: "Tejido en telar, combinación de colores naturales",
       culturalMeaning:
         "Mis tejidos representan cuidado, memoria y continuidad entre generaciones."
     }
@@ -366,10 +366,10 @@ async function main() {
       craftTypeId: tejido.id,
       name: "Manta Qantu de memoria familiar",
       slug: "manta-qantu-memoria-familiar",
-      description: "Pieza textil elaborada con tecnica familiar.",
+      description: "Pieza textil elaborada con técnica familiar.",
       culturalPhrase: "Cada hilo conserva una historia transmitida por generaciones.",
       story: "La manta representa el camino de aprendizaje de tres generaciones.",
-      makingTime: "12 dias",
+      makingTime: "12 días",
       materials: "Fibra natural y tintes suaves",
       technique: "Tejido en telar",
       price: 180,
@@ -378,21 +378,76 @@ async function main() {
   });
 
   const showcaseArtisans = [
-    { email: "maria@warmi.test", firstName: "Maria", lastName: "Huaman", name: "Maria Huaman", product: "Chumpi de los caminos", slug: "chumpi-caminos-maria", phrase: "Los caminos de mi comunidad viven en cada figura tejida." },
-    { email: "juana@warmi.test", firstName: "Juana", lastName: "Quispe", name: "Juana Quispe", product: "Manta de amanecer", slug: "manta-amanecer-juana", phrase: "Los colores recuerdan la luz que llega a nuestra comunidad." },
-    { email: "rosa@warmi.test", firstName: "Rosa", lastName: "Condori", name: "Rosa Condori", product: "Bolso de flores andinas", slug: "bolso-flores-andinas-rosa", phrase: "Cada flor bordada celebra a las mujeres que me ensenaron." }
+    {
+      email: "maria@warmi.test",
+      firstName: "María",
+      lastName: "Huamán",
+      name: "María Huamán",
+      product: "Chumpi de los caminos",
+      slug: "chumpi-caminos-maria",
+      phrase: "Los caminos de mi comunidad viven en cada figura tejida."
+    },
+    {
+      email: "juana@warmi.test",
+      firstName: "Juana",
+      lastName: "Quispe",
+      name: "Juana Quispe",
+      product: "Manta de amanecer",
+      slug: "manta-amanecer-juana",
+      phrase: "Los colores recuerdan la luz que llega a nuestra comunidad."
+    },
+    {
+      email: "rosa@warmi.test",
+      firstName: "Rosa",
+      lastName: "Condori",
+      name: "Rosa Condori",
+      product: "Bolso de flores andinas",
+      slug: "bolso-flores-andinas-rosa",
+      phrase: "Cada flor bordada celebra a las mujeres que me enseñaron."
+    }
   ];
 
   for (const item of showcaseArtisans) {
     const person = await prisma.user.upsert({
       where: { email: item.email },
       update: { passwordHash },
-      create: { email: item.email, passwordHash, userRoles: { create: [{ roleId: artisanRole.id }] }, profile: { create: { firstName: item.firstName, lastName: item.lastName, displayName: item.name, communityId: qantu.id, bio: "Artesana de demostracion de Warmi Digital.", craftTypes: { create: [{ craftTypeId: tejido.id }] } } } }
+      create: {
+        email: item.email,
+        passwordHash,
+        userRoles: { create: [{ roleId: artisanRole.id }] },
+        profile: {
+          create: {
+            firstName: item.firstName,
+            lastName: item.lastName,
+            displayName: item.name,
+            communityId: qantu.id,
+            bio: "Artesana de demostración de Warmi Digital.",
+            craftTypes: { create: [{ craftTypeId: tejido.id }] }
+          }
+        }
+      }
     });
     await prisma.product.upsert({
       where: { slug: item.slug },
       update: { status: "PUBLISHED", available: true },
-      create: { artisanId: person.id, categoryId: textiles.id, communityId: qantu.id, craftTypeId: tejido.id, name: item.product, slug: item.slug, description: "Pieza cultural de demostracion creada para la vitrina Warmi.", culturalPhrase: item.phrase, story: "Una pieza creada desde el aprendizaje familiar y el respeto por el patrimonio vivo.", culturalMeaning: "Memoria, cuidado y continuidad entre generaciones.", materials: "Fibra natural y tintes suaves", technique: "Tejido y bordado a mano", makingTime: "8 dias", price: 160, status: "PUBLISHED" }
+      create: {
+        artisanId: person.id,
+        categoryId: textiles.id,
+        communityId: qantu.id,
+        craftTypeId: tejido.id,
+        name: item.product,
+        slug: item.slug,
+        description: "Pieza cultural de demostración creada para la vitrina Warmi.",
+        culturalPhrase: item.phrase,
+        story:
+          "Una pieza creada desde el aprendizaje familiar y el respeto por el patrimonio vivo.",
+        culturalMeaning: "Memoria, cuidado y continuidad entre generaciones.",
+        materials: "Fibra natural y tintes suaves",
+        technique: "Tejido y bordado a mano",
+        makingTime: "8 días",
+        price: 160,
+        status: "PUBLISHED"
+      }
     });
   }
   await prisma.order.create({
@@ -416,7 +471,7 @@ async function main() {
   await prisma.announcement.create({
     data: {
       title: "Convocatoria para feria de saberes textiles",
-      body: "Programa de participacion para artesanas que desean presentar una pieza con historia documentada.",
+      body: "Programa de participación para artesanas que desean presentar una pieza con historia documentada.",
       authorId: adminUser.id,
       communityId: qantu.id,
       publishedAt: new Date(),
@@ -428,13 +483,13 @@ async function main() {
   for (const notification of [
     {
       type: "LEARNING" as const,
-      title: "Continua tu primera leccion",
-      body: "Tu ruta de aprendizaje ya esta lista para seguir avanzando."
+      title: "Continúa tu primera lección",
+      body: "Tu ruta de aprendizaje ya está lista para seguir avanzando."
     },
     {
       type: "COMMUNITY" as const,
-      title: "Tu historia cultural esta registrada",
-      body: "Puedes editarla y completarla cuando tengas nuevas fotografias."
+      title: "Tu historia cultural está registrada",
+      body: "Puedes editarla y completarla cuando tengas nuevas fotografías."
     },
     {
       type: "ORDER" as const,

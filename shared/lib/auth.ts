@@ -28,7 +28,7 @@ export const authOptions: NextAuthConfig = {
       name: "Correo y contrasena",
       credentials: {
         email: { label: "Correo", type: "email" },
-        password: { label: "Contrasena", type: "password" }
+        password: { label: "Contraseña", type: "password" }
       },
       async authorize(credentials: Credentials) {
         const parsed = loginSchema.safeParse({

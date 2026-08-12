@@ -19,7 +19,7 @@ export default async function ArtisanStoryPage() {
       <PageHeader
         eyebrow="Mi historia"
         title="Ficha de patrimonio cultural vivo"
-        description="Cuenta de donde viene tu saber, que significa tu tecnica y que historia conserva tu trabajo."
+        description="Cuenta de dónde viene tu saber, qué significa tu técnica y qué historia conserva tu trabajo."
       />
 
       {story ? (
@@ -46,7 +46,7 @@ export default async function ArtisanStoryPage() {
         </Card>
       ) : (
         <EmptyState
-          title="Tu historia aun no esta registrada"
+          title="Tu historia aún no está registrada"
           description="Puedes empezar con pocas palabras y completarla con calma."
         />
       )}

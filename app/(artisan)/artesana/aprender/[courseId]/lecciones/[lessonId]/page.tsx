@@ -44,7 +44,7 @@ export default async function ArtisanLessonPage({
             </div>
           ) : null}
           <div className="prose prose-sm max-w-none text-body-lg">
-            <p>{lesson.content ?? "Contenido de la leccion pendiente de ampliar."}</p>
+            <p>{lesson.content ?? "Contenido de la lección pendiente de ampliar."}</p>
           </div>
           <LessonCompletionButton
             courseId={courseId}
@@ -56,7 +56,7 @@ export default async function ArtisanLessonPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Recursos y actividad practica</CardTitle>
+          <CardTitle>Recursos y actividad práctica</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {lesson.lessonFiles.length ? (
@@ -72,13 +72,13 @@ export default async function ArtisanLessonPage({
             ))
           ) : (
             <p className="text-body-md text-muted-foreground">
-              La facilitadora aun no agrego materiales descargables.
+              La facilitadora aún no agregó materiales descargables.
             </p>
           )}
           <div className="rounded-md border border-border p-3">
-            <p className="font-medium">Actividad practica</p>
+            <p className="font-medium">Actividad práctica</p>
             <p className="mt-1 text-body-md text-muted-foreground">
-              Aplica esta leccion en una pieza, foto o nota de tu proceso artesanal.
+              Aplica esta lección en una pieza, foto o nota de tu proceso artesanal.
             </p>
           </div>
         </CardContent>

@@ -71,11 +71,11 @@ export function RegisterForm() {
               Registro artesana
             </p>
             <h1 className="mt-3 max-w-2xl font-serif text-6xl font-bold leading-tight xl:text-7xl">
-              Tu historia tambien es patrimonio vivo.
+              Tu historia también es patrimonio vivo.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-white/90 xl:text-lg xl:leading-8">
               Crea tu cuenta para iniciar tu ruta de aprendizaje, documentar tu oficio y
-              fortalecer tu autonomia digital.
+              fortalecer tu autonomía digital.
             </p>
           </div>
         </aside>
@@ -141,13 +141,13 @@ export function RegisterForm() {
               <div className="grid gap-4 md:grid-cols-2">
                 <TextField
                   name="password"
-                  label="Contrasena"
+                  label="Contraseña"
                   type="password"
                   placeholder="********"
                 />
                 <TextField
                   name="confirmPassword"
-                  label="Confirmar contrasena"
+                  label="Confirmar contraseña"
                   type="password"
                   placeholder="********"
                 />
@@ -157,8 +157,8 @@ export function RegisterForm() {
                 <div className="flex gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#b5245b]" />
                   <p>
-                    Tu cuenta se crea como artesana. Mas adelante podras completar tu
-                    comunidad, tecnica e historia cultural.
+                    Tu cuenta se crea como artesana. Más adelante podrás completar tu
+                    comunidad, técnica e historia cultural.
                   </p>
                 </div>
               </div>
@@ -177,9 +177,9 @@ export function RegisterForm() {
             </form>
 
             <div className="mt-5 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 xl:text-base">
-              <span className="text-[#5b4a42]">Ya tienes una cuenta?</span>
+              <span className="text-[#5b4a42]">¿Ya tienes una cuenta?</span>
               <Link href="/login" className="font-bold text-[#7a3100] hover:underline">
-                Volver al inicio de sesion
+                Volver al inicio de sesión
               </Link>
             </div>
           </div>

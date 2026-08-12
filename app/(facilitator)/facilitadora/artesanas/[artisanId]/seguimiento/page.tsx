@@ -21,7 +21,7 @@ export default async function Page({
     <Container className="max-w-3xl space-y-6 py-8">
       <PageHeader
         title="Registrar seguimiento"
-        description={`Acompanamiento para ${assignment.artisan.profile?.displayName ?? assignment.artisan.email}`}
+        description={`Acompañamiento para ${assignment.artisan.profile?.displayName ?? assignment.artisan.email}`}
       />
       <Card>
         <CardContent className="pt-6">

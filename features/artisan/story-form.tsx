@@ -67,8 +67,8 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
           <CardTitle>Identidad cultural</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
-          <Field label="Nombre publico" error={errors.publicName?.message}>
-            <Input {...register("publicName")} placeholder="Como quieres aparecer" />
+          <Field label="Nombre público" error={errors.publicName?.message}>
+            <Input {...register("publicName")} placeholder="Cómo quieres aparecer" />
           </Field>
           <Field label="Titulo de tu historia" error={errors.title?.message}>
             <Input {...register("title")} placeholder="Mi camino con el tejido" />
@@ -96,7 +96,7 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
               onValueChange={(value) => setValue("craftTypeId", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona tu tecnica" />
+                <SelectValue placeholder="Selecciona tu técnica" />
               </SelectTrigger>
               <SelectContent>
                 {craftTypes.map((craftType) => (

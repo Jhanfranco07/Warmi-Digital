@@ -14,17 +14,17 @@ const programPillars = [
   {
     title: "Objetivo general",
     icon: Target,
-    text: "Que aprendan a usar su celular para vender sus productos, prepararse para participar en concursos, ferias y hacer sus propios tramites, con la ayuda de una facilitadora y de otras artesanas."
+    text: "Que aprendan a usar su celular para vender sus productos, prepararse para participar en concursos, ferias y hacer sus propios trámites, con la ayuda de una facilitadora y de otras artesanas."
   },
   {
-    title: "Mision",
+    title: "Misión",
     icon: ShoppingBag,
-    text: "Ensenarles a usar herramientas digitales de forma practica y con acompanamiento, para que su celular sea una herramienta de trabajo, tengan mas ventas y participen en concursos que les ayuden a crecer."
+    text: "Enseñarles a usar herramientas digitales de forma práctica y con acompañamiento, para que su celular sea una herramienta de trabajo, tengan más ventas y participen en concursos que les ayuden a crecer."
   },
   {
-    title: "Vision",
+    title: "Visión",
     icon: UsersRound,
-    text: "Ser un ejemplo en la region Cajamarca de como las artesanas pueden usar la tecnologia junto al apoyo de su comunidad, para que ninguna se quede atras y todas tengan oportunidades de salir adelante con su trabajo."
+    text: "Ser un ejemplo en la región Cajamarca de cómo las artesanas pueden usar la tecnología junto al apoyo de su comunidad, para que ninguna se quede atrás y todas tengan oportunidades de salir adelante con su trabajo."
   }
 ];
 
@@ -66,7 +66,7 @@ export default function ProgramaPage() {
                     ))}
                   </div>
                   <p className="mt-5 max-w-3xl font-serif text-3xl italic leading-tight text-[#b5245b]">
-                    La tecnologia no reemplaza la tradicion; la conecta con nuevas
+                    La tecnología no reemplaza la tradición; la conecta con nuevas
                     oportunidades.
                   </p>
                 </div>

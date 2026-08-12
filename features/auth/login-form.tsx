@@ -29,7 +29,7 @@ const roles = {
     eyebrow: "Ingreso artesana",
     title: "Bienvenida a tu taller",
     description:
-      "Continua tu ruta de aprendizaje, fortalece tu historia y prepara tu vitrina cultural cuando tu proceso este listo.",
+      "Continúa tu ruta de aprendizaje, fortalece tu historia y prepara tu vitrina cultural cuando tu proceso esté listo.",
     button: "Ingresar como artesana",
     accent: "#b5245b",
     soft: "#fff0f5",
@@ -47,7 +47,7 @@ const roles = {
     eyebrow: "Ingreso facilitadora",
     title: "Bienvenida, facilitadora",
     description:
-      "Acompana avances, organiza recursos y guia a las artesanas durante su camino digital.",
+      "Acompaña avances, organiza recursos y guía a las artesanas durante su camino digital.",
     button: "Ingresar como facilitadora",
     accent: "#d39a12",
     soft: "#fff7df",
@@ -55,8 +55,8 @@ const roles = {
     image: "/images/auth/facilitadora.png",
     icon: UsersRound,
     highlights: [
-      { icon: BookOpen, label: "Guias y materiales" },
-      { icon: UsersRound, label: "Acompana y orienta" },
+      { icon: BookOpen, label: "Guías y materiales" },
+      { icon: UsersRound, label: "Acompaña y orienta" },
       { icon: TrendingUp, label: "Impulsa su desarrollo" }
     ]
   }
@@ -100,7 +100,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
         const result = await login(formData);
 
         if (!result.success) {
-          setError(result.message ?? "No se pudo iniciar sesion.");
+          setError(result.message ?? "No se pudo iniciar sesión.");
           return;
         }
 
@@ -143,7 +143,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
 
         <div className="mt-3 shrink-0 border-t-4 border-[#2f62a3] pt-3 text-center md:mt-4 md:pt-4">
           <p className="font-ui text-sm font-bold uppercase text-[#b5245b] xl:text-base">
-            Como deseas ingresar?
+            ¿Cómo deseas ingresar?
           </p>
         </div>
 
@@ -284,7 +284,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 </label>
                 <label className="block">
                   <span className="font-ui text-sm font-bold text-[#5b4a42] xl:text-base">
-                    Contrasena
+                    Contraseña
                   </span>
                   <Input
                     className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 text-base shadow-none focus-visible:ring-0 xl:h-14 xl:text-lg"
@@ -304,13 +304,13 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                       className="h-4 w-4 rounded border-[#d8b9a8]"
                       style={{ accentColor: activeRole.accent }}
                     />
-                    Recordar sesion
+                    Recordar sesión
                   </label>
                   <Link
                     href="/forgot-password"
                     className="text-[#7a3100] hover:underline"
                   >
-                    Olvidaste tu contrasena?
+                    ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
 

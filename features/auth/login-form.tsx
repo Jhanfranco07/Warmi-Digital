@@ -131,11 +131,20 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           </p>
         </div>
 
-        <div
+        <motion.div
+          layout
           className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:grid-cols-[minmax(640px,1.1fr)_minmax(580px,0.9fr)] 2xl:min-h-0"
           style={{ borderColor: activeRole.border }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
         >
-          <div className="relative min-h-[320px] overflow-hidden bg-[#f7efe9] sm:min-h-[450px] lg:min-h-[760px] 2xl:min-h-0">
+          <motion.div
+            layout
+            className={cn(
+              "relative min-h-[320px] overflow-hidden bg-[#f7efe9] sm:min-h-[450px] lg:min-h-[760px] 2xl:min-h-0",
+              role === "facilitadora" ? "lg:order-2" : "lg:order-1"
+            )}
+            transition={{ duration: 0.45, ease: "easeInOut" }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={role}
@@ -191,11 +200,16 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 {activeRole.description}
               </p>
             </motion.div>
-          </div>
+          </motion.div>
 
-          <div
-            className="flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14"
+          <motion.div
+            layout
+            className={cn(
+              "flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14",
+              role === "facilitadora" ? "lg:order-1" : "lg:order-2"
+            )}
             style={{ backgroundColor: activeRole.soft }}
+            transition={{ duration: 0.45, ease: "easeInOut" }}
           >
             <div className="mx-auto w-full max-w-[720px]">
               <motion.div
@@ -304,8 +318,8 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 Crear cuenta de artesana
               </Link>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
     </main>
   );

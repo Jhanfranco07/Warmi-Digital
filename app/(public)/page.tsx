@@ -115,7 +115,7 @@ export default function LandingPage() {
               width={360}
               height={360}
               priority
-              className="aspect-square w-36 rounded-full bg-white/95 object-contain p-4 shadow-[0_18px_46px_rgba(0,0,0,0.24)] ring-2 ring-white/70 md:w-52"
+              className="aspect-square w-32 rounded-full bg-white/90 object-contain p-1.5 shadow-[0_14px_34px_rgba(0,0,0,0.22)] ring-1 ring-white/70 md:w-44"
             />
             <h1 className="mt-5 font-serif text-4xl font-bold leading-tight tracking-[0.18em] text-white sm:text-5xl md:text-7xl">
               WARMI DIGITAL

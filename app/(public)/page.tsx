@@ -102,7 +102,7 @@ export default function LandingPage() {
     <main className="bg-white text-[#123f78]">
       <section className="relative min-h-[520px] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center grayscale"
+          className="warmi-hero-photo absolute inset-0 bg-cover bg-center grayscale"
           style={{
             backgroundImage: `linear-gradient(rgba(27,28,26,.42),rgba(27,28,26,.42)),url(${hero})`
           }}
@@ -137,7 +137,7 @@ export default function LandingPage() {
       </nav>
 
       <section id="programa" className="bg-white">
-        <Container className="px-4 py-14 md:py-16">
+        <div className="mx-auto w-full max-w-[1680px] px-4 py-14 md:px-8 md:py-20">
           <div className="relative border-t-2 border-[#d9d9d9] pt-8">
             <div className="inline-flex bg-[#5576a7] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-12 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
@@ -145,16 +145,18 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="mt-7 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-              <div
-                className="min-h-[360px] bg-cover bg-center md:min-h-[520px]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
-                }}
-              />
+            <div className="warmi-scroll-reveal mt-8 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div className="group min-h-[420px] overflow-hidden md:min-h-[640px]">
+                <div
+                  className="h-full min-h-[420px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 md:min-h-[640px]"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(/images/programa/programa-warmi.png)"
+                  }}
+                />
+              </div>
 
-              <div>
+              <div className="warmi-scroll-reveal">
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                   <div>
                     <div className="flex gap-2">
@@ -224,11 +226,11 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
       <section id="descubre" className="bg-white">
-        <Container className="px-4 py-14 md:py-16">
+        <div className="mx-auto w-full max-w-[1680px] px-4 py-14 md:px-8 md:py-16">
           <div className="relative border-t-2 border-[#d9d9d9] pt-7">
             <div className="inline-flex bg-[#ea9b62] px-8 py-4 md:absolute md:-top-9 md:left-0 md:px-10 md:py-5">
               <h2 className="font-ui text-2xl font-extrabold uppercase text-white md:text-3xl">
@@ -241,19 +243,23 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white md:grid-cols-4">
+          <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 overflow-hidden bg-white md:grid-cols-4">
             {discovery.map((item) => (
               <div
                 key={item.title}
-                className="min-h-[135px] bg-cover bg-center sm:min-h-[180px] md:min-h-[250px]"
-                style={{
-                  backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${item.image})`
-                }}
-              />
+                className="group min-h-[160px] overflow-hidden sm:min-h-[220px] md:min-h-[310px]"
+              >
+                <div
+                  className="h-full min-h-[160px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 sm:min-h-[220px] md:min-h-[310px]"
+                  style={{
+                    backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${item.image})`
+                  }}
+                />
+              </div>
             ))}
           </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 md:mt-10 md:grid-cols-4 md:gap-x-8 md:gap-y-5">
+          <div className="warmi-scroll-reveal mt-8 grid gap-4 sm:grid-cols-2 md:mt-10 md:grid-cols-4 md:gap-x-8 md:gap-y-5">
             {discovery.map((item, index) => {
               const Icon = item.icon;
 
@@ -284,7 +290,7 @@ export default function LandingPage() {
               );
             })}
           </div>
-        </Container>
+        </div>
       </section>
 
       <section id="identidad" className="border-y-[6px] border-[#55d2dd] bg-[#ecfcfd]">

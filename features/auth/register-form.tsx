@@ -53,7 +53,7 @@ export function RegisterForm() {
 
   return (
     <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a]">
-      <section className="mx-auto grid min-h-screen w-full max-w-[1720px] gap-0 px-3 py-3 sm:px-6 lg:grid-cols-[minmax(520px,0.95fr)_minmax(620px,1.05fr)] lg:px-10 lg:py-6 2xl:px-12">
+      <section className="mx-auto grid min-h-screen w-full max-w-[1880px] gap-0 px-3 py-3 sm:px-6 lg:grid-cols-[minmax(640px,0.95fr)_minmax(720px,1.05fr)] lg:px-8 lg:py-5 xl:px-10 2xl:px-12">
         <aside className="relative hidden overflow-hidden rounded-l-lg bg-[#fff0f5] lg:block">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -63,16 +63,16 @@ export function RegisterForm() {
             }}
           />
           <div className="absolute left-8 top-8 rounded-full bg-white/90 px-5 py-3 shadow-[0_12px_34px_rgba(27,28,26,0.18)]">
-            <WarmiLogo compact markClassName="w-36" />
+            <WarmiLogo compact markClassName="w-36 xl:w-44" />
           </div>
-          <div className="absolute inset-x-0 bottom-0 p-8 text-white">
-            <p className="font-ui text-sm font-bold uppercase tracking-[0.08em]">
+          <div className="absolute inset-x-0 bottom-0 p-8 text-white xl:p-10">
+            <p className="font-ui text-sm font-bold uppercase tracking-[0.08em] xl:text-base">
               Registro artesana
             </p>
-            <h1 className="mt-3 max-w-xl font-serif text-6xl font-bold leading-tight">
+            <h1 className="mt-3 max-w-2xl font-serif text-6xl font-bold leading-tight xl:text-7xl">
               Tu historia tambien es patrimonio vivo.
             </h1>
-            <p className="mt-4 max-w-lg text-base leading-7 text-white/90">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/90 xl:text-lg xl:leading-8">
               Crea tu cuenta para iniciar tu ruta de aprendizaje, documentar tu oficio y
               fortalecer tu autonomia digital.
             </p>
@@ -80,7 +80,7 @@ export function RegisterForm() {
         </aside>
 
         <section className="flex items-center justify-center rounded-lg border border-[#e2a0ba] bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] lg:rounded-l-none">
-          <div className="w-full max-w-[820px] p-4 sm:p-6 md:p-8 xl:p-10">
+          <div className="w-full max-w-[980px] p-4 sm:p-6 md:p-8 xl:p-12">
             <header className="mb-5 flex items-start justify-between gap-3 lg:hidden">
               <WarmiLogo compact markClassName="w-28" />
               <Link href="/login" className="text-sm font-bold text-[#7a3100]">
@@ -89,13 +89,13 @@ export function RegisterForm() {
             </header>
 
             <div className="border-t-4 border-[#5576a7] pt-4 md:pt-5">
-              <p className="font-ui text-sm font-bold uppercase text-[#b5245b]">
+              <p className="font-ui text-sm font-bold uppercase text-[#b5245b] xl:text-base">
                 Crea tu cuenta
               </p>
-              <h2 className="mt-2 font-serif text-3xl font-bold leading-tight md:text-5xl xl:text-6xl">
+              <h2 className="mt-2 font-serif text-3xl font-bold leading-tight md:text-5xl xl:text-7xl">
                 Registro de artesana
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#5b4a42] xl:text-base">
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-[#5b4a42] xl:text-lg xl:leading-8">
                 Ingresa tus datos para acceder a tu espacio de aprendizaje, historia y
                 comunidad.
               </p>
@@ -108,16 +108,16 @@ export function RegisterForm() {
                 return (
                   <div
                     key={step.label}
-                    className="flex min-h-[66px] flex-col items-center justify-center rounded-md bg-[#fff0f5] px-1.5 py-2 text-center text-[10px] font-bold leading-tight text-[#b5245b] sm:text-[11px] xl:min-h-[82px] xl:text-xs"
+                    className="flex min-h-[66px] flex-col items-center justify-center rounded-md bg-[#fff0f5] px-1.5 py-2 text-center text-[10px] font-bold leading-tight text-[#b5245b] sm:text-[11px] xl:min-h-[92px] xl:text-sm"
                   >
-                    <Icon className="mx-auto mb-1 h-5 w-5" />
+                    <Icon className="mx-auto mb-1 h-5 w-5 xl:h-6 xl:w-6" />
                     {step.label}
                   </div>
                 );
               })}
             </div>
 
-            <form className="mt-5 grid gap-4 md:mt-6 xl:gap-5" onSubmit={handleSubmit}>
+            <form className="mt-5 grid gap-4 md:mt-6 xl:gap-6" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <TextField name="firstName" label="Nombre" placeholder="Maria" />
                 <TextField name="lastName" label="Apellido" placeholder="Quispe" />
@@ -148,7 +148,7 @@ export function RegisterForm() {
                 />
               </div>
 
-              <div className="rounded-md border border-[#f0c3cf] bg-[#fff7f9] p-3 text-sm leading-6 text-[#5b4a42]">
+              <div className="rounded-md border border-[#f0c3cf] bg-[#fff7f9] p-3 text-sm leading-6 text-[#5b4a42] xl:p-4 xl:text-base xl:leading-7">
                 <div className="flex gap-2">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#b5245b]" />
                   <p>
@@ -162,7 +162,7 @@ export function RegisterForm() {
               {success ? <p className="text-sm text-[#14715d]">{success}</p> : null}
 
               <Button
-                className="min-h-touch-target rounded-full bg-[#b5245b] font-ui text-label-ui text-white hover:bg-[#9f1f50]"
+                className="min-h-touch-target rounded-full bg-[#b5245b] font-ui text-label-ui text-white hover:bg-[#9f1f50] xl:min-h-[56px] xl:text-base"
                 type="submit"
                 disabled={isPending}
               >
@@ -171,7 +171,7 @@ export function RegisterForm() {
               </Button>
             </form>
 
-            <div className="mt-5 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+            <div className="mt-5 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 xl:text-base">
               <span className="text-[#5b4a42]">Ya tienes una cuenta?</span>
               <Link href="/login" className="font-bold text-[#7a3100] hover:underline">
                 Volver al inicio de sesion
@@ -197,9 +197,11 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="font-ui text-sm font-bold text-[#5b4a42]">{label}</span>
+      <span className="font-ui text-sm font-bold text-[#5b4a42] xl:text-base">
+        {label}
+      </span>
       <Input
-        className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-transparent px-0 shadow-none focus-visible:ring-0"
+        className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-transparent px-0 text-base shadow-none focus-visible:ring-0 xl:h-14 xl:text-lg"
         name={name}
         type={type}
         placeholder={placeholder}

@@ -1,8 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import type { Route } from "next";
 import {
-  ArrowRight,
   Building2,
   CheckCircle2,
   ExternalLink,
@@ -148,21 +145,7 @@ export default function AprenderParaCrecerPage() {
       <section className="mx-auto w-full max-w-[1860px] px-4 py-8 md:px-8 md:py-12 lg:px-12">
         <div className="warmi-scroll-reveal grid gap-8 border-t-2 border-[#d9d9d9] pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
           <div>
-            <Link
-              href={"/descubre" as Route}
-              className="inline-flex items-center gap-2 font-ui text-sm font-bold uppercase text-[#b5245b] transition-colors hover:text-[#7a1042]"
-            >
-              <ArrowRight className="h-4 w-4 rotate-180" />
-              Volver a Descubre
-            </Link>
-
-            <div className="mt-6 inline-flex bg-[#2f62a3] px-6 py-4 md:px-10">
-              <h1 className="font-ui text-2xl font-extrabold uppercase tracking-[0.04em] text-white md:text-4xl">
-                Aprender para crecer
-              </h1>
-            </div>
-
-            <div className="mt-6 flex gap-2">
+            <div className="flex gap-2">
               {palette.map((color) => (
                 <span
                   key={color}

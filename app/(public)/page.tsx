@@ -14,8 +14,7 @@ import {
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
 import { Container } from "@/shared/components/layout/container";
 
-const hero =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAx1EYaB9Blh965Nub9RDokUeqX6dIW3zuusAKDcWEaZwtlK2mZC18YCzYeKF9a-Djz_ft7lsqcXZwhx2VhRwJKAVrSy_sFvB4jp3SUDvQlUCv6MnrH9K1Mc4ABDVTjfK_MJ1a-LfuwRS7yAUAIDk2FRw0xGyGjMeLqKzHh_9FXLAjGR4CmiytIgLLt-fQ2C_3E7DMFWc8ufz2Bop1AckIX-lgdkfKoXK-AITeYCIk8C7ym7G_Ey1TI";
+const hero = "/images/hero/warmi-hero.png";
 
 const actions = [
   {

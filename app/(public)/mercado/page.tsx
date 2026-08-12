@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { Grid2X2, MapPin, Search, Volume2 } from "lucide-react";
 
+import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
 import { Input } from "@/shared/components/ui/input";
 import { prisma } from "@/shared/server/db/prisma";
@@ -102,8 +103,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
   return (
     <main className="min-h-screen bg-[#fffaf8] text-[#30130d]">
+      <WarmiPublicHeader navOnly />
+
       <section className="mx-auto w-full max-w-[1760px] px-4 py-8 md:px-8 lg:px-12">
-        <header className="grid gap-6 border-b border-[#e9cfc4] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
+        <header className="warmi-scroll-reveal grid gap-6 border-b border-[#e9cfc4] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <div className="mb-4 w-28 md:w-36">
               <WarmiLogo compact markClassName="w-full" />
@@ -162,19 +165,19 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               <Link
                 key={item.id}
                 href={`/artesanas/${item.id}` as Route}
-                className="group border border-[#ead4ca] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-transform duration-300 hover:-translate-y-1"
+                className="warmi-scroll-reveal group overflow-visible border border-[#ead4ca] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_28px_62px_rgba(122,49,0,0.13)]"
               >
                 <div
-                  className="relative min-h-[310px] overflow-hidden bg-cover bg-center"
+                  className="relative min-h-[310px] bg-cover bg-center"
                   style={{ backgroundImage: `url(${image})` }}
                 >
                   <span className="from-[#30130d]/28 absolute inset-0 bg-gradient-to-t to-transparent" />
                   <span
-                    className="absolute -bottom-10 right-7 h-32 w-32 rounded-full border-4 border-white bg-cover bg-center shadow-[0_12px_34px_rgba(48,19,13,0.24)] transition-transform duration-300 group-hover:scale-105"
+                    className="absolute -bottom-16 right-7 z-10 h-32 w-32 rounded-full border-4 border-white bg-cover bg-center shadow-[0_12px_34px_rgba(48,19,13,0.24)] transition-transform duration-500 group-hover:scale-110 md:-bottom-14"
                     style={{ backgroundImage: `url(${texture})` }}
                   />
                 </div>
-                <div className="p-5 pr-36">
+                <div className="p-5 pr-40 pt-8 md:pt-6">
                   <h2 className="font-serif text-3xl font-bold text-[#7a3100]">
                     {item.profile?.displayName ?? item.name ?? "Artesana Warmi"}
                   </h2>

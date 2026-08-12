@@ -48,14 +48,14 @@ export default function DescubrePage() {
       <WarmiPublicHeader compact />
 
       <section className="mx-auto w-full max-w-[1860px] px-4 py-10 md:px-8 md:py-14 lg:px-12">
-        <div className="border-t-2 border-[#d9d9d9] pt-8">
+        <div className="warmi-scroll-reveal border-t-2 border-[#d9d9d9] pt-8">
           <p className="max-w-[1500px] font-ui text-lg leading-7 text-[#10124f] md:text-2xl">
             Con Warmi Digital, tu celular se convierte en tu mejor herramienta para
             aprender, vender y participar en nuevas oportunidades.
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
+        <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
           {discovery.map((item) => (
             <div
               key={item.title}
@@ -79,7 +79,7 @@ export default function DescubrePage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className={`group bg-white p-5 shadow-[0_14px_36px_rgba(18,63,120,0.06)] transition-transform hover:-translate-y-1 md:p-7 ${
+                className={`warmi-scroll-reveal group bg-white p-5 shadow-[0_14px_36px_rgba(18,63,120,0.06)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_24px_54px_rgba(18,63,120,0.12)] md:p-7 ${
                   index === 1 ? "xl:mt-10" : index === 3 ? "xl:mt-16" : ""
                 }`}
               >

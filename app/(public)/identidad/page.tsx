@@ -36,7 +36,7 @@ export default function IdentidadPage() {
       <WarmiPublicHeader compact />
 
       <section className="border-y-[6px] border-[#17c3cf] bg-[#e8fbfc]">
-        <div className="mx-auto grid w-full max-w-[1860px] gap-8 px-4 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:px-8 md:py-16 lg:px-12">
+        <div className="warmi-scroll-reveal mx-auto grid w-full max-w-[1860px] gap-8 px-4 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:px-8 md:py-16 lg:px-12">
           <div>
             <h1 className="font-serif text-4xl font-bold text-[#1b1c1a] md:text-7xl">
               Nuestra fuerza nace de la comunidad.
@@ -57,9 +57,11 @@ export default function IdentidadPage() {
             return (
               <article
                 key={item.title}
-                className="border border-[#ead4ca] bg-white p-7 shadow-[0_18px_42px_rgba(122,49,0,0.07)]"
+                className="warmi-scroll-reveal group border border-[#ead4ca] bg-white p-7 shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_58px_rgba(122,49,0,0.12)]"
               >
-                <span className={`${item.color} inline-flex rounded-full p-4 text-white`}>
+                <span
+                  className={`${item.color} inline-flex rounded-full p-4 text-white transition-transform duration-300 group-hover:scale-110`}
+                >
                   <Icon className="h-6 w-6" />
                 </span>
                 <h2 className="mt-6 font-serif text-3xl font-bold text-[#7a3100]">

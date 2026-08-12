@@ -34,7 +34,7 @@ export default function ProgramaPage() {
       <WarmiPublicHeader compact />
 
       <section className="mx-auto w-full max-w-[1860px] px-4 py-10 md:px-8 md:py-16 lg:px-12">
-        <div className="border-t-2 border-[#d9d9d9] pt-8">
+        <div className="warmi-scroll-reveal border-t-2 border-[#d9d9d9] pt-8">
           <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
             <div className="group min-h-[440px] overflow-hidden md:min-h-[700px]">
               <div
@@ -80,16 +80,16 @@ export default function ProgramaPage() {
                   return (
                     <article
                       key={pillar.title}
-                      className="grid gap-3 md:grid-cols-[58px_1fr]"
+                      className="group grid gap-3 transition-transform duration-500 hover:translate-x-1 md:grid-cols-[58px_1fr]"
                     >
-                      <div className="grid h-12 w-12 place-items-center rounded-full bg-white text-[#b5245b] md:h-14 md:w-14">
+                      <div className="grid h-12 w-12 place-items-center rounded-full bg-[#fff3e8] text-[#b5245b] shadow-[0_12px_28px_rgba(181,36,91,0.12)] transition-colors duration-300 group-hover:bg-[#b5245b] group-hover:text-white md:h-14 md:w-14">
                         <Icon className="h-7 w-7" />
                       </div>
                       <div>
                         <h3 className="font-ui text-xl font-extrabold uppercase text-[#b5245b] md:text-2xl">
                           {pillar.title}:
                         </h3>
-                        <p className="mt-2 bg-[#f17a2a] px-5 py-4 text-base leading-7 text-[#1b1c1a] md:text-lg">
+                        <p className="mt-2 border-l-[8px] border-[#f17a2a] bg-[#fff4ec] px-5 py-4 text-base leading-7 text-[#3a2118] shadow-[0_12px_30px_rgba(122,49,0,0.08)] transition-colors duration-300 group-hover:bg-[#ffe8d9] md:text-lg">
                           {pillar.text}
                         </p>
                       </div>
@@ -106,7 +106,7 @@ export default function ProgramaPage() {
                 ].map(([label, Icon]) => (
                   <div
                     key={label as string}
-                    className="flex min-h-16 items-center justify-center gap-2 bg-[#f5b900] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78]"
+                    className="flex min-h-16 items-center justify-center gap-2 bg-[#f5b900] px-4 py-3 text-center font-ui text-sm font-extrabold uppercase text-[#123f78] shadow-[0_12px_24px_rgba(245,185,0,0.16)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd23c]"
                   >
                     <Icon className="h-5 w-5" />
                     {label as string}

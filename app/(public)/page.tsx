@@ -10,7 +10,7 @@ export default function LandingPage() {
       <WarmiPublicHeader />
 
       <section className="mx-auto w-full max-w-[1760px] px-4 py-10 md:px-8 lg:px-12 lg:py-16">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div className="warmi-scroll-reveal grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <div>
             <div className="flex gap-3">
               {colors.map((color) => (
@@ -35,19 +35,19 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[280px] overflow-hidden border border-[#ead4ca] bg-[#fffaf8] shadow-[0_18px_42px_rgba(122,49,0,0.08)] md:min-h-[420px]">
+          <div className="group relative min-h-[280px] overflow-hidden border border-[#ead4ca] bg-[#fffaf8] shadow-[0_18px_42px_rgba(122,49,0,0.08)] md:min-h-[420px]">
             <Image
               src="/images/home/bienvenida-warmi.png"
               alt="Artesanas Warmi"
               fill
               priority
-              className="object-cover"
+              className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
               sizes="(min-width: 1024px) 50vw, 100vw"
             />
           </div>
         </div>
 
-        <p className="mx-auto mt-10 max-w-5xl text-center font-serif text-2xl font-bold italic leading-tight text-[#10124f] md:text-3xl">
+        <p className="warmi-scroll-reveal mx-auto mt-10 max-w-5xl text-center font-serif text-2xl font-bold italic leading-tight text-[#10124f] md:text-3xl">
           “La tecnologia no reemplaza la tradicion; la conecta con nuevas oportunidades.”
         </p>
       </section>

@@ -6,8 +6,8 @@ import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-heade
 const discovery = [
   {
     title: "Aprender",
-    text: "Cursos y talleres para usar herramientas digitales sin perder la raiz cultural.",
-    href: "/login",
+    text: "Cursos y talleres para usar herramientas digitales sin perder la raíz cultural.",
+    href: "/descubre/aprender-para-crecer",
     icon: BookOpen,
     color: "bg-[#2f62a3]",
     image: "/images/discover/aprende.png",

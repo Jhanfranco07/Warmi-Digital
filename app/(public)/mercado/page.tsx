@@ -1,13 +1,211 @@
 import Link from "next/link";
-import { Grid2X2, Search } from "lucide-react";
-import { Container } from "@/shared/components/layout/container";
-import { Input } from "@/shared/components/ui/input";
-import { MarketplaceService } from "@/shared/services/marketplace.service";
+import type { Route } from "next";
+import { Grid2X2, MapPin, Search, Volume2 } from "lucide-react";
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const q = (await searchParams).q;
-  const products = await new MarketplaceService().browse({ q });
-  const featured = products[0];
-  const rest = products.slice(1);
-  return <main className="min-h-screen bg-background"><section className="border-b border-outline-variant/40 bg-surface-low py-20 text-center md:py-28"><Container><p className="font-ui text-label-ui text-secondary">EXPOSICION CULTURAL</p><h1 className="mt-4 font-serif text-display-lg text-primary">Mercado Digital:<br/><span className="text-headline-lg italic text-secondary">El alma de nuestras comunidades</span></h1><p className="mx-auto mt-6 max-w-2xl text-body-lg text-muted-foreground">Una exposicion curada de artesania ancestral. Cada pieza conserva patrimonio, resiliencia y el saber de manos maestras.</p></Container></section><Container className="py-8"><form className="flex flex-col items-start justify-between gap-5 border-b border-outline-variant/40 pb-8 md:flex-row md:items-center"><div className="flex w-full max-w-md items-center gap-3 border-b border-outline-variant"><Search className="h-4 w-4 text-secondary"/><Input className="border-0 bg-transparent px-0 shadow-none" name="q" defaultValue={q} placeholder="Buscar por pieza, artesana o comunidad"/></div><p className="flex items-center gap-2 font-ui text-label-ui text-muted-foreground"><Grid2X2 className="h-4 w-4"/> Viendo {products.length} exposiciones</p></form></Container><Container className="pb-24"><div className="grid gap-6 lg:grid-cols-12">{featured ? <Link href={`/mercado/${featured.id}`} className="group relative min-h-[520px] overflow-hidden lg:col-span-8" style={{backgroundImage:`linear-gradient(to top, rgba(27,28,26,.82), transparent 70%), url(${featured.images[0]?.file.url ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuCxqQs2n05-zA-CUuMBp3gs33g-G6HMvA1vMqtB6TzE4oR7IVbl6ec4vZmHS4QdYP421CmKIIlk9do1GyQ6CGaFhrMAUiyItjTfKR7nnEyypnL4Dv0Xn3zCZD5_D3ZkxyW5tjwy5dbVKS8B6cQH6T4Tb_a1MEgYDV-ylYnWS05WxrjkHF1kNMdFU5E1psqCcnHkRI2j4jpvMpFi_ers-tIT2VQknnp411QtbVL3JJBJhc_XZ8ADs1Sr"})`,backgroundSize:"cover",backgroundPosition:"center"}}><div className="absolute inset-x-0 bottom-0 p-8 text-white"><p className="font-ui text-label-ui">{featured.community.name} · {featured.technique ?? featured.craftType.name}</p><h2 className="mt-3 font-serif text-headline-lg">{featured.name}</h2><p className="mt-2 max-w-xl text-body-lg">{featured.culturalPhrase ?? "Una pieza creada con saber compartido."}</p></div></Link> : null}<div className="grid gap-6 md:grid-cols-2 lg:col-span-4">{rest.map(product=><Link key={product.id} href={`/mercado/${product.id}`} className="group border border-outline-variant/60 bg-surface-lowest"><div className="aspect-[4/3] bg-cover bg-center" style={{backgroundImage:`url(${product.images[0]?.file.url ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuD3zhbC53_wbrVF6X2y_CUyH1DNCoWJeXPudmWHjxueMx03Shxe9NqMFfHP4p1WNxwaBalanl5HRdQ_hQnJUOiL0YVib0WwJb5Husly6guxFR1Hel5CwTyDAheuAIRzorIFYv59_UwG_7FfBEP1qieoxp93GOgWipmF_btFlxKEDYDHQ3osxtSsXoJJtajLe4XGu1RouNDQbRu6SCf-vTZx4Ov8J0bJzrV6dyvougpAOWFb97Qx-ym8"})`}}/><div className="p-5"><p className="font-ui text-caption text-secondary">{product.community.name}</p><h2 className="mt-2 font-serif text-headline-md text-primary">{product.name}</h2><p className="mt-3 text-body-md text-muted-foreground">{product.culturalPhrase}</p></div></Link>)}</div></div></Container></main>;
+import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
+import { Input } from "@/shared/components/ui/input";
+import { prisma } from "@/shared/server/db/prisma";
+
+const fallbackArtisanImages = [
+  "/images/auth/artesana.png",
+  "/images/programa/programa-warmi.png",
+  "/images/discover/emprende.png",
+  "/images/discover/taller.png",
+  "/images/discover/aprende.png",
+  "/images/discover/recursos.png"
+];
+
+const fallbackTextures = [
+  "/images/discover/aprende.png",
+  "/images/discover/emprende.png",
+  "/images/discover/taller.png",
+  "/images/discover/recursos.png"
+];
+
+type MarketplacePageProps = {
+  searchParams: Promise<{
+    artisan?: string;
+    product?: string;
+  }>;
+};
+
+export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
+  const { artisan, product } = await searchParams;
+
+  const artisans = await prisma.user.findMany({
+    where: {
+      deletedAt: null,
+      products: {
+        some: {
+          status: "PUBLISHED",
+          available: true,
+          deletedAt: null,
+          ...(product
+            ? {
+                OR: [
+                  { name: { contains: product, mode: "insensitive" } },
+                  { craftType: { name: { contains: product, mode: "insensitive" } } },
+                  { category: { name: { contains: product, mode: "insensitive" } } }
+                ]
+              }
+            : {})
+        }
+      },
+      ...(artisan
+        ? {
+            profile: {
+              is: {
+                OR: [
+                  { displayName: { contains: artisan, mode: "insensitive" } },
+                  { firstName: { contains: artisan, mode: "insensitive" } },
+                  { lastName: { contains: artisan, mode: "insensitive" } }
+                ]
+              }
+            }
+          }
+        : {})
+    },
+    include: {
+      profile: { include: { community: true } },
+      stories: {
+        where: { publishedAt: { not: null }, deletedAt: null },
+        include: { coverImage: true },
+        orderBy: { publishedAt: "desc" },
+        take: 1
+      },
+      products: {
+        where: {
+          status: "PUBLISHED",
+          available: true,
+          deletedAt: null,
+          ...(product
+            ? {
+                OR: [
+                  { name: { contains: product, mode: "insensitive" } },
+                  { craftType: { name: { contains: product, mode: "insensitive" } } },
+                  { category: { name: { contains: product, mode: "insensitive" } } }
+                ]
+              }
+            : {})
+        },
+        include: {
+          community: true,
+          craftType: true,
+          images: { include: { file: true }, orderBy: { order: "asc" }, take: 1 }
+        },
+        orderBy: { updatedAt: "desc" },
+        take: 4
+      }
+    },
+    orderBy: { updatedAt: "desc" }
+  });
+
+  return (
+    <main className="min-h-screen bg-[#fffaf8] text-[#30130d]">
+      <section className="mx-auto w-full max-w-[1760px] px-4 py-8 md:px-8 lg:px-12">
+        <header className="grid gap-6 border-b border-[#e9cfc4] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <div className="mb-4 w-28 md:w-36">
+              <WarmiLogo compact markClassName="w-full" />
+            </div>
+            <h1 className="font-serif text-5xl font-bold leading-none text-[#7a3100] md:text-7xl">
+              Mi vitrina virtual
+            </h1>
+            <p className="mt-3 font-ui text-sm font-bold text-[#b5245b] md:text-base">
+              Mujeres que tejen cultura, historias que perduran.
+            </p>
+          </div>
+
+          <form className="grid gap-3 md:grid-cols-[minmax(240px,360px)_minmax(240px,360px)_auto]">
+            <label className="flex h-12 items-center gap-3 rounded-full border border-[#e2a0ba] bg-white/70 px-4">
+              <Search className="h-5 w-5 text-[#b5245b]" />
+              <Input
+                name="artisan"
+                defaultValue={artisan}
+                className="h-10 border-0 bg-transparent px-0 font-ui text-sm shadow-none focus-visible:ring-0"
+                placeholder="Buscar por nombre de artesana"
+              />
+            </label>
+            <label className="flex h-12 items-center gap-3 rounded-full border border-[#e2a0ba] bg-white/70 px-4">
+              <Grid2X2 className="h-5 w-5 text-[#b5245b]" />
+              <Input
+                name="product"
+                defaultValue={product}
+                className="h-10 border-0 bg-transparent px-0 font-ui text-sm shadow-none focus-visible:ring-0"
+                placeholder="Buscar por producto"
+              />
+            </label>
+            <button
+              type="submit"
+              className="grid h-12 w-12 place-items-center rounded-full bg-[#b5245b] text-white shadow-[0_12px_28px_rgba(181,36,91,0.22)]"
+              aria-label="Buscar"
+            >
+              <Volume2 className="h-5 w-5" />
+            </button>
+          </form>
+        </header>
+
+        <section className="mt-8 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+          {artisans.map((item, index) => {
+            const story = item.stories[0];
+            const firstProduct = item.products[0];
+            const image =
+              item.profile?.avatarUrl ??
+              story?.coverImage?.url ??
+              firstProduct?.images[0]?.file.url ??
+              fallbackArtisanImages[index % fallbackArtisanImages.length];
+            const texture =
+              firstProduct?.images[0]?.file.url ??
+              fallbackTextures[index % fallbackTextures.length];
+
+            return (
+              <Link
+                key={item.id}
+                href={`/artesanas/${item.id}` as Route}
+                className="group border border-[#ead4ca] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-transform duration-300 hover:-translate-y-1"
+              >
+                <div
+                  className="relative min-h-[310px] overflow-hidden bg-cover bg-center"
+                  style={{ backgroundImage: `url(${image})` }}
+                >
+                  <span className="from-[#30130d]/28 absolute inset-0 bg-gradient-to-t to-transparent" />
+                  <span
+                    className="absolute -bottom-10 right-7 h-32 w-32 rounded-full border-4 border-white bg-cover bg-center shadow-[0_12px_34px_rgba(48,19,13,0.24)] transition-transform duration-300 group-hover:scale-105"
+                    style={{ backgroundImage: `url(${texture})` }}
+                  />
+                </div>
+                <div className="p-5 pr-36">
+                  <h2 className="font-serif text-3xl font-bold text-[#7a3100]">
+                    {item.profile?.displayName ?? item.name ?? "Artesana Warmi"}
+                  </h2>
+                  <p className="mt-1 flex items-center gap-1 font-ui text-sm text-[#b5245b]">
+                    <MapPin className="h-4 w-4" />
+                    {item.profile?.community?.name ??
+                      firstProduct?.community.name ??
+                      "Comunidad Warmi"}
+                  </p>
+                  <p className="mt-4 line-clamp-3 text-sm italic leading-6 text-[#6f4c42]">
+                    {story?.summary ??
+                      item.profile?.bio ??
+                      firstProduct?.culturalPhrase ??
+                      "Cada pieza nace de una historia, una tecnica y una memoria compartida."}
+                  </p>
+                  <p className="mt-4 font-ui text-xs font-bold uppercase tracking-[0.08em] text-[#d39a12]">
+                    {item.products.length} piezas en vitrina
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </section>
+
+        <footer className="mx-auto mt-10 flex max-w-4xl items-center gap-5 text-center font-ui text-sm text-[#7a3100]">
+          <span className="h-px flex-1 bg-[#e2a0ba]" />
+          Gracias por valorar el trabajo de nuestras artesanas y por ser parte de esta
+          historia.
+          <span className="h-px flex-1 bg-[#e2a0ba]" />
+        </footer>
+      </section>
+    </main>
+  );
 }

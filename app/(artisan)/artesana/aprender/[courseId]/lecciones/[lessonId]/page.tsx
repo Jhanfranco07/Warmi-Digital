@@ -1,10 +1,13 @@
-import { FileText, Video } from "lucide-react";
+import { FileText, NotebookPen, Video } from "lucide-react";
 
 import { LessonCompletionButton } from "@/features/artisan/lesson-completion-button";
-import { Container } from "@/shared/components/layout/container";
-import { PageHeader } from "@/shared/components/layout/page-header";
+import {
+  ArtisanHero,
+  ArtisanListItem,
+  ArtisanPanel,
+  ArtisanShell
+} from "@/features/artisan/artisan-panel";
 import { Badge } from "@/shared/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { LearningService } from "@/shared/services/learning.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -22,67 +25,84 @@ export default async function ArtisanLessonPage({
   );
 
   return (
-    <Container className="space-y-8 py-6 md:py-10">
-      <PageHeader
+    <ArtisanShell>
+      <ArtisanHero
         eyebrow={enrollment.course.title}
         title={lesson.title}
-        description={`Modulo: ${lesson.module.title}`}
+        description={`Módulo: ${lesson.module.title}`}
+        imageUrl="/images/learning/cursos-spoiler.png"
       />
 
-      <Card>
-        <CardHeader>
+      <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+        <ArtisanPanel title="Contenido de la lección" eyebrow="Aprendizaje">
           <div className="flex flex-wrap gap-2">
             <Badge>{lesson.type}</Badge>
             <Badge variant="outline">{lesson.durationMin ?? 0} min</Badge>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
           {lesson.type === "VIDEO" ? (
-            <div className="flex aspect-video items-center justify-center rounded-md bg-surface-high text-muted-foreground">
-              <Video className="mr-2 h-6 w-6" />
+            <div className="mt-6 flex aspect-video items-center justify-center bg-[#1b1c1a] text-white shadow-[0_22px_50px_rgba(27,28,26,0.18)]">
+              <Video className="mr-3 h-8 w-8" />
               Video de aprendizaje
             </div>
           ) : null}
-          <div className="prose prose-sm max-w-none text-body-lg">
+          <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
             <p>{lesson.content ?? "Contenido de la lección pendiente de ampliar."}</p>
           </div>
-          <LessonCompletionButton
-            courseId={courseId}
-            lessonId={lessonId}
-            completed={progress?.completed}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recursos y actividad práctica</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {lesson.lessonFiles.length ? (
-            lesson.lessonFiles.map((resource) => (
-              <a
-                key={resource.id}
-                href={resource.file.url}
-                className="flex min-h-touch-target items-center gap-3 rounded-md border border-border p-3"
-              >
-                <FileText className="h-5 w-5 text-primary" />
-                Descargar material
-              </a>
-            ))
-          ) : (
-            <p className="text-body-md text-muted-foreground">
-              La facilitadora aún no agregó materiales descargables.
-            </p>
-          )}
-          <div className="rounded-md border border-border p-3">
-            <p className="font-medium">Actividad práctica</p>
-            <p className="mt-1 text-body-md text-muted-foreground">
-              Aplica esta lección en una pieza, foto o nota de tu proceso artesanal.
-            </p>
+          <div className="mt-7">
+            <LessonCompletionButton
+              courseId={courseId}
+              lessonId={lessonId}
+              completed={progress?.completed}
+            />
           </div>
-        </CardContent>
-      </Card>
-    </Container>
+        </ArtisanPanel>
+
+        <div className="space-y-6">
+          <ArtisanPanel title="Recursos" eyebrow="Materiales">
+            <div className="grid gap-4">
+              {lesson.lessonFiles.length ? (
+                lesson.lessonFiles.map((resource) => (
+                  <a key={resource.id} href={resource.file.url}>
+                    <ArtisanListItem
+                      meta="Descarga"
+                      title="Material de apoyo"
+                      description="Abre o descarga el archivo de esta lección."
+                    />
+                  </a>
+                ))
+              ) : (
+                <p className="text-base leading-7 text-[#5b4a42]">
+                  La facilitadora aún no agregó materiales descargables.
+                </p>
+              )}
+            </div>
+          </ArtisanPanel>
+
+          <ArtisanPanel title="Actividad práctica" eyebrow="Aplicar">
+            <div className="flex items-start gap-4">
+              <span className="inline-flex rounded-full bg-[#fff0f5] p-3 text-[#b5245b]">
+                <NotebookPen className="h-5 w-5" />
+              </span>
+              <p className="text-base leading-7 text-[#5b4a42]">
+                Aplica esta lección en una pieza, foto o nota de tu proceso artesanal.
+                Luego puedes compartir tu avance con tu facilitadora.
+              </p>
+            </div>
+          </ArtisanPanel>
+
+          <ArtisanPanel title="Sugerencia" eyebrow="Guardar evidencia">
+            <div className="flex items-start gap-4">
+              <span className="inline-flex rounded-full bg-[#e8fbfc] p-3 text-[#0b7f88]">
+                <FileText className="h-5 w-5" />
+              </span>
+              <p className="text-base leading-7 text-[#5b4a42]">
+                Toma una captura o fotografía de tu avance para usarla luego en tu
+                historia o en tu vitrina cultural.
+              </p>
+            </div>
+          </ArtisanPanel>
+        </div>
+      </section>
+    </ArtisanShell>
   );
 }

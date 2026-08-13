@@ -1,13 +1,16 @@
-import { Plus } from "lucide-react";
+import { Plus, ShoppingBag, Sparkles, Store } from "lucide-react";
 import Link from "next/link";
 
 import { ProductCard } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
-import { Container } from "@/shared/components/layout/container";
-import { PageHeader } from "@/shared/components/layout/page-header";
+import {
+  ArtisanHero,
+  ArtisanPanel,
+  ArtisanShell,
+  ArtisanStatCard
+} from "@/features/artisan/artisan-panel";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { ArtisanShowcaseService } from "@/shared/services/artisan-showcase.service";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -20,69 +23,84 @@ export default async function ArtisanShowcasePage() {
   ]);
   const artisanName =
     artisan?.profile?.displayName ?? session.user.name ?? "Artesana Warmi";
+  const published = showcase.products.filter(
+    (product) => product.status === "PUBLISHED"
+  ).length;
 
   return (
-    <Container className="space-y-8 py-6 md:py-10">
-      <PageHeader
+    <ArtisanShell>
+      <ArtisanHero
         eyebrow="Mi vitrina"
         title="Mis piezas culturales"
-        description="Este espacio muestra tus piezas con comunidad, técnica e historia. El marketplace completo vendrá después."
+        description="Este espacio muestra tus piezas con comunidad, técnica e historia. La venta llega después del aprendizaje y la documentación cultural."
+        imageUrl="/images/discover/emprende.png"
+        actions={
+          <Button
+            asChild
+            size="lg"
+            className="min-h-[56px] rounded-full bg-[#7a3100] px-7 text-base text-white hover:bg-[#5f2600]"
+          >
+            <Link href="/artesana/mi-vitrina/nuevo">
+              <Plus className="h-5 w-5" />
+              Agregar producto
+            </Link>
+          </Button>
+        }
       />
-      <section className="grid gap-4 md:grid-cols-3">
-        <SummaryCard title="Productos" value={showcase.products.length} />
-        <SummaryCard
-          title="Publicados"
-          value={
-            showcase.products.filter((product) => product.status === "PUBLISHED").length
-          }
-        />
-        <SummaryCard title="Pedidos relacionados" value={showcase.orders.length} />
-      </section>
-      <Button asChild size="lg" className="min-h-touch-target">
-        <Link href="/artesana/mi-vitrina/nuevo">
-          <Plus className="h-5 w-5" />
-          Agregar producto
-        </Link>
-      </Button>
-      {showcase.products.length ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {showcase.products.map((product) => (
-            <div key={product.id} className="space-y-2">
-              <ProductCard
-                name={product.name}
-                artisanName={artisanName}
-                community={product.community.name}
-                technique={product.technique ?? product.craftType.name}
-                makingTime={product.makingTime ?? "Tiempo por registrar"}
-                culturalPhrase={
-                  product.culturalPhrase ??
-                  "Cada pieza conserva una historia transmitida por generaciones."
-                }
-                imageUrl={product.images[0]?.file.url}
-              />
-              <Badge variant="outline">{product.status}</Badge>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          title="Aun no tienes piezas registradas"
-          description="Pronto podrás agregar una pieza cultural desde este espacio."
-        />
-      )}
-    </Container>
-  );
-}
 
-function SummaryCard({ title, value }: { title: string; value: number }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-display-md font-serif">{value}</p>
-      </CardContent>
-    </Card>
+      <section className="grid gap-5 md:grid-cols-3">
+        <ArtisanStatCard
+          title="Productos"
+          value={showcase.products.length}
+          description="Piezas registradas en tu vitrina."
+          icon={Store}
+          color="bg-[#2f62a3]"
+        />
+        <ArtisanStatCard
+          title="Publicados"
+          value={published}
+          description="Piezas visibles para la vitrina cultural."
+          icon={Sparkles}
+          color="bg-[#b5245b]"
+        />
+        <ArtisanStatCard
+          title="Pedidos relacionados"
+          value={showcase.orders.length}
+          description="Solicitudes conectadas a tus piezas."
+          icon={ShoppingBag}
+          color="bg-[#f5b900]"
+        />
+      </section>
+
+      <ArtisanPanel title="Productos de mi vitrina" eyebrow={artisanName}>
+        {showcase.products.length ? (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {showcase.products.map((product) => (
+              <div key={product.id} className="space-y-3">
+                <ProductCard
+                  name={product.name}
+                  artisanName={artisanName}
+                  community={product.community.name}
+                  technique={product.technique ?? product.craftType.name}
+                  makingTime={product.makingTime ?? "Tiempo por registrar"}
+                  culturalPhrase={
+                    product.culturalPhrase ??
+                    "Cada pieza conserva una historia transmitida por generaciones."
+                  }
+                  imageUrl={product.images[0]?.file.url}
+                  className="border-[#f0c7bb] shadow-[0_16px_40px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_58px_rgba(122,49,0,0.13)]"
+                />
+                <Badge variant="outline">{product.status}</Badge>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="Aún no tienes piezas registradas"
+            description="Pronto podrás agregar una pieza cultural desde este espacio."
+          />
+        )}
+      </ArtisanPanel>
+    </ArtisanShell>
   );
 }

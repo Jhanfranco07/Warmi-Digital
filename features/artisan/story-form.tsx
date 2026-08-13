@@ -107,7 +107,7 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Fotografia o imagen" error={errors.coverImageUrl?.message}>
+          <Field label="Fotografía o imagen" error={errors.coverImageUrl?.message}>
             <Input
               {...register("coverImageUrl")}
               placeholder="https://..."

@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import type { UserRole } from "@prisma/client";
-import { Bell, BookOpen, Home, Menu, User, Users } from "lucide-react";
+import { Bell, BookOpen, ChevronRight, Home, Menu, User, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
@@ -23,14 +23,14 @@ function NavigationContent({ role }: { role: UserRole }) {
   const meta = roleNavigationMeta[role];
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="mb-8 flex items-start gap-3">
+    <div className="relative flex h-full flex-col overflow-hidden">
+      <div className="mb-9 flex items-start gap-3">
         <div className="min-w-0">
-          <WarmiLogo compact markClassName="w-32" />
-          <p className="text-caption text-muted-foreground">{meta.label}</p>
+          <WarmiLogo compact markClassName="w-40" />
+          <p className="mt-1 pl-1 text-sm text-[#7a5b4a]">{meta.label}</p>
         </div>
       </div>
-      <nav className="space-y-1" aria-label={`Navegacion ${meta.label}`}>
+      <nav className="space-y-3" aria-label={`Navegación ${meta.label}`}>
         {items.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -40,8 +40,9 @@ function NavigationContent({ role }: { role: UserRole }) {
               key={item.href}
               href={item.href as Route}
               className={cn(
-                "flex min-h-touch-target items-center gap-3 rounded-full px-3 py-2 text-label-ui text-muted-foreground transition-colors hover:bg-primary-fixed/50 hover:text-primary",
-                active && "bg-primary text-primary-foreground shadow-soft"
+                "group flex min-h-[48px] items-center gap-4 rounded-full px-4 py-2 font-ui text-base font-semibold text-[#624331] transition-all duration-300 hover:bg-[#fff0f5] hover:text-[#b5245b]",
+                active &&
+                  "bg-[#a40f4d] text-white shadow-[0_14px_30px_rgba(164,15,77,0.24)] hover:bg-[#a40f4d] hover:text-white"
               )}
               aria-current={active ? "page" : undefined}
             >
@@ -51,7 +52,15 @@ function NavigationContent({ role }: { role: UserRole }) {
           );
         })}
       </nav>
-      <div className="mt-auto pt-6 text-caption text-muted-foreground">
+      <div className="pointer-events-none absolute -bottom-10 -left-12 h-48 w-48 rotate-45 opacity-30 [background-image:linear-gradient(45deg,rgba(181,36,91,0.22)_12.5%,transparent_12.5%,transparent_37.5%,rgba(241,122,42,0.22)_37.5%,rgba(241,122,42,0.22)_62.5%,transparent_62.5%,transparent_87.5%,rgba(47,98,163,0.22)_87.5%)] [background-size:26px_26px]" />
+      <button
+        type="button"
+        className="mt-auto grid h-12 w-12 place-items-center self-end rounded-full bg-[#5b371f] text-white shadow-[0_14px_30px_rgba(91,55,31,0.22)]"
+        aria-label="Contraer navegación"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
+      <div className="relative z-10 mt-4 pt-2 text-xs leading-4 text-[#7a5b4a]">
         {meta.description}
       </div>
     </div>
@@ -62,7 +71,7 @@ export function Sidebar({ role, className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-surface-low p-6 lg:block",
+        "fixed inset-y-0 left-0 hidden w-72 border-r border-[#ead4ca] bg-[#fffaf6] p-6 shadow-[12px_0_36px_rgba(122,49,0,0.05)] lg:block",
         className
       )}
     >

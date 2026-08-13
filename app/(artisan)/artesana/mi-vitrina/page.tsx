@@ -1,19 +1,50 @@
-import { Plus, ShoppingBag, Sparkles, Store } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { ChevronDown, Heart, MapPin, Plus, SlidersHorizontal } from "lucide-react";
 
-import { ProductCard } from "@/shared/components/domain";
-import { EmptyState } from "@/shared/components/feedback/empty-state";
-import {
-  ArtisanHero,
-  ArtisanPanel,
-  ArtisanShell,
-  ArtisanStatCard
-} from "@/features/artisan/artisan-panel";
-import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { ArtisanShowcaseService } from "@/shared/services/artisan-showcase.service";
 import { requireRole } from "@/shared/server/auth/helpers";
+
+const demoProducts = [
+  {
+    id: "camino-apus",
+    name: "Camino de los Apus",
+    community: "San Miguel, Cajamarca",
+    technique: "Tejido en telar",
+    phrase: "Inspirado en los caminos que nos guían.",
+    image: "/images/discover/aprende.png",
+    status: "PUBLISHED"
+  },
+  {
+    id: "vasija-abundancia",
+    name: "Vasija de la Abundancia",
+    community: "San Miguel, Cajamarca",
+    technique: "Cerámica",
+    phrase: "Guarda la memoria del agua y la gratitud.",
+    image: "/images/home/bienvenida-warmi.png",
+    status: "PUBLISHED"
+  },
+  {
+    id: "guardiana-historias",
+    name: "Guardiana de Historias",
+    community: "San Miguel, Cajamarca",
+    technique: "Tejido en fibra vegetal",
+    phrase: "Tejida para cuidar lo que es sagrado.",
+    image: "/images/discover/taller.png",
+    status: "PUBLISHED"
+  },
+  {
+    id: "cuenco-tierra",
+    name: "Cuenco de la Tierra",
+    community: "San Miguel, Cajamarca",
+    technique: "Cerámica",
+    phrase: "De la tierra nace, a la tierra vuelve.",
+    image: "/images/discover/emprende.png",
+    status: "DRAFT"
+  }
+];
 
 export default async function ArtisanShowcasePage() {
   const session = await requireRole("ARTESANA");
@@ -21,86 +52,153 @@ export default async function ArtisanShowcasePage() {
     new ArtisanRepository().findProfile(session.user.id),
     new ArtisanShowcaseService().getShowcase(session.user.id)
   ]);
+
   const artisanName =
-    artisan?.profile?.displayName ?? session.user.name ?? "Artesana Warmi";
-  const published = showcase.products.filter(
-    (product) => product.status === "PUBLISHED"
-  ).length;
+    artisan?.profile?.displayName ?? session.user.name ?? "Elena Mamani";
+  const communityName = artisan?.profile?.community?.name ?? "San Miguel, Cajamarca";
+  const products = showcase.products.length
+    ? showcase.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        community: product.community.name,
+        technique: product.technique ?? product.craftType.name,
+        phrase:
+          product.culturalPhrase ??
+          "Cada pieza conserva una historia transmitida por generaciones.",
+        image: product.images[0]?.file.url ?? "/images/discover/aprende.png",
+        status: product.status
+      }))
+    : demoProducts;
 
   return (
-    <ArtisanShell>
-      <ArtisanHero
-        eyebrow="Mi vitrina"
-        title="Mis piezas culturales"
-        description="Este espacio muestra tus piezas con comunidad, técnica e historia. La venta llega después del aprendizaje y la documentación cultural."
-        imageUrl="/images/discover/emprende.png"
-        actions={
-          <Button
-            asChild
-            size="lg"
-            className="min-h-[56px] rounded-full bg-[#7a3100] px-7 text-base text-white hover:bg-[#5f2600]"
-          >
-            <Link href="/artesana/mi-vitrina/nuevo">
-              <Plus className="h-5 w-5" />
-              Agregar producto
-            </Link>
-          </Button>
-        }
-      />
+    <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
+      <div className="mx-auto w-full max-w-[1760px]">
+        <header className="flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <h1 className="font-serif text-5xl font-bold leading-none text-[#101833] md:text-6xl 2xl:text-7xl">
+              Mi vitrina <span className="text-4xl text-[#b5245b]">❧</span>
+            </h1>
+            <p className="mt-4 max-w-4xl text-lg leading-8 text-[#5b4a42]">
+              Comparte tu arte, tus saberes y la esencia de tu comunidad con el mundo.
+            </p>
+          </div>
+          <span className="relative hidden h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)] md:block">
+            <Image
+              src="/images/auth/artesana.png"
+              alt={artisanName}
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
+          </span>
+        </header>
 
-      <section className="grid gap-5 md:grid-cols-3">
-        <ArtisanStatCard
-          title="Productos"
-          value={showcase.products.length}
-          description="Piezas registradas en tu vitrina."
-          icon={Store}
-          color="bg-[#2f62a3]"
-        />
-        <ArtisanStatCard
-          title="Publicados"
-          value={published}
-          description="Piezas visibles para la vitrina cultural."
-          icon={Sparkles}
-          color="bg-[#b5245b]"
-        />
-        <ArtisanStatCard
-          title="Pedidos relacionados"
-          value={showcase.orders.length}
-          description="Solicitudes conectadas a tus piezas."
-          icon={ShoppingBag}
-          color="bg-[#f5b900]"
-        />
-      </section>
+        <section className="mt-8 overflow-hidden rounded-[22px] border border-[#ecd0bd] bg-white shadow-[0_24px_70px_rgba(122,49,0,0.11)]">
+          <div className="relative min-h-[430px]">
+            <Image
+              src="/images/home/bienvenida-warmi.png"
+              alt="Artesana mostrando su vitrina"
+              fill
+              priority
+              sizes="(min-width: 1280px) 1600px, 100vw"
+              className="object-cover"
+            />
+            <div className="to-white/8 absolute inset-0 bg-gradient-to-r from-white via-white/90" />
+            <div className="relative max-w-2xl px-8 py-10 md:px-12 md:py-14">
+              <p className="font-ui text-xl font-extrabold text-[#b5245b]">Hola, soy</p>
+              <h2 className="mt-2 font-serif text-6xl font-bold leading-none text-[#b5245b] md:text-7xl">
+                {artisanName}
+              </h2>
+              <p className="mt-4 text-xl text-[#5b4a42]">Artesana de {communityName}</p>
+              <blockquote className="mt-9 max-w-md border-l-4 border-[#d8b899] pl-6 font-serif text-3xl italic leading-tight text-[#7a3100]">
+                Tejo historias que vienen de mis abuelas y florecen en mis manos.
+              </blockquote>
+              <div className="mt-8 h-px w-48 bg-[#d8b899]" />
+              <p className="mt-6 max-w-sm font-serif text-xl italic text-[#7a3100]">
+                Gracias por valorar lo hecho con corazón.
+              </p>
+              <Button
+                asChild
+                className="mt-8 rounded-full bg-[#b5245b] px-8 text-white hover:bg-[#941747]"
+              >
+                <Link href="/artesana/mi-vitrina/nuevo">
+                  <Plus className="h-5 w-5" />
+                  Agregar pieza
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
 
-      <ArtisanPanel title="Productos de mi vitrina" eyebrow={artisanName}>
-        {showcase.products.length ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {showcase.products.map((product) => (
-              <div key={product.id} className="space-y-3">
-                <ProductCard
-                  name={product.name}
-                  artisanName={artisanName}
-                  community={product.community.name}
-                  technique={product.technique ?? product.craftType.name}
-                  makingTime={product.makingTime ?? "Tiempo por registrar"}
-                  culturalPhrase={
-                    product.culturalPhrase ??
-                    "Cada pieza conserva una historia transmitida por generaciones."
-                  }
-                  imageUrl={product.images[0]?.file.url}
-                  className="border-[#f0c7bb] shadow-[0_16px_40px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_58px_rgba(122,49,0,0.13)]"
-                />
-                <Badge variant="outline">{product.status}</Badge>
-              </div>
+        <section className="mt-9">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <h2 className="font-serif text-4xl font-bold text-[#b5245b]">
+                Piezas artesanales
+              </h2>
+              <div className="mt-2 h-px w-28 bg-[#f26f21]" />
+              <p className="mt-4 text-base text-[#5b4a42]">
+                Cada creación nace de nuestra tierra, nuestras manos y nuestra historia.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              className="rounded-lg border-[#ecd0bd] bg-white px-7 text-[#7a3100] hover:bg-[#fff1e5]"
+            >
+              <SlidersHorizontal className="h-5 w-5" />
+              Filtrar por técnica
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+            {products.map((product) => (
+              <article
+                key={product.id}
+                className="group overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_18px_44px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_28px_64px_rgba(122,49,0,0.13)]"
+              >
+                <div className="relative h-56">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    sizes="(min-width: 1280px) 380px, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-[#b5245b] shadow-lg"
+                    aria-label="Guardar pieza"
+                  >
+                    <Heart className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-ui text-xl font-extrabold text-[#1b1c1a]">
+                      {product.name}
+                    </h3>
+                    <span className="rounded-full bg-[#fff1e5] px-3 py-1 text-xs font-bold text-[#a95511]">
+                      {product.status === "PUBLISHED" ? "Publicado" : "Borrador"}
+                    </span>
+                  </div>
+                  <p className="mt-2 flex items-center gap-2 text-sm text-[#5b4a42]">
+                    <MapPin className="h-4 w-4 text-[#b5245b]" />
+                    {product.community}
+                  </p>
+                  <span className="mt-4 inline-flex rounded-lg bg-[#f8eadc] px-3 py-2 text-sm font-bold text-[#7a3100]">
+                    {product.technique}
+                  </span>
+                  <p className="mt-5 font-serif text-lg italic leading-7 text-[#7a3100]">
+                    “{product.phrase}”
+                  </p>
+                  <div className="mt-5 flex justify-end text-[#b5245b]">❧</div>
+                </div>
+              </article>
             ))}
           </div>
-        ) : (
-          <EmptyState
-            title="Aún no tienes piezas registradas"
-            description="Pronto podrás agregar una pieza cultural desde este espacio."
-          />
-        )}
-      </ArtisanPanel>
-    </ArtisanShell>
+        </section>
+      </div>
+    </main>
   );
 }

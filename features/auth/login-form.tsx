@@ -113,11 +113,11 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
   };
 
   return (
-    <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a] 2xl:h-screen 2xl:overflow-hidden">
-      <section className="mx-auto flex min-h-screen w-full max-w-[1880px] flex-col px-3 py-3 sm:px-6 lg:px-8 lg:py-5 xl:px-10 2xl:h-screen 2xl:px-12">
+    <main className="min-h-screen bg-[#fffaf8] text-[#1b1c1a]">
+      <section className="mx-auto flex min-h-screen w-full max-w-[1880px] flex-col px-3 py-3 sm:px-6 lg:px-8 lg:py-4 xl:px-10">
         <header className="flex shrink-0 items-center justify-between gap-4">
           <Link href="/" aria-label="Ir al inicio">
-            <WarmiLogo compact markClassName="w-28 md:w-36" />
+            <WarmiLogo compact markClassName="w-24 md:w-32 xl:w-36" />
           </Link>
           <div className="flex items-center gap-4">
             <Link
@@ -149,14 +149,14 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
 
         <motion.div
           layout
-          className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:grid-cols-[minmax(640px,1.1fr)_minmax(580px,0.9fr)] 2xl:min-h-0"
+          className="mt-3 grid flex-1 overflow-hidden rounded-lg border bg-white shadow-[0_22px_60px_rgba(122,49,0,0.1)] md:mt-4 lg:h-[calc(100vh-168px)] lg:min-h-[560px] lg:grid-cols-[minmax(540px,1.08fr)_minmax(500px,0.92fr)] 2xl:h-[calc(100vh-178px)]"
           style={{ borderColor: activeRole.border }}
           transition={{ duration: 0.45, ease: "easeInOut" }}
         >
           <motion.div
             layout
             className={cn(
-              "relative min-h-[320px] overflow-hidden bg-[#f7efe9] sm:min-h-[450px] lg:min-h-[760px] 2xl:min-h-0",
+              "relative min-h-[320px] overflow-hidden bg-[#f7efe9] sm:min-h-[450px] lg:h-full lg:min-h-0",
               role === "facilitadora" ? "lg:order-2" : "lg:order-1"
             )}
             transition={{ duration: 0.45, ease: "easeInOut" }}
@@ -201,7 +201,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
 
             <motion.div
               key={`${role}-copy`}
-              className="absolute inset-x-0 bottom-0 p-5 text-white md:p-8 xl:p-10"
+              className="absolute inset-x-0 bottom-0 p-5 text-white md:p-8 xl:p-9"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -209,7 +209,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
               <p className="font-ui text-sm font-bold uppercase tracking-[0.08em] xl:text-base">
                 {activeRole.eyebrow}
               </p>
-              <h1 className="mt-2 max-w-2xl font-serif text-3xl font-bold leading-tight sm:text-4xl md:text-6xl xl:text-7xl">
+              <h1 className="mt-2 max-w-2xl font-serif text-3xl font-bold leading-tight sm:text-4xl md:text-5xl xl:text-6xl">
                 {activeRole.title}
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/90 md:text-base xl:text-lg xl:leading-8">
@@ -221,13 +221,13 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
           <motion.div
             layout
             className={cn(
-              "flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14",
+              "flex flex-col justify-center overflow-y-auto p-4 sm:p-6 md:p-8 lg:p-8 xl:p-10",
               role === "facilitadora" ? "lg:order-1" : "lg:order-2"
             )}
             style={{ backgroundColor: activeRole.soft }}
             transition={{ duration: 0.45, ease: "easeInOut" }}
           >
-            <div className="mx-auto w-full max-w-[720px]">
+            <div className="mx-auto w-full max-w-[760px]">
               <motion.div
                 key={`${role}-form-head`}
                 initial={{ opacity: 0, y: 10 }}
@@ -238,7 +238,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                   className="h-9 w-9 xl:h-12 xl:w-12"
                   style={{ color: activeRole.accent }}
                 />
-                <h2 className="mt-4 font-serif text-3xl font-bold leading-tight md:text-4xl xl:text-6xl">
+                <h2 className="mt-3 font-serif text-3xl font-bold leading-tight md:text-4xl xl:text-5xl">
                   Accede a Warmi Digital
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-[#5b4a42] xl:text-lg">
@@ -249,14 +249,14 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 </p>
               </motion.div>
 
-              <div className="mt-5 grid grid-cols-3 gap-2 xl:gap-3">
+              <div className="mt-4 grid grid-cols-3 gap-2 xl:gap-3">
                 {activeRole.highlights.map((highlight) => {
                   const HighlightIcon = highlight.icon;
 
                   return (
                     <div
                       key={highlight.label}
-                      className="flex min-h-[72px] flex-col items-center justify-center rounded-md bg-white/80 px-1.5 py-2 text-center text-[10px] font-bold leading-tight sm:text-[11px] xl:min-h-[96px] xl:text-sm"
+                      className="flex min-h-[68px] flex-col items-center justify-center rounded-md bg-white/80 px-1.5 py-2 text-center text-[10px] font-bold leading-tight sm:text-[11px] xl:min-h-[82px] xl:text-sm"
                       style={{ color: activeRole.accent }}
                     >
                       <HighlightIcon className="mx-auto mb-1 h-5 w-5 xl:h-6 xl:w-6" />
@@ -266,7 +266,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 })}
               </div>
 
-              <form className="mt-6 grid gap-4 xl:mt-8 xl:gap-6" onSubmit={handleSubmit}>
+              <form className="mt-5 grid gap-4 xl:mt-6" onSubmit={handleSubmit}>
                 {callbackUrl ? (
                   <input type="hidden" name="callbackUrl" value={callbackUrl} />
                 ) : null}
@@ -318,7 +318,7 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 {success ? <p className="text-sm text-[#14715d]">{success}</p> : null}
 
                 <Button
-                  className="min-h-touch-target rounded-full font-ui text-label-ui text-white xl:min-h-[56px] xl:text-base"
+                  className="min-h-touch-target rounded-full font-ui text-label-ui text-white xl:min-h-[52px] xl:text-base"
                   style={{ backgroundColor: activeRole.accent }}
                   type="submit"
                   disabled={isPending}

@@ -155,13 +155,11 @@
 @keyframes warmi-reveal {
   from {
     opacity: 0;
-    transform: translateY(42px) scale(0.98);
-    filter: blur(8px);
+    transform: translateY(28px) scale(0.99);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -171,9 +169,8 @@
 }
 
 .warmi-scroll-reveal {
-  animation: warmi-reveal both;
-  animation-timeline: view();
-  animation-range: entry 10% cover 34%;
+  animation: warmi-reveal 620ms cubic-bezier(0.2, 0.75, 0.24, 1) both;
+  will-change: opacity, transform;
 }
 
 @media (prefers-reduced-motion: reduce) {

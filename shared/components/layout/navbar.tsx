@@ -5,7 +5,7 @@ import { Container } from "@/shared/components/layout/container";
 
 export function Navbar() {
   return (
-    <header className="border-b border-border bg-surface/90 backdrop-blur">
+    <header className="border-b border-border bg-surface/95 shadow-sm">
       <Container className="flex h-16 items-center justify-between">
         <Link href="/" aria-label="Ir al inicio de Warmi Digital">
           <WarmiLogo compact markClassName="w-32" />

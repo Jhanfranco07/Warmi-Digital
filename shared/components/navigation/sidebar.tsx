@@ -104,7 +104,7 @@ export function MobileNavigation({ role }: SidebarProps) {
 
   return (
     <>
-      <div className="sticky top-0 z-40 border-b border-[#f1ccd7] bg-white/95 backdrop-blur lg:hidden">
+      <div className="sticky top-0 z-40 border-b border-[#f1ccd7] bg-white/95 shadow-sm lg:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/" aria-label="Ir al inicio de Warmi Digital">
             <WarmiLogo compact markClassName="h-9" />

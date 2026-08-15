@@ -19,9 +19,11 @@ export function AttendanceForm({
           action={(data) =>
             startTransition(async () => {
               const response = await registerAttendanceAction(null, data);
-              response.ok
-                ? toast.success(response.message)
-                : toast.error(response.message);
+              if (response.ok) {
+                toast.success(response.message);
+              } else {
+                toast.error(response.message);
+              }
             })
           }
           className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"

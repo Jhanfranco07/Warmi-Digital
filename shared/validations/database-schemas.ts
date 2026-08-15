@@ -220,9 +220,14 @@ export const notificationSchema = z.object({
 export const fileSchema = z.object({
   url: z.string().url(),
   provider: z.string().min(2).max(80),
+  publicId: z.string().max(300).optional(),
   type: fileTypeSchema,
   mimeType: z.string().min(2).max(120),
   size: z.number().int().positive(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+  altText: z.string().max(180).optional(),
+  metadata: z.record(z.unknown()).optional(),
   ownerId: uuidSchema.optional()
 });
 

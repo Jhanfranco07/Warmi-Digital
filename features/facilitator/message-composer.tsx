@@ -11,7 +11,11 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
       action={(data) =>
         startTransition(async () => {
           const response = await sendMessageAction(null, data);
-          response.ok ? toast.success(response.message) : toast.error(response.message);
+          if (response.ok) {
+            toast.success(response.message);
+          } else {
+            toast.error(response.message);
+          }
         })
       }
       className="flex gap-2"

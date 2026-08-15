@@ -84,8 +84,23 @@ export async function createProductAction(_: unknown, formData: FormData) {
     const name = String(formData.get("name"));
     const categoryId = String(formData.get("categoryId"));
     const craftTypeId = String(formData.get("craftTypeId"));
+    const mainImageFileId = String(formData.get("mainImageFileId") || "");
     const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}`;
-    await prisma.product.create({
+    if (mainImageFileId) {
+      const file = await prisma.file.findFirst({
+        where: {
+          id: mainImageFileId,
+          ownerId: session.user.id,
+          type: "IMAGE"
+        }
+      });
+
+      if (!file) {
+        throw new Error("La imagen principal no pertenece a tu cuenta.");
+      }
+    }
+
+    const product = await prisma.product.create({
       data: {
         artisanId: session.user.id,
         communityId: profile.communityId,
@@ -104,7 +119,19 @@ export async function createProductAction(_: unknown, formData: FormData) {
         culturalMeaning: String(formData.get("culturalMeaning") || "")
       }
     });
+
+    if (mainImageFileId) {
+      await prisma.productImage.create({
+        data: {
+          productId: product.id,
+          fileId: mainImageFileId,
+          altText: `Foto principal de ${name}`,
+          order: 0
+        }
+      });
+    }
     revalidatePath("/artesana/mi-vitrina");
+    revalidatePath("/mercado");
     return { ok: true, message: "Pieza guardada." };
   } catch (error) {
     return {

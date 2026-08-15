@@ -128,10 +128,7 @@ export default async function Page() {
             </div>
           </div>
           {summaryCards.map(({ title, value, detail, Icon }) => (
-            <div
-              key={title}
-              className="rounded-[10px] border border-[#eed8bf] p-6"
-            >
+            <div key={title} className="rounded-[10px] border border-[#eed8bf] p-6">
               <p className="font-ui text-sm text-[#6b5a4e]">{title}</p>
               <div className="mt-5 flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-[#fff2cf] text-[#d89b06]">

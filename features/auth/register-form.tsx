@@ -8,8 +8,7 @@ import {
   Camera,
   HandHeart,
   ShieldCheck,
-  Sparkles,
-  UsersRound
+  Sparkles
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

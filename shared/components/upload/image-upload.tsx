@@ -3,9 +3,10 @@ import { FileUpload, type FileUploadProps } from "@/shared/components/upload/fil
 export function ImageUpload(props: FileUploadProps) {
   return (
     <FileUpload
-      accept="image/*"
+      accept="image/jpeg,image/jpg,image/png,image/webp"
+      uploadType="IMAGE"
       label={props.label ?? "Subir imagen"}
-      description={props.description ?? "PNG, JPG o WebP"}
+      description={props.description ?? "JPG, PNG o WebP hasta 5 MB"}
       {...props}
     />
   );

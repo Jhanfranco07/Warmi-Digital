@@ -12,7 +12,11 @@ export function WorkshopEditor() {
       action={(data) =>
         startTransition(async () => {
           const response = await createWorkshopAction(null, data);
-          response.ok ? toast.success(response.message) : toast.error(response.message);
+          if (response.ok) {
+            toast.success(response.message);
+          } else {
+            toast.error(response.message);
+          }
         })
       }
       className="grid gap-4"

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Award, BookOpen, CircleHelp, MessageCircle, Users } from "lucide-react";
 
 import {

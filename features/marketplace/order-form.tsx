@@ -12,7 +12,11 @@ export function OrderForm({ productId }: { productId: string }) {
       action={(d) =>
         startTransition(async () => {
           const r = await createOrderAction(null, d);
-          r.ok ? toast.success(r.message) : toast.error(r.message);
+          if (r.ok) {
+            toast.success(r.message);
+          } else {
+            toast.error(r.message);
+          }
         })
       }
       className="grid gap-4"

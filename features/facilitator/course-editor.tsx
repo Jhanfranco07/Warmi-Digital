@@ -12,7 +12,11 @@ export function CourseEditor() {
       action={(data) =>
         startTransition(async () => {
           const response = await createCourseAction(null, data);
-          response.ok ? toast.success(response.message) : toast.error(response.message);
+          if (response.ok) {
+            toast.success(response.message);
+          } else {
+            toast.error(response.message);
+          }
         })
       }
       className="grid gap-4"

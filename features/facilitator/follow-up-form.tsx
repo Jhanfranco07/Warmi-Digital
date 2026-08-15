@@ -14,7 +14,11 @@ export function FollowUpForm({ artisanId }: { artisanId: string }) {
       action={(data) =>
         startTransition(async () => {
           const response = await createFollowUpAction(null, data);
-          response.ok ? toast.success(response.message) : toast.error(response.message);
+          if (response.ok) {
+            toast.success(response.message);
+          } else {
+            toast.error(response.message);
+          }
         })
       }
       className="grid gap-4"

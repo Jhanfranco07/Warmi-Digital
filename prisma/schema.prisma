@@ -1048,9 +1048,14 @@ model File {
   id        String   @id @default(uuid())
   url       String
   provider  String
+  publicId  String?
   type      FileType
   mimeType  String
   size      Int
+  width     Int?
+  height    Int?
+  altText   String?
+  metadata  Json?
   ownerId   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1065,6 +1070,7 @@ model File {
 
   @@index([ownerId])
   @@index([type])
+  @@index([provider, publicId])
 }
 
 model LessonFile {

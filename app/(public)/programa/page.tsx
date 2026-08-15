@@ -14,17 +14,17 @@ const programPillars = [
   {
     title: "Objetivo general",
     icon: Target,
-    text: "Que aprendan a usar su celular para vender sus productos, prepararse para participar en concursos, ferias y hacer sus propios trámites, con la ayuda de una facilitadora y de otras artesanas."
+    text: "Fortalecer las capacidades digitales de las artesanas de la región Cajamarca, mediante un proceso de formación y acompañamiento personalizado, que les permita emplear su dispositivo móvil como una herramienta estratégica para la comercialización de sus productos, la postulación a concursos y ferias, y la gestión autónoma de trámites vinculados a su actividad productiva, con el soporte de una facilitadora especializada y el respaldo de la red de artesanas."
   },
   {
     title: "Misión",
     icon: ShoppingBag,
-    text: "Enseñarles a usar herramientas digitales de forma práctica y con acompañamiento, para que su celular sea una herramienta de trabajo, tengan más ventas y participen en concursos que les ayuden a crecer."
+    text: "Desarrollar competencias digitales prácticas en las artesanas, mediante un acompañamiento técnico continuo, orientado a transformar su teléfono celular en un instrumento de trabajo efectivo que potencie sus canales de comercialización, facilite su participación en certámenes de reconocimiento y contribuya al fortalecimiento de su emprendimiento."
   },
   {
     title: "Visión",
     icon: UsersRound,
-    text: "Ser un ejemplo en la región Cajamarca de cómo las artesanas pueden usar la tecnología junto al apoyo de su comunidad, para que ninguna se quede atrás y todas tengan oportunidades de salir adelante con su trabajo."
+    text: "Constituirnos en un modelo de referencia en la región Cajamarca, que demuestre la viabilidad de articular tecnologías digitales con el tejido asociativo y comunitario del sector artesanal, garantizando que ninguna artesana quede excluida del acceso a oportunidades de desarrollo y que todas cuenten con los recursos técnicos y organizativos necesarios para la sostenibilidad de su actividad productiva."
   }
 ];
 

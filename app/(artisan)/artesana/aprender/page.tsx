@@ -38,6 +38,38 @@ const availableCourses = [
   }
 ];
 
+const mobileWorkshopDates = [
+  { month: "AGO", day: "15", label: "Sáb", active: true },
+  { month: "AGO", day: "16", label: "Dom" },
+  { month: "AGO", day: "17", label: "Lun" },
+  { month: "AGO", day: "20", label: "Jue" },
+  { month: "AGO", day: "27", label: "Jue" }
+];
+
+const mobileWorkshops = [
+  {
+    title: "Introducción al patrimonio textil",
+    date: "15 de agosto, 2026",
+    time: "10:00 a. m. - 12:00 p. m.",
+    facilitator: "María Quispe",
+    image: "/images/discover/aprende.png"
+  },
+  {
+    title: "Fotografía de productos con celular",
+    date: "20 de agosto, 2026",
+    time: "3:00 p. m. - 5:00 p. m.",
+    facilitator: "Lucía Mamani",
+    image: "/images/discover/emprende.png"
+  },
+  {
+    title: "Trámites digitales básicos",
+    date: "27 de agosto, 2026",
+    time: "10:00 a. m. - 12:00 p. m.",
+    facilitator: "Diego Torres",
+    image: "/images/learning/instituciones.png"
+  }
+];
+
 export default async function ArtisanLearningPage() {
   const session = await requireRole("ARTESANA");
   const [learning, dashboard] = await Promise.all([
@@ -122,6 +154,58 @@ export default async function ArtisanLearningPage() {
             image="/images/discover/recursos.png"
             completed
           />
+
+          <MobileSectionLabel title="Talleres en vivo" />
+          <div className="mt-3 rounded-2xl border border-[#f5d2dc] bg-white p-4 shadow-[0_12px_26px_rgba(122,16,66,0.08)]">
+            <div className="grid grid-cols-3 divide-x divide-[#f4cbd6]">
+              <MobileWorkshopStat label="Próximos" value="3" />
+              <MobileWorkshopStat label="Completados" value="12" />
+              <MobileWorkshopStat label="Participando" value="256" />
+            </div>
+          </div>
+
+          <div className="mt-5 flex gap-3 overflow-x-auto pb-1">
+            {mobileWorkshopDates.map((date) => (
+              <span
+                key={`${date.month}-${date.day}`}
+                className={`grid min-w-16 place-items-center rounded-2xl border px-3 py-3 text-center shadow-sm ${
+                  date.active
+                    ? "border-[#b5245b] bg-white text-[#b5245b]"
+                    : "border-[#f5d2dc] bg-white text-[#5b4a42]"
+                }`}
+              >
+                <span className="text-[11px] font-bold">{date.month}</span>
+                <span className="font-serif text-2xl font-bold">{date.day}</span>
+                <span className="text-xs">{date.label}</span>
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between">
+            <MobileSectionLabel title="Próximos talleres" className="mt-0" />
+            <Link href="/artesana/talleres" className="text-xs font-bold text-[#b5245b]">
+              Ver todos
+            </Link>
+          </div>
+          <div className="mt-3 space-y-4">
+            {mobileWorkshops.map((workshop) => (
+              <MobileWorkshopCard key={workshop.title} workshop={workshop} />
+            ))}
+          </div>
+
+          <div className="mt-5">
+            <MobileSectionLabel title="Talleres completados" className="mt-0" />
+            <MobileWorkshopCard
+              workshop={{
+                title: "Crochet para emprendedoras",
+                date: "08 de agosto, 2026",
+                time: "10:00 a. m. - 12:00 p. m.",
+                facilitator: "Ana Paredes",
+                image: "/images/discover/recursos.png"
+              }}
+              completed
+            />
+          </div>
         </div>
       </section>
 
@@ -504,6 +588,67 @@ function MobileLearningCard({
         ) : null}
       </div>
     </Link>
+  );
+}
+
+function MobileWorkshopStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="px-2 text-center">
+      <p className="font-serif text-3xl font-bold text-[#7a1042]">{value}</p>
+      <p className="mt-1 text-xs leading-tight text-[#5b4a42]">{label}</p>
+    </div>
+  );
+}
+
+function MobileWorkshopCard({
+  workshop,
+  completed = false
+}: {
+  workshop: {
+    title: string;
+    date: string;
+    time: string;
+    facilitator: string;
+    image: string;
+  };
+  completed?: boolean;
+}) {
+  return (
+    <article className="grid grid-cols-[122px_1fr] overflow-hidden rounded-2xl border border-[#f5d2dc] bg-white shadow-[0_12px_26px_rgba(122,16,66,0.08)]">
+      <div className="relative min-h-[132px]">
+        <Image
+          src={workshop.image}
+          alt={workshop.title}
+          fill
+          sizes="122px"
+          className="object-cover"
+        />
+      </div>
+      <div className="p-4">
+        <span
+          className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+            completed ? "bg-[#eef8e9] text-[#3a8b44]" : "bg-[#ffe0ea] text-[#b5245b]"
+          }`}
+        >
+          {completed ? "Completado" : "En vivo"}
+        </span>
+        <h3 className="mt-2 font-ui text-sm font-extrabold leading-tight text-[#1b1c1a]">
+          {workshop.title}
+        </h3>
+        <div className="mt-3 space-y-1 text-xs text-[#5b4a42]">
+          <p>{workshop.date}</p>
+          <p>{workshop.time}</p>
+          <p>Facilitadora: {workshop.facilitator}</p>
+        </div>
+        <Link
+          href="/artesana/talleres"
+          className="mt-3 inline-flex items-center rounded-lg border border-[#b5245b] px-4 py-2 text-xs font-bold text-[#b5245b]"
+        >
+          Ver detalles
+          <ChevronRight className="ml-1 h-3.5 w-3.5" />
+        </Link>
+      </div>
+    </article>
   );
 }
 

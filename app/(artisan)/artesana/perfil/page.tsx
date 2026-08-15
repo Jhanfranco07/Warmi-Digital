@@ -15,6 +15,7 @@ import {
   UserRound
 } from "lucide-react";
 
+import { logout } from "@/shared/actions/auth/logout";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -53,6 +54,16 @@ export default async function ArtisanProfilePage() {
             />
           </span>
         </header>
+
+        <form action={logout} className="mt-6 lg:hidden">
+          <button
+            type="submit"
+            className="flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#b5245b] px-5 font-ui text-base font-extrabold text-white shadow-[0_14px_30px_rgba(181,36,91,0.22)]"
+          >
+            <LogOut className="h-5 w-5" />
+            Cerrar sesión
+          </button>
+        </form>
 
         <section className="mt-8 grid gap-7 xl:grid-cols-[1.08fr_0.92fr]">
           <Panel title="Datos personales" icon={UserRound}>
@@ -202,13 +213,15 @@ export default async function ArtisanProfilePage() {
                 </div>
               </div>
 
-              <Button
-                variant="outline"
-                className="w-full rounded-lg border-[#e7b89f] bg-white text-[#b5245b] hover:bg-[#fff1e5]"
-              >
-                <LogOut className="h-5 w-5" />
-                Cerrar sesión en todos los dispositivos
-              </Button>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-[#e7b89f] bg-white px-5 font-ui text-base font-extrabold text-[#b5245b] transition-colors duration-300 hover:bg-[#fff1e5]"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Cerrar sesión
+                </button>
+              </form>
             </div>
           </Panel>
         </section>

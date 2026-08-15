@@ -39,7 +39,115 @@ export default async function ArtisanDashboardPage() {
 
   return (
     <>
-      <section className="bg-[#fff7f9] px-4 pb-6 pt-4 lg:hidden">
+      <section className="relative overflow-hidden bg-[#fffaf6] px-5 pb-7 pt-6 lg:hidden">
+        <div className="pointer-events-none absolute -right-16 top-6 h-40 w-40 rounded-full bg-[#ffe6ee]" />
+        <div className="pointer-events-none absolute -right-6 top-10 h-36 w-36 opacity-80">
+          <Image
+            src="/images/brand/warmi-isotipo.png"
+            alt=""
+            fill
+            sizes="144px"
+            className="object-contain"
+          />
+        </div>
+
+        <div className="relative">
+          <h1 className="font-serif text-3xl font-bold leading-tight text-[#7a1042]">
+            ¡Bienvenida, {firstName}!<span className="ml-1 text-[#c93772]">❧</span>
+          </h1>
+          <p className="mt-1 text-xs text-[#5b4a42]">
+            Aprende, emprende y transforma tu futuro.
+          </p>
+
+          <form className="mt-5 flex h-12 items-center rounded-full border border-[#f0b9ca] bg-white px-4 shadow-[0_10px_24px_rgba(181,36,91,0.08)]">
+            <Search className="mr-3 h-5 w-5 text-[#b5245b]" />
+            <input
+              name="q"
+              className="min-w-0 flex-1 bg-transparent text-sm text-[#7a1042] outline-none placeholder:text-[#9f6b7e]"
+              placeholder="¿Qué quieres aprender hoy?"
+            />
+          </form>
+
+          <MobileSectionTitle title="Continúa aprendiendo" />
+
+          <Link
+            href={
+              currentCourse
+                ? (`/artesana/aprender/${currentCourse.id}` as Route)
+                : ("/artesana/aprender" as Route)
+            }
+            className="mt-3 grid grid-cols-[128px_1fr] overflow-hidden rounded-2xl border border-[#f0c3cf] bg-white shadow-[0_14px_30px_rgba(122,16,66,0.1)]"
+          >
+            <div className="relative min-h-[126px]">
+              <Image
+                src="/images/discover/taller.png"
+                alt="Curso de tejido"
+                fill
+                sizes="128px"
+                className="object-cover"
+              />
+              <span className="absolute inset-0 bg-[#7a1042]/15" />
+              <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#b5245b] shadow-lg">
+                <PlayCircle className="h-8 w-8" />
+              </span>
+            </div>
+            <div className="p-4">
+              <p className="font-ui text-sm font-extrabold leading-tight text-[#1b1c1a]">
+                {currentCourse?.title ?? "Introducción al patrimonio textil"}
+              </p>
+              <p className="mt-3 text-[11px] font-bold text-[#b5245b]">
+                {data.generalProgress}% completado
+              </p>
+              <Progress
+                value={data.generalProgress}
+                className="mt-1.5 h-1.5 bg-[#f4dbe4] [&>div]:bg-[#b5245b]"
+              />
+              <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">
+                Continuar curso
+                <ChevronRight className="ml-1 h-3.5 w-3.5" />
+              </span>
+            </div>
+          </Link>
+
+          <div className="mt-6 flex items-center justify-between">
+            <h2 className="font-serif text-lg font-bold text-[#5a1d2f]">
+              Cursos recomendados para ti
+            </h2>
+            <Link href="/artesana/aprender" className="text-xs font-bold text-[#b5245b]">
+              Ver todos
+            </Link>
+          </div>
+
+          <div className="mt-3 space-y-3">
+            <MobileCourse
+              image="/images/discover/aprende.png"
+              title="Emprendimiento para artesanas"
+              modules="8 módulos"
+            />
+            <MobileCourse
+              image="/images/discover/emprende.png"
+              title="Fotografía de productos con celular"
+              modules="6 módulos"
+            />
+            <MobileCourse
+              image="/images/discover/recursos.png"
+              title="Marketing digital para artesanas"
+              modules="7 módulos"
+            />
+          </div>
+
+          <h2 className="mt-6 font-serif text-lg font-bold text-[#5a1d2f]">Categorías</h2>
+          <div className="mt-3 grid grid-cols-5 gap-2">
+            <MobileCategory icon={Palette} label="Tejido" />
+            <MobileCategory icon={Gem} label="Bordado" />
+            <MobileCategory icon={Store} label="Emprendimiento" />
+            <MobileCategory icon={Megaphone} label="Marketing" />
+            <MobileCategory icon={Camera} label="Fotografía" />
+          </div>
+        </div>
+      </section>
+
+      <section className="hidden">
         <p className="font-ui text-base font-bold text-[#1b1c1a]">
           ¡Bienvenida, {firstName}!
         </p>
@@ -520,6 +628,15 @@ function AchievementRow({ title, description }: { title: string; description: st
   );
 }
 
+function MobileSectionTitle({ title }: { title: string }) {
+  return (
+    <div className="mt-6 flex items-center gap-3">
+      <h2 className="font-serif text-lg font-bold text-[#5a1d2f]">{title}</h2>
+      <span className="h-px flex-1 bg-[#f1c6d5]" />
+    </div>
+  );
+}
+
 function MobileCourse({
   image,
   title,
@@ -532,17 +649,21 @@ function MobileCourse({
   return (
     <Link
       href="/artesana/aprender"
-      className="grid grid-cols-[78px_1fr_auto] items-center gap-3 rounded-md bg-white p-2 shadow-[0_8px_18px_rgba(122,16,66,0.06)]"
+      className="grid grid-cols-[86px_1fr_auto] items-center gap-3 rounded-xl border border-[#f5d2dc] bg-white p-2 shadow-[0_10px_22px_rgba(122,16,66,0.07)]"
     >
-      <div
-        className="h-14 rounded bg-cover bg-center"
-        style={{ backgroundImage: `url(${image})` }}
-      />
-      <div className="min-w-0">
-        <p className="line-clamp-2 font-ui text-xs font-bold text-[#1b1c1a]">{title}</p>
-        <p className="mt-1 text-[10px] text-[#5b4a42]">{modules}</p>
+      <div className="relative h-16 overflow-hidden rounded-lg">
+        <Image src={image} alt={title} fill sizes="86px" className="object-cover" />
       </div>
-      <span className="rounded-sm border border-[#b5245b] px-2 py-1 text-[10px] font-bold text-[#7a1042]">
+      <div className="min-w-0">
+        <p className="line-clamp-2 font-ui text-xs font-extrabold leading-tight text-[#1b1c1a]">
+          {title}
+        </p>
+        <p className="mt-1 flex items-center gap-1 text-[10px] text-[#5b4a42]">
+          <BookOpen className="h-3 w-3 text-[#b5245b]" />
+          {modules}
+        </p>
+      </div>
+      <span className="rounded-lg border border-[#b5245b] px-2.5 py-1.5 text-[10px] font-bold text-[#7a1042]">
         Ver curso
       </span>
     </Link>
@@ -559,9 +680,9 @@ function MobileCategory({
   return (
     <Link
       href="/artesana/aprender"
-      className="flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg bg-[#ffe3eb] px-1 text-center text-[#7a1042]"
+      className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl bg-[#ffe4ec] px-1 text-center text-[#9d0f4f] shadow-[0_8px_18px_rgba(122,16,66,0.05)]"
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-6 w-6" />
       <span className="text-[9px] leading-tight">{label}</span>
     </Link>
   );

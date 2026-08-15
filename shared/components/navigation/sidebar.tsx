@@ -4,7 +4,16 @@ import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import type { UserRole } from "@prisma/client";
-import { Bell, BookOpen, ChevronRight, Home, Menu, User, Users } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  ChevronRight,
+  Home,
+  Menu,
+  Store,
+  User,
+  Users
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
@@ -87,6 +96,7 @@ export function MobileNavigation({ role }: SidebarProps) {
       ? [
           { label: "Inicio", href: "/artesana/dashboard", icon: Home },
           { label: "Mis cursos", href: "/artesana/aprender", icon: BookOpen },
+          { label: "Mi vitrina", href: "/artesana/mi-vitrina", icon: Store },
           { label: "Comunidad", href: "/artesana/mi-comunidad", icon: Users },
           { label: "Perfil", href: "/artesana/perfil", icon: User }
         ]
@@ -131,7 +141,7 @@ export function MobileNavigation({ role }: SidebarProps) {
       </div>
 
       {bottomItems.length ? (
-        <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[#c64d73] bg-[#7a1042] px-2 py-2 text-white shadow-[0_-12px_30px_rgba(122,16,66,0.24)] lg:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#c64d73] bg-[#9d0f4f] px-1.5 py-2 text-white shadow-[0_-12px_30px_rgba(122,16,66,0.24)] lg:hidden">
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -141,8 +151,9 @@ export function MobileNavigation({ role }: SidebarProps) {
                 key={item.href}
                 href={item.href as Route}
                 className={cn(
-                  "flex min-h-12 flex-col items-center justify-center gap-1 rounded-md text-[11px] text-white/80",
-                  active && "bg-white/12 text-white"
+                  "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] text-white/80",
+                  active &&
+                    "bg-white/12 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
                 )}
               >
                 <Icon className="h-4 w-4" />

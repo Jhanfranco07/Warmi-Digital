@@ -11,7 +11,6 @@ import {
   MessageCircle,
   Package,
   ScrollText,
-  Settings,
   Store,
   User,
   Users,
@@ -42,13 +41,18 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
   ],
   FACILITADORA: [
     { label: "Inicio", href: "/facilitadora/dashboard", icon: LayoutDashboard },
-    { label: "Artesanas", href: "/facilitadora/artesanas", icon: HandHeart },
+    { label: "Mis artesanas", href: "/facilitadora/artesanas", icon: HandHeart },
+    {
+      label: "Seguimiento",
+      href: "/facilitadora/seguimiento",
+      icon: ChartNoAxesCombined
+    },
     { label: "Cursos", href: "/facilitadora/cursos", icon: GraduationCap },
     { label: "Talleres", href: "/facilitadora/talleres", icon: CalendarDays },
     { label: "Convocatorias", href: "/facilitadora/convocatorias", icon: Bell },
     { label: "Mensajes", href: "/facilitadora/mensajes", icon: MessageCircle },
     { label: "Reportes", href: "/facilitadora/reportes", icon: ChartNoAxesCombined },
-    { label: "Configuración", href: "/facilitadora/configuracion", icon: Settings }
+    { label: "Mi perfil", href: "/facilitadora/perfil", icon: User }
   ],
   ADMIN: [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -59,7 +63,7 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
     { label: "Pedidos", href: "/admin/orders", icon: Package },
     { label: "Convocatorias", href: "/admin/opportunities", icon: Bell },
     { label: "Reportes", href: "/admin/reports", icon: ChartNoAxesCombined },
-    { label: "Configuración", href: "/admin/settings", icon: Settings }
+    { label: "Configuración", href: "/admin/settings", icon: User }
   ]
 };
 
@@ -74,7 +78,7 @@ export const roleNavigationMeta: Record<
   },
   FACILITADORA: {
     label: "Facilitadora",
-    description: "Seguimiento y acompañamiento",
+    description: "Impulsamos su desarrollo",
     icon: HandHeart
   },
   ADMIN: {

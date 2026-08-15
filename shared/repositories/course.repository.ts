@@ -9,6 +9,7 @@ export class CourseRepository {
       include: {
         course: {
           include: {
+            facilitator: { include: { profile: true } },
             modules: {
               include: { lessons: { orderBy: { order: "asc" } } },
               orderBy: { order: "asc" }
@@ -34,6 +35,14 @@ export class CourseRepository {
             title: true,
             description: true,
             level: true,
+            imageUrl: true,
+            facilitator: {
+              select: {
+                id: true,
+                name: true,
+                profile: { select: { displayName: true, avatarUrl: true } }
+              }
+            },
             modules: {
               select: {
                 id: true,
@@ -78,6 +87,14 @@ export class CourseRepository {
         title: true,
         description: true,
         level: true,
+        imageUrl: true,
+        facilitator: {
+          select: {
+            id: true,
+            name: true,
+            profile: { select: { displayName: true, avatarUrl: true } }
+          }
+        },
         modules: {
           select: {
             id: true,
@@ -96,6 +113,7 @@ export class CourseRepository {
       include: {
         course: {
           include: {
+            facilitator: { include: { profile: true } },
             modules: {
               include: {
                 lessons: {
@@ -121,7 +139,11 @@ export class CourseRepository {
     const enrollment = await this.db.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },
       include: {
-        course: true,
+        course: {
+          include: {
+            facilitator: { include: { profile: true } }
+          }
+        },
         courseProgress: true,
         lessonProgresses: true
       }

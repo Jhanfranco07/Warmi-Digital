@@ -9,9 +9,18 @@ export class OrderRepository {
         items: { some: { product: { artisanId } } }
       },
       include: {
+        buyer: { include: { profile: true } },
+        payment: true,
         items: {
           where: { product: { artisanId } },
-          include: { product: true }
+          include: {
+            product: {
+              include: {
+                community: true,
+                images: { include: { file: true }, orderBy: { order: "asc" } }
+              }
+            }
+          }
         }
       },
       orderBy: { placedAt: "desc" },
@@ -27,7 +36,17 @@ export class OrderRepository {
       where: { id: orderId, items: { some: { product: { artisanId } } } },
       include: {
         buyer: { include: { profile: true } },
-        items: { include: { product: true } }
+        payment: true,
+        items: {
+          include: {
+            product: {
+              include: {
+                community: true,
+                images: { include: { file: true }, orderBy: { order: "asc" } }
+              }
+            }
+          }
+        }
       }
     });
   }

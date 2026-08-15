@@ -1,121 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
+import { format } from "date-fns";
 import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
   Clock,
   MapPin,
-  Star,
   Users
 } from "lucide-react";
 
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { WorkshopService } from "@/shared/services/workshop.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
-const techWorkshops = [
-  {
-    title: "Correo para trámites simples",
-    date: "06 de agosto, 2026",
-    time: "10:00 - 12:00",
-    location: "En línea",
-    image: "/images/learning/instituciones.png",
-    description: "Crea tu correo, guarda tu contraseña y aprende a enviar documentos."
-  },
-  {
-    title: "Fotografía para artesanas",
-    date: "15 de agosto, 2026",
-    time: "15:00 - 17:00",
-    location: "En línea",
-    image: "/images/discover/emprende.png",
-    description: "Técnicas simples para tomar mejores fotos de tus productos."
-  },
-  {
-    title: "Contar la historia de una pieza",
-    date: "20 de agosto, 2026",
-    time: "19:00 - 21:00",
-    location: "Centro comunal Qantu",
-    image: "/images/discover/taller.png",
-    description: "Aprende a comunicar el significado y valor de tus creaciones."
-  },
-  {
-    title: "WhatsApp Business para pedidos",
-    date: "27 de agosto, 2026",
-    time: "10:00 - 12:00",
-    location: "En línea",
-    image: "/images/discover/recursos.png",
-    description: "Configura catálogo, respuestas rápidas y seguimiento básico de pedidos."
-  }
-];
-
-const completedWorkshops = [
-  {
-    title: "Introducción al tejido andino",
-    date: "22 de julio, 2026",
-    time: "10:00 - 12:00",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    title: "Diseño de patrones",
-    date: "08 de julio, 2026",
-    time: "15:00 - 17:00",
-    image: "/images/learning/cursos-spoiler.png"
-  },
-  {
-    title: "Color natural en fibras",
-    date: "25 de junio, 2026",
-    time: "10:00 - 12:00",
-    image: "/images/home/bienvenida-warmi.png"
-  }
-];
-
-const calendarDays = [
-  ["LUN", "28", false],
-  ["MAR", "29", false],
-  ["MIÉ", "30", false],
-  ["JUE", "31", false],
-  ["VIE", "1", false],
-  ["SÁB", "2", false],
-  ["DOM", "3", false],
-  ["", "4", false],
-  ["", "5", false],
-  ["", "6", "soft"],
-  ["", "7", false],
-  ["", "8", false],
-  ["", "9", false],
-  ["", "10", false],
-  ["", "11", false],
-  ["", "12", false],
-  ["", "13", false],
-  ["", "14", false],
-  ["", "15", "soft"],
-  ["", "16", false],
-  ["", "17", false],
-  ["", "18", false],
-  ["", "19", false],
-  ["", "20", "strong"],
-  ["", "21", false],
-  ["", "22", false],
-  ["", "23", false],
-  ["", "24", false],
-  ["", "25", false],
-  ["", "26", false],
-  ["", "27", "gold"],
-  ["", "28", false],
-  ["", "29", false],
-  ["", "30", false],
-  ["", "31", false]
-] as const;
+type WorkshopRegistration = Awaited<
+  ReturnType<WorkshopService["getWorkshops"]>
+>["upcoming"][number];
 
 export default async function ArtisanWorkshopsPage() {
   const session = await requireRole("ARTESANA");
-  const { upcoming, completed } = await new WorkshopService().getWorkshops(
-    session.user.id
-  );
-  const upcomingCount = Math.max(upcoming.length, 3);
-  const completedCount = Math.max(completed.length, 8);
+  const [{ upcoming, completed }, artisan] = await Promise.all([
+    new WorkshopService().getWorkshops(session.user.id),
+    new ArtisanRepository().findProfile(session.user.id)
+  ]);
+
+  const displayName =
+    artisan?.profile?.displayName ?? session.user.name ?? "Artesana Warmi";
+  const avatarUrl = artisan?.profile?.avatarUrl ?? null;
+  const totalHours = completed.reduce((total, registration) => {
+    const { startsAt, endsAt } = registration.workshop;
+    if (!startsAt || !endsAt) return total;
+    return (
+      total + Math.max(1, Math.round((endsAt.getTime() - startsAt.getTime()) / 3600000))
+    );
+  }, 0);
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -123,9 +44,9 @@ export default async function ArtisanWorkshopsPage() {
         <header className="flex items-start justify-between gap-6">
           <div>
             <h1 className="font-serif text-6xl font-bold leading-none text-[#101833] 2xl:text-7xl">
-              Talleres <span className="text-4xl text-[#b5245b]">❧</span>
+              Talleres <span className="text-4xl text-[#b5245b]">*</span>
             </h1>
-            <p className="mt-4 text-lg leading-8 text-[#5b4a42]">
+            <p className="mt-4 max-w-4xl text-lg leading-8 text-[#5b4a42]">
               Descubre, participa y fortalece habilidades digitales simples para tus
               trámites, tu comunicación y tu vitrina cultural.
             </p>
@@ -133,17 +54,23 @@ export default async function ArtisanWorkshopsPage() {
 
           <div className="hidden items-center gap-3 xl:flex">
             <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
-              <Image
-                src="/images/auth/artesana.png"
-                alt="Elena Mamani"
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={displayName}
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              ) : (
+                <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
+                  {displayName.slice(0, 1)}
+                </span>
+              )}
             </span>
             <div>
               <p className="font-ui text-base font-extrabold text-[#1b1c1a]">
-                Elena Mamani
+                {displayName}
               </p>
               <p className="text-sm text-[#5b4a42]">Artesana</p>
             </div>
@@ -155,189 +82,99 @@ export default async function ArtisanWorkshopsPage() {
             <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
               Resumen de participación
             </h2>
-            <div className="mt-16 grid gap-10 md:grid-cols-3">
+            <div className="mt-12 grid gap-10 md:grid-cols-3">
               <SummaryStat
                 icon={CalendarDays}
                 label="Próximos talleres"
-                value={upcomingCount}
-                detail="Este mes"
+                value={upcoming.length}
+                detail="Asignados a tu ruta"
                 color="bg-[#ffe8ef] text-[#b5245b]"
               />
               <SummaryStat
                 icon={CheckCircle2}
                 label="Talleres completados"
-                value={completedCount}
-                detail="En total"
+                value={completed.length}
+                detail="Con asistencia registrada"
                 color="bg-[#fff0d6] text-[#d7920c]"
               />
               <SummaryStat
                 icon={Users}
                 label="Horas de aprendizaje"
-                value={24}
-                detail="En total"
-                color="bg-[#f0edff] text-[#6252b7]"
+                value={totalHours}
+                detail="Calculadas desde talleres"
+                color="bg-[#e8fbfd] text-[#159aa4]"
               />
             </div>
           </article>
 
           <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
             <h2 className="font-serif text-3xl font-bold text-[#b5245b]">Calendario</h2>
-            <div className="mt-5 grid gap-8 xl:grid-cols-[1fr_1.15fr]">
-              <div>
-                <div className="mb-4 flex items-center justify-between text-[#7a3100]">
-                  <ChevronRight className="h-5 w-5 rotate-180" />
-                  <p className="font-ui text-base font-bold text-[#1b1c1a]">
-                    Agosto 2026
-                  </p>
-                  <ChevronRight className="h-5 w-5" />
-                </div>
-                <div className="grid grid-cols-7 gap-y-3 text-center text-sm">
-                  {calendarDays.map(([label, day, state], index) => (
-                    <div key={`${day}-${index}`} className="space-y-2">
-                      {label ? (
-                        <p className="font-ui text-xs font-bold text-[#7a5b4a]">
-                          {label}
-                        </p>
-                      ) : null}
-                      <span
-                        className={`mx-auto grid h-8 w-8 place-items-center rounded-full text-sm ${
-                          state === "strong"
-                            ? "bg-[#b5245b] text-white"
-                            : state === "soft"
-                              ? "bg-[#ffe8ef] text-[#b5245b]"
-                              : state === "gold"
-                                ? "bg-[#fff0d6] text-[#b96700]"
-                                : "text-[#5b4a42]"
-                        }`}
-                      >
-                        {day}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-[#ecd0bd] p-4">
-                {techWorkshops.map((workshop, index) => (
-                  <div
-                    key={workshop.title}
-                    className="grid grid-cols-[54px_1fr] gap-4 border-b border-[#f1ddcf] py-3 last:border-0"
-                  >
-                    <div className="text-center">
-                      <p
-                        className={`font-ui text-2xl font-extrabold ${
-                          index === 2 ? "text-[#b5245b]" : "text-[#d25768]"
-                        }`}
-                      >
-                        {workshop.date.slice(0, 2)}
-                      </p>
-                      <p className="text-xs font-bold uppercase text-[#7a5b4a]">AGO</p>
-                    </div>
-                    <div>
-                      <p className="font-ui text-sm font-extrabold text-[#1b1c1a]">
-                        {workshop.title}
-                      </p>
-                      <p className="mt-1 text-sm text-[#5b4a42]">{workshop.time}</p>
-                    </div>
-                  </div>
+            {upcoming.length ? (
+              <div className="mt-6 grid gap-4">
+                {upcoming.slice(0, 4).map((registration) => (
+                  <CalendarRow key={registration.id} registration={registration} />
                 ))}
-                <Link
-                  href="/artesana/talleres"
-                  className="mt-4 flex items-center justify-end gap-2 font-ui text-sm font-extrabold text-[#b5245b]"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  Ver calendario completo
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
               </div>
-            </div>
+            ) : (
+              <EmptyWorkshopState text="No tienes talleres próximos." />
+            )}
           </article>
         </section>
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.08fr_0.92fr]">
-          <div>
-            <div className="mb-5 flex gap-8 border-b border-[#ecd0bd]">
-              <button className="border-b-2 border-[#b5245b] pb-4 font-ui text-base font-extrabold text-[#b5245b]">
+          <article className="rounded-[18px] border border-[#ecd0bd] bg-white p-5 shadow-[0_20px_50px_rgba(122,49,0,0.07)]">
+            <header className="mb-5 flex items-center justify-between border-b border-[#ecd0bd] pb-4">
+              <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
                 Próximos talleres
-              </button>
-              <button className="pb-4 font-ui text-base font-bold text-[#7a5b4a]">
-                Talleres completados
-              </button>
-            </div>
+              </h2>
+              <Link
+                href="/artesana/aprender"
+                className="font-ui text-sm font-bold text-[#b5245b]"
+              >
+                Volver a cursos <ChevronRight className="inline h-4 w-4" />
+              </Link>
+            </header>
 
-            <article className="rounded-[18px] border border-[#ecd0bd] bg-white p-4 shadow-[0_20px_50px_rgba(122,49,0,0.07)]">
+            {upcoming.length ? (
               <div className="grid gap-4">
-                {techWorkshops.slice(0, 3).map((workshop, index) => (
-                  <WorkshopRow
-                    key={workshop.title}
-                    workshop={workshop}
-                    facilitator={
-                      index === 0
-                        ? "Lucía Quispe"
-                        : index === 1
-                          ? "María Condori"
-                          : "Yana Mamani"
-                    }
-                  />
+                {upcoming.map((registration) => (
+                  <WorkshopRow key={registration.id} registration={registration} />
                 ))}
               </div>
-              <Button
-                variant="outline"
-                className="mt-5 min-h-[48px] w-full justify-center rounded-lg border-[#ecd0bd] text-[#b5245b]"
-              >
-                Ver todos los próximos talleres
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </article>
-          </div>
+            ) : (
+              <EmptyWorkshopState text="No tienes talleres próximos. Cuando una facilitadora te registre, aparecerán aquí." />
+            )}
+          </article>
 
           <article className="rounded-[18px] border border-[#ecd0bd] bg-white p-5 shadow-[0_20px_50px_rgba(122,49,0,0.07)]">
-            <header className="mb-4 flex items-center justify-between">
+            <header className="mb-5 flex items-center justify-between border-b border-[#ecd0bd] pb-4">
               <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
                 Talleres completados
               </h2>
-              <Link
-                href="/artesana/talleres"
-                className="font-ui text-sm font-bold text-[#b5245b]"
-              >
-                Ver todos <ChevronRight className="inline h-4 w-4" />
-              </Link>
+              <span className="font-ui text-sm font-bold text-[#7a5b4a]">
+                {completed.length} registrados
+              </span>
             </header>
-            <div className="grid gap-4">
-              {completedWorkshops.map((workshop) => (
-                <CompletedRow key={workshop.title} workshop={workshop} />
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              className="mt-5 min-h-[48px] w-full justify-center rounded-lg border-[#ecd0bd] text-[#b5245b]"
-            >
-              Ver todos los talleres completados
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+
+            {completed.length ? (
+              <div className="grid gap-4">
+                {completed.map((registration) => (
+                  <CompletedRow key={registration.id} registration={registration} />
+                ))}
+              </div>
+            ) : (
+              <EmptyWorkshopState text="Aún no tienes talleres completados." />
+            )}
           </article>
         </section>
 
-        <section className="mt-8 flex items-center justify-between rounded-[14px] border border-[#d7d0f4] bg-[#f2efff] px-7 py-5 shadow-[0_18px_40px_rgba(98,82,183,0.08)]">
-          <div className="flex items-center gap-5">
-            <Star className="h-10 w-10 text-[#6252b7]" />
-            <div>
-              <h3 className="font-ui text-lg font-extrabold text-[#6252b7]">
-                Aprende a tu ritmo, conecta con otras artesanas y fortalece tu talento.
-              </h3>
-              <p className="mt-1 text-base text-[#5b4a42]">
-                Los talleres son espacios pensados para ti. ¡Sigue aprendiendo y
-                creciendo!
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            className="hidden min-h-[54px] rounded-lg border-white bg-white px-8 text-[#6252b7] md:inline-flex"
-          >
-            Explorar más talleres
-            <ChevronRight className="h-5 w-5" />
-          </Button>
+        <section className="mt-8 rounded-[14px] border border-[#d7d0f4] bg-[#f2efff] px-7 py-5 shadow-[0_18px_40px_rgba(98,82,183,0.08)]">
+          <h3 className="font-ui text-lg font-extrabold text-[#6252b7]">
+            Aprende a tu ritmo, conecta con otras artesanas y fortalece tu talento.
+          </h3>
+          <p className="mt-1 text-base text-[#5b4a42]">
+            Los talleres registrados por tu facilitadora aparecerán en esta sección.
+          </p>
         </section>
       </div>
     </main>
@@ -371,110 +208,127 @@ function SummaryStat({
   );
 }
 
-function WorkshopRow({
-  workshop,
-  facilitator
-}: {
-  workshop: (typeof techWorkshops)[number];
-  facilitator: string;
-}) {
+function CalendarRow({ registration }: { registration: WorkshopRegistration }) {
+  const { workshop } = registration;
   return (
-    <article className="grid gap-5 rounded-xl border border-[#ecd0bd] p-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)] md:grid-cols-[190px_1fr_170px]">
-      <div className="relative h-28 overflow-hidden rounded-lg">
-        <Image
-          src={workshop.image}
-          alt={workshop.title}
-          fill
-          sizes="190px"
-          className="object-cover"
-        />
-        <Badge className="absolute right-2 top-2 bg-[#ffe8ef] text-[#b5245b] hover:bg-[#ffe8ef]">
+    <div className="grid grid-cols-[64px_1fr_auto] items-center gap-4 border-b border-[#f1ddcf] py-3 last:border-0">
+      <WorkshopDate startsAt={workshop.startsAt} />
+      <div>
+        <p className="font-ui text-sm font-extrabold text-[#1b1c1a]">{workshop.title}</p>
+        <p className="mt-1 text-sm text-[#5b4a42]">{formatWorkshopTime(workshop)}</p>
+      </div>
+      <Badge className="bg-[#fff0d6] text-[#a95511] hover:bg-[#fff0d6]">
+        {registration.status}
+      </Badge>
+    </div>
+  );
+}
+
+function WorkshopRow({ registration }: { registration: WorkshopRegistration }) {
+  const { workshop } = registration;
+  const facilitator =
+    workshop.facilitator.profile?.displayName ??
+    workshop.facilitator.name ??
+    "Facilitadora Warmi";
+
+  return (
+    <article className="grid gap-5 rounded-xl border border-[#ecd0bd] p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)] md:grid-cols-[110px_1fr_auto]">
+      <WorkshopDate startsAt={workshop.startsAt} large />
+      <div>
+        <Badge className="mb-3 bg-[#ffe8ef] text-[#b5245b] hover:bg-[#ffe8ef]">
           Próximo
         </Badge>
-      </div>
-      <div>
         <h3 className="font-serif text-2xl font-bold text-[#b5245b]">{workshop.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-[#5b4a42]">
+          {workshop.description ?? "Taller registrado en tu ruta de aprendizaje."}
+        </p>
         <div className="mt-3 flex flex-wrap gap-4 text-sm text-[#5b4a42]">
           <span className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4" />
-            {workshop.date}
-          </span>
-          <span className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            {workshop.time}
+            {formatWorkshopTime(workshop)}
           </span>
           <span className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
-            {workshop.location}
+            {workshop.location ?? workshop.community?.name ?? "Lugar por confirmar"}
+          </span>
+          <span className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Facilitadora: {facilitator}
           </span>
         </div>
-        <p className="mt-3 text-sm text-[#5b4a42]">{workshop.description}</p>
       </div>
-      <div className="flex flex-col justify-between">
-        <div className="flex items-center gap-3">
-          <span className="relative h-10 w-10 overflow-hidden rounded-full">
-            <Image
-              src="/images/auth/facilitadora.png"
-              alt=""
-              fill
-              sizes="40px"
-              className="object-cover"
-            />
-          </span>
-          <div>
-            <p className="text-xs text-[#5b4a42]">Facilitadora</p>
-            <p className="text-sm font-bold text-[#1b1c1a]">{facilitator}</p>
-          </div>
-        </div>
-        <Button className="mt-4 rounded-lg bg-[#b5245b] text-white hover:bg-[#941747]">
-          Ver detalles
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+      <Button
+        variant="outline"
+        className="self-center rounded-lg border-[#ecd0bd] text-[#b5245b]"
+        disabled
+      >
+        Detalle no habilitado
+      </Button>
     </article>
   );
 }
 
-function CompletedRow({ workshop }: { workshop: (typeof completedWorkshops)[number] }) {
+function CompletedRow({ registration }: { registration: WorkshopRegistration }) {
+  const { workshop } = registration;
   return (
-    <article className="grid grid-cols-[120px_1fr_auto] items-center gap-5 border-b border-[#f1ddcf] pb-4 last:border-0">
-      <div className="relative h-20 overflow-hidden rounded-lg">
-        <Image
-          src={workshop.image}
-          alt={workshop.title}
-          fill
-          sizes="120px"
-          className="object-cover"
-        />
-        <Badge className="absolute left-2 top-2 bg-[#fff0d6] text-[#a95511] hover:bg-[#fff0d6]">
+    <article className="grid gap-5 rounded-xl border border-[#ecd0bd] p-4 md:grid-cols-[110px_1fr_auto]">
+      <WorkshopDate startsAt={workshop.startsAt} large />
+      <div>
+        <Badge className="mb-3 bg-[#eef8e9] text-[#36785f] hover:bg-[#eef8e9]">
           Completado
         </Badge>
-      </div>
-      <div>
-        <h3 className="font-ui text-base font-extrabold text-[#1b1c1a]">
-          {workshop.title}
-        </h3>
-        <div className="mt-2 flex flex-wrap gap-4 text-sm text-[#5b4a42]">
-          <span className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4" />
-            {workshop.date}
-          </span>
+        <h3 className="font-serif text-2xl font-bold text-[#1b1c1a]">{workshop.title}</h3>
+        <div className="mt-3 flex flex-wrap gap-4 text-sm text-[#5b4a42]">
           <span className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            {workshop.time}
+            {formatWorkshopTime(workshop)}
           </span>
           <span className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
-            En línea
+            {workshop.location ?? workshop.community?.name ?? "Lugar registrado"}
           </span>
         </div>
       </div>
-      <div className="text-right">
-        <p className="text-xs text-[#5b4a42]">Tu asistencia</p>
-        <p className="mt-1 flex items-center gap-2 text-sm font-bold text-[#36785f]">
-          Asististe <CheckCircle2 className="h-5 w-5" />
-        </p>
-      </div>
+      <p className="self-center text-sm font-bold text-[#36785f]">
+        Asistencia registrada
+      </p>
     </article>
+  );
+}
+
+function WorkshopDate({
+  startsAt,
+  large = false
+}: {
+  startsAt: Date | null;
+  large?: boolean;
+}) {
+  return (
+    <div
+      className={`grid place-items-center rounded-xl bg-[#fff5e8] text-center text-[#7a3100] ${
+        large ? "h-24 w-24" : "h-16 w-16"
+      }`}
+    >
+      <span className="font-serif text-3xl font-bold">
+        {startsAt ? format(startsAt, "dd") : "--"}
+      </span>
+      <span className="text-xs font-bold uppercase">
+        {startsAt ? format(startsAt, "MMM") : "TAL"}
+      </span>
+    </div>
+  );
+}
+
+function formatWorkshopTime(workshop: WorkshopRegistration["workshop"]) {
+  if (!workshop.startsAt) return "Horario pendiente";
+  if (!workshop.endsAt) return format(workshop.startsAt, "HH:mm");
+  return `${format(workshop.startsAt, "HH:mm")} - ${format(workshop.endsAt, "HH:mm")}`;
+}
+
+function EmptyWorkshopState({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-[#ecd0bd] bg-[#fffaf6] p-8 text-center text-base font-semibold text-[#7a5b4a]">
+      {text}
+    </div>
   );
 }

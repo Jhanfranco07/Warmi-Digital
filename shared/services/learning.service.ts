@@ -55,6 +55,11 @@ export class LearningService {
         title: enrollment.course.title,
         description: enrollment.course.description,
         level: enrollment.course.level,
+        imageUrl: enrollment.course.imageUrl,
+        facilitatorName:
+          enrollment.course.facilitator?.profile?.displayName ??
+          enrollment.course.facilitator?.name ??
+          null,
         status: enrollment.status,
         progress: getCourseSummaryProgress(enrollment),
         durationMin: enrollment.course.modules.reduce(
@@ -70,6 +75,9 @@ export class LearningService {
         title: course.title,
         description: course.description,
         level: course.level,
+        imageUrl: course.imageUrl,
+        facilitatorName:
+          course.facilitator?.profile?.displayName ?? course.facilitator?.name ?? null,
         durationMin: course.modules.reduce(
           (total, module) => total + (module.durationMin ?? 0),
           0

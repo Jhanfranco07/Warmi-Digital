@@ -45,7 +45,12 @@ export function AudioHelpButton({
       )}
     >
       <Volume2 className="h-4 w-4" aria-hidden="true" />
-      <button type="button" onClick={toggle} className="inline-flex items-center gap-1">
+      <button
+        type="button"
+        onClick={toggle}
+        className="inline-flex items-center gap-1"
+        aria-label={playing ? "Pausar audio de apoyo" : title}
+      >
         {playing ? (
           <Pause className="h-4 w-4" aria-hidden="true" />
         ) : (

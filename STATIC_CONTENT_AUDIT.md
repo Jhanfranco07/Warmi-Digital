@@ -54,3 +54,23 @@ Esta auditoria clasifica los assets actuales antes de eliminar o reemplazar cual
 - Los modulos autenticados no deben usar assets de `/images/discover`, `/images/home`, `/images/auth` o `/images/learning` como datos de negocio.
 - Cuando no exista imagen real, se debe usar un placeholder de UI generado por componente, no una foto demo permanente.
 - Los seed pueden seguir creando datos de desarrollo, pero la UI debe consumir PostgreSQL mediante Service -> Repository -> Prisma.
+
+## Actualizacion Tanda 2 - Artesana
+
+Fecha: 2026-08-15
+
+| Modulo                    | Resultado                                                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Artesana - Inicio         | Reemplazados fallbacks de imagen demo por `Course.imageUrl`, avatar real y placeholders de UI. Convocatorias y logros consumen datos reales o EmptyState. |
+| Artesana - Mi aprendizaje | Cursos inscritos/disponibles provienen de `LearningService`; talleres provienen de `WorkshopService`; sin imagenes demo como portada interna.             |
+| Artesana - Curso detalle  | Portada desde `Course.imageUrl`; facilitadora desde relacion real del curso.                                                                              |
+| Artesana - Leccion        | Materiales desde `LessonFile/File`; audio opcional mediante `AudioHelpButton`; sin contenido visual demo.                                                 |
+| Artesana - Talleres       | Talleres proximos/completados desde `WorkshopRegistration`; ubicacion y facilitadora reales; placeholders cuando no hay imagen.                           |
+| Artesana - Mi comunidad   | Comunidad, artesanas, historias y oportunidades desde PostgreSQL; sin perfiles hardcodeados.                                                              |
+| Artesana - Mi historia    | Portada y galeria desde `Story/File`; `StoryGalleryManager` conectado a datos persistidos.                                                                |
+| Artesana - Mis pedidos    | Pedidos desde `OrderRepository`; imagen de producto real o placeholder neutro.                                                                            |
+| Artesana - Mensajes       | Conversaciones y mensajes desde `Conversation/Participant/Message`; sin listas demo.                                                                      |
+| Artesana - Logros         | Badges, certificados y progreso desde base de datos; EmptyState si no existen.                                                                            |
+| Artesana - Ayuda          | Contenido institucional estatico valido; se elimino el componente `ComingSoon` con imagenes demo.                                                         |
+
+No se eliminaron assets protegidos del landing, login, branding, home publico ni paginas institucionales.

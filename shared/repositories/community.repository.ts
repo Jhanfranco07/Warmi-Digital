@@ -10,6 +10,22 @@ export class CommunityRepository {
     });
   }
 
+  findByIdWithProfiles(id: string) {
+    return this.db.community.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        profiles: {
+          where: { deletedAt: null },
+          include: {
+            craftTypes: { include: { craftType: true } },
+            user: true
+          },
+          orderBy: { displayName: "asc" }
+        }
+      }
+    });
+  }
+
   findCraftTypes() {
     return this.db.craftType.findMany({
       orderBy: { name: "asc" }

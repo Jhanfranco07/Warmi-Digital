@@ -16,6 +16,20 @@ export class StoryRepository {
     });
   }
 
+  findByCommunity(communityId: string, take = 6) {
+    return this.db.story.findMany({
+      where: { communityId, deletedAt: null },
+      include: {
+        user: { include: { profile: true } },
+        community: true,
+        craftType: true,
+        coverImage: true
+      },
+      orderBy: { updatedAt: "desc" },
+      take
+    });
+  }
+
   upsertForUser(
     userId: string,
     data: {
@@ -31,7 +45,7 @@ export class StoryRepository {
       learnedFrom?: string | null;
       techniques?: string | null;
       culturalMeaning?: string | null;
-      coverImageUrl?: string | null;
+      coverImageFileId?: string | null;
     }
   ) {
     return this.db.$transaction(async (tx) => {
@@ -39,22 +53,6 @@ export class StoryRepository {
         where: { userId, deletedAt: null },
         select: { id: true, coverImageId: true }
       });
-
-      let coverImageId: string | null | undefined;
-
-      if (data.coverImageUrl) {
-        const file = await tx.file.create({
-          data: {
-            url: data.coverImageUrl,
-            provider: "external",
-            type: "IMAGE",
-            mimeType: "image/*",
-            size: 0,
-            ownerId: userId
-          }
-        });
-        coverImageId = file.id;
-      }
 
       const storyData = {
         communityId: data.communityId ?? null,
@@ -69,7 +67,7 @@ export class StoryRepository {
         learnedFrom: data.learnedFrom ?? null,
         techniques: data.techniques ?? null,
         culturalMeaning: data.culturalMeaning ?? null,
-        coverImageId: coverImageId ?? current?.coverImageId ?? null
+        coverImageId: data.coverImageFileId ?? current?.coverImageId ?? null
       };
 
       if (current) {
@@ -77,6 +75,79 @@ export class StoryRepository {
       }
 
       return tx.story.create({ data: { ...storyData, userId } });
+    });
+  }
+
+  async addGalleryFile(userId: string, fileId: string) {
+    return this.db.$transaction(async (tx) => {
+      const story = await tx.story.findFirst({
+        where: { userId, deletedAt: null },
+        select: { id: true }
+      });
+
+      if (!story) {
+        throw new Error("Primero guarda tu historia cultural.");
+      }
+
+      const last = await tx.storyFile.findFirst({
+        where: { storyId: story.id },
+        orderBy: { order: "desc" },
+        select: { order: true }
+      });
+
+      return tx.storyFile.upsert({
+        where: { storyId_fileId: { storyId: story.id, fileId } },
+        create: {
+          storyId: story.id,
+          fileId,
+          order: (last?.order ?? -1) + 1
+        },
+        update: {}
+      });
+    });
+  }
+
+  async removeGalleryFile(userId: string, fileId: string) {
+    const story = await this.db.story.findFirst({
+      where: { userId, deletedAt: null },
+      select: { id: true }
+    });
+
+    if (!story) return { count: 0 };
+
+    return this.db.storyFile.deleteMany({
+      where: { storyId: story.id, fileId }
+    });
+  }
+
+  async moveGalleryFile(userId: string, fileId: string, direction: "up" | "down") {
+    return this.db.$transaction(async (tx) => {
+      const current = await tx.storyFile.findFirst({
+        where: { fileId, story: { userId, deletedAt: null } }
+      });
+
+      if (!current) return null;
+
+      const sibling = await tx.storyFile.findFirst({
+        where: {
+          storyId: current.storyId,
+          order: direction === "up" ? { lt: current.order } : { gt: current.order }
+        },
+        orderBy: { order: direction === "up" ? "desc" : "asc" }
+      });
+
+      if (!sibling) return current;
+
+      await tx.storyFile.update({
+        where: { id: current.id },
+        data: { order: sibling.order }
+      });
+      await tx.storyFile.update({
+        where: { id: sibling.id },
+        data: { order: current.order }
+      });
+
+      return current;
     });
   }
 }

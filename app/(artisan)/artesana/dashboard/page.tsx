@@ -36,6 +36,8 @@ export default async function ArtisanDashboardPage() {
   const currentCourse = data.currentEnrollment?.course;
   const displayName = profile?.displayName ?? session.user.name ?? "artesana";
   const firstName = displayName.split(" ")[0] ?? "artesana";
+  const avatarUrl = profile?.avatarUrl ?? null;
+  const enrolledCourses = data.enrollments.slice(0, 3);
 
   return (
     <>
@@ -53,7 +55,7 @@ export default async function ArtisanDashboardPage() {
 
         <div className="relative">
           <h1 className="font-serif text-3xl font-bold leading-tight text-[#7a1042]">
-            ¡Bienvenida, {firstName}!<span className="ml-1 text-[#c93772]">❧</span>
+            ¡Bienvenida, {firstName}!<span className="ml-1 text-[#c93772]">*</span>
           </h1>
           <p className="mt-1 text-xs text-[#5b4a42]">
             Aprende, emprende y transforma tu futuro.
@@ -79,13 +81,17 @@ export default async function ArtisanDashboardPage() {
             className="mt-3 grid grid-cols-[128px_1fr] overflow-hidden rounded-2xl border border-[#f0c3cf] bg-white shadow-[0_14px_30px_rgba(122,16,66,0.1)]"
           >
             <div className="relative min-h-[126px]">
-              <Image
-                src="/images/discover/taller.png"
-                alt="Curso de tejido"
-                fill
-                sizes="128px"
-                className="object-cover"
-              />
+              {currentCourse?.imageUrl ? (
+                <Image
+                  src={currentCourse.imageUrl}
+                  alt={currentCourse.title}
+                  fill
+                  sizes="128px"
+                  className="object-cover"
+                />
+              ) : (
+                <DashboardImagePlaceholder compact />
+              )}
               <span className="absolute inset-0 bg-[#7a1042]/15" />
               <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#b5245b] shadow-lg">
                 <PlayCircle className="h-8 w-8" />
@@ -93,7 +99,7 @@ export default async function ArtisanDashboardPage() {
             </div>
             <div className="p-4">
               <p className="font-ui text-sm font-extrabold leading-tight text-[#1b1c1a]">
-                {currentCourse?.title ?? "Introducción al patrimonio textil"}
+                {currentCourse?.title ?? "No tienes curso activo"}
               </p>
               <p className="mt-3 text-[11px] font-bold text-[#b5245b]">
                 {data.generalProgress}% completado
@@ -103,7 +109,7 @@ export default async function ArtisanDashboardPage() {
                 className="mt-1.5 h-1.5 bg-[#f4dbe4] [&>div]:bg-[#b5245b]"
               />
               <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">
-                Continuar curso
+                Continúar curso
                 <ChevronRight className="ml-1 h-3.5 w-3.5" />
               </span>
             </div>
@@ -119,21 +125,19 @@ export default async function ArtisanDashboardPage() {
           </div>
 
           <div className="mt-3 space-y-3">
-            <MobileCourse
-              image="/images/discover/aprende.png"
-              title="Emprendimiento para artesanas"
-              modules="8 módulos"
-            />
-            <MobileCourse
-              image="/images/discover/emprende.png"
-              title="Fotografía de productos con celular"
-              modules="6 módulos"
-            />
-            <MobileCourse
-              image="/images/discover/recursos.png"
-              title="Marketing digital para artesanas"
-              modules="7 módulos"
-            />
+            {enrolledCourses.length ? (
+              enrolledCourses.map((enrollment) => (
+                <MobileCourse
+                  key={enrollment.id}
+                  href={`/artesana/aprender/${enrollment.course.id}`}
+                  image={enrollment.course.imageUrl}
+                  title={enrollment.course.title}
+                  modules={`${enrollment.course.modules.length} módulos`}
+                />
+              ))
+            ) : (
+              <DashboardInlineEmpty text="No tienes cursos asignados todavía." />
+            )}
           </div>
 
           <h2 className="mt-6 font-serif text-lg font-bold text-[#5a1d2f]">Categorías</h2>
@@ -147,107 +151,13 @@ export default async function ArtisanDashboardPage() {
         </div>
       </section>
 
-      <section className="hidden">
-        <p className="font-ui text-base font-bold text-[#1b1c1a]">
-          ¡Bienvenida, {firstName}!
-        </p>
-        <p className="text-[11px] text-[#5b4a42]">
-          Aprende, emprende y transforma tu futuro.
-        </p>
-
-        <form className="mt-4 flex h-9 items-center rounded-md border border-[#d98da8] bg-[#ffe8ef] px-3">
-          <input
-            name="q"
-            className="min-w-0 flex-1 bg-transparent text-xs text-[#7a1042] outline-none placeholder:text-[#9f6b7e]"
-            placeholder="¿Qué quieres aprender hoy?"
-          />
-          <Search className="h-4 w-4 text-[#7a1042]" />
-        </form>
-
-        <div className="mt-5 flex items-center justify-between">
-          <h2 className="font-ui text-sm font-bold text-[#1b1c1a]">
-            Continúa aprendiendo
-          </h2>
-        </div>
-
-        <Link
-          href={
-            currentCourse
-              ? (`/artesana/aprender/${currentCourse.id}` as Route)
-              : ("/artesana/aprender" as Route)
-          }
-          className="mt-2 grid grid-cols-[118px_1fr] overflow-hidden rounded-lg border border-[#f0c3cf] bg-white shadow-[0_10px_22px_rgba(122,16,66,0.08)]"
-        >
-          <div
-            className="relative min-h-[92px] bg-cover bg-center"
-            style={{ backgroundImage: "url(/images/discover/aprende.png)" }}
-          >
-            <span className="absolute inset-0 bg-[#7a1042]/15" />
-            <span className="absolute left-1/2 top-1/2 grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#e65578]">
-              <PlayCircle className="h-7 w-7" />
-            </span>
-          </div>
-          <div className="p-3">
-            <p className="font-ui text-xs font-bold text-[#1b1c1a]">
-              {currentCourse?.title ?? "Técnicas de tejido tradicional andino"}
-            </p>
-            <p className="mt-2 text-[10px] text-[#5b4a42]">
-              {data.generalProgress}% completado
-            </p>
-            <Progress
-              value={data.generalProgress}
-              className="mt-1 h-1.5 bg-[#eadfe2] [&>div]:bg-[#e65578]"
-            />
-            <span className="mt-2 inline-flex rounded-sm border border-[#b5245b] px-3 py-1 text-[10px] font-bold text-[#7a1042]">
-              Continuar
-            </span>
-          </div>
-        </Link>
-
-        <div className="mt-5 flex items-center justify-between">
-          <h2 className="font-ui text-sm font-bold text-[#1b1c1a]">
-            Cursos recomendados para ti
-          </h2>
-          <Link href="/artesana/aprender" className="text-[11px] text-[#7a1042]">
-            Ver todos
-          </Link>
-        </div>
-
-        <div className="mt-2 space-y-2">
-          <MobileCourse
-            image="/images/discover/aprende.png"
-            title="Emprendimiento para artesanas"
-            modules="8 módulos"
-          />
-          <MobileCourse
-            image="/images/discover/emprende.png"
-            title="Fotografía de productos con celular"
-            modules="6 módulos"
-          />
-          <MobileCourse
-            image="/images/discover/recursos.png"
-            title="Marketing digital para artesanas"
-            modules="7 módulos"
-          />
-        </div>
-
-        <h2 className="mt-5 font-ui text-sm font-bold text-[#1b1c1a]">Categorías</h2>
-        <div className="mt-2 grid grid-cols-5 gap-2">
-          <MobileCategory icon={Palette} label="Tejido" />
-          <MobileCategory icon={Gem} label="Bordado" />
-          <MobileCategory icon={Store} label="Emprendimiento" />
-          <MobileCategory icon={Megaphone} label="Marketing" />
-          <MobileCategory icon={Camera} label="Fotografía" />
-        </div>
-      </section>
-
       <div className="hidden min-h-screen bg-[#fffaf6] lg:block">
         <div className="mx-auto w-full max-w-[1760px] px-10 py-10 xl:px-14 2xl:px-20">
           <header className="flex items-start justify-between gap-6">
             <div>
               <h1 className="font-serif text-6xl font-bold leading-none text-[#101833] 2xl:text-7xl">
                 Hola, {displayName}
-                <span className="ml-3 text-4xl text-[#b5245b]">❧</span>
+                <span className="ml-3 text-4xl text-[#b5245b]">*</span>
               </h1>
               <p className="mt-4 text-lg leading-8 text-[#5b4a42]">
                 Este es tu espacio para aprender, fortalecer tu historia y avanzar paso a
@@ -261,13 +171,19 @@ export default async function ArtisanDashboardPage() {
               aria-label="Perfil de artesana"
             >
               <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
-                <Image
-                  src="/images/auth/artesana.png"
-                  alt={displayName}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
+                    {displayName.slice(0, 1)}
+                  </span>
+                )}
               </span>
               <ChevronRight className="h-5 w-5 rotate-90 text-[#7a3100] transition-transform group-hover:translate-y-0.5" />
             </button>
@@ -355,42 +271,37 @@ export default async function ArtisanDashboardPage() {
                 <h2 className="font-serif text-3xl font-bold text-[#a95511]">
                   Próximo taller
                 </h2>
-                <span className="text-4xl text-[#f0c8a6]">✣</span>
+                <span className="text-4xl text-[#f0c8a6]">#</span>
               </header>
 
               <div className="grid gap-6 p-8 md:grid-cols-[190px_1fr]">
                 <div className="relative aspect-square overflow-hidden rounded-[22px] bg-[#1f2d55]">
-                  <Image
-                    src="/images/discover/taller.png"
-                    alt="Taller de artesanas"
-                    fill
-                    sizes="190px"
-                    className="object-cover opacity-90"
-                  />
+                  <DashboardImagePlaceholder />
                   <span className="absolute inset-0 bg-[#101833]/30" />
                 </div>
 
                 <div>
                   <h3 className="font-serif text-3xl font-bold leading-tight text-[#1b1c1a]">
-                    {data.nextWorkshop?.workshop.title ??
-                      "Taller: contar la historia de una pieza"}
+                    {data.nextWorkshop?.workshop.title ?? "No tienes taller próximo"}
                   </h3>
                   <div className="mt-5 grid gap-3 text-base text-[#5b4a42]">
                     <p className="flex items-center gap-3">
                       <CalendarDays className="h-5 w-5 text-[#7a3100]" />
                       {data.nextWorkshop?.workshop.startsAt
                         ? format(data.nextWorkshop.workshop.startsAt, "dd/MM/yyyy")
-                        : "15/08/2026"}
+                        : "Fecha pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <CalendarDays className="h-5 w-5 text-[#7a3100]" />
                       {data.nextWorkshop?.workshop.startsAt
                         ? format(data.nextWorkshop.workshop.startsAt, "HH:mm")
-                        : "22:00"}
+                        : "Hora pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <Store className="h-5 w-5 text-[#7a3100]" />
-                      {data.nextWorkshop?.workshop.location ?? "Centro comunal Qantu"}
+                      {data.nextWorkshop?.workshop.location ??
+                        data.nextWorkshop?.workshop.community?.name ??
+                        "Lugar por confirmar"}
                     </p>
                   </div>
                   <Button
@@ -465,7 +376,6 @@ export default async function ArtisanDashboardPage() {
                   data.opportunities.map((item) => (
                     <DashboardRow
                       key={item.id}
-                      image="/images/discover/recursos.png"
                       title={item.title}
                       description={
                         item.endsAt
@@ -499,10 +409,7 @@ export default async function ArtisanDashboardPage() {
                       />
                     ))
                 ) : (
-                  <AchievementRow
-                    title="Semilla Digital"
-                    description="Inicio su camino de aprendizaje en Warmi Digital."
-                  />
+                  <EmptyState title="Aún no tienes logros registrados" />
                 )}
               </div>
             </DashboardBlock>
@@ -586,19 +493,11 @@ function DashboardBlock({
   );
 }
 
-function DashboardRow({
-  image,
-  title,
-  description
-}: {
-  image: string;
-  title: string;
-  description: string;
-}) {
+function DashboardRow({ title, description }: { title: string; description: string }) {
   return (
     <article className="group grid grid-cols-[86px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white p-3 transition-all duration-300 hover:-translate-y-1 hover:bg-[#fffaf6] hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)]">
       <div className="relative h-16 overflow-hidden rounded-md">
-        <Image src={image} alt="" fill sizes="86px" className="object-cover" />
+        <DashboardImagePlaceholder compact />
       </div>
       <div>
         <h3 className="font-ui text-base font-extrabold text-[#1b1c1a]">{title}</h3>
@@ -638,21 +537,27 @@ function MobileSectionTitle({ title }: { title: string }) {
 }
 
 function MobileCourse({
+  href,
   image,
   title,
   modules
 }: {
-  image: string;
+  href: string;
+  image: string | null;
   title: string;
   modules: string;
 }) {
   return (
     <Link
-      href="/artesana/aprender"
+      href={href as Route}
       className="grid grid-cols-[86px_1fr_auto] items-center gap-3 rounded-xl border border-[#f5d2dc] bg-white p-2 shadow-[0_10px_22px_rgba(122,16,66,0.07)]"
     >
       <div className="relative h-16 overflow-hidden rounded-lg">
-        <Image src={image} alt={title} fill sizes="86px" className="object-cover" />
+        {image ? (
+          <Image src={image} alt={title} fill sizes="86px" className="object-cover" />
+        ) : (
+          <DashboardImagePlaceholder compact />
+        )}
       </div>
       <div className="min-w-0">
         <p className="line-clamp-2 font-ui text-xs font-extrabold leading-tight text-[#1b1c1a]">
@@ -667,6 +572,28 @@ function MobileCourse({
         Ver curso
       </span>
     </Link>
+  );
+}
+
+function DashboardInlineEmpty({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-[#f0c3cf] bg-white/80 p-4 text-sm font-semibold text-[#7a5b4a]">
+      {text}
+    </div>
+  );
+}
+
+function DashboardImagePlaceholder({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#fff0d6,#ffe8ef,#e8fbfd)]">
+      <div
+        className={`grid place-items-center rounded-full bg-white/85 text-[#b5245b] shadow-sm ${
+          compact ? "h-10 w-10" : "h-16 w-16"
+        }`}
+      >
+        <BookOpen className={compact ? "h-5 w-5" : "h-8 w-8"} />
+      </div>
+    </div>
   );
 }
 

@@ -11,6 +11,7 @@ export class WorkshopRepository {
         workshop: {
           include: {
             facilitator: { include: { profile: true } },
+            community: true,
             course: true,
             module: true
           }

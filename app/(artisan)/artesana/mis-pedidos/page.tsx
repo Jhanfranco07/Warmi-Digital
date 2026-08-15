@@ -4,19 +4,16 @@ import { es } from "date-fns/locale";
 import {
   CalendarDays,
   CheckCircle2,
-  ChevronDown,
-  ChevronRight,
   Clock3,
   Gift,
   MapPin,
   PackageCheck,
   ReceiptText,
-  Send,
-  SlidersHorizontal
+  Send
 } from "lucide-react";
 import type { OrderStatus } from "@prisma/client";
 
-import { Button } from "@/shared/components/ui/button";
+import { EmptyState } from "@/shared/components/feedback/empty-state";
 import { OrderRepository } from "@/shared/repositories/order.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -28,7 +25,7 @@ type OrderCard = {
   date: Date;
   location: string;
   amount: string;
-  image: string;
+  image: string | null;
 };
 
 const statusColumns: Array<{
@@ -44,146 +41,25 @@ const statusColumns: Array<{
   { status: "COMPLETED", label: "Entregado", tone: "green", icon: PackageCheck }
 ];
 
-const demoOrders: OrderCard[] = [
-  {
-    id: "PED-000125",
-    status: "PENDING",
-    productName: "Bolso tejido a mano",
-    buyerName: "María Quispe",
-    date: new Date("2026-08-12T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 120.00",
-    image: "/images/discover/taller.png"
-  },
-  {
-    id: "PED-000126",
-    status: "PENDING",
-    productName: "Taza de cerámica",
-    buyerName: "Juan Pérez",
-    date: new Date("2026-08-12T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 45.00",
-    image: "/images/home/bienvenida-warmi.png"
-  },
-  {
-    id: "PED-000127",
-    status: "PENDING",
-    productName: "Cojín decorativo",
-    buyerName: "Lucía Condori",
-    date: new Date("2026-08-12T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 80.00",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    id: "PED-000122",
-    status: "CONFIRMED",
-    productName: "Torito de Pucará",
-    buyerName: "Carlos Mamani",
-    date: new Date("2026-08-11T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 65.00",
-    image: "/images/discover/emprende.png"
-  },
-  {
-    id: "PED-000123",
-    status: "CONFIRMED",
-    productName: "Camino de mesa",
-    buyerName: "Ana López",
-    date: new Date("2026-08-11T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 95.00",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    id: "PED-000118",
-    status: "IN_PROGRESS",
-    productName: "Canasta de mimbre",
-    buyerName: "Rosa Huarcaya",
-    date: new Date("2026-08-10T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 70.00",
-    image: "/images/discover/taller.png"
-  },
-  {
-    id: "PED-000119",
-    status: "IN_PROGRESS",
-    productName: "Tapiz decorativo",
-    buyerName: "Diego Quispe",
-    date: new Date("2026-08-10T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 110.00",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    id: "PED-000115",
-    status: "SHIPPED",
-    productName: "Juego de miniaturas",
-    buyerName: "Patricia Gómez",
-    date: new Date("2026-08-09T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 55.00",
-    image: "/images/learning/aprender-hero.png"
-  },
-  {
-    id: "PED-000116",
-    status: "SHIPPED",
-    productName: "Bolso bordado",
-    buyerName: "Miguel Ángel",
-    date: new Date("2026-08-09T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 35.00",
-    image: "/images/discover/emprende.png"
-  },
-  {
-    id: "PED-000110",
-    status: "COMPLETED",
-    productName: "Individual tejido",
-    buyerName: "Sofía Ramírez",
-    date: new Date("2026-08-07T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 30.00",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    id: "PED-000111",
-    status: "COMPLETED",
-    productName: "Plato decorativo",
-    buyerName: "Luis Quispe",
-    date: new Date("2026-08-07T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 60.00",
-    image: "/images/home/bienvenida-warmi.png"
-  },
-  {
-    id: "PED-000112",
-    status: "COMPLETED",
-    productName: "Llavero artesanal",
-    buyerName: "Valeria Flores",
-    date: new Date("2026-08-07T10:00:00"),
-    location: "San Miguel, Cajamarca",
-    amount: "S/ 20.00",
-    image: "/images/discover/taller.png"
-  }
-];
-
 export default async function ArtisanOrdersPage() {
   const session = await requireRole("ARTESANA");
   const orders = await new OrderRepository().findRecentForArtisan(session.user.id, 50);
   const normalizedOrders: OrderCard[] = orders.map((order) => {
     const firstItem = order.items[0];
+    const product = firstItem?.product;
     return {
       id: `PED-${order.id.slice(0, 6).toUpperCase()}`,
       status: order.status,
-      productName: firstItem?.product.name ?? "Pieza artesanal",
-      buyerName: "Cliente Warmi",
+      productName: product?.name ?? "Pieza artesanal",
+      buyerName:
+        order.buyer.profile?.displayName ?? order.buyer.name ?? order.buyer.email,
       date: order.placedAt,
-      location: "San Miguel, Cajamarca",
+      location:
+        product?.community.location ?? product?.community.name ?? "San Miguel, Cajamarca",
       amount: `S/ ${Number(order.totalAmount).toFixed(2)}`,
-      image: "/images/discover/aprende.png"
+      image: product?.images[0]?.file.url ?? null
     };
   });
-  const boardOrders = normalizedOrders.length ? normalizedOrders : demoOrders;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -191,43 +67,17 @@ export default async function ArtisanOrdersPage() {
         <header className="flex flex-wrap items-start justify-between gap-6">
           <div>
             <h1 className="font-serif text-5xl font-bold leading-none text-[#101833] md:text-6xl 2xl:text-7xl">
-              Mis pedidos <span className="text-4xl text-[#b5245b]">❧</span>
+              Mis pedidos <span className="text-4xl text-[#b5245b]">-</span>
             </h1>
             <p className="mt-4 max-w-4xl text-lg leading-8 text-[#5b4a42]">
-              Gestiona todos tus pedidos y acompaña cada entrega con dedicación.
+              Gestiona tus pedidos reales y acompaña cada entrega con dedicación.
             </p>
-          </div>
-          <div className="flex items-center gap-5">
-            <span className="relative hidden h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)] md:block">
-              <Image
-                src="/images/auth/artesana.png"
-                alt="Elena Mamani"
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
-            </span>
-            <div className="hidden md:block">
-              <p className="font-ui font-extrabold text-[#1b1c1a]">Elena Mamani</p>
-              <p className="text-sm text-[#5b4a42]">Artesana</p>
-            </div>
-            <ChevronDown className="hidden h-5 w-5 text-[#7a3100] md:block" />
           </div>
         </header>
 
-        <div className="mt-8 flex justify-end">
-          <Button
-            variant="outline"
-            className="rounded-lg border-[#e7b89f] bg-white px-7 text-[#a95511] hover:bg-[#fff1e5]"
-          >
-            <SlidersHorizontal className="h-5 w-5" />
-            Filtros
-          </Button>
-        </div>
-
-        <section className="mt-5 grid gap-5 xl:grid-cols-5">
+        <section className="mt-8 grid gap-5 xl:grid-cols-5">
           {statusColumns.map((column) => {
-            const columnOrders = boardOrders.filter(
+            const columnOrders = normalizedOrders.filter(
               (order) => order.status === column.status
             );
             return (
@@ -238,16 +88,31 @@ export default async function ArtisanOrdersPage() {
                 icon={column.icon}
                 count={columnOrders.length}
               >
-                {columnOrders.map((order) => (
-                  <OrderCardItem key={order.id} order={order} tone={column.tone} />
-                ))}
+                {columnOrders.length ? (
+                  columnOrders.map((order) => (
+                    <OrderCardItem key={order.id} order={order} tone={column.tone} />
+                  ))
+                ) : (
+                  <p className="rounded-xl border border-dashed border-[#ecd0bd] bg-[#fffaf6] p-4 text-sm text-[#7a5b4a]">
+                    No hay pedidos en este estado.
+                  </p>
+                )}
               </OrderColumn>
             );
           })}
         </section>
 
+        {!normalizedOrders.length ? (
+          <div className="mt-6">
+            <EmptyState
+              title="Todavía no tienes pedidos registrados"
+              description="Cuando una pieza de tu vitrina reciba un pedido, aparecerá aquí con su estado y detalle."
+            />
+          </div>
+        ) : null}
+
         <section className="mt-6 rounded-[18px] border border-[#ecd0bd] bg-white p-5 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
-          <div className="grid gap-4 lg:grid-cols-[1.35fr_repeat(5,1fr)_1.15fr] lg:items-center">
+          <div className="grid gap-4 lg:grid-cols-[1.35fr_repeat(5,1fr)] lg:items-center">
             <div className="flex items-center gap-4">
               <span className="grid h-14 w-14 place-items-center rounded-full bg-[#fff1e5] text-[#a95511]">
                 <ReceiptText className="h-7 w-7" />
@@ -261,7 +126,7 @@ export default async function ArtisanOrdersPage() {
             </div>
             {statusColumns.map((column) => {
               const Icon = column.icon;
-              const count = boardOrders.filter(
+              const count = normalizedOrders.filter(
                 (order) => order.status === column.status
               ).length;
               return (
@@ -279,13 +144,6 @@ export default async function ArtisanOrdersPage() {
                 </div>
               );
             })}
-            <Button
-              variant="outline"
-              className="min-h-14 rounded-lg border-[#e7b89f] bg-white text-[#a95511] hover:bg-[#fff1e5]"
-            >
-              <ReceiptText className="h-5 w-5" />
-              Ver historial de pedidos
-            </Button>
           </div>
         </section>
       </div>
@@ -307,7 +165,7 @@ function OrderColumn({
   children: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_18px_44px_rgba(122,49,0,0.08)]">
+    <section className="overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_18px_44px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-1">
       <header
         className={`${toneClasses[tone].header} flex items-center justify-between p-5`}
       >
@@ -324,15 +182,6 @@ function OrderColumn({
         </span>
       </header>
       <div className="space-y-4 p-4">{children}</div>
-      <div className="p-4 pt-0">
-        <Button
-          variant="outline"
-          className="w-full rounded-lg border-[#ecd0bd] bg-white text-[#a95511] hover:bg-[#fff1e5]"
-        >
-          Ver todos ({count})
-          <ChevronRight className="h-5 w-5" />
-        </Button>
-      </div>
     </section>
   );
 }
@@ -350,13 +199,19 @@ function OrderCardItem({ order, tone }: { order: OrderCard; tone: string }) {
       </div>
       <div className="flex gap-4">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-[#f8eadc]">
-          <Image
-            src={order.image}
-            alt={order.productName}
-            fill
-            sizes="80px"
-            className="object-cover"
-          />
+          {order.image ? (
+            <Image
+              src={order.image}
+              alt={order.productName}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center text-[#b5245b]">
+              <ReceiptText className="h-6 w-6" />
+            </div>
+          )}
         </div>
         <div className="min-w-0">
           <h3 className="font-ui text-base font-extrabold text-[#1b1c1a]">

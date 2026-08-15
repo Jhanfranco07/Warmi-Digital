@@ -16,4 +16,18 @@ export class NotificationRepository {
       where: { userId, readAt: null }
     });
   }
+
+  markRead(notificationId: string, userId: string) {
+    return this.db.notification.updateMany({
+      where: { id: notificationId, userId },
+      data: { readAt: new Date() }
+    });
+  }
+
+  markAllRead(userId: string) {
+    return this.db.notification.updateMany({
+      where: { userId, readAt: null },
+      data: { readAt: new Date() }
+    });
+  }
 }

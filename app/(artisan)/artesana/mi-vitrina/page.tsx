@@ -15,7 +15,7 @@ export default async function ArtisanShowcasePage() {
   ]);
 
   const artisanName =
-    artisan?.profile?.displayName ?? session.user.name ?? "Elena Mamani";
+    artisan?.profile?.displayName ?? session.user.name ?? "Artesana Warmi";
   const communityName = artisan?.profile?.community?.name ?? "San Miguel, Cajamarca";
   const avatarUrl = artisan?.profile?.avatarUrl ?? null;
   const products = showcase.products.map((product) => ({
@@ -84,7 +84,7 @@ export default async function ArtisanShowcasePage() {
           </article>
 
           <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
-            {["Todos", "Tejido", "Bordado", "Ceramica", "Mas"].map((filter, index) => (
+            {["Todos", "Tejido", "Bordado", "Cerámica", "Más"].map((filter, index) => (
               <span
                 key={filter}
                 className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold ${
@@ -192,7 +192,7 @@ export default async function ArtisanShowcasePage() {
                 </blockquote>
                 <div className="mt-8 h-px w-48 bg-[#d8b899]" />
                 <p className="mt-6 max-w-sm font-serif text-xl italic text-[#7a3100]">
-                  Gracias por valorar lo hecho con corazon.
+                  Gracias por valorar lo hecho con corazón.
                 </p>
                 <Button
                   asChild
@@ -215,7 +215,7 @@ export default async function ArtisanShowcasePage() {
                 </h2>
                 <div className="mt-2 h-px w-28 bg-[#f26f21]" />
                 <p className="mt-4 text-base text-[#5b4a42]">
-                  Cada creacion nace de nuestra tierra, nuestras manos y nuestra historia.
+                  Cada creación nace de nuestra tierra, nuestras manos y nuestra historia.
                 </p>
               </div>
               <Button
@@ -223,7 +223,7 @@ export default async function ArtisanShowcasePage() {
                 className="rounded-lg border-[#ecd0bd] bg-white px-7 text-[#7a3100] hover:bg-[#fff1e5]"
               >
                 <SlidersHorizontal className="h-5 w-5" />
-                Filtrar por tecnica
+                Filtrar por técnica
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </div>
@@ -282,10 +282,10 @@ export default async function ArtisanShowcasePage() {
             ) : (
               <div className="rounded-[18px] border border-dashed border-[#ecd0bd] bg-white px-8 py-14 text-center shadow-[0_18px_44px_rgba(122,49,0,0.06)]">
                 <h3 className="font-serif text-3xl font-bold text-[#7a1042]">
-                  Todavia no tienes piezas registradas.
+                  Todavía no tienes piezas registradas.
                 </h3>
                 <p className="mx-auto mt-3 max-w-xl text-[#5b4a42]">
-                  Crea tu primera pieza para documentar su historia, tecnica, materiales e
+                  Crea tu primera pieza para documentar su historia, técnica, materiales e
                   imagen principal.
                 </p>
                 <Button
@@ -310,7 +310,7 @@ function MobileEmptyState() {
   return (
     <div className="mt-4 rounded-2xl border border-dashed border-[#f0c3cf] bg-white p-5 text-center shadow-[0_12px_26px_rgba(122,16,66,0.06)]">
       <h3 className="font-serif text-xl font-bold text-[#7a1042]">
-        Todavia no tienes piezas.
+        Todavía no tienes piezas.
       </h3>
       <p className="mt-2 text-xs leading-5 text-[#5b4a42]">
         Crea tu primera pieza para que aparezca en tu vitrina.

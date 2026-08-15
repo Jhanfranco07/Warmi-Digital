@@ -58,3 +58,32 @@ Esta auditoria clasifica botones, links y acciones visibles antes de convertirlo
 3. Facilitadora: seguimiento, cursos, talleres, convocatorias y mensajes.
 4. Admin: usuarios, comunidades, mercado cultural, comunicaciones y reportes.
 5. Limpieza final de fallbacks demo y pruebas E2E manuales.
+
+## Actualizacion Tanda 2 - Artesana
+
+Fecha: 2026-08-15
+
+| Modulo                    | Accion visible                          | Estado actualizado                                                                                                  |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Artesana - Inicio         | Continuar mi aprendizaje                | FUNCIONAL: enlaza al curso real activo o a la ruta de aprendizaje.                                                  |
+| Artesana - Inicio         | Ver talleres                            | FUNCIONAL: enlaza a `/artesana/talleres` con datos reales.                                                          |
+| Artesana - Inicio         | Editar mi historia                      | FUNCIONAL: enlaza al formulario real de historia.                                                                   |
+| Artesana - Inicio         | Convocatorias / Mi vitrina / Mis logros | FUNCIONAL: enlazan a rutas reales con datos de PostgreSQL o EmptyState.                                             |
+| Artesana - Mi aprendizaje | Ver curso / Continuar                   | FUNCIONAL: usa inscripciones reales y rutas de curso.                                                               |
+| Artesana - Mi aprendizaje | Carrusel/flechas                        | RETIRADO/DESHABILITADO: no se mantiene control decorativo sin accion real.                                          |
+| Artesana - Leccion        | Descargar material                      | FUNCIONAL cuando existe `LessonFile`.                                                                               |
+| Artesana - Leccion        | Escuchar audio                          | FUNCIONAL cuando existe archivo `AUDIO`; no aparece si no hay audio.                                                |
+| Artesana - Talleres       | Ver detalles                            | FUNCIONAL hacia listado real; detalle individual queda deshabilitado cuando no existe ruta canonica en `ROUTES.md`. |
+| Artesana - Mi historia    | Editar / guardar historia               | FUNCIONAL con React Hook Form, Zod y Server Action.                                                                 |
+| Artesana - Mi historia    | Galeria                                 | FUNCIONAL: subir, eliminar y reordenar mediante `StoryGalleryManager`.                                              |
+| Artesana - Mi vitrina     | Crear pieza / administrar pieza         | FUNCIONAL segun infraestructura previa de vitrina y productos.                                                      |
+| Artesana - Mis pedidos    | Visualizar por estado                   | FUNCIONAL con datos reales; detalle individual queda pendiente si se aprueba la ruta.                               |
+| Artesana - Convocatorias  | Abrir enlace / documento                | FUNCIONAL cuando existe URL oficial o archivo; boton deshabilitado si no existe recurso.                            |
+| Artesana - Mi comunidad   | Editar historia desde comunidad         | FUNCIONAL: enlaza a `/artesana/mi-historia`; no se inventa red social sin modelo.                                   |
+| Artesana - Mensajes       | Abrir conversacion / enviar mensaje     | FUNCIONAL con Server Action y revalidacion.                                                                         |
+| Artesana - Perfil         | Editar perfil / avatar / contrasena     | FUNCIONAL con Server Actions y validacion Zod.                                                                      |
+| Artesana - Perfil         | Cerrar sesion                           | FUNCIONAL.                                                                                                          |
+| Artesana - Logros         | Consultar logros                        | FUNCIONAL con datos reales o EmptyState.                                                                            |
+| Artesana - Ayuda          | Consultar soporte                       | FUNCIONAL como contenido institucional estatico.                                                                    |
+
+Pendientes reales no cerrados en esta tanda: detalle individual de pedido, detalle individual de taller y administracion de Wallet/Yape/Plin si se aprueban rutas y reglas de negocio especificas.

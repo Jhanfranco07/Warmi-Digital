@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { updateStoryAction } from "@/shared/actions/artisan/update-story";
+import { ImageUpload } from "@/shared/components/upload/image-upload";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
@@ -67,8 +68,8 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
           <CardTitle>Identidad cultural</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
-          <Field label="Nombre público" error={errors.publicName?.message}>
-            <Input {...register("publicName")} placeholder="Cómo quieres aparecer" />
+          <Field label="Nombre publico" error={errors.publicName?.message}>
+            <Input {...register("publicName")} placeholder="Como quieres aparecer" />
           </Field>
           <Field label="Titulo de tu historia" error={errors.title?.message}>
             <Input {...register("title")} placeholder="Mi camino con el tejido" />
@@ -96,7 +97,7 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
               onValueChange={(value) => setValue("craftTypeId", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona tu técnica" />
+                <SelectValue placeholder="Selecciona tu tecnica" />
               </SelectTrigger>
               <SelectContent>
                 {craftTypes.map((craftType) => (
@@ -107,11 +108,13 @@ export function StoryForm({ defaultValues, communities, craftTypes }: StoryFormP
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Fotografía o imagen" error={errors.coverImageUrl?.message}>
-            <Input
-              {...register("coverImageUrl")}
-              placeholder="https://..."
-              inputMode="url"
+          <Field label="Fotografia o imagen" error={errors.coverImageFileId?.message}>
+            <input type="hidden" {...register("coverImageFileId")} />
+            <ImageUpload
+              label="Subir imagen principal"
+              description="Esta imagen acompana tu perfil cultural."
+              folder="warmi/stories"
+              onUploaded={(file) => setValue("coverImageFileId", file.id)}
             />
           </Field>
           <Field label="Resumen breve" error={errors.summary?.message}>

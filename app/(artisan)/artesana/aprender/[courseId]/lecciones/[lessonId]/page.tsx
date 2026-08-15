@@ -8,6 +8,7 @@ import {
   ArtisanShell
 } from "@/features/artisan/artisan-panel";
 import { Badge } from "@/shared/components/ui/badge";
+import { AudioHelpButton } from "@/shared/components/media/audio-help-button";
 import { LearningService } from "@/shared/services/learning.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -23,6 +24,11 @@ export default async function ArtisanLessonPage({
     courseId,
     lessonId
   );
+  const audioFile = lesson.lessonFiles.find((resource) => resource.file.type === "AUDIO");
+  const videoFile = lesson.lessonFiles.find((resource) => resource.file.type === "VIDEO");
+  const supportFiles = lesson.lessonFiles.filter(
+    (resource) => resource.file.type !== "AUDIO"
+  );
 
   return (
     <ArtisanShell>
@@ -30,7 +36,7 @@ export default async function ArtisanLessonPage({
         eyebrow={enrollment.course.title}
         title={lesson.title}
         description={`Módulo: ${lesson.module.title}`}
-        imageUrl="/images/learning/cursos-spoiler.png"
+        imageUrl={enrollment.course.imageUrl ?? undefined}
       />
 
       <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
@@ -39,10 +45,23 @@ export default async function ArtisanLessonPage({
             <Badge>{lesson.type}</Badge>
             <Badge variant="outline">{lesson.durationMin ?? 0} min</Badge>
           </div>
-          {lesson.type === "VIDEO" ? (
-            <div className="mt-6 flex aspect-video items-center justify-center bg-[#1b1c1a] text-white shadow-[0_22px_50px_rgba(27,28,26,0.18)]">
+          {videoFile ? (
+            <a
+              href={videoFile.file.url}
+              target="_blank"
+              className="mt-6 flex aspect-video items-center justify-center bg-[#1b1c1a] text-white shadow-[0_22px_50px_rgba(27,28,26,0.18)]"
+            >
               <Video className="mr-3 h-8 w-8" />
-              Video de aprendizaje
+              Abrir video de aprendizaje
+            </a>
+          ) : null}
+          {audioFile ? (
+            <div className="mt-6">
+              <AudioHelpButton
+                audioUrl={audioFile.file.url}
+                title="Escuchar explicación"
+                description={`Audio de apoyo para ${lesson.title}`}
+              />
             </div>
           ) : null}
           <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
@@ -60,8 +79,8 @@ export default async function ArtisanLessonPage({
         <div className="space-y-6">
           <ArtisanPanel title="Recursos" eyebrow="Materiales">
             <div className="grid gap-4">
-              {lesson.lessonFiles.length ? (
-                lesson.lessonFiles.map((resource) => (
+              {supportFiles.length ? (
+                supportFiles.map((resource) => (
                   <a key={resource.id} href={resource.file.url}>
                     <ArtisanListItem
                       meta="Descarga"

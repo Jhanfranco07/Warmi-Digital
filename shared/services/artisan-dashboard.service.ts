@@ -80,9 +80,11 @@ export class ArtisanDashboardService {
       artisan,
       story,
       generalProgress,
+      enrollments,
       currentEnrollment,
       currentBadge,
       nextWorkshop: workshops.upcoming[0] ?? null,
+      workshops,
       opportunities: opportunities.slice(0, 3),
       products,
       recentOrders: orders,
@@ -97,10 +99,10 @@ export class ArtisanDashboardService {
             : "Documentar y compartir tu historia cultural",
       routeName:
         generalProgress < 40
-          ? "Semilla Digital"
+          ? (currentEnrollment?.course.title ?? "Ruta por iniciar")
           : generalProgress < 75
             ? "Colorista Digital"
-            : "Guardiana de la Tradicion"
+            : "Guardiana de la Tradición"
     };
   }
 }

@@ -18,58 +18,6 @@ import { ArtisanDashboardService } from "@/shared/services/artisan-dashboard.ser
 import { LearningService } from "@/shared/services/learning.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
-const courseImages = [
-  "/images/discover/aprende.png",
-  "/images/discover/taller.png",
-  "/images/discover/recursos.png",
-  "/images/discover/emprende.png"
-];
-
-const availableCourses = [
-  {
-    title: "Fotografía para artesanas",
-    description: "Comunica tu trabajo con imágenes que inspiran.",
-    image: "/images/discover/emprende.png"
-  },
-  {
-    title: "Organiza tu negocio",
-    description: "Herramientas simples para gestionar tu emprendimiento.",
-    image: "/images/learning/instituciones.png"
-  }
-];
-
-const mobileWorkshopDates = [
-  { month: "AGO", day: "15", label: "Sáb", active: true },
-  { month: "AGO", day: "16", label: "Dom" },
-  { month: "AGO", day: "17", label: "Lun" },
-  { month: "AGO", day: "20", label: "Jue" },
-  { month: "AGO", day: "27", label: "Jue" }
-];
-
-const mobileWorkshops = [
-  {
-    title: "Introducción al patrimonio textil",
-    date: "15 de agosto, 2026",
-    time: "10:00 a. m. - 12:00 p. m.",
-    facilitator: "María Quispe",
-    image: "/images/discover/aprende.png"
-  },
-  {
-    title: "Fotografía de productos con celular",
-    date: "20 de agosto, 2026",
-    time: "3:00 p. m. - 5:00 p. m.",
-    facilitator: "Lucía Mamani",
-    image: "/images/discover/emprende.png"
-  },
-  {
-    title: "Trámites digitales básicos",
-    date: "27 de agosto, 2026",
-    time: "10:00 a. m. - 12:00 p. m.",
-    facilitator: "Diego Torres",
-    image: "/images/learning/instituciones.png"
-  }
-];
-
 export default async function ArtisanLearningPage() {
   const session = await requireRole("ARTESANA");
   const [learning, dashboard] = await Promise.all([
@@ -81,16 +29,17 @@ export default async function ArtisanLearningPage() {
     ? Math.round(
         enrolled.reduce((total, course) => total + course.progress, 0) / enrolled.length
       )
-    : 45;
-  const completedModules = Math.max(1, Math.round((averageProgress / 100) * 5));
+    : 0;
+  const completedModules = Math.round((averageProgress / 100) * 5);
   const currentCourse = dashboard.currentEnrollment?.course;
   const profile = dashboard.artisan?.profile;
-  const displayName = profile?.displayName ?? session.user.name ?? "Elena Mamani";
-  const craft = profile?.craftTypes[0]?.craftType.name ?? "Tejido";
+  const displayName = profile?.displayName ?? session.user.name ?? "Artesana Warmi";
+  const craft = profile?.craftTypes[0]?.craftType.name ?? "Especialidad por registrar";
+  const avatarUrl = profile?.avatarUrl ?? null;
 
-  const mobileCourses = enrolled.length
-    ? enrolled.map(toDisplayCourse)
-    : fallbackCourses();
+  const mobileCourses = enrolled.map(toDisplayCourse);
+  const completedCourses = mobileCourses.filter((course) => course.progress >= 100);
+  const workshopStats = dashboard.workshops;
 
   return (
     <>
@@ -108,7 +57,7 @@ export default async function ArtisanLearningPage() {
 
         <div className="relative">
           <h1 className="font-serif text-4xl font-bold leading-tight text-[#7a1042]">
-            Mis cursos <span className="text-[#c93772]">❧</span>
+            Mis cursos <span className="text-[#c93772]">*</span>
           </h1>
           <p className="mt-2 max-w-[240px] text-sm leading-5 text-[#5b4a42]">
             Sigue aprendiendo y avanzando paso a paso hacia tus metas.
@@ -128,16 +77,22 @@ export default async function ArtisanLearningPage() {
 
           <MobileSectionLabel title="En progreso" />
           <div className="mt-3 space-y-4">
-            {mobileCourses.slice(0, 3).map((course, index) => (
-              <MobileLearningCard
-                key={course.id}
-                href={course.href}
-                title={course.title}
-                meta={course.meta}
-                progress={course.progress}
-                image={courseImages[index % courseImages.length]}
-              />
-            ))}
+            {mobileCourses.length ? (
+              mobileCourses
+                .slice(0, 3)
+                .map((course) => (
+                  <MobileLearningCard
+                    key={course.id}
+                    href={course.href}
+                    title={course.title}
+                    meta={course.meta}
+                    progress={course.progress}
+                    image={course.image}
+                  />
+                ))
+            ) : (
+              <MobileInlineEmpty text="No tienes cursos asignados todavía." />
+            )}
           </div>
 
           <div className="mt-7 flex items-center justify-between">
@@ -146,39 +101,59 @@ export default async function ArtisanLearningPage() {
               Ver todos
             </Link>
           </div>
-          <MobileLearningCard
-            href="/artesana/aprender"
-            title="Marketing digital para artesanas"
-            meta="7 módulos"
-            progress={100}
-            image="/images/discover/recursos.png"
-            completed
-          />
+          {completedCourses[0] ? (
+            <MobileLearningCard {...completedCourses[0]} completed />
+          ) : (
+            <MobileInlineEmpty text="Aún no tienes cursos completados." />
+          )}
 
           <MobileSectionLabel title="Talleres en vivo" />
           <div className="mt-3 rounded-2xl border border-[#f5d2dc] bg-white p-4 shadow-[0_12px_26px_rgba(122,16,66,0.08)]">
             <div className="grid grid-cols-3 divide-x divide-[#f4cbd6]">
-              <MobileWorkshopStat label="Próximos" value="3" />
-              <MobileWorkshopStat label="Completados" value="12" />
-              <MobileWorkshopStat label="Participando" value="256" />
+              <MobileWorkshopStat
+                label="Próximos"
+                value={String(workshopStats.upcoming.length)}
+              />
+              <MobileWorkshopStat
+                label="Completados"
+                value={String(workshopStats.completed.length)}
+              />
+              <MobileWorkshopStat
+                label="Participando"
+                value={String(
+                  workshopStats.upcoming.length + workshopStats.completed.length
+                )}
+              />
             </div>
           </div>
 
           <div className="mt-5 flex gap-3 overflow-x-auto pb-1">
-            {mobileWorkshopDates.map((date) => (
-              <span
-                key={`${date.month}-${date.day}`}
-                className={`grid min-w-16 place-items-center rounded-2xl border px-3 py-3 text-center shadow-sm ${
-                  date.active
-                    ? "border-[#b5245b] bg-white text-[#b5245b]"
-                    : "border-[#f5d2dc] bg-white text-[#5b4a42]"
-                }`}
-              >
-                <span className="text-[11px] font-bold">{date.month}</span>
-                <span className="font-serif text-2xl font-bold">{date.day}</span>
-                <span className="text-xs">{date.label}</span>
-              </span>
-            ))}
+            {workshopStats.upcoming.length ? (
+              workshopStats.upcoming.slice(0, 5).map((registration) => (
+                <span
+                  key={registration.id}
+                  className="grid min-w-16 place-items-center rounded-2xl border border-[#b5245b] bg-white px-3 py-3 text-center text-[#b5245b] shadow-sm"
+                >
+                  <span className="text-[11px] font-bold">
+                    {registration.workshop.startsAt
+                      ? format(registration.workshop.startsAt, "MMM").toUpperCase()
+                      : "TAL"}
+                  </span>
+                  <span className="font-serif text-2xl font-bold">
+                    {registration.workshop.startsAt
+                      ? format(registration.workshop.startsAt, "dd")
+                      : "--"}
+                  </span>
+                  <span className="text-xs">
+                    {registration.workshop.startsAt
+                      ? format(registration.workshop.startsAt, "EEE")
+                      : ""}
+                  </span>
+                </span>
+              ))
+            ) : (
+              <MobileInlineEmpty text="No tienes talleres próximos." />
+            )}
           </div>
 
           <div className="mt-5 flex items-center justify-between">
@@ -188,23 +163,30 @@ export default async function ArtisanLearningPage() {
             </Link>
           </div>
           <div className="mt-3 space-y-4">
-            {mobileWorkshops.map((workshop) => (
-              <MobileWorkshopCard key={workshop.title} workshop={workshop} />
-            ))}
+            {workshopStats.upcoming.length ? (
+              workshopStats.upcoming
+                .slice(0, 3)
+                .map((registration) => (
+                  <MobileWorkshopCard
+                    key={registration.id}
+                    workshop={toDisplayWorkshop(registration)}
+                  />
+                ))
+            ) : (
+              <MobileInlineEmpty text="No tienes talleres próximos." />
+            )}
           </div>
 
           <div className="mt-5">
             <MobileSectionLabel title="Talleres completados" className="mt-0" />
-            <MobileWorkshopCard
-              workshop={{
-                title: "Crochet para emprendedoras",
-                date: "08 de agosto, 2026",
-                time: "10:00 a. m. - 12:00 p. m.",
-                facilitator: "Ana Paredes",
-                image: "/images/discover/recursos.png"
-              }}
-              completed
-            />
+            {workshopStats.completed[0] ? (
+              <MobileWorkshopCard
+                workshop={toDisplayWorkshop(workshopStats.completed[0])}
+                completed
+              />
+            ) : (
+              <MobileInlineEmpty text="Aún no tienes talleres completados." />
+            )}
           </div>
         </div>
       </section>
@@ -215,7 +197,7 @@ export default async function ArtisanLearningPage() {
             <div>
               <h1 className="font-serif text-5xl font-bold leading-none text-[#101833] xl:text-6xl 2xl:text-7xl">
                 Hola, {displayName}
-                <span className="ml-3 text-4xl text-[#b5245b]">❧</span>
+                <span className="ml-3 text-4xl text-[#b5245b]">*</span>
               </h1>
               <p className="mt-4 text-lg leading-8 text-[#5b4a42]">
                 Este es tu espacio para aprender, fortalecer tu historia y avanzar paso a
@@ -225,13 +207,19 @@ export default async function ArtisanLearningPage() {
 
             <div className="hidden items-center gap-3 xl:flex">
               <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
-                <Image
-                  src="/images/auth/artesana.png"
-                  alt={displayName}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
+                    {displayName.slice(0, 1)}
+                  </span>
+                )}
               </span>
               <div>
                 <p className="font-ui text-base font-extrabold text-[#1b1c1a]">
@@ -256,7 +244,7 @@ export default async function ArtisanLearningPage() {
                     variant="outline"
                     className="rounded-xl border-[#e9edf5] bg-[#f5f7fb] px-5 py-2 text-[#123f78]"
                   >
-                    {profile?.community?.name ?? "Comunidad Qantu"}
+                    {profile?.community?.name ?? "Comunidad pendiente"}
                   </Badge>
                   <Badge className="rounded-xl bg-[#fff0d6] px-5 py-2 text-[#b96700] hover:bg-[#fff0d6]">
                     {craft}
@@ -311,7 +299,7 @@ export default async function ArtisanLearningPage() {
                     >
                       <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
                         <BookOpen className="h-5 w-5" />
-                        Continuar lección
+                        Continúar lección
                       </Link>
                     </Button>
                   ) : null}
@@ -324,41 +312,35 @@ export default async function ArtisanLearningPage() {
                 <h2 className="font-serif text-3xl font-bold text-[#a95511]">
                   Sigue aprendiendo
                 </h2>
-                <span className="text-4xl text-[#f0c8a6]">✣</span>
+                <span className="text-4xl text-[#f0c8a6]">#</span>
               </header>
               <div className="grid gap-6 p-8 md:grid-cols-[190px_1fr]">
                 <div className="relative aspect-square overflow-hidden rounded-[22px] bg-[#1f2d55]">
-                  <Image
-                    src="/images/discover/taller.png"
-                    alt="Taller de aprendizaje"
-                    fill
-                    sizes="190px"
-                    className="object-cover opacity-90"
-                  />
-                  <span className="absolute inset-0 bg-[#101833]/30" />
+                  <LearningImagePlaceholder />
+                  <span className="absolute inset-0 bg-[#101833]/10" />
                 </div>
                 <div>
                   <h3 className="font-serif text-3xl font-bold leading-tight text-[#1b1c1a]">
-                    {dashboard.nextWorkshop?.workshop.title ??
-                      "Taller: contar la historia de una pieza"}
+                    {dashboard.nextWorkshop?.workshop.title ?? "No tienes taller próximo"}
                   </h3>
                   <div className="mt-5 grid gap-3 text-base text-[#5b4a42]">
                     <p className="flex items-center gap-3">
                       <CalendarDays className="h-5 w-5 text-[#7a3100]" />
                       {dashboard.nextWorkshop?.workshop.startsAt
                         ? format(dashboard.nextWorkshop.workshop.startsAt, "dd/MM/yyyy")
-                        : "15/08/2026"}
+                        : "Fecha pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <Clock className="h-5 w-5 text-[#7a3100]" />
                       {dashboard.nextWorkshop?.workshop.startsAt
                         ? format(dashboard.nextWorkshop.workshop.startsAt, "HH:mm")
-                        : "22:00"}
+                        : "Hora pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <MapPin className="h-5 w-5 text-[#7a3100]" />
                       {dashboard.nextWorkshop?.workshop.location ??
-                        "Centro comunal Qantu"}
+                        dashboard.nextWorkshop?.workshop.community?.name ??
+                        "Lugar por confirmar"}
                     </p>
                   </div>
                   <Button
@@ -397,19 +379,26 @@ export default async function ArtisanLearningPage() {
                   </div>
                 </div>
                 <div className="grid gap-5 md:grid-cols-3">
-                  {(enrolled.length ? enrolled.map(toDisplayCourse) : fallbackCourses())
-                    .slice(0, 3)
-                    .map((course, index) => (
-                      <CourseCard
-                        key={course.id}
-                        href={course.href}
-                        title={course.title}
-                        description={course.description}
-                        image={courseImages[index % courseImages.length]}
-                        progress={course.progress}
-                        meta={course.meta}
-                      />
-                    ))}
+                  {enrolled.length ? (
+                    enrolled
+                      .map(toDisplayCourse)
+                      .slice(0, 3)
+                      .map((course) => (
+                        <CourseCard
+                          key={course.id}
+                          href={course.href}
+                          title={course.title}
+                          description={course.description}
+                          image={course.image}
+                          progress={course.progress}
+                          meta={course.meta}
+                        />
+                      ))
+                  ) : (
+                    <div className="md:col-span-3">
+                      <LearningEmptyState text="No tienes cursos asignados todavía." />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -418,9 +407,25 @@ export default async function ArtisanLearningPage() {
                   Disponibles para ti
                 </p>
                 <div className="grid gap-5 md:grid-cols-2">
-                  {availableCourses.map((course) => (
-                    <AvailableCourse key={course.title} {...course} />
-                  ))}
+                  {learning.availableCourses.length ? (
+                    learning.availableCourses
+                      .slice(0, 2)
+                      .map((course) => (
+                        <AvailableCourse
+                          key={course.id}
+                          title={course.title}
+                          description={
+                            course.description ??
+                            "Curso disponible para continuar tu formación digital."
+                          }
+                          image={course.imageUrl}
+                        />
+                      ))
+                  ) : (
+                    <div className="md:col-span-2">
+                      <LearningEmptyState text="No hay cursos disponibles por ahora." />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -467,38 +472,10 @@ type DisplayCourse = {
   href: string;
   title: string;
   description: string;
+  image: string | null;
   progress: number;
   meta: string;
 };
-
-function fallbackCourses(): DisplayCourse[] {
-  return [
-    {
-      id: "semilla",
-      href: "/artesana/aprender",
-      title: "Semilla Digital",
-      description: "Cuenta tu historia",
-      progress: 60,
-      meta: "Módulo 2 de 5"
-    },
-    {
-      id: "tejido",
-      href: "/artesana/aprender",
-      title: "Tejido con identidad",
-      description: "Técnicas básicas",
-      progress: 25,
-      meta: "Módulo 1 de 4"
-    },
-    {
-      id: "diseno",
-      href: "/artesana/aprender",
-      title: "Diseño de piezas",
-      description: "Decoración y significado",
-      progress: 40,
-      meta: "Módulo 3 de 5"
-    }
-  ];
-}
 
 function toDisplayCourse(
   course: Awaited<
@@ -511,12 +488,38 @@ function toDisplayCourse(
     title: course.title,
     description:
       course.description ?? "Continúa fortaleciendo tus herramientas digitales.",
+    image: course.imageUrl,
     progress: course.progress,
     meta: `${course.modulesCount} módulos · ${
       course.lastAccessedAt
         ? `Último acceso ${format(course.lastAccessedAt, "dd/MM/yyyy")}`
         : `${course.durationMin} min`
     }`
+  };
+}
+
+type WorkshopRegistration = NonNullable<
+  Awaited<
+    ReturnType<ArtisanDashboardService["getDashboard"]>
+  >["workshops"]["upcoming"][number]
+>;
+
+function toDisplayWorkshop(registration: WorkshopRegistration) {
+  const { workshop } = registration;
+  const facilitator =
+    workshop.facilitator.profile?.displayName ??
+    workshop.facilitator.name ??
+    "Facilitadora Warmi";
+
+  return {
+    title: workshop.title,
+    date: workshop.startsAt ? format(workshop.startsAt, "dd/MM/yyyy") : "Fecha pendiente",
+    time:
+      workshop.startsAt && workshop.endsAt
+        ? `${format(workshop.startsAt, "HH:mm")} - ${format(workshop.endsAt, "HH:mm")}`
+        : "Horario pendiente",
+    facilitator,
+    image: null
   };
 }
 
@@ -544,7 +547,7 @@ function MobileLearningCard({
   completed = false
 }: {
   href: string;
-  image: string;
+  image: string | null;
   title: string;
   meta: string;
   progress: number;
@@ -556,7 +559,11 @@ function MobileLearningCard({
       className="grid grid-cols-[126px_1fr] overflow-hidden rounded-2xl border border-[#f5d2dc] bg-white shadow-[0_12px_26px_rgba(122,16,66,0.08)]"
     >
       <div className="relative min-h-[126px]">
-        <Image src={image} alt={title} fill sizes="126px" className="object-cover" />
+        {image ? (
+          <Image src={image} alt={title} fill sizes="126px" className="object-cover" />
+        ) : (
+          <LearningImagePlaceholder compact />
+        )}
       </div>
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
@@ -565,7 +572,7 @@ function MobileLearningCard({
           </h3>
           {completed ? (
             <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f0f8df] text-[#6fa33c]">
-              ✓
+              
             </span>
           ) : null}
         </div>
@@ -582,7 +589,7 @@ function MobileLearningCard({
         />
         {!completed ? (
           <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">
-            Continuar
+            Continúar
             <ChevronRight className="ml-1 h-3.5 w-3.5" />
           </span>
         ) : null}
@@ -609,20 +616,24 @@ function MobileWorkshopCard({
     date: string;
     time: string;
     facilitator: string;
-    image: string;
+    image: string | null;
   };
   completed?: boolean;
 }) {
   return (
     <article className="grid grid-cols-[122px_1fr] overflow-hidden rounded-2xl border border-[#f5d2dc] bg-white shadow-[0_12px_26px_rgba(122,16,66,0.08)]">
       <div className="relative min-h-[132px]">
-        <Image
-          src={workshop.image}
-          alt={workshop.title}
-          fill
-          sizes="122px"
-          className="object-cover"
-        />
+        {workshop.image ? (
+          <Image
+            src={workshop.image}
+            alt={workshop.title}
+            fill
+            sizes="122px"
+            className="object-cover"
+          />
+        ) : (
+          <LearningImagePlaceholder compact />
+        )}
       </div>
       <div className="p-4">
         <span
@@ -659,14 +670,18 @@ function CourseCard({
   description,
   progress,
   meta
-}: Omit<DisplayCourse, "id"> & { image: string }) {
+}: Omit<DisplayCourse, "id">) {
   return (
     <Link
       href={href as Route}
       className="group overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_16px_38px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_58px_rgba(122,49,0,0.13)]"
     >
       <div className="relative h-40">
-        <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
+        {image ? (
+          <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
+        ) : (
+          <LearningImagePlaceholder />
+        )}
         <span className="absolute left-4 top-4 rounded-lg bg-[#c93772] px-3 py-1 font-ui text-xs font-extrabold text-white">
           En progreso
         </span>
@@ -697,12 +712,16 @@ function AvailableCourse({
 }: {
   title: string;
   description: string;
-  image: string;
+  image: string | null;
 }) {
   return (
     <article className="group overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_16px_38px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_26px_58px_rgba(122,49,0,0.13)]">
       <div className="relative h-32">
-        <Image src={image} alt={title} fill sizes="260px" className="object-cover" />
+        {image ? (
+          <Image src={image} alt={title} fill sizes="260px" className="object-cover" />
+        ) : (
+          <LearningImagePlaceholder />
+        )}
         <span className="absolute right-4 top-4 rounded-lg bg-[#f4c542] px-3 py-1 font-ui text-xs font-extrabold text-[#7a3100]">
           Nuevo
         </span>
@@ -715,5 +734,35 @@ function AvailableCourse({
         </span>
       </div>
     </article>
+  );
+}
+
+function MobileInlineEmpty({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-[#f0c3cf] bg-white/80 p-4 text-sm font-semibold text-[#7a5b4a]">
+      {text}
+    </div>
+  );
+}
+
+function LearningEmptyState({ text }: { text: string }) {
+  return (
+    <div className="rounded-[18px] border border-dashed border-[#ecd0bd] bg-white p-8 text-center text-base font-semibold text-[#7a5b4a] shadow-[0_16px_38px_rgba(122,49,0,0.06)]">
+      {text}
+    </div>
+  );
+}
+
+function LearningImagePlaceholder({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#fff0d6,#ffe8ef,#e8fbfd)]">
+      <div
+        className={`grid place-items-center rounded-full bg-white/80 text-[#b5245b] shadow-sm ${
+          compact ? "h-12 w-12" : "h-16 w-16"
+        }`}
+      >
+        <BookOpen className={compact ? "h-6 w-6" : "h-8 w-8"} />
+      </div>
+    </div>
   );
 }

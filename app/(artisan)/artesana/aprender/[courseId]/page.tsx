@@ -35,7 +35,7 @@ export default async function ArtisanCourseDetailPage({
         eyebrow="Curso"
         title={enrollment.course.title}
         description={enrollment.course.description ?? "Curso de la ruta Warmi."}
-        imageUrl="/images/discover/aprende.png"
+        imageUrl={enrollment.course.imageUrl ?? undefined}
         actions={
           firstIncompleteLesson ? (
             <Button
@@ -129,7 +129,9 @@ export default async function ArtisanCourseDetailPage({
             <UserRound className="h-5 w-5" />
           </span>
           <p className="text-lg leading-8 text-[#5b4a42]">
-            La facilitadora vinculada aparecerá en los talleres asociados al curso.
+            {enrollment.course.facilitator?.profile?.displayName ??
+              enrollment.course.facilitator?.name ??
+              "La facilitadora vinculada aparecerá en los talleres asociados al curso."}
           </p>
         </div>
       </ArtisanPanel>

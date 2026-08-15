@@ -29,6 +29,20 @@ export class FileRepository {
     });
   }
 
+  findOwnedByType(
+    fileId: string,
+    ownerId: string,
+    type: import("@prisma/client").FileType
+  ) {
+    return this.db.file.findFirst({
+      where: {
+        id: fileId,
+        ownerId,
+        type
+      }
+    });
+  }
+
   deleteOwned(fileId: string, ownerId: string) {
     return this.db.file.deleteMany({
       where: {

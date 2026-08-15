@@ -327,12 +327,18 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 </Button>
               </form>
 
-              <Link
-                href="/register"
-                className="mt-5 inline-flex text-sm font-bold text-[#7a3100] hover:underline xl:text-base"
-              >
-                Crear cuenta de artesana
-              </Link>
+              {role === "artesana" ? (
+                <Link
+                  href="/register"
+                  className="mt-5 inline-flex text-sm font-bold text-[#7a3100] hover:underline xl:text-base"
+                >
+                  Crear cuenta de artesana
+                </Link>
+              ) : (
+                <p className="mt-5 rounded-xl border border-[#e5c067] bg-white/65 px-4 py-3 text-sm font-bold leading-6 text-[#7a3100] xl:text-base">
+                  El acceso de facilitadora se habilita por invitación del administrador.
+                </p>
+              )}
             </div>
           </motion.div>
         </motion.div>

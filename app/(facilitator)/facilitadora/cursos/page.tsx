@@ -14,6 +14,7 @@ import {
 
 import { requireRole } from "@/shared/server/auth/helpers";
 import { CourseRepository } from "@/shared/repositories/course.repository";
+import { isSupportedImageUrl } from "@/shared/lib/image-url";
 
 const metricCards: {
   label: string;
@@ -150,7 +151,7 @@ export default async function Page() {
                   className="grid gap-5 rounded-[10px] border border-[#eed8bf] bg-white p-4 shadow-[0_16px_42px_rgba(122,73,20,0.06)] transition duration-300 hover:-translate-y-1 xl:grid-cols-[200px_1fr_90px_120px_150px_190px_150px] xl:items-center"
                 >
                   <div className="relative h-32 overflow-hidden rounded-[8px]">
-                    {course.imageUrl ? (
+                    {isSupportedImageUrl(course.imageUrl) ? (
                       <Image
                         src={course.imageUrl}
                         alt={course.title}

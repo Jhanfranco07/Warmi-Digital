@@ -22,6 +22,7 @@ import { EmptyState } from "@/shared/components/feedback/empty-state";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
+import { isSupportedImageUrl } from "@/shared/lib/image-url";
 import { ArtisanDashboardService } from "@/shared/services/artisan-dashboard.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -81,7 +82,7 @@ export default async function ArtisanDashboardPage() {
             className="mt-3 grid grid-cols-[128px_1fr] overflow-hidden rounded-2xl border border-[#f0c3cf] bg-white shadow-[0_14px_30px_rgba(122,16,66,0.1)]"
           >
             <div className="relative min-h-[126px]">
-              {currentCourse?.imageUrl ? (
+              {isSupportedImageUrl(currentCourse?.imageUrl) ? (
                 <Image
                   src={currentCourse.imageUrl}
                   alt={currentCourse.title}
@@ -553,7 +554,7 @@ function MobileCourse({
       className="grid grid-cols-[86px_1fr_auto] items-center gap-3 rounded-xl border border-[#f5d2dc] bg-white p-2 shadow-[0_10px_22px_rgba(122,16,66,0.07)]"
     >
       <div className="relative h-16 overflow-hidden rounded-lg">
-        {image ? (
+        {isSupportedImageUrl(image) ? (
           <Image src={image} alt={title} fill sizes="86px" className="object-cover" />
         ) : (
           <DashboardImagePlaceholder compact />

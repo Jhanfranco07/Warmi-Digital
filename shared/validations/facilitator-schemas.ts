@@ -6,6 +6,8 @@ import {
   CourseStatus,
   FollowUpPriority,
   FollowUpType,
+  LessonResourceType,
+  LessonType,
   WorkshopMode,
   WorkshopStatus
 } from "@prisma/client";
@@ -29,6 +31,37 @@ export const courseFormSchema = z.object({
   status: z.nativeEnum(CourseStatus),
   durationMin: z.coerce.number().int().positive().optional(),
   imageUrl: z.string().url().optional()
+});
+export const updateCourseFormSchema = courseFormSchema.extend({
+  courseId: z.string().uuid()
+});
+export const moduleFormSchema = z.object({
+  courseId: z.string().uuid(),
+  moduleId: z.string().uuid().optional(),
+  title: z.string().min(3).max(180),
+  description: z.string().max(2000).optional(),
+  order: z.coerce.number().int().min(0).default(0),
+  durationMin: z.coerce.number().int().positive().optional()
+});
+export const lessonFormSchema = z.object({
+  courseId: z.string().uuid(),
+  moduleId: z.string().uuid(),
+  lessonId: z.string().uuid().optional(),
+  title: z.string().min(3).max(180),
+  content: z.string().max(8000).optional(),
+  type: z.nativeEnum(LessonType).default(LessonType.TEXT),
+  order: z.coerce.number().int().min(0).default(0),
+  durationMin: z.coerce.number().int().positive().optional()
+});
+export const lessonResourceFormSchema = z.object({
+  courseId: z.string().uuid(),
+  lessonId: z.string().uuid(),
+  resourceType: z.nativeEnum(LessonResourceType),
+  title: z.string().min(3).max(180),
+  description: z.string().max(2000).optional(),
+  position: z.coerce.number().int().min(0).default(0),
+  fileId: z.string().uuid().optional(),
+  url: z.string().url().optional()
 });
 export const workshopFormSchema = z.object({
   title: z.string().min(3).max(180),

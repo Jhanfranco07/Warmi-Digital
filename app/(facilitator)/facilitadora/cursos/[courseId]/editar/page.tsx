@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+
+import { CourseLearningBuilder } from "@/features/facilitator/course-learning-builder";
 import { Container } from "@/shared/components/layout/container";
 import { PageHeader } from "@/shared/components/layout/page-header";
-import { Card, CardContent } from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
 export default async function Page({
@@ -15,25 +18,63 @@ export default async function Page({
     (await params).courseId
   );
   if (!course) notFound();
+
+  const serializedCourse = {
+    id: course.id,
+    title: course.title,
+    description: course.description,
+    level: course.level,
+    status: course.status,
+    durationMin: course.durationMin,
+    imageUrl: course.imageUrl,
+    modules: course.modules.map((module) => ({
+      id: module.id,
+      title: module.title,
+      description: module.description,
+      order: module.order,
+      durationMin: module.durationMin,
+      lessons: module.lessons.map((lesson) => ({
+        id: lesson.id,
+        title: lesson.title,
+        content: lesson.content,
+        type: lesson.type,
+        order: lesson.order,
+        durationMin: lesson.durationMin,
+        lessonFiles: lesson.lessonFiles.map((resource) => ({
+          id: resource.id,
+          type: resource.type,
+          title: resource.title,
+          description: resource.description,
+          position: resource.position,
+          provider: resource.provider,
+          externalId: resource.externalId,
+          originalUrl: resource.originalUrl,
+          file: resource.file
+            ? {
+                id: resource.file.id,
+                url: resource.file.url,
+                type: resource.file.type,
+                mimeType: resource.file.mimeType,
+                altText: resource.file.altText
+              }
+            : null
+        }))
+      }))
+    }))
+  };
+
   return (
     <Container className="space-y-6 py-8">
       <PageHeader
         title={`Editar: ${course.title}`}
-        description="Los módulos y lecciones existentes se conservan en esta ruta."
+        description="Gestiona módulos, lecciones y recursos formativos reales."
+        actions={
+          <Button asChild variant="outline">
+            <Link href="/facilitadora/cursos">Volver</Link>
+          </Button>
+        }
       />
-      <Card>
-        <CardContent className="space-y-3 pt-6">
-          {course.modules.map((module) => (
-            <div key={module.id}>
-              <p className="font-semibold">{module.title}</p>
-              <p className="text-body-sm text-muted-foreground">
-                {module.lessons.map((lesson) => lesson.title).join(" · ") ||
-                  "Sin lecciones"}
-              </p>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <CourseLearningBuilder course={serializedCourse} />
     </Container>
   );
 }

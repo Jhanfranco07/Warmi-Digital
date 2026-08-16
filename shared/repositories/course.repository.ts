@@ -117,7 +117,12 @@ export class CourseRepository {
             modules: {
               include: {
                 lessons: {
-                  include: { lessonFiles: { include: { file: true } } },
+                  include: {
+                    lessonFiles: {
+                      include: { file: true },
+                      orderBy: { position: "asc" }
+                    }
+                  },
                   orderBy: { order: "asc" }
                 }
               },
@@ -160,7 +165,10 @@ export class CourseRepository {
       },
       include: {
         module: true,
-        lessonFiles: { include: { file: true } }
+        lessonFiles: {
+          include: { file: true },
+          orderBy: { position: "asc" }
+        }
       }
     });
 
@@ -171,7 +179,18 @@ export class CourseRepository {
     return this.db.course.findMany({
       where: { facilitatorId, deletedAt: null },
       include: {
-        modules: { include: { lessons: true } },
+        modules: {
+          include: {
+            lessons: {
+              include: {
+                lessonFiles: {
+                  include: { file: true },
+                  orderBy: { position: "asc" }
+                }
+              }
+            }
+          }
+        },
         enrollments: { include: { courseProgress: true } },
         facilitator: { include: { profile: true } }
       },
@@ -184,7 +203,17 @@ export class CourseRepository {
       where: { id: courseId, facilitatorId, deletedAt: null },
       include: {
         modules: {
-          include: { lessons: { orderBy: { order: "asc" } } },
+          include: {
+            lessons: {
+              include: {
+                lessonFiles: {
+                  include: { file: true },
+                  orderBy: { position: "asc" }
+                }
+              },
+              orderBy: { order: "asc" }
+            }
+          },
           orderBy: { order: "asc" }
         }
       }
@@ -201,5 +230,88 @@ export class CourseRepository {
     data: Parameters<typeof this.db.course.update>[0]["data"]
   ) {
     return this.db.course.updateMany({ where: { id: courseId, facilitatorId }, data });
+  }
+
+  findManagedLesson(facilitatorId: string, courseId: string, lessonId: string) {
+    return this.db.lesson.findFirst({
+      where: {
+        id: lessonId,
+        module: { course: { id: courseId, facilitatorId, deletedAt: null } }
+      },
+      include: { module: true }
+    });
+  }
+
+  upsertModule(
+    facilitatorId: string,
+    data: {
+      id?: string;
+      courseId: string;
+      title: string;
+      description?: string | null;
+      order: number;
+      durationMin?: number | null;
+    }
+  ) {
+    const { id, courseId, ...moduleData } = data;
+
+    if (id) {
+      return this.db.module.updateMany({
+        where: { id, course: { facilitatorId } },
+        data: moduleData
+      });
+    }
+
+    return this.db.module.create({
+      data: { ...moduleData, course: { connect: { id: courseId } } }
+    });
+  }
+
+  upsertLesson(
+    facilitatorId: string,
+    data: {
+      id?: string;
+      moduleId: string;
+      title: string;
+      slug?: string;
+      content?: string | null;
+      type: import("@prisma/client").LessonType;
+      order: number;
+      durationMin?: number | null;
+    }
+  ) {
+    const { id, moduleId, ...lessonData } = data;
+
+    if (id) {
+      return this.db.lesson.updateMany({
+        where: { id, module: { course: { facilitatorId } } },
+        data: lessonData
+      });
+    }
+
+    if (!lessonData.slug) {
+      throw new Error("La lección nueva requiere slug.");
+    }
+
+    return this.db.lesson.create({
+      data: {
+        ...lessonData,
+        slug: lessonData.slug,
+        module: { connect: { id: moduleId } }
+      }
+    });
+  }
+
+  createLessonResource(data: Parameters<typeof this.db.lessonFile.create>[0]["data"]) {
+    return this.db.lessonFile.create({ data });
+  }
+
+  deleteLessonResource(resourceId: string, facilitatorId: string) {
+    return this.db.lessonFile.deleteMany({
+      where: {
+        id: resourceId,
+        lesson: { module: { course: { facilitatorId } } }
+      }
+    });
   }
 }

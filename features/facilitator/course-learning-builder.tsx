@@ -95,8 +95,7 @@ const resourceOptions: {
   { value: "IMAGE", label: "Imagen", Icon: ImageIcon },
   { value: "PDF", label: "PDF / documento", Icon: FileText },
   { value: "AUDIO", label: "Audio", Icon: Music },
-  { value: "EXTERNAL_LINK", label: "Enlace externo", Icon: LinkIcon },
-  { value: "VIDEO_UPLOAD", label: "Subir video", Icon: Video }
+  { value: "EXTERNAL_LINK", label: "Enlace externo", Icon: LinkIcon }
 ];
 
 function submitWithToast(
@@ -535,18 +534,6 @@ function LessonResourceForm({
           onRemove={() => setFileId("")}
         />
       ) : null}
-      {resourceType === "VIDEO_UPLOAD" ? (
-        <FileUpload
-          accept="video/mp4,video/webm,video/quicktime"
-          uploadType="VIDEO"
-          folder="warmi/learning"
-          label="Subir video"
-          description="Video compatible con Cloudinary"
-          onUploaded={(file) => setFileId(file.id)}
-          onRemove={() => setFileId("")}
-        />
-      ) : null}
-
       <Button type="submit" className="justify-self-start" disabled={pending}>
         {SelectedIcon ? <SelectedIcon className="mr-2 h-4 w-4" /> : null}
         Guardar recurso

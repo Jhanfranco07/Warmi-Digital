@@ -190,6 +190,13 @@ export async function addLessonResourceAction(_: unknown, formData: FormData) {
 
     if (!lesson) return result(false, "No tienes acceso a esta lección.");
 
+    if (input.resourceType === LessonResourceType.VIDEO_UPLOAD) {
+      return result(
+        false,
+        "La subida directa de video queda pendiente. Usa un enlace de YouTube."
+      );
+    }
+
     if (input.resourceType === LessonResourceType.VIDEO_YOUTUBE) {
       if (!input.url) return result(false, "Ingresa un enlace de YouTube.");
       const videoId = parseYouTubeVideoId(input.url);

@@ -14,6 +14,7 @@ export const audioMimeTypes = [
   "audio/ogg"
 ] as const;
 export const documentMimeTypes = ["application/pdf"] as const;
+export const videoMimeTypes = ["video/mp4", "video/webm", "video/quicktime"] as const;
 
 export const uploadFileSchema = z.object({
   type: z.nativeEnum(FileType),
@@ -31,6 +32,7 @@ export function validateFileForType(file: File, type: FileType) {
   const maxImageSize = 5 * 1024 * 1024;
   const maxDocumentSize = 20 * 1024 * 1024;
   const maxAudioSize = 30 * 1024 * 1024;
+  const maxVideoSize = 100 * 1024 * 1024;
 
   if (type === FileType.IMAGE) {
     if (!imageMimeTypes.includes(file.type as (typeof imageMimeTypes)[number])) {
@@ -59,6 +61,16 @@ export function validateFileForType(file: File, type: FileType) {
 
     if (file.size > maxDocumentSize) {
       return "El documento no debe superar 20 MB.";
+    }
+  }
+
+  if (type === FileType.VIDEO) {
+    if (!videoMimeTypes.includes(file.type as (typeof videoMimeTypes)[number])) {
+      return "Solo se permiten videos MP4, WebM o MOV.";
+    }
+
+    if (file.size > maxVideoSize) {
+      return "El video no debe superar 100 MB.";
     }
   }
 

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { BaseDomainCardProps } from "@/shared/components/domain/domain-card-types";
+import { isSupportedImageUrl } from "@/shared/lib/image-url";
 import { cn } from "@/shared/lib/utils";
 
 export function BaseDomainCard({
@@ -26,7 +27,7 @@ export function BaseDomainCard({
         className
       )}
     >
-      {imageUrl ? (
+      {isSupportedImageUrl(imageUrl) ? (
         <div className="relative aspect-[4/3] bg-surface-high">
           <Image
             src={imageUrl}

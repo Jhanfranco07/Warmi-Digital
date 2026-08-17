@@ -281,9 +281,7 @@ export class CourseRepository {
           ...moduleData,
           order: (lastModule?.order ?? -1) + 1,
           course: { connect: { id: courseId } },
-          ...(coverFileId
-            ? { coverFile: { connect: { id: coverFileId } } }
-            : {})
+          ...(coverFileId ? { coverFile: { connect: { id: coverFileId } } } : {})
         }
       });
     });
@@ -324,11 +322,7 @@ export class CourseRepository {
     return result;
   }
 
-  async moveModule(
-    facilitatorId: string,
-    moduleId: string,
-    direction: "up" | "down"
-  ) {
+  async moveModule(facilitatorId: string, moduleId: string, direction: "up" | "down") {
     return this.db.$transaction(async (tx) => {
       const current = await tx.module.findFirst({
         where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
@@ -377,12 +371,12 @@ export class CourseRepository {
     }
   ) {
     return this.db.$transaction(async (tx) => {
-      const module = await tx.module.findFirst({
+      const courseModule = await tx.module.findFirst({
         where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
         select: { id: true }
       });
 
-      if (!module) {
+      if (!courseModule) {
         return null;
       }
 
@@ -416,11 +410,7 @@ export class CourseRepository {
     });
   }
 
-  async attachLessonFile(
-    facilitatorId: string,
-    lessonId: string,
-    fileId: string
-  ) {
+  async attachLessonFile(facilitatorId: string, lessonId: string, fileId: string) {
     return this.db.$transaction(async (tx) => {
       const lesson = await tx.lesson.findFirst({
         where: {
@@ -492,9 +482,7 @@ export class CourseRepository {
         where: {
           lessonId: current.lessonId,
           position:
-            direction === "up"
-              ? { lt: current.position }
-              : { gt: current.position }
+            direction === "up" ? { lt: current.position } : { gt: current.position }
         },
         orderBy: { position: direction === "up" ? "desc" : "asc" },
         select: { id: true, position: true }
@@ -586,9 +574,7 @@ export class CourseRepository {
       data: {
         ...moduleData,
         course: { connect: { id: courseId } },
-        ...(coverFileId
-          ? { coverFile: { connect: { id: coverFileId } } }
-          : {})
+        ...(coverFileId ? { coverFile: { connect: { id: coverFileId } } } : {})
       }
     });
   }

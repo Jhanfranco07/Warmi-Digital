@@ -2,6 +2,7 @@
 
 import { FormEvent, ReactNode, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import type { LessonResourceType, LessonType } from "@prisma/client";
 import {
   ArrowDown,
   ArrowLeft,
@@ -40,9 +41,17 @@ import {
   updateCourseModuleAction
 } from "@/shared/actions/facilitator/course-editor";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
-import { FileUpload, type UploadedFileValue } from "@/shared/components/upload/file-upload";
+import {
+  FileUpload,
+  type UploadedFileValue
+} from "@/shared/components/upload/file-upload";
 import { ImageUpload } from "@/shared/components/upload/image-upload";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "@/shared/components/ui/accordion";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -74,27 +83,37 @@ import { cn } from "@/shared/lib/utils";
 type FileRecord = {
   id: string;
   url: string;
-  provider: string;
-  publicId: string | null;
-  type: "IMAGE" | "VIDEO" | "AUDIO" | "DOCUMENT" | "CERTIFICATE" | "OTHER";
-  mimeType: string;
-  size: number;
-  width: number | null;
-  height: number | null;
-  altText: string | null;
-  metadata: unknown;
+  provider?: string | null;
+  publicId?: string | null;
+  type?: "IMAGE" | "VIDEO" | "AUDIO" | "DOCUMENT" | "CERTIFICATE" | "OTHER" | null;
+  mimeType?: string | null;
+  size?: number | null;
+  width?: number | null;
+  height?: number | null;
+  altText?: string | null;
+  metadata?: unknown;
+  createdAt?: Date | string | null;
+  updatedAt?: Date | string | null;
+  ownerId?: string | null;
 };
 
 type LessonResource = {
   id: string;
-  order: number;
-  file: FileRecord;
+  type: LessonResourceType;
+  title: string;
+  description: string | null;
+  position: number;
+  provider: string | null;
+  externalId: string | null;
+  originalUrl: string | null;
+  file: FileRecord | null;
 };
 
 type LessonRecord = {
   id: string;
   title: string;
   content: string | null;
+  type: LessonType;
   durationMin: number | null;
   order: number;
   lessonFiles: LessonResource[];
@@ -186,7 +205,10 @@ const resourceOptions = [
 
 type ResourceKind = (typeof resourceOptions)[number]["kind"];
 
-function getMetadataValue(file: FileRecord, key: "title" | "description" | "resourceKind") {
+function getMetadataValue(
+  file: FileRecord,
+  key: "title" | "description" | "resourceKind"
+) {
   if (!file.metadata || typeof file.metadata !== "object") return null;
   const value = (file.metadata as Record<string, unknown>)[key];
   return typeof value === "string" ? value : null;
@@ -253,13 +275,7 @@ function useSubmitAction() {
   return { isPending, submit, startTransition };
 }
 
-function FormField({
-  label,
-  children
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function FormField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="space-y-2 text-label-ui font-semibold text-[#4b2414]">
       <span>{label}</span>
@@ -271,15 +287,13 @@ function FormField({
 function WarmiDots() {
   return (
     <div className="flex items-center gap-2" aria-hidden="true">
-      {["#2f63a4", "#c21f5a", "#2fbfc5", "#f26b21", "#ff8a3d", "#f6bc1b"].map(
-        (color) => (
-          <span
-            key={color}
-            className="h-3 w-3 rounded-full shadow-sm"
-            style={{ backgroundColor: color }}
-          />
-        )
-      )}
+      {["#2f63a4", "#c21f5a", "#2fbfc5", "#f26b21", "#ff8a3d", "#f6bc1b"].map((color) => (
+        <span
+          key={color}
+          className="h-3 w-3 rounded-full shadow-sm"
+          style={{ backgroundColor: color }}
+        />
+      ))}
     </div>
   );
 }
@@ -333,7 +347,11 @@ export function CourseEditor({ course }: { course: CourseEditorData }) {
           </div>
           <div className="flex items-center gap-4">
             <WarmiDots />
-            <PreviewDialog course={course} totalLessons={totalLessons} totalResources={totalResources} />
+            <PreviewDialog
+              course={course}
+              totalLessons={totalLessons}
+              totalResources={totalResources}
+            />
           </div>
         </div>
 
@@ -349,7 +367,8 @@ export function CourseEditor({ course }: { course: CourseEditorData }) {
                     {course.title}
                   </CardTitle>
                   <CardDescription className="mt-2 max-w-3xl text-base">
-                    {course.description ?? "Agrega una descripción para orientar a las artesanas."}
+                    {course.description ??
+                      "Agrega una descripción para orientar a las artesanas."}
                   </CardDescription>
                 </div>
                 <CourseInfoDialog course={course} />
@@ -365,16 +384,23 @@ export function CourseEditor({ course }: { course: CourseEditorData }) {
                 <EmptyPreview />
               )}
               <div className="grid gap-3 sm:grid-cols-3">
-                <SummaryTile icon={Layers3} label="Módulos" value={course.modules.length} />
+                <SummaryTile
+                  icon={Layers3}
+                  label="Módulos"
+                  value={course.modules.length}
+                />
                 <SummaryTile icon={BookOpen} label="Lecciones" value={totalLessons} />
                 <SummaryTile icon={Upload} label="Recursos" value={totalResources} />
                 <div className="rounded-lg border border-[#f0cfbb] bg-[#fff8ef] p-4 sm:col-span-3">
-                  <p className="text-label-ui font-semibold text-[#7b3500]">Nivel y duración</p>
+                  <p className="text-label-ui font-semibold text-[#7b3500]">
+                    Nivel y duración
+                  </p>
                   <p className="mt-2 font-serif text-2xl text-[#111827]">
                     {levelLabel[course.level]} · {course.durationMin ?? 0} min
                   </p>
-                  <p className="mt-1 text-body-sm text-muted-foreground">
-                    El orden de módulos, lecciones y recursos se calcula desde esta pantalla.
+                  <p className="text-body-sm mt-1 text-muted-foreground">
+                    El orden de módulos, lecciones y recursos se calcula desde esta
+                    pantalla.
                   </p>
                 </div>
               </div>
@@ -383,7 +409,9 @@ export function CourseEditor({ course }: { course: CourseEditorData }) {
 
           <Card className="border-[#efc9b6] bg-[#fff7fb] shadow-[0_18px_50px_rgba(194,31,90,0.08)]">
             <CardHeader>
-              <CardTitle className="text-3xl text-[#8f1450]">Constructor guiado</CardTitle>
+              <CardTitle className="text-3xl text-[#8f1450]">
+                Constructor guiado
+              </CardTitle>
               <CardDescription>
                 Organiza el curso como una ruta clara: módulo, lección y recurso.
               </CardDescription>
@@ -490,7 +518,7 @@ function ProcessStep({
       </span>
       <div>
         <p className="font-serif text-xl text-[#111827]">{title}</p>
-        <p className="mt-1 text-body-sm text-muted-foreground">{description}</p>
+        <p className="text-body-sm mt-1 text-muted-foreground">{description}</p>
       </div>
     </div>
   );
@@ -547,7 +575,7 @@ function ModuleAccordion({
           <p className="max-w-3xl text-body-md text-muted-foreground">
             {module.description ?? "Agrega una descripción para este módulo."}
           </p>
-          <div className="mt-4 flex flex-wrap gap-2 text-body-sm">
+          <div className="text-body-sm mt-4 flex flex-wrap gap-2">
             <Badge variant="outline" className="border-[#efc9b6]">
               <BookOpen className="mr-1 h-3.5 w-3.5" />
               {module.lessons.length} lecciones
@@ -623,7 +651,7 @@ function ModuleAccordion({
           ) : (
             <div className="rounded-lg border border-dashed border-[#efc9b6] bg-white p-6 text-center">
               <p className="font-serif text-2xl text-[#111827]">Sin lecciones todavía</p>
-              <p className="mt-1 text-body-sm text-muted-foreground">
+              <p className="text-body-sm mt-1 text-muted-foreground">
                 Crea una lección para comenzar a agregar recursos.
               </p>
             </div>
@@ -650,7 +678,9 @@ function LessonCard({
       <CardHeader className="pb-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <Badge className="bg-[#fff0d1] text-[#8a4b00]">Lección {lessonIndex + 1}</Badge>
+            <Badge className="bg-[#fff0d1] text-[#8a4b00]">
+              Lección {lessonIndex + 1}
+            </Badge>
             <CardTitle className="mt-2 text-2xl text-[#111827]">{lesson.title}</CardTitle>
             <CardDescription className="mt-1">
               {lesson.content ?? "Agrega el contenido textual de la lección."}
@@ -699,7 +729,7 @@ function LessonCard({
             />
           ))
         ) : (
-          <div className="rounded-lg border border-dashed border-[#efc9b6] bg-[#fffaf4] p-4 text-body-sm text-muted-foreground">
+          <div className="text-body-sm rounded-lg border border-dashed border-[#efc9b6] bg-[#fffaf4] p-4 text-muted-foreground">
             Esta lección aún no tiene recursos adjuntos.
           </div>
         )}
@@ -717,15 +747,27 @@ function ResourceItem({
   resource: LessonResource;
   index: number;
 }) {
-  const Icon = resourceIcon(resource.file);
+  const file = resource.file;
+  const Icon = file ? resourceIcon(file) : null;
+
   const { startTransition } = useSubmitAction();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const title = getMetadataValue(resource.file, "title") ?? resource.file.altText ?? resource.file.url;
-  const description = getMetadataValue(resource.file, "description");
+
+  const title =
+    resource.title ||
+    (file
+      ? (getMetadataValue(file, "title") ?? file.altText ?? file.url)
+      : (resource.originalUrl ?? "Recurso"));
+
+  const description =
+    resource.description ?? (file ? getMetadataValue(file, "description") : null);
+
+  const label = file ? resourceLabel(file) : resource.type.replace(/_/g, " ");
 
   function move(direction: "up" | "down") {
     startTransition(async () => {
       const result = await moveLessonResourceAction(courseId, resource.id, direction);
+
       result.ok ? toast.success(result.message) : toast.info(result.message);
     });
   }
@@ -733,6 +775,7 @@ function ResourceItem({
   function remove() {
     startTransition(async () => {
       const result = await deleteLessonResourceAction(courseId, resource.id);
+
       if (result.ok) {
         toast.success(result.message);
         setConfirmOpen(false);
@@ -745,51 +788,85 @@ function ResourceItem({
   return (
     <div className="grid gap-3 rounded-lg border border-[#f0cfbb] bg-white p-3 transition duration-200 hover:-translate-y-0.5 hover:shadow-soft md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center">
       <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#fff0d1] text-[#c21f5a]">
-        <Icon className="h-5 w-5" />
+        {Icon ? (
+          <Icon className="h-5 w-5" />
+        ) : (
+          <span className="px-1 text-center text-[10px] font-bold leading-tight">
+            {resource.type === "VIDEO_YOUTUBE"
+              ? "YT"
+              : resource.type === "EXTERNAL_LINK"
+                ? "LINK"
+                : "RECURSO"}
+          </span>
+        )}
       </div>
+
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="border-[#efc9b6]">
             Recurso {index + 1}
           </Badge>
-          <Badge className="bg-[#f7e6f0] text-[#8f1450]">
-            {resourceLabel(resource.file)}
-          </Badge>
+
+          <Badge className="bg-[#f7e6f0] text-[#8f1450]">{label}</Badge>
         </div>
+
         <p className="mt-2 truncate font-semibold text-[#111827]">{title}</p>
+
         {description ? (
-          <p className="mt-1 line-clamp-2 text-body-sm text-muted-foreground">
+          <p className="text-body-sm mt-1 line-clamp-2 text-muted-foreground">
             {description}
           </p>
         ) : null}
       </div>
+
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" className="border-[#d8aa8f]" onClick={() => move("up")}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="border-[#d8aa8f]"
+          onClick={() => move("up")}
+        >
           <ArrowUp className="h-4 w-4" />
           <span className="sr-only">Subir recurso</span>
         </Button>
-        <Button variant="outline" size="icon" className="border-[#d8aa8f]" onClick={() => move("down")}>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className="border-[#d8aa8f]"
+          onClick={() => move("down")}
+        >
           <ArrowDown className="h-4 w-4" />
           <span className="sr-only">Bajar recurso</span>
         </Button>
+
         <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="border-[#f1b8b8] text-destructive">
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-[#f1b8b8] text-destructive"
+            >
               <Trash2 className="h-4 w-4" />
               <span className="sr-only">Retirar recurso</span>
             </Button>
           </DialogTrigger>
+
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Retirar recurso</DialogTitle>
+
               <DialogDescription>
-                El recurso se quitará de esta lección. El archivo original se conserva en la biblioteca.
+                El recurso se quitará de esta lección. El archivo original se conserva en
+                la biblioteca.
               </DialogDescription>
             </DialogHeader>
+
             <DialogFooter>
               <Button variant="outline" onClick={() => setConfirmOpen(false)}>
                 Cancelar
               </Button>
+
               <Button variant="destructive" onClick={remove}>
                 Retirar recurso
               </Button>
@@ -823,7 +900,9 @@ function CourseInfoDialog({ course }: { course: CourseEditorData }) {
         </DialogHeader>
         <form
           className="grid gap-5"
-          onSubmit={(event) => submit(event, updateCourseEditorAction, () => setOpen(false))}
+          onSubmit={(event) =>
+            submit(event, updateCourseEditorAction, () => setOpen(false))
+          }
         >
           <input type="hidden" name="courseId" value={course.id} />
           <input type="hidden" name="imageUrl" value={imageUrl} />
@@ -866,7 +945,12 @@ function CourseInfoDialog({ course }: { course: CourseEditorData }) {
                   </select>
                 </FormField>
                 <FormField label="Duración estimada">
-                  <Input name="durationMin" type="number" min={0} defaultValue={course.durationMin ?? ""} />
+                  <Input
+                    name="durationMin"
+                    type="number"
+                    min={0}
+                    defaultValue={course.durationMin ?? ""}
+                  />
                 </FormField>
               </div>
             </div>
@@ -913,12 +997,18 @@ function ModuleDialog({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Crear módulo" : "Editar módulo"}</DialogTitle>
+          <DialogTitle>
+            {mode === "create" ? "Crear módulo" : "Editar módulo"}
+          </DialogTitle>
           <DialogDescription>
-            Agrupa lecciones relacionadas y agrega una portada opcional para orientar visualmente.
+            Agrupa lecciones relacionadas y agrega una portada opcional para orientar
+            visualmente.
           </DialogDescription>
         </DialogHeader>
-        <form className="grid gap-5" onSubmit={(event) => submit(event, action, () => setOpen(false))}>
+        <form
+          className="grid gap-5"
+          onSubmit={(event) => submit(event, action, () => setOpen(false))}
+        >
           <input type="hidden" name="courseId" value={courseId} />
           {module ? <input type="hidden" name="moduleId" value={module.id} /> : null}
           <input type="hidden" name="coverFileId" value={coverFileId} />
@@ -942,7 +1032,12 @@ function ModuleDialog({
                 <Textarea name="description" defaultValue={module?.description ?? ""} />
               </FormField>
               <FormField label="Duración estimada en minutos">
-                <Input name="durationMin" type="number" min={0} defaultValue={module?.durationMin ?? ""} />
+                <Input
+                  name="durationMin"
+                  type="number"
+                  min={0}
+                  defaultValue={module?.durationMin ?? ""}
+                />
               </FormField>
             </div>
           </div>
@@ -983,12 +1078,17 @@ function LessonDialog({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Crear lección" : "Editar lección"}</DialogTitle>
+          <DialogTitle>
+            {mode === "create" ? "Crear lección" : "Editar lección"}
+          </DialogTitle>
           <DialogDescription>
             Escribe una lección breve y agrega los recursos después.
           </DialogDescription>
         </DialogHeader>
-        <form className="grid gap-4" onSubmit={(event) => submit(event, action, () => setOpen(false))}>
+        <form
+          className="grid gap-4"
+          onSubmit={(event) => submit(event, action, () => setOpen(false))}
+        >
           <input type="hidden" name="courseId" value={courseId} />
           <input type="hidden" name="moduleId" value={moduleId} />
           {lesson ? <input type="hidden" name="lessonId" value={lesson.id} /> : null}
@@ -1003,7 +1103,12 @@ function LessonDialog({
             />
           </FormField>
           <FormField label="Duración estimada en minutos">
-            <Input name="durationMin" type="number" min={0} defaultValue={lesson?.durationMin ?? ""} />
+            <Input
+              name="durationMin"
+              type="number"
+              min={0}
+              defaultValue={lesson?.durationMin ?? ""}
+            />
           </FormField>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
@@ -1095,7 +1200,7 @@ function ResourceDialog({
                 >
                   <Icon className={cn("h-6 w-6", option.color)} />
                   <p className="mt-3 font-serif text-xl text-[#111827]">{option.label}</p>
-                  <p className="mt-1 text-body-sm text-muted-foreground">
+                  <p className="text-body-sm mt-1 text-muted-foreground">
                     {option.description}
                   </p>
                 </button>
@@ -1114,7 +1219,7 @@ function ResourceDialog({
                   placeholder="Describe para qué sirve este recurso dentro de la lección."
                 />
               </FormField>
-              {(kind === "YOUTUBE" || kind === "EXTERNAL_LINK") ? (
+              {kind === "YOUTUBE" || kind === "EXTERNAL_LINK" ? (
                 <FormField label="URL del recurso">
                   <Input
                     name="url"
@@ -1172,12 +1277,16 @@ function ResourceDialog({
               ) : filePreviewUrl && kind === "AUDIO" ? (
                 <audio className="mt-4 w-full" src={filePreviewUrl} controls />
               ) : filePreviewUrl && kind === "VIDEO_UPLOAD" ? (
-                <video className="mt-4 aspect-video w-full rounded-lg" src={filePreviewUrl} controls />
+                <video
+                  className="mt-4 aspect-video w-full rounded-lg"
+                  src={filePreviewUrl}
+                  controls
+                />
               ) : (
                 <div className="mt-4 grid aspect-video place-items-center rounded-lg border border-dashed border-[#efc9b6] bg-white text-center">
                   <div>
                     <Upload className="mx-auto h-8 w-8 text-[#c21f5a]" />
-                    <p className="mt-2 text-body-sm text-muted-foreground">
+                    <p className="text-body-sm mt-2 text-muted-foreground">
                       La previsualización aparecerá aquí.
                     </p>
                   </div>
@@ -1224,7 +1333,8 @@ function ResourceUploader({
     DOCUMENT: {
       label: "Subir PDF o documento",
       description: "PDF, DOC o DOCX",
-      accept: "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      accept:
+        "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       uploadType: "DOCUMENT" as const
     },
     AUDIO: {

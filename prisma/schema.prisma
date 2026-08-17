@@ -1088,12 +1088,6 @@ model File {
 }
 
 model LessonFile {
-<<<<<<< HEAD
-  id       String @id @default(uuid())
-  lessonId String
-  fileId   String
-  order    Int    @default(0)
-=======
   id          String             @id @default(uuid())
   lessonId    String
   fileId      String?
@@ -1106,13 +1100,11 @@ model LessonFile {
   originalUrl String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
->>>>>>> origin/main
 
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   file   File?  @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   @@index([lessonId])
-  @@index([lessonId, order])
   @@index([fileId])
   @@index([lessonId, position])
   @@index([type])

@@ -182,15 +182,18 @@ export class CourseRepository {
       include: {
         modules: {
           include: {
+            coverFile: true,
             lessons: {
               include: {
                 lessonFiles: {
                   include: { file: true },
                   orderBy: { position: "asc" }
                 }
-              }
+              },
+              orderBy: { order: "asc" }
             }
-          }
+          },
+          orderBy: { order: "asc" }
         },
         enrollments: { include: { courseProgress: true } },
         facilitator: { include: { profile: true } }
@@ -205,19 +208,12 @@ export class CourseRepository {
       include: {
         modules: {
           include: {
-<<<<<<< HEAD
             coverFile: true,
-=======
->>>>>>> origin/main
             lessons: {
               include: {
                 lessonFiles: {
                   include: { file: true },
-<<<<<<< HEAD
-                  orderBy: { order: "asc" }
-=======
                   orderBy: { position: "asc" }
->>>>>>> origin/main
                 }
               },
               orderBy: { order: "asc" }
@@ -241,7 +237,6 @@ export class CourseRepository {
     return this.db.course.updateMany({ where: { id: courseId, facilitatorId }, data });
   }
 
-<<<<<<< HEAD
   updateManagedCourse(
     courseId: string,
     facilitatorId: string,
@@ -279,25 +274,54 @@ export class CourseRepository {
         select: { order: true }
       });
 
+      const { coverFileId, ...moduleData } = data;
+
       return tx.module.create({
         data: {
-          ...data,
-          courseId,
-          order: (lastModule?.order ?? -1) + 1
+          ...moduleData,
+          order: (lastModule?.order ?? -1) + 1,
+          course: { connect: { id: courseId } },
+          ...(coverFileId
+            ? { coverFile: { connect: { id: coverFileId } } }
+            : {})
         }
       });
     });
   }
 
-  updateModule(
+  async updateModule(
     facilitatorId: string,
     moduleId: string,
-    data: Prisma.ModuleUpdateManyMutationInput
+    data: {
+      title?: string;
+      description?: string | null;
+      durationMin?: number | null;
+      order?: number;
+      coverFileId?: string | null;
+    }
   ) {
-    return this.db.module.updateMany({
+    const { coverFileId, ...moduleData } = data;
+
+    const result = await this.db.module.updateMany({
       where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
-      data
+      data: moduleData
     });
+
+    if (result.count === 0) {
+      return result;
+    }
+
+    if (coverFileId !== undefined) {
+      await this.db.module.update({
+        where: { id: moduleId },
+        data:
+          coverFileId === null
+            ? { coverFile: { disconnect: true } }
+            : { coverFile: { connect: { id: coverFileId } } }
+      });
+    }
+
+    return result;
   }
 
   async moveModule(
@@ -410,17 +434,37 @@ export class CourseRepository {
         return null;
       }
 
+      const file = await tx.file.findFirst({
+        where: { id: fileId, ownerId: facilitatorId },
+        select: { id: true, type: true, publicId: true, altText: true }
+      });
+
+      if (!file) {
+        return null;
+      }
+
       const lastResource = await tx.lessonFile.findFirst({
         where: { lessonId },
-        orderBy: { order: "desc" },
-        select: { order: true }
+        orderBy: { position: "desc" },
+        select: { position: true }
       });
+
+      const resourceType =
+        file.type === "IMAGE"
+          ? "IMAGE"
+          : file.type === "AUDIO"
+            ? "AUDIO"
+            : file.type === "VIDEO"
+              ? "VIDEO_UPLOAD"
+              : "DOCUMENT";
 
       return tx.lessonFile.create({
         data: {
           lessonId,
           fileId,
-          order: (lastResource?.order ?? -1) + 1
+          type: resourceType,
+          title: file.altText ?? file.publicId ?? "Recurso",
+          position: (lastResource?.position ?? -1) + 1
         }
       });
     });
@@ -437,7 +481,7 @@ export class CourseRepository {
           id: lessonFileId,
           lesson: { module: { course: { facilitatorId, deletedAt: null } } }
         },
-        select: { id: true, lessonId: true, order: true }
+        select: { id: true, lessonId: true, position: true }
       });
 
       if (!current) {
@@ -447,10 +491,13 @@ export class CourseRepository {
       const adjacent = await tx.lessonFile.findFirst({
         where: {
           lessonId: current.lessonId,
-          order: direction === "up" ? { lt: current.order } : { gt: current.order }
+          position:
+            direction === "up"
+              ? { lt: current.position }
+              : { gt: current.position }
         },
-        orderBy: { order: direction === "up" ? "desc" : "asc" },
-        select: { id: true, order: true }
+        orderBy: { position: direction === "up" ? "desc" : "asc" },
+        select: { id: true, position: true }
       });
 
       if (!adjacent) {
@@ -459,11 +506,11 @@ export class CourseRepository {
 
       await tx.lessonFile.update({
         where: { id: current.id },
-        data: { order: adjacent.order }
+        data: { position: adjacent.position }
       });
       await tx.lessonFile.update({
         where: { id: adjacent.id },
-        data: { order: current.order }
+        data: { position: current.position }
       });
 
       return true;
@@ -475,7 +522,10 @@ export class CourseRepository {
       where: {
         id: lessonFileId,
         lesson: { module: { course: { facilitatorId, deletedAt: null } } }
-=======
+      }
+    });
+  }
+
   findManagedLesson(facilitatorId: string, courseId: string, lessonId: string) {
     return this.db.lesson.findFirst({
       where: {
@@ -486,7 +536,7 @@ export class CourseRepository {
     });
   }
 
-  upsertModule(
+  async upsertModule(
     facilitatorId: string,
     data: {
       id?: string;
@@ -495,19 +545,51 @@ export class CourseRepository {
       description?: string | null;
       order: number;
       durationMin?: number | null;
+      coverFileId?: string | null;
     }
   ) {
-    const { id, courseId, ...moduleData } = data;
+    const { id, courseId, coverFileId, ...moduleData } = data;
 
     if (id) {
-      return this.db.module.updateMany({
-        where: { id, course: { facilitatorId } },
+      const result = await this.db.module.updateMany({
+        where: { id, course: { facilitatorId, deletedAt: null } },
         data: moduleData
       });
+
+      if (result.count === 0) {
+        return result;
+      }
+
+      if (coverFileId !== undefined) {
+        await this.db.module.update({
+          where: { id },
+          data:
+            coverFileId === null
+              ? { coverFile: { disconnect: true } }
+              : { coverFile: { connect: { id: coverFileId } } }
+        });
+      }
+
+      return result;
+    }
+
+    const course = await this.db.course.findFirst({
+      where: { id: courseId, facilitatorId, deletedAt: null },
+      select: { id: true }
+    });
+
+    if (!course) {
+      throw new Error("Curso no encontrado o no autorizado.");
     }
 
     return this.db.module.create({
-      data: { ...moduleData, course: { connect: { id: courseId } } }
+      data: {
+        ...moduleData,
+        course: { connect: { id: courseId } },
+        ...(coverFileId
+          ? { coverFile: { connect: { id: coverFileId } } }
+          : {})
+      }
     });
   }
 
@@ -555,8 +637,15 @@ export class CourseRepository {
       where: {
         id: resourceId,
         lesson: { module: { course: { facilitatorId } } }
->>>>>>> origin/main
       }
     });
+  }
+
+  moveLessonResource(
+    facilitatorId: string,
+    resourceId: string,
+    direction: "up" | "down"
+  ) {
+    return this.moveLessonFile(facilitatorId, resourceId, direction);
   }
 }

@@ -451,14 +451,17 @@ model Module {
   description String?
   order       Int      @default(0)
   durationMin Int?
+  coverFileId String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  coverFile File?      @relation("ModuleCoverFile", fields: [coverFileId], references: [id], onDelete: SetNull)
   lessons   Lesson[]
   workshops Workshop[]
 
   @@index([courseId])
+  @@index([coverFileId])
   @@index([order])
 }
 
@@ -1062,6 +1065,7 @@ model File {
 
   owner        User?         @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   coverStories Story[]       @relation("StoryCoverImage")
+  moduleCovers Module[]      @relation("ModuleCoverFile")
   lessonFiles  LessonFile[]
   messageFiles MessageFile[]
   productImage ProductImage?
@@ -1077,12 +1081,14 @@ model LessonFile {
   id       String @id @default(uuid())
   lessonId String
   fileId   String
+  order    Int    @default(0)
 
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   @@unique([lessonId, fileId])
   @@index([lessonId])
+  @@index([lessonId, order])
   @@index([fileId])
 }
 

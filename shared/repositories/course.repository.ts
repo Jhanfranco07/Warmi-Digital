@@ -1,4 +1,5 @@
 import { prisma } from "@/shared/server/db/prisma";
+import type { Prisma } from "@prisma/client";
 
 export class CourseRepository {
   constructor(protected readonly db = prisma) {}
@@ -184,7 +185,18 @@ export class CourseRepository {
       where: { id: courseId, facilitatorId, deletedAt: null },
       include: {
         modules: {
-          include: { lessons: { orderBy: { order: "asc" } } },
+          include: {
+            coverFile: true,
+            lessons: {
+              include: {
+                lessonFiles: {
+                  include: { file: true },
+                  orderBy: { order: "asc" }
+                }
+              },
+              orderBy: { order: "asc" }
+            }
+          },
           orderBy: { order: "asc" }
         }
       }
@@ -201,5 +213,242 @@ export class CourseRepository {
     data: Parameters<typeof this.db.course.update>[0]["data"]
   ) {
     return this.db.course.updateMany({ where: { id: courseId, facilitatorId }, data });
+  }
+
+  updateManagedCourse(
+    courseId: string,
+    facilitatorId: string,
+    data: Prisma.CourseUpdateManyMutationInput
+  ) {
+    return this.db.course.updateMany({
+      where: { id: courseId, facilitatorId, deletedAt: null },
+      data
+    });
+  }
+
+  async createModule(
+    facilitatorId: string,
+    courseId: string,
+    data: {
+      title: string;
+      description?: string | null;
+      durationMin?: number | null;
+      coverFileId?: string | null;
+    }
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const course = await tx.course.findFirst({
+        where: { id: courseId, facilitatorId, deletedAt: null },
+        select: { id: true }
+      });
+
+      if (!course) {
+        return null;
+      }
+
+      const lastModule = await tx.module.findFirst({
+        where: { courseId },
+        orderBy: { order: "desc" },
+        select: { order: true }
+      });
+
+      return tx.module.create({
+        data: {
+          ...data,
+          courseId,
+          order: (lastModule?.order ?? -1) + 1
+        }
+      });
+    });
+  }
+
+  updateModule(
+    facilitatorId: string,
+    moduleId: string,
+    data: Prisma.ModuleUpdateManyMutationInput
+  ) {
+    return this.db.module.updateMany({
+      where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
+      data
+    });
+  }
+
+  async moveModule(
+    facilitatorId: string,
+    moduleId: string,
+    direction: "up" | "down"
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const current = await tx.module.findFirst({
+        where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
+        select: { id: true, courseId: true, order: true }
+      });
+
+      if (!current) {
+        return false;
+      }
+
+      const adjacent = await tx.module.findFirst({
+        where: {
+          courseId: current.courseId,
+          order: direction === "up" ? { lt: current.order } : { gt: current.order }
+        },
+        orderBy: { order: direction === "up" ? "desc" : "asc" },
+        select: { id: true, order: true }
+      });
+
+      if (!adjacent) {
+        return false;
+      }
+
+      await tx.module.update({
+        where: { id: current.id },
+        data: { order: adjacent.order }
+      });
+      await tx.module.update({
+        where: { id: adjacent.id },
+        data: { order: current.order }
+      });
+
+      return true;
+    });
+  }
+
+  async createLesson(
+    facilitatorId: string,
+    moduleId: string,
+    data: {
+      title: string;
+      slug: string;
+      content?: string | null;
+      durationMin?: number | null;
+      type?: "TEXT" | "VIDEO" | "AUDIO" | "PDF" | "QUIZ" | "ASSIGNMENT";
+    }
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const module = await tx.module.findFirst({
+        where: { id: moduleId, course: { facilitatorId, deletedAt: null } },
+        select: { id: true }
+      });
+
+      if (!module) {
+        return null;
+      }
+
+      const lastLesson = await tx.lesson.findFirst({
+        where: { moduleId },
+        orderBy: { order: "desc" },
+        select: { order: true }
+      });
+
+      return tx.lesson.create({
+        data: {
+          ...data,
+          moduleId,
+          order: (lastLesson?.order ?? -1) + 1
+        }
+      });
+    });
+  }
+
+  updateLesson(
+    facilitatorId: string,
+    lessonId: string,
+    data: Prisma.LessonUpdateManyMutationInput
+  ) {
+    return this.db.lesson.updateMany({
+      where: {
+        id: lessonId,
+        module: { course: { facilitatorId, deletedAt: null } }
+      },
+      data
+    });
+  }
+
+  async attachLessonFile(
+    facilitatorId: string,
+    lessonId: string,
+    fileId: string
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({
+        where: {
+          id: lessonId,
+          module: { course: { facilitatorId, deletedAt: null } }
+        },
+        select: { id: true }
+      });
+
+      if (!lesson) {
+        return null;
+      }
+
+      const lastResource = await tx.lessonFile.findFirst({
+        where: { lessonId },
+        orderBy: { order: "desc" },
+        select: { order: true }
+      });
+
+      return tx.lessonFile.create({
+        data: {
+          lessonId,
+          fileId,
+          order: (lastResource?.order ?? -1) + 1
+        }
+      });
+    });
+  }
+
+  async moveLessonFile(
+    facilitatorId: string,
+    lessonFileId: string,
+    direction: "up" | "down"
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const current = await tx.lessonFile.findFirst({
+        where: {
+          id: lessonFileId,
+          lesson: { module: { course: { facilitatorId, deletedAt: null } } }
+        },
+        select: { id: true, lessonId: true, order: true }
+      });
+
+      if (!current) {
+        return false;
+      }
+
+      const adjacent = await tx.lessonFile.findFirst({
+        where: {
+          lessonId: current.lessonId,
+          order: direction === "up" ? { lt: current.order } : { gt: current.order }
+        },
+        orderBy: { order: direction === "up" ? "desc" : "asc" },
+        select: { id: true, order: true }
+      });
+
+      if (!adjacent) {
+        return false;
+      }
+
+      await tx.lessonFile.update({
+        where: { id: current.id },
+        data: { order: adjacent.order }
+      });
+      await tx.lessonFile.update({
+        where: { id: adjacent.id },
+        data: { order: current.order }
+      });
+
+      return true;
+    });
+  }
+
+  deleteLessonFile(facilitatorId: string, lessonFileId: string) {
+    return this.db.lessonFile.deleteMany({
+      where: {
+        id: lessonFileId,
+        lesson: { module: { course: { facilitatorId, deletedAt: null } } }
+      }
+    });
   }
 }

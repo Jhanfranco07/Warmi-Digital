@@ -51,4 +51,21 @@ export class FileRepository {
       }
     });
   }
+
+  updateOwned(
+    fileId: string,
+    ownerId: string,
+    data: Pick<
+      Parameters<typeof this.db.file.update>[0]["data"],
+      "altText" | "metadata"
+    >
+  ) {
+    return this.db.file.updateMany({
+      where: {
+        id: fileId,
+        ownerId
+      },
+      data
+    });
+  }
 }

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Heart, MapPin, Plus, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, MapPin, PencilLine, Plus, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
@@ -127,13 +127,13 @@ export default async function ArtisanShowcasePage() {
                     ) : (
                       <ProductImagePlaceholder />
                     )}
-                    <button
-                      type="button"
-                      className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-white text-[#b5245b] shadow"
-                      aria-label="Guardar pieza"
+                    <Link
+                      href={`/artesana/mi-vitrina/${product.id}/editar`}
+                      className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-white text-[#b5245b] shadow transition hover:bg-[#ffe6ee] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]"
+                      aria-label={`Editar ${product.name}`}
                     >
-                      <Heart className="h-4 w-4" />
-                    </button>
+                      <PencilLine className="h-4 w-4" aria-hidden="true" />
+                    </Link>
                   </div>
                   <div className="p-3">
                     <h3 className="line-clamp-1 font-ui text-sm font-extrabold text-[#1b1c1a]">
@@ -257,13 +257,13 @@ export default async function ArtisanShowcasePage() {
                       ) : (
                         <ProductImagePlaceholder />
                       )}
-                      <button
-                        type="button"
-                        className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-[#b5245b] shadow-lg"
-                        aria-label="Guardar pieza"
+                      <Link
+                        href={`/artesana/mi-vitrina/${product.id}/editar`}
+                        className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-[#b5245b] shadow-lg transition hover:bg-[#ffe6ee] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]"
+                        aria-label={`Editar ${product.name}`}
                       >
-                        <Heart className="h-5 w-5" />
-                      </button>
+                        <PencilLine className="h-5 w-5" aria-hidden="true" />
+                      </Link>
                     </div>
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-3">
@@ -284,7 +284,16 @@ export default async function ArtisanShowcasePage() {
                       <p className="mt-5 font-serif text-lg italic leading-7 text-[#7a3100]">
                         &quot;{product.phrase}&quot;
                       </p>
-                      <div className="mt-5 flex justify-end text-[#b5245b]">W</div>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="mt-6 w-full rounded-full border-[#f0c3cf] bg-[#fffaf6] text-[#b5245b] hover:bg-[#ffe6ee]"
+                      >
+                        <Link href={`/artesana/mi-vitrina/${product.id}/editar`}>
+                          <PencilLine className="h-4 w-4" aria-hidden="true" />
+                          Editar pieza
+                        </Link>
+                      </Button>
                     </div>
                   </article>
                 ))}

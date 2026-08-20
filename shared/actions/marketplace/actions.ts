@@ -8,14 +8,32 @@ export async function updateProductAction(_: unknown, formData: FormData) {
   try {
     const session = await requireRole("ARTESANA");
     const id = String(formData.get("productId"));
+    const mainImageFileId = String(formData.get("mainImageFileId") || "");
+    const removeMainImage = String(formData.get("removeMainImage") || "") === "true";
     const product = await prisma.product.findFirst({
       where: { id, artisanId: session.user.id, deletedAt: null }
     });
     if (!product) throw new Error("No tienes permiso para editar esta pieza.");
+    if (mainImageFileId) {
+      const file = await prisma.file.findFirst({
+        where: {
+          id: mainImageFileId,
+          ownerId: session.user.id,
+          type: "IMAGE"
+        }
+      });
+
+      if (!file) {
+        throw new Error("La imagen principal no pertenece a tu cuenta.");
+      }
+    }
+
     await prisma.product.update({
       where: { id },
       data: {
         name: String(formData.get("name")),
+        categoryId: String(formData.get("categoryId")),
+        craftTypeId: String(formData.get("craftTypeId")),
         price: Number(formData.get("price")),
         status: String(formData.get("status")) as import("@prisma/client").ProductStatus,
         description: String(formData.get("description") || ""),
@@ -28,7 +46,24 @@ export async function updateProductAction(_: unknown, formData: FormData) {
         available: String(formData.get("status")) === "PUBLISHED"
       }
     });
+
+    if (removeMainImage || mainImageFileId) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+    }
+
+    if (mainImageFileId) {
+      await prisma.productImage.create({
+        data: {
+          productId: id,
+          fileId: mainImageFileId,
+          altText: `Foto principal de ${String(formData.get("name"))}`,
+          order: 0
+        }
+      });
+    }
+
     revalidatePath("/artesana/mi-vitrina");
+    revalidatePath(`/artesana/mi-vitrina/${id}/editar`);
     return { ok: true, message: "Pieza actualizada." };
   } catch (error) {
     return {

@@ -14,7 +14,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { createProductAction } from "@/shared/actions/marketplace/actions";
+import {
+  createProductAction,
+  updateProductAction
+} from "@/shared/actions/marketplace/actions";
 import { ImageUpload } from "@/shared/components/upload/image-upload";
 import type { UploadedFileValue } from "@/shared/components/upload/file-upload";
 import { Button } from "@/shared/components/ui/button";
@@ -22,24 +25,55 @@ import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { cn } from "@/shared/lib/utils";
 
-type ProductFormProps = {
-  categories: Array<{ id: string; name: string }>;
-  craftTypes: Array<{ id: string; name: string }>;
+type ProductOption = { id: string; name: string };
+
+type ProductFormInitialValue = {
+  id: string;
+  name: string;
+  categoryId: string;
+  craftTypeId: string;
+  culturalPhrase: string;
+  story: string;
+  culturalMeaning: string;
+  description: string;
+  technique: string;
+  materials: string;
+  makingTime: string;
+  price: number;
+  status: "DRAFT" | "REVIEW" | "PUBLISHED" | "UNAVAILABLE" | "ARCHIVED";
+  imageUrl: string | null;
 };
 
-export function ProductForm({ categories, craftTypes }: ProductFormProps) {
+type ProductFormProps = {
+  categories: ProductOption[];
+  craftTypes: ProductOption[];
+  mode?: "create" | "edit";
+  initialValue?: ProductFormInitialValue;
+};
+
+export function ProductForm({
+  categories,
+  craftTypes,
+  mode = "create",
+  initialValue
+}: ProductFormProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [mainImage, setMainImage] = useState<UploadedFileValue | null>(null);
-  const [name, setName] = useState("");
-  const [story, setStory] = useState("");
-  const [price, setPrice] = useState("");
+  const [removeMainImage, setRemoveMainImage] = useState(false);
+  const [name, setName] = useState(initialValue?.name ?? "");
+  const [story, setStory] = useState(initialValue?.story ?? "");
+  const [price, setPrice] = useState(
+    initialValue?.price ? String(initialValue.price) : ""
+  );
+  const isEditing = mode === "edit" && Boolean(initialValue);
+  const hasVisibleImage = Boolean(mainImage || (initialValue?.imageUrl && !removeMainImage));
 
   const checklist = useMemo(
     () => [
       {
         label: "Foto principal",
-        done: Boolean(mainImage),
+        done: hasVisibleImage,
         helper: "Ayuda a reconocer tu pieza en la vitrina."
       },
       {
@@ -58,14 +92,16 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
         helper: "Déjalo listo para cuando publiques."
       }
     ],
-    [mainImage, name, price, story]
+    [hasVisibleImage, name, price, story]
   );
 
   return (
     <form
       action={(formData) =>
         startTransition(async () => {
-          const result = await createProductAction(null, formData);
+          const result = isEditing
+            ? await updateProductAction(null, formData)
+            : await createProductAction(null, formData);
 
           if (result.ok) {
             toast.success(result.message);
@@ -79,6 +115,11 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
       }
       className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]"
     >
+      {isEditing ? (
+        <input type="hidden" name="productId" value={initialValue?.id} />
+      ) : null}
+      {removeMainImage ? <input type="hidden" name="removeMainImage" value="true" /> : null}
+
       <div className="space-y-5">
         <section className="overflow-hidden rounded-[28px] border border-[#f0c3cf] bg-white shadow-[0_18px_48px_rgba(122,16,66,0.08)]">
           <div className="border-b border-[#f5d2dc] bg-[linear-gradient(135deg,#fff4f8_0%,#fffaf6_58%,#fff1e5_100%)] px-5 py-5 sm:px-7">
@@ -88,7 +129,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               </span>
               <div>
                 <p className="font-ui text-xs font-extrabold uppercase tracking-[0.14em] text-[#b5245b]">
-                  Primer paso
+                  {isEditing ? "Imagen de la vitrina" : "Primer paso"}
                 </p>
                 <h2 className="font-serif text-3xl font-bold text-[#1b1c1a]">
                   Foto que abre tu historia
@@ -103,11 +144,18 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
           <div className="p-5 sm:p-7">
             <ImageUpload
               folder="warmi/products"
-              label="Subir foto principal"
+              label={isEditing ? "Cambiar foto principal" : "Subir foto principal"}
               description="JPG, PNG o WebP. Si puedes, toma la foto cerca de luz natural."
               altText="Foto principal de la pieza artesanal"
-              onUploaded={setMainImage}
-              onRemove={() => setMainImage(null)}
+              previewUrl={removeMainImage ? null : initialValue?.imageUrl}
+              onUploaded={(file) => {
+                setRemoveMainImage(false);
+                setMainImage(file);
+              }}
+              onRemove={() => {
+                setMainImage(null);
+                setRemoveMainImage(true);
+              }}
               className="[&>label]:min-h-[260px] [&>label]:rounded-[24px] [&>label]:border-[#f0c3cf] [&>label]:bg-[#fffaf6] [&>label]:transition-all [&>label]:duration-300 hover:[&>label]:border-[#b5245b] hover:[&>label]:shadow-[0_18px_42px_rgba(181,36,91,0.12)]"
             />
             {mainImage ? (
@@ -138,6 +186,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               name="categoryId"
               options={categories}
               placeholder="Selecciona una categoría"
+              defaultValue={initialValue?.categoryId}
               required
             />
 
@@ -146,6 +195,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               name="craftTypeId"
               options={craftTypes}
               placeholder="Selecciona una técnica"
+              defaultValue={initialValue?.craftTypeId}
               required
             />
 
@@ -153,6 +203,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Input
                 name="culturalPhrase"
                 placeholder="Ej. Tejida para cuidar lo que es sagrado."
+                defaultValue={initialValue?.culturalPhrase}
                 className="min-h-12 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 text-base focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -179,6 +230,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Textarea
                 name="culturalMeaning"
                 placeholder="Explica los colores, símbolos, materiales o memoria que guarda esta creación."
+                defaultValue={initialValue?.culturalMeaning}
                 className="min-h-32 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 py-3 text-base leading-7 focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -187,6 +239,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Textarea
                 name="description"
                 placeholder="Resume la pieza en pocas palabras para quienes la vean en la vitrina."
+                defaultValue={initialValue?.description}
                 className="min-h-28 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 py-3 text-base leading-7 focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -203,6 +256,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Input
                 name="technique"
                 placeholder="Ej. Tejido en telar"
+                defaultValue={initialValue?.technique}
                 className="min-h-12 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 text-base focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -211,6 +265,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Input
                 name="materials"
                 placeholder="Ej. Lana de oveja y tintes naturales"
+                defaultValue={initialValue?.materials}
                 className="min-h-12 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 text-base focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -219,6 +274,7 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               <Input
                 name="makingTime"
                 placeholder="Ej. 5 días"
+                defaultValue={initialValue?.makingTime}
                 className="min-h-12 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 text-base focus-visible:ring-[#b5245b]"
               />
             </Field>
@@ -246,10 +302,12 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               Guía Warmi
             </p>
             <h3 className="mt-2 font-serif text-3xl font-bold">
-              Revisa antes de guardar
+              {isEditing ? "Revisa los cambios" : "Revisa antes de guardar"}
             </h3>
             <p className="mt-3 text-sm leading-6 text-white/85">
-              Puedes guardar en borrador y completar la información con calma.
+              {isEditing
+                ? "Puedes corregir datos, cambiar la foto o volver la pieza a borrador."
+                : "Puedes guardar en borrador y completar la información con calma."}
             </p>
           </div>
 
@@ -285,11 +343,13 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
             <Field label="Estado de publicación">
               <select
                 name="status"
-                defaultValue="DRAFT"
+                defaultValue={initialValue?.status ?? "DRAFT"}
                 className="min-h-12 w-full rounded-2xl border border-[#e8c4b1] bg-[#fffdf9] px-4 text-base text-[#1b1c1a] outline-none transition focus:border-[#b5245b] focus:ring-2 focus:ring-[#b5245b]/20"
               >
                 <option value="DRAFT">Guardar como borrador</option>
                 <option value="PUBLISHED">Publicar en mi vitrina</option>
+                <option value="UNAVAILABLE">Pausar publicación</option>
+                <option value="ARCHIVED">Archivar pieza</option>
               </select>
             </Field>
 
@@ -303,7 +363,13 @@ export function ProductForm({ categories, craftTypes }: ProductFormProps) {
               ) : (
                 <Tag className="h-5 w-5" aria-hidden="true" />
               )}
-              {pending ? "Guardando pieza..." : "Guardar pieza"}
+              {pending
+                ? isEditing
+                  ? "Actualizando pieza..."
+                  : "Guardando pieza..."
+                : isEditing
+                  ? "Guardar cambios"
+                  : "Guardar pieza"}
               {!pending ? <ArrowRight className="h-5 w-5" aria-hidden="true" /> : null}
             </Button>
           </div>
@@ -366,12 +432,14 @@ function SelectField({
   name,
   options,
   placeholder,
+  defaultValue,
   required
 }: {
   label: string;
   name: string;
-  options: Array<{ id: string; name: string }>;
+  options: ProductOption[];
   placeholder: string;
+  defaultValue?: string;
   required?: boolean;
 }) {
   return (
@@ -379,7 +447,7 @@ function SelectField({
       <select
         name={name}
         required={required}
-        defaultValue=""
+        defaultValue={defaultValue ?? ""}
         className="min-h-12 w-full rounded-2xl border border-[#e8c4b1] bg-[#fffdf9] px-4 text-base text-[#1b1c1a] outline-none transition focus:border-[#b5245b] focus:ring-2 focus:ring-[#b5245b]/20"
       >
         <option value="" disabled>

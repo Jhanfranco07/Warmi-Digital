@@ -73,7 +73,7 @@ function durationPhrase(durationMin?: number | null) {
     return null;
   }
 
-  return `Duración aproximada: ${durationMin} minutos.`;
+  return `Te tomará aproximadamente ${durationMin} minutos. Puedes hacerlo con calma.`;
 }
 
 function compact(parts: Array<string | null | undefined>) {
@@ -82,45 +82,46 @@ function compact(parts: Array<string | null | undefined>) {
 
 export function buildLearningPageNarration(input: LearningPageNarrationInput) {
   const current = input.currentCourseTitle
-    ? `Puedes continuar con el curso ${input.currentCourseTitle}.`
-    : "Cuando tengas un curso asignado, aparecerá aquí para continuar tu ruta.";
+    ? `Para seguir avanzando, puedes continuar con el curso ${input.currentCourseTitle}.`
+    : "Cuando tengas un curso asignado, aparecerá aquí para que puedas continuar tu ruta paso a paso.";
 
   return compact([
-    "Estás en Mi aprendizaje.",
-    "Aquí puedes encontrar tus cursos, continuar los que ya comenzaste y revisar nuevos contenidos disponibles.",
-    `Tienes ${itemCount(input.enrolledCount, "curso asignado", "cursos asignados")}.`,
+    "Estás en Mi aprendizaje. Este espacio te acompaña para aprender a tu ritmo.",
+    "Aquí encontrarás tus cursos, tus avances y nuevos contenidos preparados para fortalecer tu trabajo.",
+    `En este momento tienes ${itemCount(input.enrolledCount, "curso asignado", "cursos asignados")}.`,
     input.availableCount > 0
-      ? `También hay ${itemCount(input.availableCount, "curso disponible", "cursos disponibles")} para explorar.`
+      ? `También puedes explorar ${itemCount(input.availableCount, "curso disponible", "cursos disponibles")} cuando te sientas lista.`
       : null,
     current,
-    "Selecciona un curso para conocer sus módulos y lecciones."
+    "Elige un curso y Warmi te mostrará los módulos y lecciones disponibles."
   ]);
 }
 
 export function buildCourseNarration(input: CourseNarrationInput) {
   return compact([
-    `Curso. ${input.title}.`,
+    `Estás en el curso ${input.title}.`,
     input.description,
-    `Este curso tiene ${itemCount(input.moduleCount, "módulo", "módulos")} y ${itemCount(input.lessonCount, "lección", "lecciones")}.`,
-    `Tu avance actual es ${input.progress} por ciento.`,
+    `La ruta está organizada en ${itemCount(input.moduleCount, "módulo", "módulos")} y ${itemCount(input.lessonCount, "lección", "lecciones")}, para que avances poco a poco.`,
+    `Tu avance actual es de ${input.progress} por ciento. Cada lección completada suma a tu progreso.`,
     input.nextLessonTitle
-      ? `Tu siguiente paso recomendado es abrir la lección ${input.nextLessonTitle}.`
-      : "La facilitadora aún está preparando el siguiente paso."
+      ? `Tu siguiente paso recomendado es abrir la lección ${input.nextLessonTitle}. Puedes empezar por ahí.`
+      : "Por ahora no hay una siguiente lección pendiente. Si tienes dudas, puedes revisar el curso nuevamente o escribir a tu facilitadora."
   ]);
 }
 
 export function buildModuleNarration(input: ModuleNarrationInput) {
   const lessons =
     input.lessonTitles && input.lessonTitles.length > 0
-      ? `Las lecciones son: ${input.lessonTitles.join(", ")}.`
+      ? `En este módulo encontrarás estas lecciones: ${input.lessonTitles.join(", ")}.`
       : null;
 
   return compact([
-    `Módulo ${wordForNumber(input.order)}. ${input.title}.`,
+    `Este es el módulo ${wordForNumber(input.order)}: ${input.title}.`,
     input.description,
-    `Este módulo contiene ${itemCount(input.lessonCount, "lección", "lecciones")}.`,
+    `Tiene ${itemCount(input.lessonCount, "lección", "lecciones")} para practicar de manera sencilla.`,
     durationPhrase(input.durationMin),
-    lessons
+    lessons,
+    "Cuando estés lista, abre la primera lección disponible y sigue las indicaciones."
   ]);
 }
 
@@ -128,11 +129,12 @@ export function buildLessonNarration(input: LessonNarrationInput) {
   const resources = summarizeResources(input.resources ?? []);
 
   return compact([
-    `Lección. ${input.title}.`,
-    input.moduleTitle ? `Pertenece al módulo ${input.moduleTitle}.` : null,
+    `Estás en la lección ${input.title}.`,
+    input.moduleTitle ? `Esta lección pertenece al módulo ${input.moduleTitle}.` : null,
     input.content,
     durationPhrase(input.durationMin),
-    resources
+    resources,
+    "Lee o escucha con calma. Cuando termines, marca la lección como completada para guardar tu avance."
   ]);
 }
 
@@ -140,16 +142,16 @@ export function buildResourceNarration(resource: LessonNarrationResource) {
   const type = resourceTypeLabels[resource.type] ?? "un recurso";
 
   return compact([
-    `Recurso. ${resource.title}.`,
-    `Es ${type}.`,
+    `Este recurso se llama ${resource.title}.`,
+    `Es ${type} preparado para ayudarte con esta lección.`,
     resource.description,
-    "Ábrelo cuando necesites revisar el material de apoyo."
+    "Puedes abrirlo cuando necesites ver un ejemplo, repasar o practicar nuevamente."
   ]);
 }
 
 function summarizeResources(resources: LessonNarrationResource[]) {
   if (!resources.length) {
-    return "Esta lección no tiene recursos adicionales por ahora.";
+    return "Esta lección no tiene recursos adicionales por ahora. Puedes continuar con la explicación principal.";
   }
 
   const labels = resources.map(
@@ -157,5 +159,5 @@ function summarizeResources(resources: LessonNarrationResource[]) {
   );
   const uniqueLabels = Array.from(new Set(labels));
 
-  return `En esta lección encontrarás ${uniqueLabels.join(", ")}.`;
+  return `Como apoyo, en esta lección encontrarás ${uniqueLabels.join(", ")}. Úsalos cuando quieras reforzar lo aprendido.`;
 }

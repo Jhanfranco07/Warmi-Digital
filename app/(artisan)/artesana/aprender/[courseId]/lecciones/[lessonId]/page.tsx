@@ -1,5 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
+import type { Route } from "next";
 import {
+  ArrowLeft,
   Download,
   ExternalLink,
   FileText,
@@ -19,8 +22,18 @@ import {
 import { AudioHelpButton } from "@/shared/components/media/audio-help-button";
 import { YouTubePlayer } from "@/shared/components/media/youtube-player";
 import { Badge } from "@/shared/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
 import { requireRole } from "@/shared/server/auth/helpers";
 import { LearningService } from "@/shared/services/learning.service";
+
+const lessonTypeLabels = {
+  TEXT: "Lectura",
+  VIDEO: "Video",
+  AUDIO: "Audio",
+  PDF: "PDF",
+  QUIZ: "Práctica",
+  ASSIGNMENT: "Actividad"
+} as const;
 
 export default async function ArtisanLessonPage({
   params
@@ -35,6 +48,8 @@ export default async function ArtisanLessonPage({
     lessonId
   );
   const resources = lesson.lessonFiles;
+  const completed = Boolean(progress?.completed);
+  const courseHref = `/artesana/aprender/${courseId}` as Route;
 
   return (
     <ArtisanShell>
@@ -43,12 +58,30 @@ export default async function ArtisanLessonPage({
         title={lesson.title}
         description={`Módulo: ${lesson.module.title}`}
         imageUrl={enrollment.course.imageUrl ?? undefined}
+        actions={
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="min-h-[56px] rounded-full border-[#b5245b] bg-white px-6 text-base font-bold text-[#b5245b] hover:bg-[#fff0f5]"
+            >
+              <Link href={courseHref}>
+                <ArrowLeft className="h-5 w-5" />
+                Volver al curso
+              </Link>
+            </Button>
+            <span className="rounded-full border border-[#f0c7bb] bg-white/90 px-5 py-3 font-ui text-sm font-extrabold text-[#7a3100]">
+              {completed ? "Lección completada" : "Paso pendiente"}
+            </span>
+          </div>
+        }
       />
 
       <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
         <ArtisanPanel title="Contenido de la lección" eyebrow="Aprendizaje">
           <div className="flex flex-wrap gap-2">
-            <Badge>{lesson.type}</Badge>
+            <Badge>{lessonTypeLabels[lesson.type]}</Badge>
             <Badge variant="outline">{lesson.durationMin ?? 0} min</Badge>
           </div>
           <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
@@ -63,7 +96,8 @@ export default async function ArtisanLessonPage({
             <LessonCompletionButton
               courseId={courseId}
               lessonId={lessonId}
-              completed={progress?.completed}
+              completed={completed}
+              courseHref={courseHref}
             />
           </div>
         </ArtisanPanel>

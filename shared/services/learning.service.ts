@@ -29,7 +29,7 @@ function getCourseSummaryProgress(
   );
   const lessonCount = lessonIds.size;
   const completedLessons = enrollment.lessonProgresses.filter(
-    (progress) => progress.completed
+    (progress) => progress.completed && lessonIds.has(progress.lessonId)
   ).length;
 
   return lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0;
@@ -92,8 +92,7 @@ export class LearningService {
       notFound();
     }
 
-    const progress =
-      enrollment.courseProgress?.percentage ?? getCourseProgress(enrollment);
+    const progress = getCourseProgress(enrollment);
     const lessonProgress = new Map(
       enrollment.lessonProgresses.map((item) => [item.lessonId, item])
     );

@@ -23,7 +23,7 @@ export async function completeLessonAction(
   if (!enrollment) {
     return {
       ok: false,
-      message: "No encontramos tu inscripcion a este curso."
+      message: "No encontramos tu inscripción a este curso."
     };
   }
 
@@ -47,6 +47,6 @@ export async function completeLessonAction(
 
   return {
     ok: true,
-    message: "Leccion completada. Tu avance se actualizo correctamente."
+    message: "Lección completada. Tu avance se actualizó correctamente."
   };
 }

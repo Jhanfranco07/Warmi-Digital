@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import type { Route } from "next";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
@@ -12,12 +14,14 @@ type LessonCompletionButtonProps = {
   courseId: string;
   lessonId: string;
   completed?: boolean;
+  courseHref?: Route;
 };
 
 export function LessonCompletionButton({
   courseId,
   lessonId,
-  completed = false
+  completed = false,
+  courseHref
 }: LessonCompletionButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [isCompleted, setIsCompleted] = useState(completed);
@@ -46,7 +50,7 @@ export function LessonCompletionButton({
         className="min-h-touch-target"
       >
         <CheckCircle2 className="h-5 w-5" />
-        {isCompleted ? "Leccion completada" : "Marcar como completada"}
+        {isCompleted ? "Lección completada" : "Marcar como completada"}
       </Button>
       {isCompleted ? (
         <motion.p
@@ -56,6 +60,19 @@ export function LessonCompletionButton({
         >
           Buen avance. Tu ruta sigue creciendo.
         </motion.p>
+      ) : null}
+      {isCompleted && courseHref ? (
+        <Button
+          asChild
+          variant="outline"
+          size="lg"
+          className="min-h-touch-target border-[#b5245b] text-[#b5245b]"
+        >
+          <Link href={courseHref}>
+            <ArrowLeft className="h-5 w-5" />
+            Volver al curso
+          </Link>
+        </Button>
       ) : null}
     </div>
   );

@@ -55,7 +55,7 @@ export class CourseRepository {
           }
         },
         courseProgress: { select: { percentage: true } },
-        lessonProgresses: { select: { completed: true } }
+        lessonProgresses: { select: { completed: true, lessonId: true } }
       },
       orderBy: { enrolledAt: "desc" }
     });

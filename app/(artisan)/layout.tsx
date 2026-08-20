@@ -8,7 +8,9 @@ export default async function ArtisanLayout({ children }: { children: React.Reac
     <div className="warmi-module-shell min-h-screen bg-surface">
       <MobileNavigation role="ARTESANA" />
       <Sidebar role="ARTESANA" />
-      <main className="min-h-screen pb-20 lg:pb-0 lg:pl-72">{children}</main>
+      <main className="min-h-screen pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-0 lg:pl-72">
+        {children}
+      </main>
     </div>
   );
 }

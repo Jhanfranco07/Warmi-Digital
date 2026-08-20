@@ -6,35 +6,33 @@ import { ProgressService } from "@/shared/services/progress.service";
 function getCourseProgress(
   enrollment: Awaited<ReturnType<CourseRepository["findEnrolledCourses"]>>[number]
 ) {
-  const lessonCount = enrollment.course.modules.reduce(
-    (total, module) => total + module.lessons.length,
-    0
+  const lessonIds = new Set(
+    enrollment.course.modules.flatMap((module) =>
+      module.lessons.map((lesson) => lesson.id)
+    )
   );
+  const lessonCount = lessonIds.size;
   const completedLessons = enrollment.lessonProgresses.filter(
-    (progress) => progress.completed
+    (progress) => progress.completed && lessonIds.has(progress.lessonId)
   ).length;
 
-  return (
-    enrollment.courseProgress?.percentage ??
-    (lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0)
-  );
+  return lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0;
 }
 
 function getCourseSummaryProgress(
   enrollment: Awaited<ReturnType<CourseRepository["findEnrolledCourseSummaries"]>>[number]
 ) {
-  const lessonCount = enrollment.course.modules.reduce(
-    (total, module) => total + module.lessons.length,
-    0
+  const lessonIds = new Set(
+    enrollment.course.modules.flatMap((module) =>
+      module.lessons.map((lesson) => lesson.id)
+    )
   );
+  const lessonCount = lessonIds.size;
   const completedLessons = enrollment.lessonProgresses.filter(
     (progress) => progress.completed
   ).length;
 
-  return (
-    enrollment.courseProgress?.percentage ??
-    (lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0)
-  );
+  return lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0;
 }
 
 export class LearningService {

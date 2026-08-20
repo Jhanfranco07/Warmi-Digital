@@ -42,6 +42,7 @@ export async function completeLessonAction(
 
   revalidatePath(`/artesana/aprender/${courseId}`);
   revalidatePath(`/artesana/aprender/${courseId}/lecciones/${lessonId}`);
+  revalidatePath("/artesana/aprender");
   revalidatePath("/artesana/dashboard");
 
   return {

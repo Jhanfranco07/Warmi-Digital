@@ -19,6 +19,11 @@ import {
   ArtisanPanel,
   ArtisanShell
 } from "@/features/artisan/artisan-panel";
+import {
+  buildLessonNarration,
+  buildResourceNarration
+} from "@/shared/accessibility/narration";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { AudioHelpButton } from "@/shared/components/media/audio-help-button";
 import { YouTubePlayer } from "@/shared/components/media/youtube-player";
 import { Badge } from "@/shared/components/ui/badge";
@@ -50,6 +55,17 @@ export default async function ArtisanLessonPage({
   const resources = lesson.lessonFiles;
   const completed = Boolean(progress?.completed);
   const courseHref = `/artesana/aprender/${courseId}` as Route;
+  const lessonNarration = buildLessonNarration({
+    title: lesson.title,
+    moduleTitle: lesson.module.title,
+    content: lesson.content,
+    durationMin: lesson.durationMin,
+    resources: resources.map((resource) => ({
+      title: resource.title,
+      description: resource.description,
+      type: resource.type
+    }))
+  });
 
   return (
     <ArtisanShell>
@@ -74,6 +90,7 @@ export default async function ArtisanLessonPage({
             <span className="rounded-full border border-[#f0c7bb] bg-white/90 px-5 py-3 font-ui text-sm font-extrabold text-[#7a3100]">
               {completed ? "Lección completada" : "Paso pendiente"}
             </span>
+            <SpeechButton text={lessonNarration} label="Escuchar explicación" compact />
           </div>
         }
       />
@@ -178,10 +195,15 @@ function ResourceNavigationCard({ resource }: LessonResourceProps) {
 }
 
 function LessonResource({ resource }: LessonResourceProps) {
+  const resourceSpeech = <ResourceSpeechButton resource={resource} />;
+
   if (resource.type === "VIDEO_YOUTUBE" && resource.externalId) {
     return (
       <section id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
-        <h2 className="font-display text-2xl">{resource.title}</h2>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h2 className="font-display text-2xl">{resource.title}</h2>
+          {resourceSpeech}
+        </div>
         {resource.description ? (
           <p className="text-base leading-7 text-[#5b4a42]">{resource.description}</p>
         ) : null}
@@ -195,7 +217,8 @@ function LessonResource({ resource }: LessonResourceProps) {
 
   if (resource.type === "AUDIO" && resource.file?.url) {
     return (
-      <section id={`recurso-${resource.id}`} className="scroll-mt-24">
+      <section id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
+        {resourceSpeech}
         <AudioHelpButton
           audioUrl={resource.file.url}
           title={resource.title || "Escuchar explicación"}
@@ -208,6 +231,7 @@ function LessonResource({ resource }: LessonResourceProps) {
   if (resource.type === "IMAGE" && resource.file?.url) {
     return (
       <figure id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
+        <div className="flex justify-end">{resourceSpeech}</div>
         <div className="relative aspect-video overflow-hidden rounded-lg border bg-white">
           <Image
             src={resource.file.url}
@@ -228,7 +252,10 @@ function LessonResource({ resource }: LessonResourceProps) {
   if (resource.type === "VIDEO_UPLOAD" && resource.file?.url) {
     return (
       <section id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
-        <h2 className="font-display text-2xl">{resource.title}</h2>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h2 className="font-display text-2xl">{resource.title}</h2>
+          {resourceSpeech}
+        </div>
         <video
           src={resource.file.url}
           controls
@@ -263,6 +290,7 @@ function LessonResource({ resource }: LessonResourceProps) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
+            {resourceSpeech}
             {previewUrl ? (
               <a
                 href={previewUrl}
@@ -301,21 +329,28 @@ function LessonResource({ resource }: LessonResourceProps) {
 
   if (resource.type === "EXTERNAL_LINK" && resource.originalUrl) {
     return (
-      <a
+      <section
         id={`recurso-${resource.id}`}
-        href={resource.originalUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="flex scroll-mt-24 items-start gap-4 rounded-lg border bg-white p-4"
+        className="scroll-mt-24 rounded-lg border bg-white p-4"
       >
-        <ExternalLink className="mt-1 h-6 w-6 text-[#0b7f88]" />
-        <span>
-          <span className="block font-ui font-bold">{resource.title}</span>
-          <span className="block text-sm text-[#6b5a4e]">
-            {resource.description ?? "Abrir enlace complementario"}
-          </span>
-        </span>
-      </a>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <a
+            href={resource.originalUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-start gap-4 focus:outline-none focus:ring-2 focus:ring-[#b5245b]"
+          >
+            <ExternalLink className="mt-1 h-6 w-6 text-[#0b7f88]" />
+            <span>
+              <span className="block font-ui font-bold">{resource.title}</span>
+              <span className="block text-sm text-[#6b5a4e]">
+                {resource.description ?? "Abrir enlace complementario"}
+              </span>
+            </span>
+          </a>
+          {resourceSpeech}
+        </div>
+      </section>
     );
   }
 
@@ -335,4 +370,18 @@ function LessonResource({ resource }: LessonResourceProps) {
   }
 
   return null;
+}
+
+function ResourceSpeechButton({ resource }: LessonResourceProps) {
+  return (
+    <SpeechButton
+      text={buildResourceNarration({
+        title: resource.title,
+        description: resource.description,
+        type: resource.type
+      })}
+      label="Escuchar descripción"
+      compact
+    />
+  );
 }

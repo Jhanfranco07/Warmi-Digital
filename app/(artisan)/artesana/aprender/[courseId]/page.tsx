@@ -13,6 +13,11 @@ import {
 } from "lucide-react";
 
 import {
+  buildCourseNarration,
+  buildModuleNarration
+} from "@/shared/accessibility/narration";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
+import {
   ArtisanHero,
   ArtisanPanel,
   ArtisanShell,
@@ -79,6 +84,14 @@ export default async function ArtisanCourseDetailPage({
     : hasStarted
       ? "Continuar mi curso"
       : "Empezar aquí";
+  const courseNarration = buildCourseNarration({
+    title: course.title,
+    description: course.description,
+    moduleCount: course.modules.length,
+    lessonCount: totalLessons,
+    progress,
+    nextLessonTitle: nextLesson?.title
+  });
 
   return (
     <ArtisanShell>
@@ -112,6 +125,7 @@ export default async function ArtisanCourseDetailPage({
                   : `Abre "${nextLesson.title}" y márcala como completada al terminar.`
                 : "La facilitadora aún está preparando las lecciones."}
             </div>
+            <SpeechButton text={courseNarration} label="Escuchar este curso" compact />
           </div>
         }
       />
@@ -205,6 +219,20 @@ export default async function ArtisanCourseDetailPage({
           const moduleProgress = moduleLessons.length
             ? Math.round((moduleCompleted / moduleLessons.length) * 100)
             : 0;
+          const moduleDuration =
+            module.durationMin ??
+            module.lessons.reduce(
+              (total, lesson) => total + (lesson.durationMin ?? 0),
+              0
+            );
+          const moduleNarration = buildModuleNarration({
+            order: moduleIndex + 1,
+            title: module.title,
+            description: module.description,
+            lessonCount: module.lessons.length,
+            durationMin: moduleDuration,
+            lessonTitles: module.lessons.map((lesson) => lesson.title)
+          });
 
           return (
             <ArtisanPanel
@@ -212,9 +240,16 @@ export default async function ArtisanCourseDetailPage({
               eyebrow={`Módulo ${moduleIndex + 1}`}
               title={module.title}
               action={
-                <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
-                  {moduleProgress}% completado
-                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
+                    {moduleProgress}% completado
+                  </span>
+                  <SpeechButton
+                    text={moduleNarration}
+                    label="Escuchar este módulo"
+                    compact
+                  />
+                </div>
               }
             >
               {module.description ? (

@@ -3,6 +3,7 @@ import { CheckCircle2, LogOut, Mail, MapPin, ShieldCheck, UserRound } from "luci
 
 import { ProfileForm } from "@/features/artisan/profile-form";
 import { logout } from "@/shared/actions/auth/logout";
+import { AccessibilitySettingsPanel } from "@/shared/accessibility/speech-controls";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { CommunityRepository } from "@/shared/repositories/community.repository";
@@ -115,6 +116,10 @@ export default async function ArtisanProfilePage() {
             communities={communities}
             craftTypes={craftTypes}
           />
+        </section>
+
+        <section className="mt-7">
+          <AccessibilitySettingsPanel />
         </section>
       </div>
     </main>

@@ -11,6 +11,8 @@ import {
   Palette
 } from "lucide-react";
 
+import { SpeechButton } from "@/shared/accessibility/speech-button";
+import { buildLearningPageNarration } from "@/shared/accessibility/narration";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
@@ -40,6 +42,11 @@ export default async function ArtisanLearningPage() {
   const mobileCourses = enrolled.map(toDisplayCourse);
   const completedCourses = mobileCourses.filter((course) => course.progress >= 100);
   const workshopStats = dashboard.workshops;
+  const pageNarration = buildLearningPageNarration({
+    enrolledCount: enrolled.length,
+    availableCount: learning.availableCourses.length,
+    currentCourseTitle: currentCourse?.title
+  });
 
   return (
     <>
@@ -62,6 +69,9 @@ export default async function ArtisanLearningPage() {
           <p className="mt-2 max-w-[240px] text-sm leading-5 text-[#5b4a42]">
             Sigue aprendiendo y avanzando paso a paso hacia tus metas.
           </p>
+          <div className="mt-4">
+            <SpeechButton text={pageNarration} label="Escuchar esta pantalla" compact />
+          </div>
 
           <div className="mt-6 grid grid-cols-3 overflow-hidden rounded-full border border-[#f0c3cf] bg-white p-1 shadow-[0_10px_24px_rgba(181,36,91,0.08)]">
             <span className="rounded-full bg-[#b5245b] px-3 py-3 text-center text-xs font-bold text-white">
@@ -204,6 +214,11 @@ export default async function ArtisanLearningPage() {
                 paso.
               </p>
             </div>
+            <SpeechButton
+              text={pageNarration}
+              label="Escuchar esta pantalla"
+              className="max-w-xs"
+            />
 
             <div className="hidden items-center gap-3 xl:flex">
               <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">

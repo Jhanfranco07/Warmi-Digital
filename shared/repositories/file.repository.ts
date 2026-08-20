@@ -29,6 +29,12 @@ export class FileRepository {
     });
   }
 
+  findById(fileId: string) {
+    return this.db.file.findUnique({
+      where: { id: fileId }
+    });
+  }
+
   findOwnedByType(
     fileId: string,
     ownerId: string,

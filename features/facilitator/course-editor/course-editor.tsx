@@ -10,6 +10,8 @@ import {
   BookOpen,
   CheckCircle2,
   Clock3,
+  Download,
+  Eye,
   ExternalLink,
   FileAudio,
   FileText,
@@ -17,6 +19,7 @@ import {
   Layers3,
   Link2,
   ListPlus,
+  Maximize2,
   MoreHorizontal,
   Pencil,
   PlayCircle,
@@ -38,6 +41,7 @@ import {
   moveLessonResourceAction,
   updateCourseEditorAction,
   updateCourseLessonAction,
+  updateLessonResourceAction,
   updateCourseModuleAction
 } from "@/shared/actions/facilitator/course-editor";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
@@ -99,6 +103,7 @@ type FileRecord = {
 
 type LessonResource = {
   id: string;
+  lessonId: string;
   type: LessonResourceType;
   title: string;
   description: string | null;
@@ -248,6 +253,62 @@ function resourceIcon(file: FileRecord) {
   if (file.type === "AUDIO") return FileAudio;
   if (file.type === "VIDEO") return Video;
   return FileText;
+}
+
+function resourceKindFromType(type: LessonResourceType): ResourceKind {
+  const map: Record<LessonResourceType, ResourceKind> = {
+    VIDEO_YOUTUBE: "YOUTUBE",
+    VIDEO_UPLOAD: "VIDEO_UPLOAD",
+    IMAGE: "IMAGE",
+    PDF: "DOCUMENT",
+    DOCUMENT: "DOCUMENT",
+    AUDIO: "AUDIO",
+    EXTERNAL_LINK: "EXTERNAL_LINK"
+  };
+
+  return map[type] ?? "DOCUMENT";
+}
+
+function resourceTypeLabel(type: LessonResourceType) {
+  const label: Record<LessonResourceType, string> = {
+    VIDEO_YOUTUBE: "YouTube",
+    VIDEO_UPLOAD: "Video",
+    IMAGE: "Imagen",
+    PDF: "PDF",
+    DOCUMENT: "Documento",
+    AUDIO: "Audio",
+    EXTERNAL_LINK: "Enlace"
+  };
+
+  return label[type] ?? "Recurso";
+}
+
+function resourceIconFromType(type: LessonResourceType) {
+  const Icon: Record<LessonResourceType, LucideIcon> = {
+    VIDEO_YOUTUBE: PlayCircle,
+    VIDEO_UPLOAD: Video,
+    IMAGE: ImageIcon,
+    PDF: FileText,
+    DOCUMENT: FileText,
+    AUDIO: FileAudio,
+    EXTERNAL_LINK: ExternalLink
+  };
+
+  return Icon[type] ?? FileText;
+}
+
+function getResourceUrl(resource: LessonResource) {
+  return resource.originalUrl ?? resource.file?.url ?? "";
+}
+
+function getResourcePreviewUrl(resource: LessonResource) {
+  if (!resource.file?.id) return "";
+  return `/api/files/${resource.file.id}/preview`;
+}
+
+function getResourceDownloadUrl(resource: LessonResource) {
+  const previewUrl = getResourcePreviewUrl(resource);
+  return previewUrl ? `${previewUrl}?download=1` : getResourceUrl(resource);
 }
 
 function useSubmitAction() {
@@ -542,7 +603,11 @@ function ModuleAccordion({
   function move(direction: "up" | "down") {
     startTransition(async () => {
       const result = await moveCourseModuleAction(courseId, module.id, direction);
-      result.ok ? toast.success(result.message) : toast.info(result.message);
+      if (result.ok) {
+        toast.success(result.message);
+      } else {
+        toast.info(result.message);
+      }
     });
   }
 
@@ -748,7 +813,7 @@ function ResourceItem({
   index: number;
 }) {
   const file = resource.file;
-  const Icon = file ? resourceIcon(file) : null;
+  const Icon = file ? resourceIcon(file) : resourceIconFromType(resource.type);
 
   const { startTransition } = useSubmitAction();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -762,13 +827,17 @@ function ResourceItem({
   const description =
     resource.description ?? (file ? getMetadataValue(file, "description") : null);
 
-  const label = file ? resourceLabel(file) : resource.type.replace(/_/g, " ");
+  const label = file ? resourceLabel(file) : resourceTypeLabel(resource.type);
 
   function move(direction: "up" | "down") {
     startTransition(async () => {
       const result = await moveLessonResourceAction(courseId, resource.id, direction);
 
-      result.ok ? toast.success(result.message) : toast.info(result.message);
+      if (result.ok) {
+        toast.success(result.message);
+      } else {
+        toast.info(result.message);
+      }
     });
   }
 
@@ -788,17 +857,7 @@ function ResourceItem({
   return (
     <div className="grid gap-3 rounded-lg border border-[#f0cfbb] bg-white p-3 transition duration-200 hover:-translate-y-0.5 hover:shadow-soft md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center">
       <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#fff0d1] text-[#c21f5a]">
-        {Icon ? (
-          <Icon className="h-5 w-5" />
-        ) : (
-          <span className="px-1 text-center text-[10px] font-bold leading-tight">
-            {resource.type === "VIDEO_YOUTUBE"
-              ? "YT"
-              : resource.type === "EXTERNAL_LINK"
-                ? "LINK"
-                : "RECURSO"}
-          </span>
-        )}
+        <Icon className="h-5 w-5" />
       </div>
 
       <div className="min-w-0">
@@ -820,6 +879,20 @@ function ResourceItem({
       </div>
 
       <div className="flex items-center gap-2">
+        <ResourcePreviewDialog resource={resource}>
+          <Button variant="outline" size="icon" className="border-[#d8aa8f]">
+            <Eye className="h-4 w-4" />
+            <span className="sr-only">Ver recurso</span>
+          </Button>
+        </ResourcePreviewDialog>
+
+        <ResourceEditDialog courseId={courseId} resource={resource}>
+          <Button variant="outline" size="icon" className="border-[#d8aa8f]">
+            <Pencil className="h-4 w-4" />
+            <span className="sr-only">Editar recurso</span>
+          </Button>
+        </ResourceEditDialog>
+
         <Button
           variant="outline"
           size="icon"
@@ -875,6 +948,343 @@ function ResourceItem({
         </Dialog>
       </div>
     </div>
+  );
+}
+
+function ResourcePreviewDialog({
+  resource,
+  children
+}: {
+  resource: LessonResource;
+  children: ReactNode;
+}) {
+  const previewUrl = getResourcePreviewUrl(resource);
+  const downloadUrl = getResourceDownloadUrl(resource);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{resource.title || "Vista previa del recurso"}</DialogTitle>
+          <DialogDescription>
+            Revisa el material antes de publicarlo o modificarlo.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="overflow-hidden rounded-xl border border-[#efc9b6] bg-[#fffaf4]">
+          <ResourcePreviewFrame resource={resource} />
+        </div>
+
+        <DialogFooter className="gap-2 sm:justify-between">
+          <p className="text-body-sm text-muted-foreground">
+            {resource.description ?? resourceTypeLabel(resource.type)}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {previewUrl ? (
+              <Button asChild variant="outline" className="border-[#d8aa8f]">
+                <a href={previewUrl} target="_blank" rel="noreferrer">
+                  <Maximize2 className="h-4 w-4" />
+                  Abrir visor
+                </a>
+              </Button>
+            ) : null}
+            {downloadUrl ? (
+              <Button asChild className="bg-[#7b3500] text-white hover:bg-[#5d2900]">
+                <a href={downloadUrl} target="_blank" rel="noreferrer" download>
+                  <Download className="h-4 w-4" />
+                  Descargar
+                </a>
+              </Button>
+            ) : null}
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ResourcePreviewFrame({ resource }: { resource: LessonResource }) {
+  const previewUrl = getResourcePreviewUrl(resource);
+  const resourceUrl = getResourceUrl(resource);
+
+  if (resource.type === "VIDEO_YOUTUBE" && resource.externalId) {
+    return (
+      <iframe
+        className="aspect-video w-full"
+        src={`https://www.youtube.com/embed/${resource.externalId}`}
+        title={resource.title}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  if (resource.type === "IMAGE" && resource.file?.url) {
+    return (
+      <div
+        className="aspect-video w-full bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${resource.file.url})` }}
+      />
+    );
+  }
+
+  if (resource.type === "AUDIO" && resource.file?.url) {
+    return (
+      <div className="grid min-h-72 place-items-center p-8">
+        <audio className="w-full max-w-2xl" src={resource.file.url} controls />
+      </div>
+    );
+  }
+
+  if (resource.type === "VIDEO_UPLOAD" && resource.file?.url) {
+    return (
+      <video
+        className="aspect-video w-full bg-black"
+        src={resource.file.url}
+        controls
+        preload="metadata"
+      />
+    );
+  }
+
+  if ((resource.type === "PDF" || resource.type === "DOCUMENT") && previewUrl) {
+    return (
+      <iframe
+        src={previewUrl}
+        title={`Vista previa de ${resource.title}`}
+        className="h-[70vh] min-h-[520px] w-full bg-[#f5f0ea]"
+      />
+    );
+  }
+
+  if (resource.type === "EXTERNAL_LINK" && resourceUrl) {
+    return (
+      <div className="grid min-h-72 place-items-center p-8 text-center">
+        <div>
+          <ExternalLink className="mx-auto h-12 w-12 text-[#c21f5a]" />
+          <p className="mt-4 font-serif text-2xl text-[#111827]">
+            Este recurso se abre en una página externa.
+          </p>
+          <Button asChild className="mt-5 bg-[#c21f5a] text-white hover:bg-[#9f174a]">
+            <a href={resourceUrl} target="_blank" rel="noreferrer">
+              Abrir enlace
+            </a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid min-h-72 place-items-center p-8 text-center text-muted-foreground">
+      No hay una vista previa disponible para este recurso.
+    </div>
+  );
+}
+
+function ResourceEditDialog({
+  courseId,
+  resource,
+  children
+}: {
+  courseId: string;
+  resource: LessonResource;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<ResourceKind>(resourceKindFromType(resource.type));
+  const [fileId, setFileId] = useState("");
+  const [filePreviewUrl, setFilePreviewUrl] = useState(resource.file?.url ?? "");
+  const [url, setUrl] = useState(
+    resource.type === "VIDEO_YOUTUBE" || resource.type === "EXTERNAL_LINK"
+      ? getResourceUrl(resource)
+      : ""
+  );
+  const [altText, setAltText] = useState(resource.file?.altText ?? "");
+  const { isPending, submit } = useSubmitAction();
+  const youtubeId = kind === "YOUTUBE" ? extractYouTubeId(url) : null;
+  const needsUpload = kind !== "YOUTUBE" && kind !== "EXTERNAL_LINK";
+
+  function handleKindChange(nextKind: ResourceKind) {
+    setKind(nextKind);
+    setFileId("");
+    setFilePreviewUrl(nextKind === resourceKindFromType(resource.type) ? resource.file?.url ?? "" : "");
+    setUrl(nextKind === "YOUTUBE" || nextKind === "EXTERNAL_LINK" ? getResourceUrl(resource) : "");
+  }
+
+  function handleUploaded(file: UploadedFileValue) {
+    setFileId(file.id);
+    setFilePreviewUrl(file.url);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Editar recurso</DialogTitle>
+          <DialogDescription>
+            Ajusta el material, su descripción y la forma en que se mostrará a la artesana.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form
+          className="grid gap-6"
+          onSubmit={(event) =>
+            submit(event, updateLessonResourceAction, () => setOpen(false))
+          }
+        >
+          <input type="hidden" name="courseId" value={courseId} />
+          <input type="hidden" name="resourceId" value={resource.id} />
+          <input type="hidden" name="kind" value={kind} />
+          <input type="hidden" name="fileId" value={fileId} />
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {resourceOptions.map((option) => {
+              const Icon = option.icon;
+              const selected = kind === option.kind;
+
+              return (
+                <button
+                  key={option.kind}
+                  type="button"
+                  className={cn(
+                    "rounded-xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-soft",
+                    selected
+                      ? "border-[#c21f5a] bg-[#fff0f6] ring-2 ring-[#c21f5a]/15"
+                      : "border-[#efc9b6] bg-white"
+                  )}
+                  onClick={() => handleKindChange(option.kind)}
+                >
+                  <Icon className={cn("h-6 w-6", option.color)} />
+                  <p className="mt-3 font-serif text-xl text-[#111827]">
+                    {option.label}
+                  </p>
+                  <p className="text-body-sm mt-1 text-muted-foreground">
+                    {option.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.8fr)]">
+            <div className="grid gap-4">
+              <FormField label="Título del recurso">
+                <Input
+                  name="title"
+                  defaultValue={resource.title}
+                  placeholder="Ej. Guía para crear cuenta Gmail"
+                />
+              </FormField>
+              <FormField label="Descripción">
+                <Textarea
+                  name="description"
+                  defaultValue={resource.description ?? ""}
+                  placeholder="Explica para qué servirá este recurso."
+                />
+              </FormField>
+              {kind === "YOUTUBE" || kind === "EXTERNAL_LINK" ? (
+                <FormField label="URL del recurso">
+                  <Input
+                    name="url"
+                    value={url}
+                    onChange={(event) => setUrl(event.target.value)}
+                    required
+                  />
+                </FormField>
+              ) : (
+                <>
+                  <FormField label="Texto alternativo">
+                    <Input
+                      name="altText"
+                      value={altText}
+                      onChange={(event) => setAltText(event.target.value)}
+                      placeholder="Describe el archivo para accesibilidad."
+                    />
+                  </FormField>
+                  <ResourceUploader
+                    kind={kind}
+                    previewUrl={filePreviewUrl}
+                    altText={altText}
+                    onUploaded={handleUploaded}
+                    onRemove={() => {
+                      setFileId("");
+                      setFilePreviewUrl("");
+                    }}
+                  />
+                  {resource.file?.url && !fileId ? (
+                    <p className="text-body-sm text-muted-foreground">
+                      Si no subes un archivo nuevo, se conservará el recurso actual.
+                    </p>
+                  ) : null}
+                </>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-[#efc9b6] bg-[#fffaf4] p-4">
+              <p className="text-label-ui font-bold uppercase tracking-[0.16em] text-[#2f63a4]">
+                Previsualización
+              </p>
+              {kind === "YOUTUBE" && youtubeId ? (
+                <iframe
+                  className="mt-4 aspect-video w-full rounded-lg"
+                  src={`https://www.youtube.com/embed/${youtubeId}`}
+                  title="Vista previa de YouTube"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : needsUpload && filePreviewUrl ? (
+                <div className="mt-4 overflow-hidden rounded-lg border border-[#efc9b6] bg-white">
+                  {kind === "IMAGE" ? (
+                    <div
+                      className="aspect-video bg-contain bg-center bg-no-repeat"
+                      style={{ backgroundImage: `url(${filePreviewUrl})` }}
+                    />
+                  ) : kind === "AUDIO" ? (
+                    <div className="grid aspect-video place-items-center p-6">
+                      <audio className="w-full" src={filePreviewUrl} controls />
+                    </div>
+                  ) : kind === "VIDEO_UPLOAD" ? (
+                    <video
+                      className="aspect-video w-full bg-black"
+                      src={filePreviewUrl}
+                      controls
+                    />
+                  ) : (
+                    <iframe
+                      src={fileId ? filePreviewUrl : getResourcePreviewUrl(resource)}
+                      title="Vista previa del documento"
+                      className="h-80 w-full bg-[#f5f0ea]"
+                    />
+                  )}
+                </div>
+              ) : (
+                <div className="mt-4 grid aspect-video place-items-center rounded-lg border border-dashed border-[#efc9b6] bg-white text-center">
+                  <div>
+                    <Upload className="mx-auto h-8 w-8 text-[#c21f5a]" />
+                    <p className="text-body-sm mt-2 text-muted-foreground">
+                      La previsualización aparecerá aquí.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              <Save className="h-4 w-4" />
+              Guardar recurso
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

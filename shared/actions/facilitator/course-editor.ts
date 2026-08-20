@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FileType } from "@prisma/client";
+import { FileType, LessonResourceType } from "@prisma/client";
 import { z } from "zod";
 
+import { parseYouTubeVideoId } from "@/shared/lib/youtube";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { FileRepository } from "@/shared/repositories/file.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -65,10 +66,46 @@ const lessonUpdateSchema = lessonCreateSchema.extend({
   lessonId: z.string().uuid()
 });
 
-const resourceSchema = z
+const baseResourceSchema = z.object({
+  courseId: z.string().uuid(),
+  lessonId: z.string().uuid(),
+  kind: z.enum([
+    "YOUTUBE",
+    "IMAGE",
+    "DOCUMENT",
+    "AUDIO",
+    "EXTERNAL_LINK",
+    "VIDEO_UPLOAD"
+  ]),
+  fileId: nullableText,
+  url: nullableText,
+  title: nullableText,
+  description: nullableText,
+  altText: nullableText
+});
+
+const resourceSchema = baseResourceSchema.superRefine((value, ctx) => {
+    if (["YOUTUBE", "EXTERNAL_LINK"].includes(value.kind) && !value.url) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "La URL es obligatoria para este recurso.",
+        path: ["url"]
+      });
+    }
+
+    if (!["YOUTUBE", "EXTERNAL_LINK"].includes(value.kind) && !value.fileId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Debes subir o seleccionar un archivo.",
+        path: ["fileId"]
+      });
+    }
+  });
+
+const resourceUpdateSchema = z
   .object({
     courseId: z.string().uuid(),
-    lessonId: z.string().uuid(),
+    resourceId: z.string().uuid(),
     kind: z.enum([
       "YOUTUBE",
       "IMAGE",
@@ -91,15 +128,34 @@ const resourceSchema = z
         path: ["url"]
       });
     }
-
-    if (!["YOUTUBE", "EXTERNAL_LINK"].includes(value.kind) && !value.fileId) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Debes subir o seleccionar un archivo.",
-        path: ["fileId"]
-      });
-    }
   });
+
+const resourceKindMap = {
+  YOUTUBE: LessonResourceType.VIDEO_YOUTUBE,
+  IMAGE: LessonResourceType.IMAGE,
+  DOCUMENT: LessonResourceType.PDF,
+  AUDIO: LessonResourceType.AUDIO,
+  EXTERNAL_LINK: LessonResourceType.EXTERNAL_LINK,
+  VIDEO_UPLOAD: LessonResourceType.VIDEO_UPLOAD
+} as const;
+
+const expectedFileTypeMap = {
+  IMAGE: FileType.IMAGE,
+  DOCUMENT: FileType.DOCUMENT,
+  AUDIO: FileType.AUDIO,
+  VIDEO_UPLOAD: FileType.VIDEO
+} as const;
+
+function resourceFallbackTitle(kind: keyof typeof resourceKindMap) {
+  return {
+    YOUTUBE: "Video de YouTube",
+    IMAGE: "Imagen de apoyo",
+    DOCUMENT: "Documento PDF",
+    AUDIO: "Audio de apoyo",
+    EXTERNAL_LINK: "Enlace complementario",
+    VIDEO_UPLOAD: "Video de apoyo"
+  }[kind];
+}
 
 function formObject(formData: FormData) {
   return Object.fromEntries(formData.entries());
@@ -290,29 +346,32 @@ export async function addLessonResourceAction(
     const files = new FileRepository();
     const courses = new CourseRepository();
     let fileId = data.fileId;
+    let provider: string | null = null;
+    let externalId: string | null = null;
+    let originalUrl: string | null = data.url;
 
-    if (data.kind === "YOUTUBE" || data.kind === "EXTERNAL_LINK") {
-      const file = await files.create({
-        url: data.url ?? "",
-        provider: data.kind === "YOUTUBE" ? "youtube" : "external",
-        publicId: null,
-        type: data.kind === "YOUTUBE" ? FileType.VIDEO : FileType.OTHER,
-        mimeType: "text/uri-list",
-        size: 0,
-        altText: data.altText,
-        metadata: {
-          resourceKind: data.kind,
-          title: data.title,
-          description: data.description
-        },
-        ownerId: session.user.id
-      });
-      fileId = file.id;
+    if (data.kind === "YOUTUBE") {
+      const videoId = parseYouTubeVideoId(data.url ?? "");
+
+      if (!videoId) {
+        return { ok: false, message: "El enlace de YouTube no es valido." };
+      }
+
+      provider = "YOUTUBE";
+      externalId = videoId;
+      fileId = null;
+    } else if (data.kind === "EXTERNAL_LINK") {
+      provider = "EXTERNAL";
+      fileId = null;
     } else if (fileId) {
-      const file = await files.findOwned(fileId, session.user.id);
+      const expectedFileType = expectedFileTypeMap[data.kind];
+      const file = await files.findOwnedByType(fileId, session.user.id, expectedFileType);
 
       if (!file) {
-        return { ok: false, message: "El archivo no pertenece a tu cuenta." };
+        return {
+          ok: false,
+          message: "El archivo no existe o no corresponde al tipo seleccionado."
+        };
       }
 
       await files.updateOwned(fileId, session.user.id, {
@@ -324,18 +383,106 @@ export async function addLessonResourceAction(
           description: data.description
         }
       });
+
+      originalUrl = null;
     }
 
-    if (!fileId) {
-      return { ok: false, message: "No se pudo preparar el recurso." };
-    }
-
-    const attached = await courses.attachLessonFile(session.user.id, data.lessonId, fileId);
+    const attached = await courses.createManagedLessonResource(
+      session.user.id,
+      data.lessonId,
+      {
+        fileId,
+        type: resourceKindMap[data.kind],
+        title: data.title ?? resourceFallbackTitle(data.kind),
+        description: data.description,
+        provider,
+        externalId,
+        originalUrl
+      }
+    );
     revalidatePath(editorPath(data.courseId));
 
     return {
       ok: Boolean(attached),
       message: attached ? "Recurso agregado a la leccion." : "No se encontro la leccion."
+    };
+  } catch (error) {
+    return { ok: false, message: validationError(error) };
+  }
+}
+
+export async function updateLessonResourceAction(
+  formData: FormData
+): Promise<ActionResult> {
+  const session = await requireRole("FACILITADORA");
+
+  try {
+    const data = resourceUpdateSchema.parse(formObject(formData));
+    const files = new FileRepository();
+    const courses = new CourseRepository();
+    let fileId: string | null | undefined = undefined;
+    let provider: string | null = null;
+    let externalId: string | null = null;
+    let originalUrl: string | null = data.url;
+
+    if (data.kind === "YOUTUBE") {
+      const videoId = parseYouTubeVideoId(data.url ?? "");
+
+      if (!videoId) {
+        return { ok: false, message: "El enlace de YouTube no es valido." };
+      }
+
+      provider = "YOUTUBE";
+      externalId = videoId;
+      fileId = null;
+    } else if (data.kind === "EXTERNAL_LINK") {
+      provider = "EXTERNAL";
+      fileId = null;
+    } else {
+      originalUrl = null;
+
+      if (data.fileId) {
+        const expectedFileType = expectedFileTypeMap[data.kind];
+        const file = await files.findOwnedByType(data.fileId, session.user.id, expectedFileType);
+
+        if (!file) {
+          return {
+            ok: false,
+            message: "El archivo no existe o no corresponde al tipo seleccionado."
+          };
+        }
+
+        await files.updateOwned(data.fileId, session.user.id, {
+          altText: data.altText,
+          metadata: {
+            ...(typeof file.metadata === "object" && file.metadata ? file.metadata : {}),
+            resourceKind: data.kind,
+            title: data.title,
+            description: data.description
+          }
+        });
+
+        fileId = data.fileId;
+      }
+    }
+
+    const result = await courses.updateLessonResource(session.user.id, data.resourceId, {
+      fileId,
+      type: resourceKindMap[data.kind],
+      title: data.title ?? resourceFallbackTitle(data.kind),
+      description: data.description,
+      provider,
+      externalId,
+      originalUrl
+    });
+
+    revalidatePath(editorPath(data.courseId));
+    return {
+      ok: result.count > 0,
+      message:
+        result.count > 0
+          ? "Recurso actualizado correctamente."
+          : "No se encontro el recurso."
     };
   } catch (error) {
     return { ok: false, message: validationError(error) };

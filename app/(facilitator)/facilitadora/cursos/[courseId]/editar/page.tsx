@@ -55,6 +55,7 @@ export default async function Page({
 
         lessonFiles: lesson.lessonFiles.map((resource) => ({
           id: resource.id,
+          lessonId: resource.lessonId,
           type: resource.type,
           title: resource.title,
           description: resource.description,

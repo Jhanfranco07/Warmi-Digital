@@ -1,5 +1,13 @@
 import Image from "next/image";
-import { ExternalLink, FileText, ImageIcon, NotebookPen, Video } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileText,
+  ImageIcon,
+  Maximize2,
+  NotebookPen,
+  Video
+} from "lucide-react";
 
 import { LessonCompletionButton } from "@/features/artisan/lesson-completion-button";
 import {
@@ -8,11 +16,11 @@ import {
   ArtisanPanel,
   ArtisanShell
 } from "@/features/artisan/artisan-panel";
-import { Badge } from "@/shared/components/ui/badge";
 import { AudioHelpButton } from "@/shared/components/media/audio-help-button";
 import { YouTubePlayer } from "@/shared/components/media/youtube-player";
-import { LearningService } from "@/shared/services/learning.service";
+import { Badge } from "@/shared/components/ui/badge";
 import { requireRole } from "@/shared/server/auth/helpers";
+import { LearningService } from "@/shared/services/learning.service";
 
 export default async function ArtisanLessonPage({
   params
@@ -65,21 +73,7 @@ export default async function ArtisanLessonPage({
             <div className="grid gap-4">
               {resources.length ? (
                 resources.map((resource) => (
-                  <a
-                    key={resource.id}
-                    href={resource.originalUrl ?? resource.file?.url ?? "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <ArtisanListItem
-                      meta={resource.type}
-                      title={resource.title}
-                      description={
-                        resource.description ??
-                        "Abre o descarga el recurso de esta lección."
-                      }
-                    />
-                  </a>
+                  <ResourceNavigationCard key={resource.id} resource={resource} />
                 ))
               ) : (
                 <p className="text-base leading-7 text-[#5b4a42]">
@@ -124,10 +118,35 @@ type LessonResourceProps = {
   >["lesson"]["lessonFiles"][number];
 };
 
+function getPreviewUrl(resource: LessonResourceProps["resource"]) {
+  if (!resource.file?.id) return null;
+  return `/api/files/${resource.file.id}/preview`;
+}
+
+function getDownloadUrl(resource: LessonResourceProps["resource"]) {
+  const previewUrl = getPreviewUrl(resource);
+  return previewUrl ? `${previewUrl}?download=1` : resource.file?.url;
+}
+
+function ResourceNavigationCard({ resource }: LessonResourceProps) {
+  return (
+    <a
+      href={`#recurso-${resource.id}`}
+      className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b5245b]"
+    >
+      <ArtisanListItem
+        meta={resource.type.replace(/_/g, " ")}
+        title={resource.title}
+        description={resource.description ?? "Ver este recurso dentro de la lección."}
+      />
+    </a>
+  );
+}
+
 function LessonResource({ resource }: LessonResourceProps) {
   if (resource.type === "VIDEO_YOUTUBE" && resource.externalId) {
     return (
-      <section className="space-y-3">
+      <section id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
         <h2 className="font-display text-2xl">{resource.title}</h2>
         {resource.description ? (
           <p className="text-base leading-7 text-[#5b4a42]">{resource.description}</p>
@@ -142,17 +161,19 @@ function LessonResource({ resource }: LessonResourceProps) {
 
   if (resource.type === "AUDIO" && resource.file?.url) {
     return (
-      <AudioHelpButton
-        audioUrl={resource.file.url}
-        title={resource.title || "Escuchar explicación"}
-        description={resource.description ?? undefined}
-      />
+      <section id={`recurso-${resource.id}`} className="scroll-mt-24">
+        <AudioHelpButton
+          audioUrl={resource.file.url}
+          title={resource.title || "Escuchar explicación"}
+          description={resource.description ?? undefined}
+        />
+      </section>
     );
   }
 
   if (resource.type === "IMAGE" && resource.file?.url) {
     return (
-      <figure className="space-y-3">
+      <figure id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
         <div className="relative aspect-video overflow-hidden rounded-lg border bg-white">
           <Image
             src={resource.file.url}
@@ -172,7 +193,7 @@ function LessonResource({ resource }: LessonResourceProps) {
 
   if (resource.type === "VIDEO_UPLOAD" && resource.file?.url) {
     return (
-      <section className="space-y-3">
+      <section id={`recurso-${resource.id}`} className="scroll-mt-24 space-y-3">
         <h2 className="font-display text-2xl">{resource.title}</h2>
         <video
           src={resource.file.url}
@@ -187,31 +208,71 @@ function LessonResource({ resource }: LessonResourceProps) {
   }
 
   if ((resource.type === "PDF" || resource.type === "DOCUMENT") && resource.file?.url) {
+    const previewUrl = getPreviewUrl(resource);
+    const downloadUrl = getDownloadUrl(resource);
+
     return (
-      <a
-        href={resource.file.url}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-start gap-4 rounded-lg border bg-white p-4"
+      <section
+        id={`recurso-${resource.id}`}
+        className="scroll-mt-24 overflow-hidden rounded-lg border border-[#f2c7b3] bg-white shadow-[0_16px_42px_rgba(122,73,20,0.08)]"
       >
-        <FileText className="mt-1 h-6 w-6 text-[#b5245b]" />
-        <span>
-          <span className="block font-ui font-bold">{resource.title}</span>
-          <span className="block text-sm text-[#6b5a4e]">
-            {resource.description ?? "Abrir o descargar documento"}
-          </span>
-        </span>
-      </a>
+        <div className="flex flex-col gap-4 border-b border-[#f2c7b3] bg-[#fff8f1] p-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#ffe8f0] text-[#b5245b]">
+              <FileText className="h-6 w-6" />
+            </span>
+            <div>
+              <h2 className="font-display text-2xl">{resource.title}</h2>
+              <p className="mt-1 text-base leading-7 text-[#5b4a42]">
+                {resource.description ?? "Documento de apoyo para esta lección."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {previewUrl ? (
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-[#b5245b] px-4 py-2 font-ui text-sm font-bold text-[#b5245b]"
+              >
+                <Maximize2 className="h-4 w-4" />
+                Abrir visor
+              </a>
+            ) : null}
+            {downloadUrl ? (
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                download
+                className="inline-flex items-center gap-2 rounded-md bg-[#b5245b] px-4 py-2 font-ui text-sm font-bold text-white"
+              >
+                <Download className="h-4 w-4" />
+                Descargar PDF
+              </a>
+            ) : null}
+          </div>
+        </div>
+        {previewUrl ? (
+          <iframe
+            src={previewUrl}
+            title={`Vista previa de ${resource.title}`}
+            className="h-[560px] w-full bg-[#f5f0ea]"
+          />
+        ) : null}
+      </section>
     );
   }
 
   if (resource.type === "EXTERNAL_LINK" && resource.originalUrl) {
     return (
       <a
+        id={`recurso-${resource.id}`}
         href={resource.originalUrl}
         target="_blank"
         rel="noreferrer"
-        className="flex items-start gap-4 rounded-lg border bg-white p-4"
+        className="flex scroll-mt-24 items-start gap-4 rounded-lg border bg-white p-4"
       >
         <ExternalLink className="mt-1 h-6 w-6 text-[#0b7f88]" />
         <span>
@@ -227,10 +288,11 @@ function LessonResource({ resource }: LessonResourceProps) {
   if (resource.file?.url) {
     return (
       <a
+        id={`recurso-${resource.id}`}
         href={resource.file.url}
         target="_blank"
         rel="noreferrer"
-        className="flex items-center gap-3 rounded-lg border bg-white p-4 font-ui font-bold"
+        className="flex scroll-mt-24 items-center gap-3 rounded-lg border bg-white p-4 font-ui font-bold"
       >
         <Video className="h-5 w-5" />
         {resource.title}

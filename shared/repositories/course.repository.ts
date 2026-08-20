@@ -627,6 +627,91 @@ export class CourseRepository {
     });
   }
 
+  async createManagedLessonResource(
+    facilitatorId: string,
+    lessonId: string,
+    data: {
+      fileId?: string | null;
+      type: import("@prisma/client").LessonResourceType;
+      title: string;
+      description?: string | null;
+      provider?: string | null;
+      externalId?: string | null;
+      originalUrl?: string | null;
+    }
+  ) {
+    return this.db.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({
+        where: {
+          id: lessonId,
+          module: { course: { facilitatorId, deletedAt: null } }
+        },
+        select: { id: true }
+      });
+
+      if (!lesson) {
+        return null;
+      }
+
+      const lastResource = await tx.lessonFile.findFirst({
+        where: { lessonId },
+        orderBy: { position: "desc" },
+        select: { position: true }
+      });
+
+      return tx.lessonFile.create({
+        data: {
+          lessonId,
+          fileId: data.fileId ?? null,
+          type: data.type,
+          title: data.title,
+          description: data.description ?? null,
+          position: (lastResource?.position ?? -1) + 1,
+          provider: data.provider ?? null,
+          externalId: data.externalId ?? null,
+          originalUrl: data.originalUrl ?? null
+        }
+      });
+    });
+  }
+
+  async updateLessonResource(
+    facilitatorId: string,
+    resourceId: string,
+    data: {
+      fileId?: string | null;
+      type?: import("@prisma/client").LessonResourceType;
+      title?: string;
+      description?: string | null;
+      provider?: string | null;
+      externalId?: string | null;
+      originalUrl?: string | null;
+    }
+  ) {
+    const { fileId, ...resourceData } = data;
+    const result = await this.db.lessonFile.updateMany({
+      where: {
+        id: resourceId,
+        lesson: { module: { course: { facilitatorId, deletedAt: null } } }
+      },
+      data: resourceData
+    });
+
+    if (result.count === 0 || fileId === undefined) {
+      return result;
+    }
+
+    await this.db.lessonFile.update({
+      where: { id: resourceId },
+      data:
+        fileId === null
+          ? { file: { disconnect: true } }
+          : { file: { connect: { id: fileId } } }
+    });
+
+    return result;
+  }
+
   moveLessonResource(
     facilitatorId: string,
     resourceId: string,

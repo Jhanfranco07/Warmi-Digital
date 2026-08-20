@@ -3,6 +3,7 @@
 import { Pause, Play, Square, Volume2 } from "lucide-react";
 
 import { useSpeech } from "@/shared/accessibility/use-speech";
+import { WarmiVoiceGuide } from "@/shared/accessibility/warmi-voice-guide";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
 
@@ -43,6 +44,7 @@ export function SpeechButton({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex flex-wrap items-center gap-2">
+        <WarmiVoiceGuide compact={compact} />
         {!isSpeaking ? (
           <Button
             type="button"

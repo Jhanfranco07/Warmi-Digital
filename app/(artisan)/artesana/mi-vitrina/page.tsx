@@ -83,6 +83,16 @@ export default async function ArtisanShowcasePage() {
             </div>
           </article>
 
+          <Button
+            asChild
+            className="mt-5 min-h-12 w-full rounded-full bg-[#b5245b] text-sm font-extrabold text-white shadow-[0_14px_28px_rgba(181,36,91,0.22)] hover:bg-[#941747]"
+          >
+            <Link href="/artesana/mi-vitrina/nuevo">
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Agregar nueva pieza
+            </Link>
+          </Button>
+
           <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
             {["Todos", "Tejido", "Bordado", "Cerámica", "Más"].map((filter, index) => (
               <span

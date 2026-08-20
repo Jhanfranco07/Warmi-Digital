@@ -143,6 +143,46 @@
   }
 }
 
+html.warmi-large-text {
+  font-size: 17px;
+}
+
+html.warmi-high-contrast body {
+  background: #fffefa;
+  color: #17110e;
+}
+
+html.warmi-high-contrast a,
+html.warmi-high-contrast button {
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.2em;
+}
+
+html.warmi-high-contrast input,
+html.warmi-high-contrast select,
+html.warmi-high-contrast textarea {
+  border-color: #7a1042 !important;
+}
+
+html.warmi-high-contrast :focus-visible {
+  outline: 3px solid #123f7a;
+  outline-offset: 3px;
+}
+
+html.warmi-high-contrast .warmi-module-shell,
+html.warmi-high-contrast .warmi-public-shell {
+  filter: contrast(1.08) saturate(1.08);
+}
+
+html.warmi-reduce-motion *,
+html.warmi-reduce-motion *::before,
+html.warmi-reduce-motion *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 1ms !important;
+}
+
 @keyframes warmi-hero-drift {
   from {
     transform: scale(1);

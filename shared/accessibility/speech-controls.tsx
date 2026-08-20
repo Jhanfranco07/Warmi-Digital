@@ -6,6 +6,7 @@ import { Volume2 } from "lucide-react";
 import {
   type AccessibilitySettings,
   type SpeechRateOption,
+  applyAccessibilitySettings,
   defaultAccessibilitySettings,
   readAccessibilitySettings,
   saveAccessibilitySettings,
@@ -19,18 +20,44 @@ import { cn } from "@/shared/lib/utils";
 const voiceExample =
   "Hola. Soy la ayuda por voz de Warmi. Puedo explicarte las opciones de la pantalla y acompañarte mientras utilizas la plataforma.";
 
+const visualPreferences: Array<{
+  description: string;
+  key: "largeText" | "highContrast" | "reduceMotion";
+  label: string;
+}> = [
+  {
+    key: "largeText",
+    label: "Texto más grande",
+    description: "Aumenta ligeramente el tamaño de lectura en toda la plataforma."
+  },
+  {
+    key: "highContrast",
+    label: "Alto contraste",
+    description: "Refuerza colores, bordes y focos para distinguir mejor cada acción."
+  },
+  {
+    key: "reduceMotion",
+    label: "Reducir animaciones",
+    description: "Disminuye movimientos y transiciones para navegar con más calma."
+  }
+];
+
 export function AccessibilitySettingsPanel() {
   const [settings, setSettings] = useState<AccessibilitySettings>(
     defaultAccessibilitySettings
   );
 
   useEffect(() => {
-    setSettings(readAccessibilitySettings());
+    const currentSettings = readAccessibilitySettings();
+
+    setSettings(currentSettings);
+    applyAccessibilitySettings(currentSettings);
   }, []);
 
   function updateSettings(next: AccessibilitySettings) {
     setSettings(next);
     saveAccessibilitySettings(next);
+    applyAccessibilitySettings(next);
   }
 
   return (
@@ -96,17 +123,45 @@ export function AccessibilitySettingsPanel() {
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-3">
-        {["Texto más grande", "Alto contraste", "Reducir animaciones"].map((item) => (
-          <div
-            key={item}
-            className="rounded-2xl border border-dashed border-[#ecd0bd] bg-[#fffaf6] p-4 text-sm font-semibold text-[#7a5b4a]"
-          >
-            {item}
-            <span className="mt-1 block text-xs font-normal text-[#8a7165]">
-              Preparado para una siguiente fase.
-            </span>
-          </div>
-        ))}
+        {visualPreferences.map((item) => {
+          const enabled = settings[item.key];
+
+          return (
+            <div
+              key={item.key}
+              className={cn(
+                "rounded-2xl border bg-[#fffaf6] p-4 transition-all duration-300",
+                enabled
+                  ? "border-[#b5245b] shadow-[0_14px_28px_rgba(181,36,91,0.12)]"
+                  : "border-dashed border-[#ecd0bd]"
+              )}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-extrabold text-[#7a3100]">{item.label}</p>
+                  <p className="mt-1 text-xs leading-5 text-[#7a5b4a]">
+                    {item.description}
+                  </p>
+                </div>
+                <Switch
+                  checked={enabled}
+                  onCheckedChange={(checked) =>
+                    updateSettings({ ...settings, [item.key]: checked })
+                  }
+                  aria-label={`${enabled ? "Desactivar" : "Activar"} ${item.label}`}
+                />
+              </div>
+              <span
+                className={cn(
+                  "mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-extrabold",
+                  enabled ? "bg-[#ffe8ef] text-[#b5245b]" : "bg-white text-[#8a7165]"
+                )}
+              >
+                {enabled ? "Activado" : "Desactivado"}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

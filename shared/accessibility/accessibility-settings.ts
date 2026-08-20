@@ -11,11 +11,17 @@ export const speechRateOptions = {
 export type SpeechRateOption = keyof typeof speechRateOptions;
 
 export type AccessibilitySettings = {
+  highContrast: boolean;
+  largeText: boolean;
+  reduceMotion: boolean;
   voiceEnabled: boolean;
   speechRate: SpeechRateOption;
 };
 
 export const defaultAccessibilitySettings: AccessibilitySettings = {
+  highContrast: false,
+  largeText: false,
+  reduceMotion: false,
   voiceEnabled: true,
   speechRate: "normal"
 };
@@ -39,6 +45,18 @@ export function readAccessibilitySettings(): AccessibilitySettings {
         : defaultAccessibilitySettings.speechRate;
 
     return {
+      highContrast:
+        typeof parsed.highContrast === "boolean"
+          ? parsed.highContrast
+          : defaultAccessibilitySettings.highContrast,
+      largeText:
+        typeof parsed.largeText === "boolean"
+          ? parsed.largeText
+          : defaultAccessibilitySettings.largeText,
+      reduceMotion:
+        typeof parsed.reduceMotion === "boolean"
+          ? parsed.reduceMotion
+          : defaultAccessibilitySettings.reduceMotion,
       voiceEnabled:
         typeof parsed.voiceEnabled === "boolean"
           ? parsed.voiceEnabled
@@ -57,4 +75,16 @@ export function saveAccessibilitySettings(settings: AccessibilitySettings) {
 
   window.localStorage.setItem(ACCESSIBILITY_STORAGE_KEY, JSON.stringify(settings));
   window.dispatchEvent(new CustomEvent("warmi-accessibility-settings-change"));
+}
+
+export function applyAccessibilitySettings(settings: AccessibilitySettings) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const root = document.documentElement;
+
+  root.classList.toggle("warmi-large-text", settings.largeText);
+  root.classList.toggle("warmi-high-contrast", settings.highContrast);
+  root.classList.toggle("warmi-reduce-motion", settings.reduceMotion);
 }

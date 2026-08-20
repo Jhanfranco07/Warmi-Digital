@@ -11,6 +11,10 @@ import {
   Palette
 } from "lucide-react";
 
+import {
+  MobileLearningTabs,
+  type MobileLearningCourse
+} from "@/features/artisan/mobile-learning-tabs";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { buildLearningPageNarration } from "@/shared/accessibility/narration";
 import { Badge } from "@/shared/components/ui/badge";
@@ -40,7 +44,9 @@ export default async function ArtisanLearningPage() {
   const avatarUrl = profile?.avatarUrl ?? null;
 
   const mobileCourses = enrolled.map(toDisplayCourse);
+  const inProgressCourses = mobileCourses.filter((course) => course.progress < 100);
   const completedCourses = mobileCourses.filter((course) => course.progress >= 100);
+  const availableMobileCourses = learning.availableCourses.map(toAvailableDisplayCourse);
   const workshopStats = dashboard.workshops;
   const pageNarration = buildLearningPageNarration({
     enrolledCount: enrolled.length,
@@ -74,49 +80,11 @@ export default async function ArtisanLearningPage() {
             <SpeechButton text={pageNarration} label="Escuchar esta pantalla" compact />
           </div>
 
-          <div className="mt-6 grid grid-cols-3 overflow-hidden rounded-full border border-[#f0c3cf] bg-white p-1 shadow-[0_10px_24px_rgba(181,36,91,0.08)]">
-            <span className="rounded-full bg-[#b5245b] px-3 py-3 text-center text-xs font-bold text-white">
-              En progreso
-            </span>
-            <span className="px-3 py-3 text-center text-xs font-bold text-[#7a5b4a]">
-              Completados
-            </span>
-            <span className="px-3 py-3 text-center text-xs font-bold text-[#7a5b4a]">
-              Disponibles
-            </span>
-          </div>
-
-          <MobileSectionLabel title="En progreso" />
-          <div className="mt-3 space-y-4">
-            {mobileCourses.length ? (
-              mobileCourses
-                .slice(0, 3)
-                .map((course) => (
-                  <MobileLearningCard
-                    key={course.id}
-                    href={course.href}
-                    title={course.title}
-                    meta={course.meta}
-                    progress={course.progress}
-                    image={course.image}
-                  />
-                ))
-            ) : (
-              <MobileInlineEmpty text="No tienes cursos asignados todavía." />
-            )}
-          </div>
-
-          <div className="mt-7 flex items-center justify-between">
-            <MobileSectionLabel title="Completados" className="mt-0" />
-            <Link href="/artesana/aprender" className="text-xs font-bold text-[#b5245b]">
-              Ver todos
-            </Link>
-          </div>
-          {completedCourses[0] ? (
-            <MobileLearningCard {...completedCourses[0]} completed />
-          ) : (
-            <MobileInlineEmpty text="Aún no tienes cursos completados." />
-          )}
+          <MobileLearningTabs
+            availableCourses={availableMobileCourses}
+            completedCourses={completedCourses}
+            inProgressCourses={inProgressCourses}
+          />
 
           <MobileSectionLabel title="Talleres en vivo" />
           <div className="mt-3 rounded-2xl border border-[#f5d2dc] bg-white p-4 shadow-[0_12px_26px_rgba(122,16,66,0.08)]">
@@ -315,7 +283,7 @@ export default async function ArtisanLearningPage() {
                     >
                       <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
                         <BookOpen className="h-5 w-5" />
-                        Continúar lección
+                        Continuar lección
                       </Link>
                     </Button>
                   ) : null}
@@ -493,6 +461,21 @@ type DisplayCourse = {
   meta: string;
 };
 
+function toAvailableDisplayCourse(
+  course: Awaited<
+    ReturnType<LearningService["getLearningPage"]>
+  >["availableCourses"][number]
+): MobileLearningCourse {
+  return {
+    id: course.id,
+    href: "/artesana/mensajes",
+    title: course.title,
+    image: course.imageUrl,
+    progress: 0,
+    meta: `${course.modulesCount} módulos · ${course.durationMin} min`
+  };
+}
+
 function toDisplayCourse(
   course: Awaited<
     ReturnType<LearningService["getLearningPage"]>
@@ -554,65 +537,6 @@ function MobileSectionLabel({
   );
 }
 
-function MobileLearningCard({
-  href,
-  image,
-  title,
-  meta,
-  progress,
-  completed = false
-}: {
-  href: string;
-  image: string | null;
-  title: string;
-  meta: string;
-  progress: number;
-  completed?: boolean;
-}) {
-  return (
-    <Link
-      href={href as Route}
-      className="grid grid-cols-[126px_1fr] overflow-hidden rounded-2xl border border-[#f5d2dc] bg-white shadow-[0_12px_26px_rgba(122,16,66,0.08)]"
-    >
-      <div className="relative min-h-[126px]">
-        {image ? (
-          <Image src={image} alt={title} fill sizes="126px" className="object-cover" />
-        ) : (
-          <LearningImagePlaceholder compact />
-        )}
-      </div>
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-ui text-sm font-extrabold leading-tight text-[#1b1c1a]">
-            {title}
-          </h3>
-          {completed ? (
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f0f8df] text-[#6fa33c]">
-              
-            </span>
-          ) : null}
-        </div>
-        <p className="mt-2 flex items-center gap-1 text-[11px] text-[#5b4a42]">
-          <BookOpen className="h-3.5 w-3.5 text-[#b5245b]" />
-          {meta}
-        </p>
-        <p className="mt-3 text-[11px] font-bold text-[#b5245b]">
-          {progress}% completado
-        </p>
-        <Progress
-          value={progress}
-          className="mt-1.5 h-1.5 bg-[#f4dbe4] [&>div]:bg-[#b5245b]"
-        />
-        {!completed ? (
-          <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">
-            Continúar
-            <ChevronRight className="ml-1 h-3.5 w-3.5" />
-          </span>
-        ) : null}
-      </div>
-    </Link>
-  );
-}
 
 function MobileWorkshopStat({ label, value }: { label: string; value: string }) {
   return (

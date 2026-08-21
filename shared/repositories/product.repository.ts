@@ -31,6 +31,7 @@ export class ProductRepository {
         status: "PUBLISHED",
         available: true,
         deletedAt: null,
+        artisan: { deletedAt: null },
         ...(filters?.categoryId ? { categoryId: filters.categoryId } : {}),
         ...(filters?.communityId ? { communityId: filters.communityId } : {}),
         ...(filters?.craftTypeId ? { craftTypeId: filters.craftTypeId } : {}),
@@ -40,7 +41,9 @@ export class ProductRepository {
                 { name: { contains: q, mode: "insensitive" } },
                 {
                   artisan: {
-                    profile: { displayName: { contains: q, mode: "insensitive" } }
+                    profile: {
+                      is: { displayName: { contains: q, mode: "insensitive" } }
+                    }
                   }
                 },
                 { community: { name: { contains: q, mode: "insensitive" } } },
@@ -62,7 +65,12 @@ export class ProductRepository {
 
   findPublicDetail(id: string) {
     return this.db.product.findFirst({
-      where: { id, status: "PUBLISHED", deletedAt: null },
+      where: {
+        id,
+        status: "PUBLISHED",
+        deletedAt: null,
+        artisan: { deletedAt: null }
+      },
       include: {
         artisan: {
           include: {

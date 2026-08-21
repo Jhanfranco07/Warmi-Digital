@@ -11,6 +11,7 @@ import {
   ChevronRight,
   CircleHelp,
   Home,
+  LogOut,
   Menu,
   MoreHorizontal,
   Store,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { logout } from "@/shared/actions/auth/logout";
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { roleNavigation, roleNavigationMeta } from "@/shared/config/navigation.config";
@@ -33,6 +35,7 @@ function NavigationContent({ role }: { role: UserRole }) {
   const items = roleNavigation[role];
   const meta = roleNavigationMeta[role];
   const isFacilitator = role === "FACILITADORA";
+  const isAdmin = role === "ADMIN";
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
@@ -53,7 +56,7 @@ function NavigationContent({ role }: { role: UserRole }) {
       <nav className="space-y-3" aria-label={`Navegación ${meta.label}`}>
         {items.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = isActivePath(pathname, item.href);
 
           return (
             <Link
@@ -87,7 +90,21 @@ function NavigationContent({ role }: { role: UserRole }) {
         )}
       />
 
-      {isFacilitator ? (
+      {isAdmin ? (
+        <div className="relative z-10 mt-auto space-y-4 border-t border-[#ead4ca] pt-5">
+          <p className="text-xs leading-4 text-[#7a5b4a]">{meta.description}</p>
+          <form action={logout}>
+            <Button
+              type="submit"
+              variant="outline"
+              className="min-h-[48px] w-full justify-start rounded-full border-[#d9b8a7] bg-white text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
+            >
+              <LogOut className="h-5 w-5" />
+              Cerrar sesion
+            </Button>
+          </form>
+        </div>
+      ) : isFacilitator ? (
         <div className="relative z-10 mt-auto flex items-center gap-3 border-t border-[#ead4ca] pt-5 text-sm text-[#7a5b4a]">
           <span className="grid h-10 w-10 place-items-center rounded-full border border-[#d89b06] text-[#d89b06]">
             <CircleHelp className="h-5 w-5" />
@@ -116,6 +133,10 @@ function NavigationContent({ role }: { role: UserRole }) {
 }
 
 function isActivePath(pathname: string, href: string) {
+  if (href === "/admin" || href.endsWith("/dashboard")) {
+    return pathname === href;
+  }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

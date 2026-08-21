@@ -10,8 +10,15 @@ export default async function Page({
   const c = await prisma.community.findUnique({
     where: { id: (await params).communityId },
     include: {
-      profiles: true,
-      products: { where: { status: "PUBLISHED", available: true } }
+      profiles: { where: { deletedAt: null, user: { deletedAt: null } } },
+      products: {
+        where: {
+          status: "PUBLISHED",
+          available: true,
+          deletedAt: null,
+          artisan: { deletedAt: null }
+        }
+      }
     }
   });
   if (!c) notFound();

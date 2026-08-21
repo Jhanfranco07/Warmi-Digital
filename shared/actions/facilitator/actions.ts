@@ -193,7 +193,7 @@ export async function addLessonResourceAction(_: unknown, formData: FormData) {
     if (input.resourceType === LessonResourceType.VIDEO_UPLOAD) {
       return result(
         false,
-        "La subida directa de video queda pendiente. Usa un enlace de YouTube."
+        "La subida de videos propios esta deshabilitada. Usa un enlace de YouTube."
       );
     }
 

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FileText, Loader2, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
-import { uploadPrivateFileAction } from "@/shared/actions/files/upload-file";
 import { cn } from "@/shared/lib/utils";
+import { uploadFileToCloudinary } from "@/shared/uploads/cloudinary-client-upload";
+import { getAcceptForUploadType, validateUploadFile } from "@/shared/uploads/upload-limits";
+import type { UploadState, WarmiUploadType } from "@/shared/uploads/upload-types";
 
 export type UploadedFileValue = {
   id: string;
@@ -21,7 +23,7 @@ export type FileUploadProps = Omit<
 > & {
   label?: string;
   description?: string;
-  uploadType?: "IMAGE" | "DOCUMENT" | "AUDIO" | "VIDEO" | "OTHER";
+  uploadType?: WarmiUploadType;
   folder?: string;
   altText?: string;
   previewUrl?: string | null;
@@ -51,26 +53,18 @@ export function FileUpload({
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
-  const [isPending, startTransition] = useTransition();
+  const [status, setStatus] = useState<UploadState>("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const activePreview = localPreview ?? previewUrl ?? null;
+  const isUploading = status === "validating" || status === "uploading";
 
   const helperText = useMemo(() => {
-    if (isPending) return `Subiendo... ${progress}%`;
+    if (status === "validating") return "Validando archivo...";
+    if (status === "uploading") return `Subiendo archivo... ${progress}%`;
+    if (status === "completed") return "Archivo listo.";
+    if (status === "error") return errorMessage ?? "No pudimos subir el archivo.";
     return fileName ?? description;
-  }, [description, fileName, isPending, progress]);
-
-  useEffect(() => {
-    if (!isPending) {
-      setProgress(0);
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setProgress((current) => Math.min(current + 18, 92));
-    }, 180);
-
-    return () => window.clearInterval(timer);
-  }, [isPending]);
+  }, [description, errorMessage, fileName, progress, status]);
 
   useEffect(() => {
     return () => {
@@ -78,7 +72,22 @@ export function FileUpload({
     };
   }, [localPreview]);
 
-  function handleFile(file: File) {
+  async function handleFile(file: File) {
+    if (isUploading) return;
+
+    setStatus("validating");
+    setProgress(0);
+    setErrorMessage(null);
+
+    const validationError = validateUploadFile(file, uploadType);
+    if (validationError) {
+      setFileName(file.name);
+      setStatus("error");
+      setErrorMessage(validationError);
+      toast.error(validationError);
+      return;
+    }
+
     setFileName(file.name);
     onFileSelected?.(file);
 
@@ -87,26 +96,33 @@ export function FileUpload({
       setLocalPreview(URL.createObjectURL(file));
     }
 
-    if (!uploadOnSelect) return;
+    if (!uploadOnSelect) {
+      setStatus("completed");
+      return;
+    }
 
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.set("file", file);
-      formData.set("type", uploadType);
-      formData.set("folder", folder);
-      if (altText) formData.set("altText", altText);
-
-      const result = await uploadPrivateFileAction(formData);
-
-      if (!result.ok || !result.file) {
-        toast.error(result.message);
-        return;
-      }
-
+    try {
+      setStatus("uploading");
+      const result = await uploadFileToCloudinary({
+        altText,
+        file,
+        folder,
+        onProgress: setProgress,
+        type: uploadType
+      });
       setProgress(100);
-      toast.success(result.message);
-      onUploaded?.(result.file);
-    });
+      setStatus("completed");
+      toast.success("Archivo listo.");
+      onUploaded?.(result);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No pudimos subir tu archivo. Intenta nuevamente.";
+      setStatus("error");
+      setErrorMessage(message);
+      toast.error(message);
+    }
   }
 
   return (
@@ -114,7 +130,7 @@ export function FileUpload({
       <label
         className={cn(
           "group relative flex min-h-36 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-surface-low px-4 py-6 text-center transition-colors hover:bg-surface-container",
-          disabled && "pointer-events-none opacity-60"
+          (disabled || isUploading) && "pointer-events-none opacity-60"
         )}
       >
         {activePreview ? (
@@ -127,7 +143,7 @@ export function FileUpload({
         {activePreview ? <span className="absolute inset-0 bg-black/30" /> : null}
 
         <span className="relative z-10 grid h-11 w-11 place-items-center rounded-full bg-white/90 text-primary shadow-sm">
-          {isPending ? (
+          {isUploading ? (
             <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
           ) : activePreview ? (
             <Upload className="h-5 w-5" aria-hidden="true" />
@@ -143,7 +159,7 @@ export function FileUpload({
             {helperText}
           </span>
         ) : null}
-        {isPending ? (
+        {isUploading ? (
           <span className="relative z-10 mt-3 h-1.5 w-full max-w-48 overflow-hidden rounded-full bg-white/60">
             <span
               className="block h-full rounded-full bg-primary transition-all"
@@ -155,8 +171,8 @@ export function FileUpload({
           ref={inputRef}
           type="file"
           className="sr-only"
-          accept={accept}
-          disabled={disabled || isPending}
+          accept={accept ?? getAcceptForUploadType(uploadType)}
+          disabled={disabled || isUploading}
           onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) handleFile(file);
@@ -172,6 +188,9 @@ export function FileUpload({
           onClick={() => {
             setFileName(null);
             setLocalPreview(null);
+            setProgress(0);
+            setStatus("idle");
+            setErrorMessage(null);
             if (inputRef.current) inputRef.current.value = "";
             onRemove();
           }}

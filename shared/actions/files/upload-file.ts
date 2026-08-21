@@ -1,94 +1,198 @@
 "use server";
 
-import { FileType } from "@prisma/client";
+import { FileType, type File } from "@prisma/client";
 
+import { env } from "@/shared/config/env";
 import { getCloudinary } from "@/shared/lib/cloudinary";
 import { FileRepository } from "@/shared/repositories/file.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
-import { uploadFileSchema, validateFileForType } from "@/shared/validations";
+import {
+  assertPublicIdBelongsToFolder,
+  getCloudinaryResourceType,
+  resolveUploadFolder
+} from "@/shared/uploads/upload-limits";
+import type {
+  CloudinaryResourceType,
+  CloudinaryUploadSignature,
+  RegisteredUploadedFile,
+  WarmiUploadType
+} from "@/shared/uploads/upload-types";
+import {
+  cleanupCloudinaryUploadSchema,
+  createUploadedFileRecordSchema,
+  uploadSignatureSchema
+} from "@/shared/validations";
 
 type UploadResult = {
   ok: boolean;
   message: string;
-  file?: {
-    id: string;
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  };
+  file?: RegisteredUploadedFile;
 };
 
-type CloudinaryUploadResult = {
-  secure_url: string;
-  public_id: string;
-  width?: number;
-  height?: number;
-  bytes: number;
-  format?: string;
-  resource_type?: string;
+type UploadSignatureResult = {
+  ok: boolean;
+  message: string;
+  signature?: CloudinaryUploadSignature;
 };
 
-export async function uploadPrivateFileAction(formData: FormData): Promise<UploadResult> {
+type CleanupInput = {
+  folder: string;
+  publicId: string;
+  resourceType: CloudinaryResourceType;
+};
+
+export async function getCloudinaryUploadSignatureAction(input: {
+  folder?: string;
+  type: WarmiUploadType;
+}): Promise<UploadSignatureResult> {
   try {
-    const session = await requireRole(["ARTESANA", "FACILITADORA", "ADMIN"]);
-    const file = formData.get("file");
+    await requireRole(["ARTESANA", "FACILITADORA", "ADMIN"]);
 
-    if (!(file instanceof File) || file.size === 0) {
-      return { ok: false, message: "Selecciona un archivo valido." };
-    }
-
-    const parsed = uploadFileSchema.safeParse({
-      type: formData.get("type") ?? FileType.IMAGE,
-      altText: formData.get("altText") ?? undefined,
-      folder: formData.get("folder") ?? undefined
+    const parsed = uploadSignatureSchema.safeParse({
+      folder: input.folder,
+      type: input.type
     });
 
     if (!parsed.success) {
-      return { ok: false, message: "Los datos del archivo no son validos." };
+      return { ok: false, message: "No pudimos preparar esta subida." };
     }
 
-    const validationError = validateFileForType(file, parsed.data.type);
-    if (validationError) {
-      return { ok: false, message: validationError };
+    if (parsed.data.type === FileType.VIDEO) {
+      return {
+        ok: false,
+        message: "La subida de videos propios esta deshabilitada. Usa YouTube."
+      };
     }
 
-    const uploaded = await uploadToCloudinary(file, parsed.data.folder, parsed.data.type);
+    const folder = resolveUploadFolder(parsed.data.folder);
+    const resourceType = getCloudinaryResourceType(
+      parsed.data.type as WarmiUploadType
+    );
+    const timestamp = Math.round(Date.now() / 1000);
+    const uploadParams = {
+      folder,
+      overwrite: "false" as const,
+      timestamp: String(timestamp),
+      unique_filename: "true" as const,
+      use_filename: "true" as const
+    };
+
+    const cloudinary = getCloudinary();
+    const apiKey = env.CLOUDINARY_API_KEY;
+    const cloudName = env.CLOUDINARY_CLOUD_NAME;
+
+    if (!apiKey || !cloudName || !env.CLOUDINARY_API_SECRET) {
+      return { ok: false, message: "Cloudinary no esta configurado." };
+    }
+
+    const signature = cloudinary.utils.api_sign_request(
+      uploadParams,
+      env.CLOUDINARY_API_SECRET
+    );
+
+    return {
+      ok: true,
+      message: "Firma generada.",
+      signature: {
+        apiKey,
+        cloudName,
+        folder,
+        resourceType,
+        signature,
+        timestamp,
+        uploadParams,
+        uploadUrl: `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`
+      }
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No pudimos preparar la subida. Intenta nuevamente."
+    };
+  }
+}
+
+export async function createUploadedFileRecordAction(input: {
+  altText?: string;
+  file: unknown;
+}): Promise<UploadResult> {
+  try {
+    const session = await requireRole(["ARTESANA", "FACILITADORA", "ADMIN"]);
+    const parsed = createUploadedFileRecordSchema.safeParse(input);
+
+    if (!parsed.success) {
+      return { ok: false, message: "No pudimos guardar los datos del archivo." };
+    }
+
+    if (parsed.data.file.type === FileType.VIDEO) {
+      return {
+        ok: false,
+        message: "La subida de videos propios esta deshabilitada. Usa YouTube."
+      };
+    }
+
+    assertPublicIdBelongsToFolder(parsed.data.file.publicId, parsed.data.file.folder);
+
     const savedFile = await new FileRepository().create({
-      url: uploaded.secure_url,
+      url: parsed.data.file.secureUrl,
       provider: "cloudinary",
-      publicId: uploaded.public_id,
-      type: parsed.data.type,
-      mimeType: file.type,
-      size: uploaded.bytes || file.size,
-      width: uploaded.width ?? null,
-      height: uploaded.height ?? null,
+      publicId: parsed.data.file.publicId,
+      type: parsed.data.file.type,
+      mimeType: parsed.data.file.mimeType,
+      size: parsed.data.file.bytes,
+      width: parsed.data.file.width ?? null,
+      height: parsed.data.file.height ?? null,
       altText: parsed.data.altText ?? null,
       metadata: {
-        originalName: file.name,
-        format: uploaded.format,
-        resourceType: uploaded.resource_type
+        directUpload: true,
+        folder: parsed.data.file.folder,
+        format: parsed.data.file.format ?? null,
+        originalName: parsed.data.file.originalFilename,
+        resourceType: parsed.data.file.resourceType,
+        version: parsed.data.file.version ?? null
       },
       ownerId: session.user.id
     });
 
     return {
       ok: true,
-      message: "Archivo subido correctamente.",
-      file: {
-        id: savedFile.id,
-        url: savedFile.url,
-        altText: savedFile.altText,
-        width: savedFile.width,
-        height: savedFile.height
-      }
+      message: "Archivo listo.",
+      file: toUploadedFileValue(savedFile)
     };
-  } catch (error) {
+  } catch {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : "No fue posible subir el archivo."
+      message: "Tu archivo se subio, pero no pudimos guardar los cambios."
     };
   }
+}
+
+export async function cleanupCloudinaryUploadAction(input: CleanupInput) {
+  try {
+    await requireRole(["ARTESANA", "FACILITADORA", "ADMIN"]);
+    const parsed = cleanupCloudinaryUploadSchema.safeParse(input);
+
+    if (!parsed.success) {
+      return { ok: false, message: "No se pudo limpiar el archivo temporal." };
+    }
+
+    assertPublicIdBelongsToFolder(parsed.data.publicId, parsed.data.folder);
+    await getCloudinary().uploader.destroy(parsed.data.publicId, {
+      resource_type: parsed.data.resourceType
+    });
+
+    return { ok: true, message: "Archivo temporal eliminado." };
+  } catch {
+    return { ok: false, message: "No se pudo limpiar el archivo temporal." };
+  }
+}
+
+export async function uploadPrivateFileAction(): Promise<UploadResult> {
+  return {
+    ok: false,
+    message:
+      "La subida directa esta activa. Selecciona el archivo nuevamente para subirlo de forma segura."
+  };
 }
 
 export async function deletePrivateFileAction(fileId: string): Promise<UploadResult> {
@@ -103,48 +207,40 @@ export async function deletePrivateFileAction(fileId: string): Promise<UploadRes
 
     if (file.provider === "cloudinary" && file.publicId) {
       await getCloudinary().uploader.destroy(file.publicId, {
-        resource_type: file.type === FileType.IMAGE ? "image" : "raw"
+        resource_type: getStoredResourceType(file)
       });
     }
 
     await repository.deleteOwned(file.id, session.user.id);
 
     return { ok: true, message: "Archivo eliminado correctamente." };
-  } catch (error) {
+  } catch {
     return {
       ok: false,
-      message:
-        error instanceof Error ? error.message : "No fue posible eliminar el archivo."
+      message: "No fue posible eliminar el archivo."
     };
   }
 }
 
-async function uploadToCloudinary(file: File, folder: string, type: FileType) {
-  const cloudinary = getCloudinary();
-  const buffer = Buffer.from(await file.arrayBuffer());
+function toUploadedFileValue(file: File): RegisteredUploadedFile {
+  return {
+    id: file.id,
+    url: file.url,
+    altText: file.altText,
+    width: file.width,
+    height: file.height
+  };
+}
 
-  const resourceType =
-    type === FileType.IMAGE ? "image" : type === FileType.VIDEO ? "video" : "raw";
+function getStoredResourceType(file: File): Exclude<CloudinaryResourceType, "auto"> {
+  const metadata = file.metadata;
 
-  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: resourceType,
-        use_filename: true,
-        unique_filename: true,
-        overwrite: false
-      },
-      (error, result) => {
-        if (error || !result) {
-          reject(error ?? new Error("Cloudinary no devolvio resultado."));
-          return;
-        }
+  if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
+    const value = (metadata as Record<string, unknown>).resourceType;
+    if (value === "image" || value === "video" || value === "raw") return value;
+  }
 
-        resolve(result as CloudinaryUploadResult);
-      }
-    );
-
-    stream.end(buffer);
-  });
+  if (file.type === FileType.IMAGE) return "image";
+  if (file.type === FileType.VIDEO || file.type === FileType.AUDIO) return "video";
+  return "raw";
 }

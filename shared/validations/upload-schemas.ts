@@ -1,20 +1,21 @@
 import { FileType } from "@prisma/client";
 import { z } from "zod";
 
-export const imageMimeTypes = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp"
-] as const;
-export const audioMimeTypes = [
-  "audio/mpeg",
-  "audio/mp3",
-  "audio/wav",
-  "audio/ogg"
-] as const;
-export const documentMimeTypes = ["application/pdf"] as const;
-export const videoMimeTypes = ["video/mp4", "video/webm", "video/quicktime"] as const;
+import {
+  allowedUploadFolders,
+  getUploadRule,
+  isAllowedUploadFolder,
+  validateUploadFile
+} from "@/shared/uploads/upload-limits";
+import type {
+  CloudinaryResourceType,
+  WarmiUploadType
+} from "@/shared/uploads/upload-types";
+
+export const imageMimeTypes = getUploadRule("IMAGE").accept;
+export const audioMimeTypes = getUploadRule("AUDIO").accept;
+export const documentMimeTypes = getUploadRule("DOCUMENT").accept;
+export const videoMimeTypes = [] as const;
 
 export const uploadFileSchema = z.object({
   type: z.nativeEnum(FileType),
@@ -25,54 +26,52 @@ export const uploadFileSchema = z.object({
     .min(2)
     .max(120)
     .regex(/^[a-z0-9/_-]+$/)
+    .refine(isAllowedUploadFolder, {
+      message: `La carpeta debe ser una de: ${allowedUploadFolders.join(", ")}.`
+    })
     .default("warmi/private")
 });
 
+export const uploadSignatureSchema = uploadFileSchema.pick({
+  folder: true,
+  type: true
+});
+
+const cloudinaryResourceTypeSchema = z.enum(["image", "video", "raw", "auto"]);
+
+export const uploadedCloudinaryMetadataSchema = z.object({
+  bytes: z.number().int().positive(),
+  folder: uploadFileSchema.shape.folder,
+  format: z.string().trim().max(40).nullable().optional(),
+  height: z.number().int().positive().nullable().optional(),
+  mimeType: z.string().trim().min(3).max(180),
+  originalFilename: z.string().trim().min(1).max(240),
+  publicId: z.string().trim().min(3).max(300),
+  resourceType: cloudinaryResourceTypeSchema,
+  secureUrl: z.string().url(),
+  type: z.nativeEnum(FileType),
+  url: z.string().url().nullable().optional(),
+  version: z.number().int().positive().nullable().optional(),
+  width: z.number().int().positive().nullable().optional()
+});
+
+export const createUploadedFileRecordSchema = z.object({
+  altText: z.string().trim().max(180).optional(),
+  file: uploadedCloudinaryMetadataSchema
+});
+
+export const cleanupCloudinaryUploadSchema = z.object({
+  folder: uploadFileSchema.shape.folder,
+  publicId: z.string().trim().min(3).max(300),
+  resourceType: cloudinaryResourceTypeSchema
+});
+
+export type UploadedCloudinaryMetadataInput = z.infer<
+  typeof uploadedCloudinaryMetadataSchema
+> & {
+  resourceType: CloudinaryResourceType;
+};
+
 export function validateFileForType(file: File, type: FileType) {
-  const maxImageSize = 5 * 1024 * 1024;
-  const maxDocumentSize = 20 * 1024 * 1024;
-  const maxAudioSize = 30 * 1024 * 1024;
-  const maxVideoSize = 100 * 1024 * 1024;
-
-  if (type === FileType.IMAGE) {
-    if (!imageMimeTypes.includes(file.type as (typeof imageMimeTypes)[number])) {
-      return "Solo se permiten imagenes JPG, JPEG, PNG o WEBP.";
-    }
-
-    if (file.size > maxImageSize) {
-      return "La imagen no debe superar 5 MB.";
-    }
-  }
-
-  if (type === FileType.AUDIO) {
-    if (!audioMimeTypes.includes(file.type as (typeof audioMimeTypes)[number])) {
-      return "Solo se permiten audios MP3, WAV u OGG.";
-    }
-
-    if (file.size > maxAudioSize) {
-      return "El audio no debe superar 30 MB.";
-    }
-  }
-
-  if (type === FileType.DOCUMENT) {
-    if (!documentMimeTypes.includes(file.type as (typeof documentMimeTypes)[number])) {
-      return "Solo se permiten documentos PDF.";
-    }
-
-    if (file.size > maxDocumentSize) {
-      return "El documento no debe superar 20 MB.";
-    }
-  }
-
-  if (type === FileType.VIDEO) {
-    if (!videoMimeTypes.includes(file.type as (typeof videoMimeTypes)[number])) {
-      return "Solo se permiten videos MP4, WebM o MOV.";
-    }
-
-    if (file.size > maxVideoSize) {
-      return "El video no debe superar 100 MB.";
-    }
-  }
-
-  return null;
+  return validateUploadFile(file, type as WarmiUploadType);
 }

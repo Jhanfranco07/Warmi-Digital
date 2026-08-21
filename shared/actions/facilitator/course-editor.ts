@@ -350,6 +350,13 @@ export async function addLessonResourceAction(
     let externalId: string | null = null;
     let originalUrl: string | null = data.url;
 
+    if (data.kind === "VIDEO_UPLOAD") {
+      return {
+        ok: false,
+        message: "La subida de videos propios esta deshabilitada. Usa un enlace de YouTube."
+      };
+    }
+
     if (data.kind === "YOUTUBE") {
       const videoId = parseYouTubeVideoId(data.url ?? "");
 
@@ -424,6 +431,13 @@ export async function updateLessonResourceAction(
     let provider: string | null = null;
     let externalId: string | null = null;
     let originalUrl: string | null = data.url;
+
+    if (data.kind === "VIDEO_UPLOAD") {
+      return {
+        ok: false,
+        message: "La subida de videos propios esta deshabilitada. Usa un enlace de YouTube."
+      };
+    }
 
     if (data.kind === "YOUTUBE") {
       const videoId = parseYouTubeVideoId(data.url ?? "");

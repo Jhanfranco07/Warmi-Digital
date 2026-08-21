@@ -202,7 +202,7 @@ const resourceOptions = [
   {
     kind: "VIDEO_UPLOAD",
     label: "Subir video",
-    description: "Archivo de video propio del taller o lección.",
+    description: "Deshabilitado. Usa un enlace de YouTube.",
     icon: Video,
     color: "text-[#8f1450]"
   }
@@ -1149,13 +1149,19 @@ function ResourceEditDialog({
                 <button
                   key={option.kind}
                   type="button"
+                  disabled={option.kind === "VIDEO_UPLOAD"}
                   className={cn(
                     "rounded-xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-soft",
                     selected
                       ? "border-[#c21f5a] bg-[#fff0f6] ring-2 ring-[#c21f5a]/15"
-                      : "border-[#efc9b6] bg-white"
+                      : "border-[#efc9b6] bg-white",
+                    option.kind === "VIDEO_UPLOAD" &&
+                      "cursor-not-allowed opacity-55 hover:translate-y-0 hover:shadow-none"
                   )}
-                  onClick={() => handleKindChange(option.kind)}
+                  onClick={() => {
+                    if (option.kind === "VIDEO_UPLOAD") return;
+                    handleKindChange(option.kind);
+                  }}
                 >
                   <Icon className={cn("h-6 w-6", option.color)} />
                   <p className="mt-3 font-serif text-xl text-[#111827]">
@@ -1595,13 +1601,17 @@ function ResourceDialog({
                 <button
                   key={option.kind}
                   type="button"
+                  disabled={option.kind === "VIDEO_UPLOAD"}
                   className={cn(
                     "rounded-xl border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-soft",
                     selected
                       ? "border-[#c21f5a] bg-[#fff0f6] ring-2 ring-[#c21f5a]/15"
-                      : "border-[#efc9b6] bg-white"
+                      : "border-[#efc9b6] bg-white",
+                    option.kind === "VIDEO_UPLOAD" &&
+                      "cursor-not-allowed opacity-55 hover:translate-y-0 hover:shadow-none"
                   )}
                   onClick={() => {
+                    if (option.kind === "VIDEO_UPLOAD") return;
                     setKind(option.kind);
                     setFileId("");
                     setFilePreviewUrl("");
@@ -1733,6 +1743,15 @@ function ResourceUploader({
   onUploaded: (file: UploadedFileValue) => void;
   onRemove: () => void;
 }) {
+  if (kind === "VIDEO_UPLOAD") {
+    return (
+      <div className="rounded-xl border border-dashed border-[#efc9b6] bg-[#fffaf4] p-5 text-body-sm text-muted-foreground">
+        La subida de videos propios esta deshabilitada. Agrega el recurso como
+        video de YouTube para que cargue mas rapido y sea facil de reproducir.
+      </div>
+    );
+  }
+
   const config = {
     IMAGE: {
       label: "Subir imagen",
@@ -1742,22 +1761,15 @@ function ResourceUploader({
     },
     DOCUMENT: {
       label: "Subir PDF o documento",
-      description: "PDF, DOC o DOCX",
-      accept:
-        "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      description: "PDF hasta 20 MB",
+      accept: "application/pdf",
       uploadType: "DOCUMENT" as const
     },
     AUDIO: {
       label: "Subir audio",
-      description: "MP3, WAV o M4A",
-      accept: "audio/*",
+      description: "MP3, WAV u OGG",
+      accept: "audio/mpeg,audio/mp3,audio/wav,audio/ogg",
       uploadType: "AUDIO" as const
-    },
-    VIDEO_UPLOAD: {
-      label: "Subir video",
-      description: "Video corto de apoyo",
-      accept: "video/*",
-      uploadType: "VIDEO" as const
     }
   }[kind];
 

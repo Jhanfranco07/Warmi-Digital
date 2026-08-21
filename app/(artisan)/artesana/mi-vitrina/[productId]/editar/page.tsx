@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, ImagePlus, PencilLine, Sparkles } from "lucide-react";
 
 import { ProductForm } from "@/features/marketplace/product-form";
+import { uniqueProductOptions } from "@/features/marketplace/product-options";
 import { requireRole } from "@/shared/server/auth/helpers";
 import { prisma } from "@/shared/server/db/prisma";
 
@@ -148,8 +149,8 @@ export default async function Page({ params }: PageProps) {
         <div className="mt-6">
           <ProductForm
             mode="edit"
-            categories={categories}
-            craftTypes={craftTypes}
+            categories={uniqueProductOptions(categories, product.categoryId)}
+            craftTypes={uniqueProductOptions(craftTypes, product.craftTypeId)}
             initialValue={{
               id: product.id,
               name: product.name,

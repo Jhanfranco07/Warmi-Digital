@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, HeartHandshake, ImagePlus, Sparkles } from "lucide-react";
 
 import { ProductForm } from "@/features/marketplace/product-form";
+import { uniqueProductOptions } from "@/features/marketplace/product-options";
 import { prisma } from "@/shared/server/db/prisma";
 
 export default async function Page() {
@@ -96,7 +97,10 @@ export default async function Page() {
         </section>
 
         <div className="mt-6">
-          <ProductForm categories={categories} craftTypes={craftTypes} />
+          <ProductForm
+            categories={uniqueProductOptions(categories)}
+            craftTypes={uniqueProductOptions(craftTypes)}
+          />
         </div>
       </div>
     </main>

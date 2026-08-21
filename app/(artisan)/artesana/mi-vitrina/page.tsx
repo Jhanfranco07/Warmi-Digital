@@ -170,27 +170,31 @@ export default async function ArtisanShowcasePage() {
                 Comparte tu arte, tus saberes y la esencia de tu comunidad con el mundo.
               </p>
             </div>
-            <span className="relative hidden h-16 w-16 overflow-hidden rounded-full border-2 border-white bg-white shadow-[0_12px_28px_rgba(122,49,0,0.16)] md:block">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={artisanName}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
-              ) : (
-                <ProductImagePlaceholder compact />
-              )}
-            </span>
           </header>
 
           <section className="mt-8 overflow-hidden rounded-[22px] border border-[#ecd0bd] bg-white shadow-[0_24px_70px_rgba(122,49,0,0.11)]">
             <div className="relative min-h-[430px]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(181,36,91,0.18),transparent_32%),linear-gradient(120deg,#fffaf6_0%,#fff_48%,#f9efe4_100%)]" />
-              <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(135deg,rgba(245,185,0,0.18),rgba(23,195,207,0.12))] lg:block" />
-              <div className="absolute bottom-0 right-0 h-64 w-64 translate-x-20 translate-y-20 rounded-full border-[36px] border-[#f5b900]/25" />
-              <div className="absolute right-28 top-20 h-32 w-32 rounded-full border-[22px] border-[#17c3cf]/20" />
+              <div className="absolute inset-y-0 right-0 hidden w-1/2 overflow-hidden lg:block">
+                {avatarUrl ? (
+                  <>
+                    <Image
+                      src={avatarUrl}
+                      alt={`Retrato de ${artisanName}`}
+                      fill
+                      priority
+                      sizes="50vw"
+                      className="object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(90deg,#fffaf6_0%,rgba(255,250,246,0.72)_18%,rgba(255,250,246,0.18)_48%,rgba(255,250,246,0)_100%)]" />
+                    <div className="absolute inset-0 bg-[#7a3100]/10" />
+                  </>
+                ) : (
+                  <ProductImagePlaceholder />
+                )}
+              </div>
+              <div className="absolute bottom-0 right-0 h-64 w-64 translate-x-20 translate-y-20 rounded-full border-[36px] border-[#f5b900]/20" />
+              <div className="absolute right-28 top-20 h-32 w-32 rounded-full border-[22px] border-[#17c3cf]/15" />
               <div className="relative max-w-2xl px-8 py-10 md:px-12 md:py-14">
                 <p className="font-ui text-xl font-extrabold text-[#b5245b]">Hola, soy</p>
                 <h2 className="mt-2 font-serif text-6xl font-bold leading-none text-[#b5245b] md:text-7xl">

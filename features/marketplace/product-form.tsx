@@ -182,19 +182,19 @@ export function ProductForm({
             </Field>
 
             <SelectField
-              label="Categoría"
+              label="Familia de la pieza"
               name="categoryId"
               options={categories}
-              placeholder="Selecciona una categoría"
+              placeholder="Ej. Textiles, cerámica o accesorios"
               defaultValue={initialValue?.categoryId}
               required
             />
 
             <SelectField
-              label="Tipo de artesanía"
+              label="Técnica artesanal principal"
               name="craftTypeId"
               options={craftTypes}
-              placeholder="Selecciona una técnica"
+              placeholder="Ej. Tejido, bordado o cerámica"
               defaultValue={initialValue?.craftTypeId}
               required
             />
@@ -252,10 +252,10 @@ export function ProductForm({
           icon={<Palette className="h-5 w-5" aria-hidden="true" />}
         >
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Técnica">
+            <Field label="Detalle técnico opcional">
               <Input
                 name="technique"
-                placeholder="Ej. Tejido en telar"
+                placeholder="Ej. Tejido en telar de cintura"
                 defaultValue={initialValue?.technique}
                 className="min-h-12 rounded-2xl border-[#e8c4b1] bg-[#fffdf9] px-4 text-base focus-visible:ring-[#b5245b]"
               />

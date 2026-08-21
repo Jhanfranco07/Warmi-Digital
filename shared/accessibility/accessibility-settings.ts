@@ -8,7 +8,14 @@ export const speechRateOptions = {
   fast: { label: "Rápida", rate: 1.2 }
 } as const;
 
+export const speechToneOptions = {
+  warm: { label: "Cálida", pitch: 0.92 },
+  natural: { label: "Natural", pitch: 1 },
+  bright: { label: "Clara", pitch: 1.08 }
+} as const;
+
 export type SpeechRateOption = keyof typeof speechRateOptions;
+export type SpeechToneOption = keyof typeof speechToneOptions;
 
 export type AccessibilitySettings = {
   highContrast: boolean;
@@ -16,6 +23,8 @@ export type AccessibilitySettings = {
   reduceMotion: boolean;
   voiceEnabled: boolean;
   speechRate: SpeechRateOption;
+  speechTone: SpeechToneOption;
+  speechVoiceURI: string;
 };
 
 export const defaultAccessibilitySettings: AccessibilitySettings = {
@@ -23,7 +32,9 @@ export const defaultAccessibilitySettings: AccessibilitySettings = {
   largeText: false,
   reduceMotion: false,
   voiceEnabled: true,
-  speechRate: "normal"
+  speechRate: "normal",
+  speechTone: "warm",
+  speechVoiceURI: "auto"
 };
 
 export function readAccessibilitySettings(): AccessibilitySettings {
@@ -43,6 +54,14 @@ export function readAccessibilitySettings(): AccessibilitySettings {
       parsed.speechRate && parsed.speechRate in speechRateOptions
         ? parsed.speechRate
         : defaultAccessibilitySettings.speechRate;
+    const speechTone =
+      parsed.speechTone && parsed.speechTone in speechToneOptions
+        ? parsed.speechTone
+        : defaultAccessibilitySettings.speechTone;
+    const speechVoiceURI =
+      typeof parsed.speechVoiceURI === "string" && parsed.speechVoiceURI.trim()
+        ? parsed.speechVoiceURI
+        : defaultAccessibilitySettings.speechVoiceURI;
 
     return {
       highContrast:
@@ -61,7 +80,9 @@ export function readAccessibilitySettings(): AccessibilitySettings {
         typeof parsed.voiceEnabled === "boolean"
           ? parsed.voiceEnabled
           : defaultAccessibilitySettings.voiceEnabled,
-      speechRate
+      speechRate,
+      speechTone,
+      speechVoiceURI
     };
   } catch {
     return defaultAccessibilitySettings;

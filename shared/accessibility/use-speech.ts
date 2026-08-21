@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import {
   type AccessibilitySettings,
   readAccessibilitySettings,
-  speechRateOptions
+  speechRateOptions,
+  speechToneOptions
 } from "@/shared/accessibility/accessibility-settings";
 
 type SpeechState = {
@@ -17,7 +18,15 @@ type SpeechState = {
   settings: AccessibilitySettings;
 };
 
-function getSpanishVoice() {
+function getBrowserSynthesis() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    return null;
+  }
+
+  return window.speechSynthesis;
+}
+
+function getPreferredVoice(settings: AccessibilitySettings) {
   const synthesis = getBrowserSynthesis();
 
   if (!synthesis) {
@@ -26,20 +35,23 @@ function getSpanishVoice() {
 
   const voices = synthesis.getVoices();
 
+  if (settings.speechVoiceURI !== "auto") {
+    const selectedVoice = voices.find(
+      (voice) => voice.voiceURI === settings.speechVoiceURI
+    );
+
+    if (selectedVoice) {
+      return selectedVoice;
+    }
+  }
+
   return (
     voices.find((voice) => voice.lang.toLowerCase() === "es-pe") ??
     voices.find((voice) => voice.lang.toLowerCase() === "es-419") ??
     voices.find((voice) => voice.lang.toLowerCase().startsWith("es")) ??
+    voices[0] ??
     null
   );
-}
-
-function getBrowserSynthesis() {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    return null;
-  }
-
-  return window.speechSynthesis;
 }
 
 export function useSpeech() {
@@ -52,6 +64,7 @@ export function useSpeech() {
     message: null,
     settings: readAccessibilitySettings()
   }));
+  const settings = state.settings;
 
   useEffect(() => {
     setState((current) => ({
@@ -128,7 +141,7 @@ export function useSpeech() {
         return;
       }
 
-      if (!state.settings.voiceEnabled) {
+      if (!settings.voiceEnabled) {
         setState((current) => ({
           ...current,
           message: "La ayuda por voz está desactivada en tu perfil."
@@ -145,10 +158,16 @@ export function useSpeech() {
       synthesis.cancel();
       window.dispatchEvent(new CustomEvent("warmi-speech-start", { detail: { id } }));
 
+      const selectedVoice = getPreferredVoice(settings);
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = "es-PE";
-      utterance.rate = speechRateOptions[state.settings.speechRate].rate;
-      utterance.voice = getSpanishVoice();
+
+      utterance.lang = selectedVoice?.lang ?? "es-PE";
+      utterance.rate = speechRateOptions[settings.speechRate].rate;
+      utterance.pitch = speechToneOptions[settings.speechTone].pitch;
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
 
       utterance.onstart = () => {
         setState((current) => ({
@@ -178,7 +197,7 @@ export function useSpeech() {
 
       synthesis.speak(utterance);
     },
-    [id, state.settings.speechRate, state.settings.voiceEnabled]
+    [id, settings]
   );
 
   const pause = useCallback(() => {

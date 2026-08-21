@@ -307,7 +307,9 @@ export async function registerAttendanceAction(_: unknown, formData: FormData) {
       session.user.id,
       input.status
     );
+    revalidatePath("/facilitadora/talleres");
     revalidatePath(`/facilitadora/talleres/${input.workshopId}`);
+    revalidatePath(`/facilitadora/talleres/${input.workshopId}/asistencia`);
     return result(true, "Asistencia actualizada.");
   } catch (error) {
     return result(

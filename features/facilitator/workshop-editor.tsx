@@ -26,7 +26,7 @@ export function WorkshopEditor() {
       <select name="mode" className="h-10 rounded-md border bg-background px-3">
         <option value="IN_PERSON">Presencial</option>
         <option value="VIRTUAL">Virtual</option>
-        <option value="HYBRID">Hibrido</option>
+        <option value="HYBRID">Híbrido</option>
       </select>
       <input type="hidden" name="status" value="SCHEDULED" />
       <Input name="location" placeholder="Lugar" />

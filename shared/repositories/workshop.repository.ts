@@ -28,7 +28,16 @@ export class WorkshopRepository {
         community: true,
         course: true,
         registrations: {
-          include: { user: { include: { profile: true } }, attendances: true }
+          include: {
+            user: {
+              include: {
+                profile: {
+                  include: { community: true }
+                }
+              }
+            },
+            attendances: true
+          }
         },
         attendances: true
       },
@@ -43,7 +52,16 @@ export class WorkshopRepository {
         community: true,
         course: true,
         registrations: {
-          include: { user: { include: { profile: true } }, attendances: true }
+          include: {
+            user: {
+              include: {
+                profile: {
+                  include: { community: true }
+                }
+              }
+            },
+            attendances: true
+          }
         },
         attendances: true
       }
@@ -61,23 +79,30 @@ export class WorkshopRepository {
     return this.db.workshop.updateMany({ where: { id, facilitatorId }, data });
   }
 
-  registerAttendance(
+  async registerAttendance(
     workshopId: string,
     userId: string,
     recordedById: string,
     status: "PRESENT" | "ABSENT" | "EXCUSED"
   ) {
+    const registration = await this.db.workshopRegistration.findUnique({
+      where: { workshopId_userId: { workshopId, userId } },
+      select: { id: true }
+    });
+
     return this.db.attendance.upsert({
       where: { workshopId_userId: { workshopId, userId } },
       update: {
         status,
         attended: status === "PRESENT",
         checkedInAt: status === "PRESENT" ? new Date() : null,
-        recordedById
+        recordedById,
+        workshopRegistrationId: registration?.id ?? null
       },
       create: {
         workshopId,
         userId,
+        workshopRegistrationId: registration?.id ?? null,
         status,
         attended: status === "PRESENT",
         checkedInAt: status === "PRESENT" ? new Date() : null,

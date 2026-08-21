@@ -55,15 +55,8 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
     { label: "Mi perfil", href: "/facilitadora/perfil", icon: User }
   ],
   ADMIN: [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "Usuarios", href: "/admin/users", icon: Users },
-    { label: "Comunidades", href: "/admin/communities", icon: HandHeart },
-    { label: "Cursos", href: "/admin/courses", icon: GraduationCap },
-    { label: "Marketplace", href: "/admin/marketplace", icon: Store },
-    { label: "Pedidos", href: "/admin/orders", icon: Package },
-    { label: "Convocatorias", href: "/admin/opportunities", icon: Bell },
-    { label: "Reportes", href: "/admin/reports", icon: ChartNoAxesCombined },
-    { label: "Configuración", href: "/admin/settings", icon: User }
+    { label: "Inicio", href: "/admin", icon: LayoutDashboard },
+    { label: "Usuarios", href: "/admin/usuarios", icon: Users }
   ]
 };
 

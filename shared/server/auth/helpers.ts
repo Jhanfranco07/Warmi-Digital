@@ -2,6 +2,7 @@ import type { UserRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/shared/server/auth/auth";
+import { prisma } from "@/shared/server/db/prisma";
 import {
   hasPermission as checkPermission,
   hasRole as checkRole,
@@ -38,11 +39,45 @@ export function hasPermission(
 export async function requireAuth() {
   const session = await auth();
 
-  if (!session?.user?.email) {
+  if (!session?.user?.email || !session.user.id) {
     redirect("/login");
   }
 
-  return session;
+  const activeUser = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+      deletedAt: null
+    },
+    select: {
+      id: true,
+      email: true,
+      locale: true,
+      userRoles: {
+        select: {
+          role: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!activeUser) {
+    redirect("/session-expired");
+  }
+
+  return {
+    ...session,
+    user: {
+      ...session.user,
+      id: activeUser.id,
+      email: activeUser.email,
+      locale: activeUser.locale,
+      roles: activeUser.userRoles.map((assignment) => assignment.role.name)
+    }
+  };
 }
 
 export async function requireRole(role: UserRole | UserRole[]) {

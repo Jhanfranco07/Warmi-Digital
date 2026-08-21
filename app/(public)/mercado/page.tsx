@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Route } from "next";
 import { Grid2X2, MapPin, Search, Volume2 } from "lucide-react";
 
@@ -160,6 +161,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             const texture =
               firstProduct?.images[0]?.file.url ??
               fallbackTextures[index % fallbackTextures.length];
+            const displayName = item.profile?.displayName ?? item.name ?? "Artesana Warmi";
 
             return (
               <Link
@@ -167,19 +169,28 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                 href={`/artesanas/${item.id}` as Route}
                 className="warmi-scroll-reveal group overflow-visible border border-[#ead4ca] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_28px_62px_rgba(122,49,0,0.13)]"
               >
-                <div
-                  className="relative min-h-[310px] bg-cover bg-center"
-                  style={{ backgroundImage: `url(${image})` }}
-                >
-                  <span className="from-[#30130d]/28 absolute inset-0 bg-gradient-to-t to-transparent" />
-                  <span
-                    className="absolute -bottom-16 right-7 z-10 h-32 w-32 rounded-full border-4 border-white bg-cover bg-center shadow-[0_12px_34px_rgba(48,19,13,0.24)] transition-transform duration-500 group-hover:scale-110 md:-bottom-14"
-                    style={{ backgroundImage: `url(${texture})` }}
+                <div className="relative min-h-[310px] overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#fffaf6_0%,#f8eadc_58%,#f3dfd1_100%)]">
+                  <Image
+                    src={image}
+                    alt={displayName}
+                    fill
+                    sizes="(min-width: 1280px) 30vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                   />
+                  <span className="from-[#30130d]/28 absolute inset-0 bg-gradient-to-t to-transparent" />
+                  <span className="absolute -bottom-16 right-7 z-10 h-32 w-32 overflow-hidden rounded-full border-4 border-white bg-[#fffaf6] shadow-[0_12px_34px_rgba(48,19,13,0.24)] transition-transform duration-500 group-hover:scale-110 md:-bottom-14">
+                    <Image
+                      src={texture}
+                      alt=""
+                      fill
+                      sizes="128px"
+                      className="object-contain p-2"
+                    />
+                  </span>
                 </div>
                 <div className="p-5 pr-40 pt-8 md:pt-6">
                   <h2 className="font-serif text-3xl font-bold text-[#7a3100]">
-                    {item.profile?.displayName ?? item.name ?? "Artesana Warmi"}
+                    {displayName}
                   </h2>
                   <p className="mt-1 flex items-center gap-1 font-ui text-sm text-[#b5245b]">
                     <MapPin className="h-4 w-4" />

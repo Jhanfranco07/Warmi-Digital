@@ -115,14 +115,14 @@ export default async function ArtisanShowcasePage() {
                   key={product.id}
                   className="overflow-hidden rounded-2xl border border-[#f5d2dc] bg-white shadow-[0_12px_26px_rgba(122,16,66,0.08)]"
                 >
-                  <div className="relative h-36">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#fffaf6_0%,#f8eadc_58%,#f3dfd1_100%)]">
                     {product.image ? (
                       <Image
                         src={product.image}
                         alt={product.name}
                         fill
                         sizes="50vw"
-                        className="object-cover"
+                        className="object-contain p-2"
                       />
                     ) : (
                       <ProductImagePlaceholder />
@@ -249,14 +249,14 @@ export default async function ArtisanShowcasePage() {
                     key={product.id}
                     className="group overflow-hidden rounded-[18px] border border-[#ecd0bd] bg-white shadow-[0_18px_44px_rgba(122,49,0,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_28px_64px_rgba(122,49,0,0.13)]"
                   >
-                    <div className="relative h-56">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#fffaf6_0%,#f8eadc_58%,#f3dfd1_100%)]">
                       {product.image ? (
                         <Image
                           src={product.image}
                           alt={product.name}
                           fill
                           sizes="(min-width: 1280px) 380px, 50vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          className="object-contain p-4 transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                       ) : (
                         <ProductImagePlaceholder />

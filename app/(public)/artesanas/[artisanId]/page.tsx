@@ -146,12 +146,12 @@ export default async function ArtisanShowcasePage({
                   href={`/mercado/${product.id}` as Route}
                   className="group overflow-hidden border border-[#ead4ca] bg-white shadow-[0_18px_42px_rgba(122,49,0,0.07)] transition-transform duration-300 hover:-translate-y-1"
                 >
-                  <div className="relative min-h-[320px]">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(circle_at_50%_35%,#fffaf6_0%,#f8eadc_58%,#f3dfd1_100%)]">
                     <Image
                       src={image}
                       alt={product.name}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-contain p-5 transition-transform duration-700 group-hover:scale-[1.03]"
                       sizes="(min-width: 1280px) 30vw, (min-width: 768px) 50vw, 100vw"
                     />
                   </div>

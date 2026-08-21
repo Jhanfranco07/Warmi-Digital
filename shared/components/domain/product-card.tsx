@@ -28,13 +28,13 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <Card className={cn("overflow-hidden", className)}>
-      <div className="relative aspect-[4/3] bg-surface-high">
+      <div className="relative aspect-[4/3] bg-[radial-gradient(circle_at_50%_35%,hsl(var(--background))_0%,hsl(var(--surface))_58%,hsl(var(--surface-high))_100%)]">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt={name}
             fill
-            className="object-cover"
+            className="object-contain p-4"
             sizes="(min-width: 768px) 33vw, 100vw"
           />
         ) : null}

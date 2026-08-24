@@ -63,23 +63,11 @@ export default async function ArtisanLearningPage() {
   return (
     <>
       <section className="relative overflow-hidden bg-[#fffaf6] px-5 pb-7 pt-6 lg:hidden">
-        <div className="pointer-events-none absolute -right-14 top-6 h-40 w-40 rounded-full bg-[#ffe6ee]" />
-        <div className="pointer-events-none absolute -right-5 top-10 h-36 w-36 overflow-hidden rounded-full border-4 border-white/70 opacity-90 shadow-[0_18px_38px_rgba(181,36,91,0.14)]">
-          <Image
-            src="/images/learning/cursos-spoiler.png"
-            alt=""
-            fill
-            sizes="144px"
-            className="object-cover object-[78%_52%]"
-          />
-          <div className="absolute inset-0 bg-[#ffe6ee]/20" />
-        </div>
-
         <div className="relative">
           <h1 className="font-serif text-4xl font-bold leading-tight text-[#7a1042]">
             Mis cursos <span className="text-[#c93772]">*</span>
           </h1>
-          <p className="mt-2 max-w-[240px] text-sm leading-5 text-[#5b4a42]">
+          <p className="mt-2 max-w-[310px] text-sm leading-5 text-[#5b4a42]">
             Sigue aprendiendo y avanzando paso a paso hacia tus metas.
           </p>
           <div className="mt-4">

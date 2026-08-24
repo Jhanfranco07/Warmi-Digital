@@ -137,9 +137,15 @@ function MobileLearningCard({
 }) {
   const content = (
     <>
-      <div className="relative min-h-[126px]">
+      <div className="relative min-h-[126px] bg-white">
         {image ? (
-          <Image src={image} alt={title} fill sizes="126px" className="object-cover" />
+          <Image
+            src={image}
+            alt={title}
+            fill
+            sizes="126px"
+            className="object-contain p-2"
+          />
         ) : (
           <LearningImagePlaceholder />
         )}

@@ -62,7 +62,7 @@ export function WarmiVoiceGuide({
       <span
         className={cn(
           "relative block overflow-hidden rounded-full bg-[#fff6ed]",
-          compact ? "h-8 w-8" : "h-10 w-10"
+          compact ? "h-11 w-11" : "h-12 w-12"
         )}
         aria-hidden="true"
       >
@@ -70,7 +70,7 @@ export function WarmiVoiceGuide({
           src={guideImage}
           alt=""
           fill
-          sizes={compact ? "32px" : "40px"}
+          sizes={compact ? "44px" : "48px"}
           className="object-cover"
         />
       </span>

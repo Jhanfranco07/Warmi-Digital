@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { EmptyState } from "@/shared/components/feedback/empty-state";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
@@ -36,6 +37,7 @@ export default async function ArtisanDashboardPage() {
   const firstName = displayName.split(" ")[0] ?? "artesana";
   const avatarUrl = profile?.avatarUrl ?? null;
   const enrolledCourses = data.enrollments.slice(0, 3);
+  const dashboardNarration = `Estás en tu inicio de Warmi Digital. Hola ${firstName}. Tu avance general es de ${data.generalProgress} por ciento. Tu próximo objetivo es ${data.nextObjective}. Desde aquí puedes continuar tu aprendizaje, revisar talleres, mirar convocatorias, editar tu historia o entrar a tu vitrina.`;
 
   return (
     <>
@@ -67,6 +69,13 @@ export default async function ArtisanDashboardPage() {
               placeholder="¿Qué quieres aprender hoy?"
             />
           </form>
+
+          <SpeechButton
+            text={dashboardNarration}
+            label="Escuchar esta pantalla"
+            className="mt-4"
+            compact
+          />
 
           <MobileSectionTitle title="Continúa aprendiendo" />
 
@@ -163,28 +172,31 @@ export default async function ArtisanDashboardPage() {
               </p>
             </div>
 
-            <Link
-              href="/artesana/perfil"
-              className="group flex items-center gap-3 rounded-full px-2 py-1 transition-colors hover:bg-[#fff0f5]"
-              aria-label="Ir a mi perfil"
-            >
-              <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={displayName}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
-                    {displayName.slice(0, 1)}
-                  </span>
-                )}
-              </span>
-              <ChevronRight className="h-5 w-5 text-[#7a3100] transition-transform group-hover:translate-x-0.5" />
-            </Link>
+            <div className="flex items-center gap-4">
+              <SpeechButton text={dashboardNarration} label="Escuchar" compact />
+              <Link
+                href="/artesana/perfil"
+                className="group flex items-center gap-3 rounded-full px-2 py-1 transition-colors hover:bg-[#fff0f5]"
+                aria-label="Ir a mi perfil"
+              >
+                <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={displayName}
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
+                      {displayName.slice(0, 1)}
+                    </span>
+                  )}
+                </span>
+                <ChevronRight className="h-5 w-5 text-[#7a3100] transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           </header>
 
           <section className="mt-10 grid gap-8 xl:grid-cols-[1.45fr_0.95fr]">

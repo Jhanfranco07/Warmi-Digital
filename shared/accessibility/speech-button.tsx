@@ -29,6 +29,7 @@ export function SpeechButton({
     isPaused,
     isSupported,
     message,
+    selectedVoiceName,
     settings
   } = useSpeech();
   const disabled = !isSupported || !settings.voiceEnabled || !text.trim();
@@ -44,7 +45,7 @@ export function SpeechButton({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex flex-wrap items-center gap-2">
-        <WarmiVoiceGuide compact={compact} />
+        <WarmiVoiceGuide compact={compact} voiceName={selectedVoiceName} />
         {!isSpeaking ? (
           <Button
             type="button"

@@ -3,6 +3,7 @@ import { CheckCircle2, LogOut, Mail, MapPin, ShieldCheck, UserRound } from "luci
 
 import { ProfileForm } from "@/features/artisan/profile-form";
 import { logout } from "@/shared/actions/auth/logout";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { AccessibilitySettingsPanel } from "@/shared/accessibility/speech-controls";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
@@ -24,6 +25,7 @@ export default async function ArtisanProfilePage() {
   const craftTypeNames =
     profile?.craftTypes.map((item) => item.craftType.name).join(", ") ??
     "Especialidad pendiente";
+  const profileNarration = `Estás en Mi perfil. Aquí puedes revisar tus datos personales, comunidad, especialidad, correo y estado de cuenta. También puedes configurar la ayuda por voz, cambiar tamaño de texto, activar alto contraste o reducir animaciones.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -38,12 +40,15 @@ export default async function ArtisanProfilePage() {
               cuenta.
             </p>
           </div>
-          <form action={logout}>
-            <Button type="submit" variant="outline" className="rounded-full">
-              <LogOut className="h-5 w-5" />
-              Cerrar sesion
-            </Button>
-          </form>
+          <div className="flex flex-wrap items-center gap-3">
+            <SpeechButton text={profileNarration} label="Escuchar" compact />
+            <form action={logout}>
+              <Button type="submit" variant="outline" className="rounded-full">
+                <LogOut className="h-5 w-5" />
+                Cerrar sesion
+              </Button>
+            </form>
+          </div>
         </header>
 
         <section className="mt-8 grid gap-7 xl:grid-cols-[1.15fr_0.85fr]">

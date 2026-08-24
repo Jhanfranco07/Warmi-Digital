@@ -10,6 +10,7 @@ import {
   Users
 } from "lucide-react";
 
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
@@ -37,6 +38,7 @@ export default async function ArtisanWorkshopsPage() {
       total + Math.max(1, Math.round((endsAt.getTime() - startsAt.getTime()) / 3600000))
     );
   }, 0);
+  const workshopsNarration = `Estás en Talleres. Aquí puedes revisar los espacios donde aprendes herramientas digitales, trámites simples, comunicación y mejora de tu vitrina cultural. Tienes ${upcoming.length} talleres próximos, ${completed.length} talleres completados y ${totalHours} horas de aprendizaje registradas. Revisa fecha, hora, lugar y facilitadora antes de participar.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -53,6 +55,7 @@ export default async function ArtisanWorkshopsPage() {
           </div>
 
           <div className="hidden items-center gap-3 xl:flex">
+            <SpeechButton text={workshopsNarration} label="Escuchar" compact />
             <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
               {avatarUrl ? (
                 <Image
@@ -76,6 +79,13 @@ export default async function ArtisanWorkshopsPage() {
             </div>
           </div>
         </header>
+
+        <SpeechButton
+          text={workshopsNarration}
+          label="Escuchar esta pantalla"
+          className="mt-5 xl:hidden"
+          compact
+        />
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
           <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">

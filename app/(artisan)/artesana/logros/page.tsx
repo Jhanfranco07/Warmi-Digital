@@ -8,6 +8,7 @@ import {
   ArtisanShell,
   ArtisanStatCard
 } from "@/features/artisan/artisan-panel";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
@@ -32,10 +33,12 @@ export default async function ArtisanAchievementsPage() {
         ) / artisan.enrollments.length
       )
     : 0;
+  const achievementsNarration = `Estás en Mis logros. Tienes ${badges.length} insignias, ${certificates.length} certificados y un avance promedio de ${averageProgress} por ciento. Aquí puedes revisar tus reconocimientos y cursos completados.`;
 
   return (
     <ArtisanShell>
-      <header>
+      <header className="flex flex-wrap items-start justify-between gap-5">
+        <div>
         <h1 className="font-serif text-5xl font-bold leading-none text-[#101833] md:text-6xl 2xl:text-7xl">
           Mis logros <span className="text-4xl text-[#b5245b]">-</span>
         </h1>
@@ -43,6 +46,8 @@ export default async function ArtisanAchievementsPage() {
           Revisa los avances, insignias y certificados obtenidos en tu ruta de
           aprendizaje.
         </p>
+        </div>
+        <SpeechButton text={achievementsNarration} label="Escuchar" compact />
       </header>
 
       <section className="grid gap-5 md:grid-cols-3">

@@ -12,6 +12,7 @@ import {
 
 import { StoryForm } from "@/features/artisan/story-form";
 import { StoryGalleryManager } from "@/features/artisan/story-gallery-manager";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { StoryService } from "@/shared/services/story.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -39,6 +40,7 @@ export default async function ArtisanStoryPage() {
       order
     })) ?? [];
   const techniques = splitList(story?.techniques);
+  const storyNarration = `Estás en Mi historia. Aquí puedes contar quién eres, de dónde vienes y qué técnica artesanal desarrollas. Tu comunidad registrada es ${communityName} y tu especialidad es ${craftName}. Completa tu historia personal, tradición familiar, significado cultural y galería para que cada pieza tenga memoria y contexto.`;
 
   return (
     <>
@@ -52,6 +54,13 @@ export default async function ArtisanStoryPage() {
             Comparte tus raíces, tu camino y lo que te inspira a seguir creando con tus
             manos.
           </p>
+
+          <SpeechButton
+            text={storyNarration}
+            label="Escuchar esta pantalla"
+            className="mt-4"
+            compact
+          />
 
           <article className="mt-6 rounded-2xl border border-[#f0c3cf] bg-white p-4 shadow-[0_14px_30px_rgba(122,16,66,0.1)]">
             <div className="flex items-center gap-4">
@@ -102,7 +111,10 @@ export default async function ArtisanStoryPage() {
                   "Completa tu perfil cultural para documentar tu identidad, técnica y memoria."}
               </p>
             </div>
-            <AvatarImage imageUrl={coverUrl} name={displayName} size="desktop" />
+            <div className="flex items-center gap-4">
+              <SpeechButton text={storyNarration} label="Escuchar" compact />
+              <AvatarImage imageUrl={coverUrl} name={displayName} size="desktop" />
+            </div>
           </header>
 
           <section className="mt-8 grid gap-7 xl:grid-cols-[1.08fr_0.9fr]">

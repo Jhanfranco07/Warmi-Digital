@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 import { ArrowLeft, Info, Search, Send, SlidersHorizontal } from "lucide-react";
 
 import { MessageComposer } from "@/features/artisan/message-composer";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
 import { ConversationRepository } from "@/shared/repositories/conversation.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -28,6 +29,10 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
   const selected = selectedId
     ? await repository.findAuthorizedConversation(selectedId, session.user.id)
     : null;
+  const unreadCount = conversations.filter((conversation) =>
+    hasUnreadConversation(conversation, session.user.id)
+  ).length;
+  const messagesNarration = `Estás en Mensajes. Tienes ${conversations.length} conversaciones y ${unreadCount} conversaciones no leídas. En la lista puedes elegir una conversación. Al abrirla, lee los mensajes y escribe tu respuesta en el campo inferior.`;
 
   return (
     <>
@@ -37,6 +42,13 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
           <h1 className="font-serif text-5xl font-bold leading-tight text-[#7a1042]">
             Mensajes <span className="text-[#ef9baa]">-</span>
           </h1>
+
+          <SpeechButton
+            text={messagesNarration}
+            label="Escuchar esta pantalla"
+            className="mt-4"
+            compact
+          />
 
           <div className="mt-6 flex min-h-16 items-center gap-4 rounded-full border border-[#f0c3cf] bg-white px-5 shadow-[0_14px_30px_rgba(181,36,91,0.08)]">
             <Search className="h-7 w-7 text-[#b5245b]" />
@@ -98,6 +110,7 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
                 Conversa con facilitadoras y comunidad desde tus conversaciones reales.
               </p>
             </div>
+            <SpeechButton text={messagesNarration} label="Escuchar" compact />
           </header>
 
           <section className="mt-8 grid gap-8 xl:grid-cols-[0.7fr_1.3fr]">

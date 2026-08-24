@@ -1,10 +1,16 @@
 import { Mail, MessageCircle, ShieldCheck } from "lucide-react";
 
+import { SpeechButton } from "@/shared/accessibility/speech-button";
+
 export default function ArtisanHelpPage() {
+  const helpNarration =
+    "Estás en Ayuda. Aquí encuentras opciones para pedir acompañamiento, consultar soporte y proteger tu cuenta. Si tienes dudas sobre aprendizaje, talleres o vitrina, escribe a tu facilitadora desde Mensajes.";
+
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
       <div className="mx-auto w-full max-w-[1760px]">
-        <header>
+        <header className="flex flex-wrap items-start justify-between gap-5">
+          <div>
           <h1 className="font-serif text-5xl font-bold leading-none text-[#101833] md:text-6xl">
             Ayuda
           </h1>
@@ -12,6 +18,8 @@ export default function ArtisanHelpPage() {
             Encuentra canales de soporte para resolver dudas sobre aprendizaje, talleres,
             vitrina cultural y uso de la plataforma.
           </p>
+          </div>
+          <SpeechButton text={helpNarration} label="Escuchar" compact />
         </header>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">

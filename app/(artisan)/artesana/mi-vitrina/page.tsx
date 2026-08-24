@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, MapPin, PencilLine, Plus, SlidersHorizontal } from "lucide-react";
 
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -29,6 +30,7 @@ export default async function ArtisanShowcasePage() {
     image: product.images[0]?.file.url ?? null,
     status: product.status
   }));
+  const showcaseNarration = `Estás en Mi vitrina. Este espacio muestra tu identidad, tu comunidad y las piezas que has documentado. Tienes ${products.length} piezas registradas. Puedes agregar una nueva pieza o editar una pieza publicada para mejorar su historia, técnica, materiales e imagen.`;
 
   return (
     <>
@@ -51,6 +53,13 @@ export default async function ArtisanShowcasePage() {
           <p className="mt-2 max-w-[250px] text-sm leading-5 text-[#5b4a42]">
             Comparte tu arte y conecta con personas que valoran lo artesanal.
           </p>
+
+          <SpeechButton
+            text={showcaseNarration}
+            label="Escuchar esta pantalla"
+            className="mt-4"
+            compact
+          />
 
           <article className="mt-6 grid grid-cols-[1fr_144px] overflow-hidden rounded-2xl border border-[#f0c3cf] bg-white shadow-[0_14px_30px_rgba(122,16,66,0.1)]">
             <div className="p-5">
@@ -170,6 +179,7 @@ export default async function ArtisanShowcasePage() {
                 Comparte tu arte, tus saberes y la esencia de tu comunidad con el mundo.
               </p>
             </div>
+            <SpeechButton text={showcaseNarration} label="Escuchar" compact />
           </header>
 
           <section className="mt-8 overflow-hidden rounded-[22px] border border-[#ecd0bd] bg-white shadow-[0_24px_70px_rgba(122,49,0,0.11)]">

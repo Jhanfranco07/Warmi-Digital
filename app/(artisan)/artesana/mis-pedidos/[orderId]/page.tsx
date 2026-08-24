@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArtisanOrderActions } from "@/features/orders/artisan-order-actions";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { ArtisanOrderService } from "@/shared/services/artisan-order.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 import {
@@ -59,6 +60,7 @@ export default async function ArtisanOrderDetailPage({
   const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
   const firstItem = order.items[0];
   const image = firstItem?.product.images[0]?.file.url ?? fallbackProduct;
+  const orderNarration = `Estás viendo el detalle del pedido número ${order.id.slice(0, 6).toUpperCase()}. El cliente es ${buyerName}. El pedido tiene ${totalQuantity} piezas y el total para tus piezas es ${artisanTotal.toFixed(2)} soles. El estado actual es ${artisanOrderStatusLabel[order.status]}. Revisa los datos antes de actualizar el estado o cancelar el pedido.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -87,14 +89,17 @@ export default async function ArtisanOrderDetailPage({
               no se editan desde esta pantalla.
             </p>
           </div>
-          <Badge
-            className={cn(
-              "w-fit rounded-full border px-4 py-2 text-sm font-bold",
-              artisanOrderStatusClass[order.status]
-            )}
-          >
-            {artisanOrderStatusLabel[order.status]}
-          </Badge>
+          <div className="flex flex-wrap items-center gap-3">
+            <SpeechButton text={orderNarration} label="Escuchar" compact />
+            <Badge
+              className={cn(
+                "w-fit rounded-full border px-4 py-2 text-sm font-bold",
+                artisanOrderStatusClass[order.status]
+              )}
+            >
+              {artisanOrderStatusLabel[order.status]}
+            </Badge>
+          </div>
         </header>
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.65fr)]">

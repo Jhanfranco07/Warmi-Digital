@@ -5,9 +5,51 @@ import { cn } from "@/shared/lib/utils";
 type WarmiVoiceGuideProps = {
   compact?: boolean;
   className?: string;
+  voiceName?: string;
 };
 
-export function WarmiVoiceGuide({ compact = false, className }: WarmiVoiceGuideProps) {
+const maleVoiceMarkers = [
+  "hombre",
+  "male",
+  "masculino",
+  "jorge",
+  "juan",
+  "carlos",
+  "diego",
+  "miguel",
+  "pablo",
+  "raul",
+  "alvaro",
+  "antonio",
+  "david",
+  "helio"
+];
+
+function normalizeVoiceName(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function getGuideImage(voiceName?: string) {
+  const normalizedVoiceName = normalizeVoiceName(voiceName ?? "");
+  const isMaleVoice = maleVoiceMarkers.some((marker) =>
+    normalizedVoiceName.includes(marker)
+  );
+
+  return isMaleVoice
+    ? "/images/accessibility/warmi-voice-guide1.png"
+    : "/images/accessibility/warmi-voice-guide2.png";
+}
+
+export function WarmiVoiceGuide({
+  compact = false,
+  className,
+  voiceName
+}: WarmiVoiceGuideProps) {
+  const guideImage = getGuideImage(voiceName);
+
   return (
     <div
       className={cn(
@@ -25,7 +67,7 @@ export function WarmiVoiceGuide({ compact = false, className }: WarmiVoiceGuideP
         aria-hidden="true"
       >
         <Image
-          src="/images/accessibility/warmi-voice-guide.png"
+          src={guideImage}
           alt=""
           fill
           sizes={compact ? "32px" : "40px"}

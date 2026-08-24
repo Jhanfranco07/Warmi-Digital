@@ -8,6 +8,7 @@ import {
   ArtisanShell,
   ArtisanStatCard
 } from "@/features/artisan/artisan-panel";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
@@ -35,6 +36,7 @@ export default async function ArtisanOpportunitiesPage() {
     if (!opportunity.spots) return total;
     return total + Math.max(opportunity.spots - opportunity._count.applications, 0);
   }, 0);
+  const opportunitiesNarration = `Estás en Convocatorias. Hay ${opportunities.length} oportunidades disponibles para revisar. Ya tienes ${applications.length} postulaciones enviadas. Abre una convocatoria para ver sus requisitos, fecha límite, modalidad, cupos y estado de postulación.`;
 
   return (
     <ArtisanShell>
@@ -43,6 +45,13 @@ export default async function ArtisanOpportunitiesPage() {
         title="Oportunidades para crecer"
         description="Revisa ferias, concursos y programas disponibles. Postula paso a paso y sigue el estado de tu solicitud."
         imageUrl="/images/home/bienvenida-warmi.png"
+        actions={
+          <SpeechButton
+            text={opportunitiesNarration}
+            label="Escuchar esta pantalla"
+            compact
+          />
+        }
       />
 
       <section className="grid gap-5 md:grid-cols-3">

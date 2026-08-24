@@ -1,6 +1,8 @@
 "use client";
 
 export const ACCESSIBILITY_STORAGE_KEY = "warmi-accessibility-settings";
+export const DEFAULT_SPANISH_VOICE_URI = "warmi-default-google-espanol-es-es";
+export const DEFAULT_SPANISH_VOICE_LABEL = "Google español (es-ES)";
 
 export const speechRateOptions = {
   slow: { label: "Lenta", rate: 0.8 },
@@ -34,7 +36,7 @@ export const defaultAccessibilitySettings: AccessibilitySettings = {
   voiceEnabled: true,
   speechRate: "normal",
   speechTone: "warm",
-  speechVoiceURI: "auto"
+  speechVoiceURI: DEFAULT_SPANISH_VOICE_URI
 };
 
 export function readAccessibilitySettings(): AccessibilitySettings {

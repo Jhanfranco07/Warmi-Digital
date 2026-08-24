@@ -13,6 +13,7 @@ import {
   Search
 } from "lucide-react";
 
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
@@ -61,6 +62,7 @@ export default async function ArtisanOrdersPage({
   const pendingOrders = orders.filter((order) =>
     pendingStatusSet.has(order.status)
   ).length;
+  const ordersNarration = `Estás en Mis pedidos. Aquí ves los pedidos relacionados con tus piezas publicadas. Tienes ${totalOrders} pedidos en esta vista y ${pendingOrders} por atender. Puedes filtrar por estado, abrir el detalle de un pedido, actualizar su estado o cancelarlo indicando un motivo.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -79,9 +81,12 @@ export default async function ArtisanOrdersPage({
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:min-w-[360px]">
-            <SummaryPill label="Pedidos" value={totalOrders} />
-            <SummaryPill label="Por atender" value={pendingOrders} />
+          <div className="grid gap-3 sm:min-w-[360px]">
+            <SpeechButton text={ordersNarration} label="Escuchar" compact />
+            <div className="grid grid-cols-2 gap-3">
+              <SummaryPill label="Pedidos" value={totalOrders} />
+              <SummaryPill label="Por atender" value={pendingOrders} />
+            </div>
           </div>
         </header>
 

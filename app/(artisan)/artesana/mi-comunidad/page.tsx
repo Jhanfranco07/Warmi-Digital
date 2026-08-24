@@ -5,6 +5,7 @@ import { Bell, BookOpen, ChevronRight, MapPin, Megaphone, Users } from "lucide-r
 
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { ArtisanCommunityService } from "@/shared/services/artisan-community.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -15,6 +16,9 @@ export default async function ArtisanCommunityPage() {
   const profile = artisan?.profile;
   const displayName = profile?.displayName ?? session.user.name ?? "Artesana Warmi";
   const avatarUrl = profile?.avatarUrl ?? null;
+  const communityNarration = community
+    ? `Estás en Mi comunidad. Tu comunidad es ${community.name}. Hay ${community.profiles.length} artesanas vinculadas, ${stories.length} historias culturales documentadas y ${announcements.length} oportunidades para revisar. Este espacio te ayuda a conectar, compartir y crecer junto a otras artesanas.`
+    : "Estás en Mi comunidad. Tu perfil todavía no tiene una comunidad asignada. Cuando se registre, aquí verás artesanas, historias culturales y oportunidades de tu entorno.";
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -30,6 +34,7 @@ export default async function ArtisanCommunityPage() {
             </p>
           </div>
           <div className="hidden items-center gap-5 xl:flex">
+            <SpeechButton text={communityNarration} label="Escuchar" compact />
             <Link
               href="/artesana/mensajes"
               className="relative grid h-12 w-12 place-items-center rounded-full text-[#7a3100]"
@@ -66,6 +71,13 @@ export default async function ArtisanCommunityPage() {
             </Link>
           </div>
         </header>
+
+        <SpeechButton
+          text={communityNarration}
+          label="Escuchar esta pantalla"
+          className="mt-5 xl:hidden"
+          compact
+        />
 
         {!community ? (
           <section className="mt-8">

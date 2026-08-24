@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Mic2, Sparkles, Volume2 } from "lucide-react";
 
 import {
+  DEFAULT_SPANISH_VOICE_LABEL,
+  DEFAULT_SPANISH_VOICE_URI,
   type AccessibilitySettings,
   type SpeechRateOption,
   type SpeechToneOption,
@@ -15,6 +17,7 @@ import {
   speechToneOptions
 } from "@/shared/accessibility/accessibility-settings";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
+import { WarmiVoiceGuide } from "@/shared/accessibility/warmi-voice-guide";
 import { Button } from "@/shared/components/ui/button";
 import { Switch } from "@/shared/components/ui/switch";
 import { cn } from "@/shared/lib/utils";
@@ -46,6 +49,23 @@ const visualPreferences: Array<{
 
 function getVoiceLabel(voice: SpeechSynthesisVoice) {
   return `${voice.name} (${voice.lang})`;
+}
+
+function normalizeVoiceText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function isDefaultGoogleSpanishVoice(voice: SpeechSynthesisVoice) {
+  const name = normalizeVoiceText(voice.name);
+
+  return (
+    voice.lang.toLowerCase() === "es-es" &&
+    name.includes("google") &&
+    name.includes("espanol")
+  );
 }
 
 export function AccessibilitySettingsPanel() {
@@ -85,12 +105,26 @@ export function AccessibilitySettingsPanel() {
       voice.lang.toLowerCase().startsWith("es")
     );
 
-    return spanishVoices.length > 0 ? spanishVoices : voices;
+    const options = spanishVoices.length > 0 ? spanishVoices : voices;
+
+    return [...options].sort((first, second) => {
+      if (isDefaultGoogleSpanishVoice(first)) return -1;
+      if (isDefaultGoogleSpanishVoice(second)) return 1;
+
+      return getVoiceLabel(first).localeCompare(getVoiceLabel(second), "es");
+    });
   }, [voices]);
 
-  const selectedVoice = voiceOptions.find(
-    (voice) => voice.voiceURI === settings.speechVoiceURI
-  );
+  const selectedVoice =
+    settings.speechVoiceURI === DEFAULT_SPANISH_VOICE_URI
+      ? voiceOptions.find(isDefaultGoogleSpanishVoice)
+      : voiceOptions.find((voice) => voice.voiceURI === settings.speechVoiceURI);
+  const selectedVoiceLabel =
+    settings.speechVoiceURI === DEFAULT_SPANISH_VOICE_URI
+      ? DEFAULT_SPANISH_VOICE_LABEL
+      : selectedVoice
+        ? getVoiceLabel(selectedVoice)
+        : null;
 
   function updateSettings(next: AccessibilitySettings) {
     setSettings(next);
@@ -131,7 +165,11 @@ export function AccessibilitySettingsPanel() {
       <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-2xl border border-[#f4d8cc] bg-[#fffdfb] p-5">
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ffe8ef] text-[#b5245b]">
+            <WarmiVoiceGuide
+              voiceName={selectedVoiceLabel ?? settings.speechVoiceURI}
+              className="mt-0.5 hidden sm:inline-flex"
+            />
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ffe8ef] text-[#b5245b] sm:hidden">
               <Mic2 className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
@@ -157,7 +195,10 @@ export function AccessibilitySettingsPanel() {
             }
             className="mt-2 min-h-touch-target w-full rounded-2xl border border-[#ecd0bd] bg-white px-4 py-3 text-sm font-semibold text-[#3a2418] outline-none transition focus:border-[#b5245b] focus:ring-4 focus:ring-[#f8d8e5]"
           >
-            <option value="auto">Automática recomendada</option>
+            <option value={DEFAULT_SPANISH_VOICE_URI}>
+              {DEFAULT_SPANISH_VOICE_LABEL} recomendada
+            </option>
+            <option value="auto">Automática del dispositivo</option>
             {voiceOptions.map((voice) => (
               <option key={voice.voiceURI} value={voice.voiceURI}>
                 {getVoiceLabel(voice)}
@@ -168,9 +209,9 @@ export function AccessibilitySettingsPanel() {
             Si no ves muchas opciones, puedes instalar voces en español desde la
             configuración de voz de tu sistema o probar otro navegador.
           </p>
-          {selectedVoice ? (
+          {selectedVoiceLabel ? (
             <p className="mt-2 text-xs font-bold text-[#7a1042]">
-              Voz seleccionada: {getVoiceLabel(selectedVoice)}
+              Voz seleccionada: {selectedVoiceLabel}
             </p>
           ) : null}
         </div>

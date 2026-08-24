@@ -11,6 +11,7 @@ import {
 
 import { ApplyOpportunityButton } from "@/features/opportunities/apply-opportunity-button";
 import { ArtisanPanel, ArtisanShell } from "@/features/artisan/artisan-panel";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
@@ -43,6 +44,11 @@ export default async function ArtisanOpportunityDetailPage({ params }: PageProps
     ? Math.max(opportunity.spots - opportunity._count.applications, 0)
     : null;
   const isClosed = Boolean(opportunity.endsAt && opportunity.endsAt < new Date());
+  const opportunityNarration = `Estás viendo la convocatoria ${opportunity.title}. Lee la descripción, requisitos, fecha de inicio, fecha límite, modalidad y cupos antes de postular. ${
+    application
+      ? `Tu postulación está en estado ${opportunityApplicationStatusLabel[application.status]}.`
+      : "Si la convocatoria está abierta, puedes enviar tu postulación con el botón Postular."
+  }`;
 
   return (
     <ArtisanShell>
@@ -52,6 +58,12 @@ export default async function ArtisanOpportunityDetailPage({ params }: PageProps
           Volver a convocatorias
         </Link>
       </Button>
+
+      <SpeechButton
+        text={opportunityNarration}
+        label="Escuchar esta convocatoria"
+        compact
+      />
 
       <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
         <ArtisanPanel

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import {
+  DEFAULT_SPANISH_VOICE_URI,
   type AccessibilitySettings,
   readAccessibilitySettings,
   speechRateOptions,
@@ -26,6 +27,35 @@ function getBrowserSynthesis() {
   return window.speechSynthesis;
 }
 
+function normalizeVoiceText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function isRecommendedGoogleSpanishVoice(voice: SpeechSynthesisVoice) {
+  const name = normalizeVoiceText(voice.name);
+
+  return (
+    voice.lang.toLowerCase() === "es-es" &&
+    name.includes("google") &&
+    name.includes("espanol")
+  );
+}
+
+function getFallbackSpanishVoice(voices: SpeechSynthesisVoice[]) {
+  return (
+    voices.find(isRecommendedGoogleSpanishVoice) ??
+    voices.find((voice) => voice.lang.toLowerCase() === "es-es") ??
+    voices.find((voice) => voice.lang.toLowerCase() === "es-pe") ??
+    voices.find((voice) => voice.lang.toLowerCase() === "es-419") ??
+    voices.find((voice) => voice.lang.toLowerCase().startsWith("es")) ??
+    voices[0] ??
+    null
+  );
+}
+
 function getPreferredVoice(settings: AccessibilitySettings) {
   const synthesis = getBrowserSynthesis();
 
@@ -35,7 +65,10 @@ function getPreferredVoice(settings: AccessibilitySettings) {
 
   const voices = synthesis.getVoices();
 
-  if (settings.speechVoiceURI !== "auto") {
+  if (
+    settings.speechVoiceURI !== "auto" &&
+    settings.speechVoiceURI !== DEFAULT_SPANISH_VOICE_URI
+  ) {
     const selectedVoice = voices.find(
       (voice) => voice.voiceURI === settings.speechVoiceURI
     );
@@ -45,13 +78,7 @@ function getPreferredVoice(settings: AccessibilitySettings) {
     }
   }
 
-  return (
-    voices.find((voice) => voice.lang.toLowerCase() === "es-pe") ??
-    voices.find((voice) => voice.lang.toLowerCase() === "es-419") ??
-    voices.find((voice) => voice.lang.toLowerCase().startsWith("es")) ??
-    voices[0] ??
-    null
-  );
+  return getFallbackSpanishVoice(voices);
 }
 
 export function useSpeech() {
@@ -65,6 +92,7 @@ export function useSpeech() {
     settings: readAccessibilitySettings()
   }));
   const settings = state.settings;
+  const selectedVoiceName = getPreferredVoice(settings)?.name ?? settings.speechVoiceURI;
 
   useEffect(() => {
     setState((current) => ({
@@ -161,7 +189,7 @@ export function useSpeech() {
       const selectedVoice = getPreferredVoice(settings);
       const utterance = new SpeechSynthesisUtterance(cleanText);
 
-      utterance.lang = selectedVoice?.lang ?? "es-PE";
+      utterance.lang = selectedVoice?.lang ?? "es-ES";
       utterance.rate = speechRateOptions[settings.speechRate].rate;
       utterance.pitch = speechToneOptions[settings.speechTone].pitch;
 
@@ -225,6 +253,7 @@ export function useSpeech() {
     isPaused: state.isPaused,
     isSupported: state.isSupported,
     message: state.message,
+    selectedVoiceName,
     settings: state.settings
   };
 }

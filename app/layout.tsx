@@ -23,7 +23,12 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Warmi Digital",
   description:
-    "Ecosistema digital para aprendizaje, comunidad, autonomía y preservación cultural."
+    "Ecosistema digital para aprendizaje, comunidad, autonomía y preservación cultural.",
+  icons: {
+    icon: "/icons/faviconWarmi.png",
+    shortcut: "/icons/faviconWarmi.png",
+    apple: "/icons/faviconWarmi.png"
+  }
 };
 
 export default function RootLayout({

@@ -3,3 +3,4 @@ export * from "@/shared/validations/artisan-schemas";
 export * from "@/shared/validations/facilitator-schemas";
 export * from "@/shared/validations/upload-schemas";
 export * from "@/shared/validations/opportunity-schemas";
+export * from "@/shared/validations/order-schemas";

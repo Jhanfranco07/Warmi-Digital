@@ -697,17 +697,18 @@ model ProductImage {
 }
 
 model Order {
-  id            String      @id @default(uuid())
-  buyerId       String
-  status        OrderStatus @default(PENDING)
-  totalAmount   Decimal
-  currency      String      @default("PEN")
-  placedAt      DateTime    @default(now())
-  fulfilledAt   DateTime?
-  cancelledAt   DateTime?
-  shippingNotes String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id                 String      @id @default(uuid())
+  buyerId            String
+  status             OrderStatus @default(PENDING)
+  totalAmount        Decimal
+  currency           String      @default("PEN")
+  placedAt           DateTime    @default(now())
+  fulfilledAt        DateTime?
+  cancelledAt        DateTime?
+  cancellationReason String?
+  shippingNotes      String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
   buyer   User        @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Restrict)
   items   OrderItem[]

@@ -24,29 +24,42 @@ export class ArtisanDashboardService {
     private readonly notificationRepository = new NotificationRepository()
   ) {}
 
-  async getDashboard(userId: string) {
-    const artisan = await this.artisanRepository.findProfile(userId);
-    const communityId = artisan?.profile?.communityId;
+  async getLearningOverview(userId: string) {
+    const [artisan, workshops] = await Promise.all([
+      this.artisanRepository.findDashboardProfile(userId),
+      this.workshopService.getWorkshops(userId)
+    ]);
 
+    return {
+      artisan,
+      workshops,
+      nextWorkshop: workshops.upcoming[0] ?? null
+    };
+  }
+
+  async getDashboard(userId: string) {
     const [
+      artisan,
       enrollments,
       workshops,
-      opportunities,
       story,
       products,
       orders,
       notifications,
       unreadNotifications
     ] = await Promise.all([
-      this.courseRepository.findEnrolledCourses(userId),
+      this.artisanRepository.findDashboardProfile(userId),
+      this.courseRepository.findEnrolledCourseSummaries(userId),
       this.workshopService.getWorkshops(userId),
-      this.opportunityService.getOpportunities(communityId),
       this.storyRepository.findByUser(userId),
-      this.productRepository.findByArtisan(userId),
-      this.orderRepository.findRecentForArtisan(userId),
+      this.productRepository.findSummaryByArtisan(userId),
+      this.orderRepository.findRecentSummaryForArtisan(userId),
       this.notificationRepository.findRecentForUser(userId),
       this.notificationRepository.countUnread(userId)
     ]);
+    const opportunities = await this.opportunityService.getOpportunities(
+      artisan?.profile?.communityId
+    );
 
     const courseProgress = enrollments.map((enrollment) => {
       const totalLessons = enrollment.course.modules.reduce(

@@ -19,6 +19,25 @@ export class ProductRepository {
     });
   }
 
+  findSummaryByArtisan(artisanId: string, take = 6) {
+    return this.db.product.findMany({
+      where: { artisanId, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        updatedAt: true,
+        images: {
+          select: { file: { select: { url: true, altText: true } } },
+          orderBy: { order: "asc" },
+          take: 1
+        }
+      },
+      orderBy: { updatedAt: "desc" },
+      take
+    });
+  }
+
   findPublic(filters?: {
     q?: string;
     categoryId?: string;

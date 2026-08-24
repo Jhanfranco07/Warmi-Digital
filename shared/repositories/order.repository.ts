@@ -38,6 +38,31 @@ export class OrderRepository {
     });
   }
 
+  findRecentSummaryForArtisan(artisanId: string, take = 5) {
+    return this.db.order.findMany({
+      where: {
+        items: { some: { product: { artisanId, deletedAt: null } } }
+      },
+      select: {
+        id: true,
+        status: true,
+        totalAmount: true,
+        placedAt: true,
+        items: {
+          where: { product: { artisanId, deletedAt: null } },
+          select: {
+            id: true,
+            quantity: true,
+            product: { select: { id: true, name: true } }
+          },
+          take: 3
+        }
+      },
+      orderBy: { placedAt: "desc" },
+      take
+    });
+  }
+
   create(data: Parameters<typeof this.db.order.create>[0]["data"]) {
     return this.db.order.create({ data });
   }

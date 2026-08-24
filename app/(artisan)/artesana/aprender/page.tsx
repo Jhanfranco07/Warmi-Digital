@@ -26,28 +26,34 @@ import { requireRole } from "@/shared/server/auth/helpers";
 
 export default async function ArtisanLearningPage() {
   const session = await requireRole("ARTESANA");
-  const [learning, dashboard] = await Promise.all([
+  const [learning, overview] = await Promise.all([
     new LearningService().getLearningPage(session.user.id),
-    new ArtisanDashboardService().getDashboard(session.user.id)
+    new ArtisanDashboardService().getLearningOverview(session.user.id)
   ]);
   const enrolled = learning.enrolledCourses;
+  const currentCourse = enrolled.find((course) => course.progress < 100) ?? enrolled[0];
   const averageProgress = enrolled.length
     ? Math.round(
         enrolled.reduce((total, course) => total + course.progress, 0) / enrolled.length
       )
     : 0;
   const completedModules = Math.round((averageProgress / 100) * 5);
-  const currentCourse = dashboard.currentEnrollment?.course;
-  const profile = dashboard.artisan?.profile;
+  const profile = overview.artisan?.profile;
   const displayName = profile?.displayName ?? session.user.name ?? "Artesana Warmi";
   const craft = profile?.craftTypes[0]?.craftType.name ?? "Especialidad por registrar";
   const avatarUrl = profile?.avatarUrl ?? null;
+  const routeName =
+    averageProgress < 40
+      ? (currentCourse?.title ?? "Ruta por iniciar")
+      : averageProgress < 75
+        ? "Colorista Digital"
+        : "Guardiana de la Tradición";
 
   const mobileCourses = enrolled.map(toDisplayCourse);
   const inProgressCourses = mobileCourses.filter((course) => course.progress < 100);
   const completedCourses = mobileCourses.filter((course) => course.progress >= 100);
   const availableMobileCourses = learning.availableCourses.map(toAvailableDisplayCourse);
-  const workshopStats = dashboard.workshops;
+  const workshopStats = overview.workshops;
   const pageNarration = buildLearningPageNarration({
     enrolledCount: enrolled.length,
     availableCount: learning.availableCourses.length,
@@ -222,7 +228,7 @@ export default async function ArtisanLearningPage() {
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   <Badge className="rounded-xl bg-[#ffe8ef] px-5 py-2 text-[#b5245b] hover:bg-[#ffe8ef]">
-                    {dashboard.routeName}
+                    {routeName}
                   </Badge>
                   <Badge
                     variant="outline"
@@ -281,7 +287,7 @@ export default async function ArtisanLearningPage() {
                       size="lg"
                       className="mt-7 min-h-[58px] rounded-xl bg-[#b5245b] px-8 text-base font-extrabold text-white shadow-[0_14px_28px_rgba(181,36,91,0.22)] hover:bg-[#941747]"
                     >
-                      <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
+                      <Link href={currentCourse.href as Route}>
                         <BookOpen className="h-5 w-5" />
                         Continuar lección
                       </Link>
@@ -305,25 +311,25 @@ export default async function ArtisanLearningPage() {
                 </div>
                 <div>
                   <h3 className="font-serif text-3xl font-bold leading-tight text-[#1b1c1a]">
-                    {dashboard.nextWorkshop?.workshop.title ?? "No tienes taller próximo"}
+                    {overview.nextWorkshop?.workshop.title ?? "No tienes taller próximo"}
                   </h3>
                   <div className="mt-5 grid gap-3 text-base text-[#5b4a42]">
                     <p className="flex items-center gap-3">
                       <CalendarDays className="h-5 w-5 text-[#7a3100]" />
-                      {dashboard.nextWorkshop?.workshop.startsAt
-                        ? format(dashboard.nextWorkshop.workshop.startsAt, "dd/MM/yyyy")
+                      {overview.nextWorkshop?.workshop.startsAt
+                        ? format(overview.nextWorkshop.workshop.startsAt, "dd/MM/yyyy")
                         : "Fecha pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <Clock className="h-5 w-5 text-[#7a3100]" />
-                      {dashboard.nextWorkshop?.workshop.startsAt
-                        ? format(dashboard.nextWorkshop.workshop.startsAt, "HH:mm")
+                      {overview.nextWorkshop?.workshop.startsAt
+                        ? format(overview.nextWorkshop.workshop.startsAt, "HH:mm")
                         : "Hora pendiente"}
                     </p>
                     <p className="flex items-center gap-3">
                       <MapPin className="h-5 w-5 text-[#7a3100]" />
-                      {dashboard.nextWorkshop?.workshop.location ??
-                        dashboard.nextWorkshop?.workshop.community?.name ??
+                      {overview.nextWorkshop?.workshop.location ??
+                        overview.nextWorkshop?.workshop.community?.name ??
                         "Lugar por confirmar"}
                     </p>
                   </div>

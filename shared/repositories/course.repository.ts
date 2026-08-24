@@ -28,6 +28,7 @@ export class CourseRepository {
     return this.db.enrollment.findMany({
       where: { userId },
       select: {
+        id: true,
         status: true,
         lastActivityAt: true,
         course: {

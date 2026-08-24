@@ -4,6 +4,39 @@ import type { ArtisanProfileInput } from "@/shared/validations";
 export class ArtisanRepository {
   constructor(protected readonly db = prisma) {}
 
+  findDashboardProfile(userId: string) {
+    return this.db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        profile: {
+          select: {
+            displayName: true,
+            avatarUrl: true,
+            communityId: true,
+            community: { select: { id: true, name: true } },
+            craftTypes: {
+              select: { craftType: { select: { id: true, name: true } } },
+              take: 1
+            }
+          }
+        },
+        userBadges: {
+          select: {
+            id: true,
+            reason: true,
+            awardedAt: true,
+            badge: { select: { id: true, name: true, description: true } }
+          },
+          orderBy: { awardedAt: "desc" },
+          take: 5
+        }
+      }
+    });
+  }
+
   findProfile(userId: string) {
     return this.db.user.findUnique({
       where: { id: userId },

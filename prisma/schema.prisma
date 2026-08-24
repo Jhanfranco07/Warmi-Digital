@@ -164,6 +164,18 @@ enum AnnouncementType {
   OTHER
 }
 
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum AnnouncementApplicationStatus {
+  IN_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
 enum CraftTypeEnum {
   TEJIDO
   BORDADO
@@ -218,47 +230,49 @@ enum PayoutStatus {
 }
 
 model User {
-  id                    String                  @id @default(uuid())
-  name                  String?
-  email                 String                  @unique
-  emailVerified         DateTime?
-  image                 String?
-  passwordHash          String?
-  locale                String                  @default("es")
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  deletedAt             DateTime?
-  profile               Profile?
-  userRoles             UserRoleAssignment[]
-  accounts              Account[]
-  sessions              Session[]
-  passwordResetTokens   PasswordResetToken[]    @relation("UserPasswordResetTokens")
-  enrollments           Enrollment[]
-  wallet                Wallet?
-  paymentMethods        PaymentMethod[]
-  ledgerEntries         LedgerEntry[]
-  payouts               Payout[]
-  products              Product[]               @relation("ArtisanProducts")
-  orders                Order[]                 @relation("BuyerOrders")
-  workshopsFacilitated  Workshop[]              @relation("FacilitatedWorkshops")
-  coursesFacilitated    Course[]                @relation("FacilitatedCourses")
-  workshopRegistrations WorkshopRegistration[]
-  attendances           Attendance[]
-  participants          Participant[]
-  messages              Message[]               @relation("SentMessages")
-  notifications         Notification[]
-  stories               Story[]
-  certificates          Certificate[]
-  announcements         Announcement[]          @relation("AnnouncementAuthor")
-  auditLogs             AuditLog[]              @relation("AuditActor")
-  userBadges            UserBadge[]
-  createdConversations  Conversation[]
-  files                 File[]
-  facilitatedArtisans   FacilitatorAssignment[] @relation("AssignmentFacilitator")
-  artisanFacilitators   FacilitatorAssignment[] @relation("AssignmentArtisan")
-  followUpsCreated      ArtisanFollowUp[]       @relation("FollowUpFacilitator")
-  followUpsReceived     ArtisanFollowUp[]       @relation("FollowUpArtisan")
-  attendanceRecorded    Attendance[]            @relation("AttendanceRecorder")
+  id                       String                    @id @default(uuid())
+  name                     String?
+  email                    String                    @unique
+  emailVerified            DateTime?
+  image                    String?
+  passwordHash             String?
+  locale                   String                    @default("es")
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  deletedAt                DateTime?
+  profile                  Profile?
+  userRoles                UserRoleAssignment[]
+  accounts                 Account[]
+  sessions                 Session[]
+  passwordResetTokens      PasswordResetToken[]      @relation("UserPasswordResetTokens")
+  enrollments              Enrollment[]
+  wallet                   Wallet?
+  paymentMethods           PaymentMethod[]
+  ledgerEntries            LedgerEntry[]
+  payouts                  Payout[]
+  products                 Product[]                 @relation("ArtisanProducts")
+  orders                   Order[]                   @relation("BuyerOrders")
+  workshopsFacilitated     Workshop[]                @relation("FacilitatedWorkshops")
+  coursesFacilitated       Course[]                  @relation("FacilitatedCourses")
+  workshopRegistrations    WorkshopRegistration[]
+  attendances              Attendance[]
+  participants             Participant[]
+  messages                 Message[]                 @relation("SentMessages")
+  notifications            Notification[]
+  stories                  Story[]
+  certificates             Certificate[]
+  announcements            Announcement[]            @relation("AnnouncementAuthor")
+  announcementApplications AnnouncementApplication[] @relation("AnnouncementApplicationArtisan")
+  announcementReviews      AnnouncementApplication[] @relation("AnnouncementApplicationReviewer")
+  auditLogs                AuditLog[]                @relation("AuditActor")
+  userBadges               UserBadge[]
+  createdConversations     Conversation[]
+  files                    File[]
+  facilitatedArtisans      FacilitatorAssignment[]   @relation("AssignmentFacilitator")
+  artisanFacilitators      FacilitatorAssignment[]   @relation("AssignmentArtisan")
+  followUpsCreated         ArtisanFollowUp[]         @relation("FollowUpFacilitator")
+  followUpsReceived        ArtisanFollowUp[]         @relation("FollowUpArtisan")
+  attendanceRecorded       Attendance[]              @relation("AttendanceRecorder")
 }
 
 model Role {
@@ -907,30 +921,58 @@ model Attendance {
 }
 
 model Announcement {
-  id           String           @id @default(uuid())
+  id           String             @id @default(uuid())
   title        String
   body         String
-  type         AnnouncementType @default(OTHER)
+  type         AnnouncementType   @default(OTHER)
+  status       AnnouncementStatus @default(DRAFT)
   institution  String?
   requirements String?
   officialUrl  String?
+  location     String?
+  spots        Int?
   startsAt     DateTime?
   endsAt       DateTime?
   publishedAt  DateTime?
   authorId     String?
   communityId  String?
   workshopId   String?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
 
-  author    User?      @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: SetNull)
-  community Community? @relation(fields: [communityId], references: [id], onDelete: SetNull)
-  workshop  Workshop?  @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  author       User?                     @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  community    Community?                @relation(fields: [communityId], references: [id], onDelete: SetNull)
+  workshop     Workshop?                 @relation(fields: [workshopId], references: [id], onDelete: SetNull)
+  applications AnnouncementApplication[]
 
   @@index([authorId])
   @@index([communityId])
   @@index([workshopId])
   @@index([type])
+  @@index([status])
+  @@index([endsAt])
+}
+
+model AnnouncementApplication {
+  id             String                        @id @default(uuid())
+  announcementId String
+  artisanId      String
+  status         AnnouncementApplicationStatus @default(IN_REVIEW)
+  appliedAt      DateTime                      @default(now())
+  reviewedAt     DateTime?
+  reviewedById   String?
+  reviewNotes    String?
+  createdAt      DateTime                      @default(now())
+  updatedAt      DateTime                      @updatedAt
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  artisan      User         @relation("AnnouncementApplicationArtisan", fields: [artisanId], references: [id], onDelete: Restrict)
+  reviewedBy   User?        @relation("AnnouncementApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@unique([announcementId, artisanId])
+  @@index([artisanId, status])
+  @@index([announcementId, status])
+  @@index([reviewedById])
 }
 
 model FacilitatorAssignment {

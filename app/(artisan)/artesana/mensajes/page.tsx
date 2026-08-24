@@ -10,7 +10,7 @@ import { ConversationRepository } from "@/shared/repositories/conversation.repos
 import { requireRole } from "@/shared/server/auth/helpers";
 
 type PageProps = {
-  searchParams?: Promise<{ conversation?: string }>;
+  searchParams?: Promise<{ conversation?: string; filter?: string }>;
 };
 
 export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
@@ -18,7 +18,13 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const repository = new ConversationRepository();
   const conversations = await repository.findForUser(session.user.id);
-  const selectedId = params?.conversation ?? conversations[0]?.id ?? null;
+  const showUnreadOnly = params?.filter === "unread";
+  const visibleConversations = showUnreadOnly
+    ? conversations.filter((conversation) =>
+        hasUnreadConversation(conversation, session.user.id)
+      )
+    : conversations;
+  const selectedId = params?.conversation ?? visibleConversations[0]?.id ?? null;
   const selected = selectedId
     ? await repository.findAuthorizedConversation(selectedId, session.user.id)
     : null;
@@ -38,15 +44,31 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
           </div>
 
           <div className="mt-6 flex items-center gap-8 border-b border-[#f5d2dc] text-lg">
-            <span className="border-b-2 border-[#b5245b] pb-3 font-bold text-[#7a1042]">
+            <Link
+              href="/artesana/mensajes"
+              className={`pb-3 ${
+                showUnreadOnly
+                  ? "text-[#8d7a72]"
+                  : "border-b-2 border-[#b5245b] font-bold text-[#7a1042]"
+              }`}
+            >
               Todas
-            </span>
-            <span className="pb-3 text-[#8d7a72]">No leidas</span>
+            </Link>
+            <Link
+              href="/artesana/mensajes?filter=unread"
+              className={`pb-3 ${
+                showUnreadOnly
+                  ? "border-b-2 border-[#b5245b] font-bold text-[#7a1042]"
+                  : "text-[#8d7a72]"
+              }`}
+            >
+              No leídas
+            </Link>
             <span className="pb-3 text-[#8d7a72]">Grupos</span>
           </div>
 
           <ConversationList
-            conversations={conversations}
+            conversations={visibleConversations}
             selectedId={selected?.id ?? null}
             currentUserId={session.user.id}
             mobile
@@ -85,17 +107,23 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
                   <Search className="h-5 w-5" />
                   Buscar conversaciones
                 </div>
-                <button
-                  type="button"
-                  className="grid h-14 place-items-center rounded-lg border border-[#ecd0bd] text-[#7a3100]"
-                  aria-label="Filtrar conversaciones"
+                <Link
+                  href={showUnreadOnly ? "/artesana/mensajes" : "/artesana/mensajes?filter=unread"}
+                  className={`grid h-14 place-items-center rounded-lg border border-[#ecd0bd] ${
+                    showUnreadOnly ? "bg-[#b5245b] text-white" : "text-[#7a3100]"
+                  }`}
+                  aria-label={
+                    showUnreadOnly
+                      ? "Mostrar todas las conversaciones"
+                      : "Mostrar conversaciones no leídas"
+                  }
                 >
                   <SlidersHorizontal className="h-6 w-6" />
-                </button>
+                </Link>
               </div>
 
               <ConversationList
-                conversations={conversations}
+                conversations={visibleConversations}
                 selectedId={selected?.id ?? null}
                 currentUserId={session.user.id}
               />
@@ -127,6 +155,22 @@ type ConversationListProps = {
   currentUserId: string;
   mobile?: boolean;
 };
+
+function hasUnreadConversation(
+  conversation: ConversationListProps["conversations"][number],
+  currentUserId: string
+) {
+  const currentParticipant = conversation.participants.find(
+    (participant) => participant.userId === currentUserId
+  );
+  const lastMessage = conversation.messages[0];
+
+  return Boolean(
+    lastMessage &&
+      lastMessage.senderId !== currentUserId &&
+      (!currentParticipant?.lastReadAt || lastMessage.createdAt > currentParticipant.lastReadAt)
+  );
+}
 
 function ConversationList({
   conversations,

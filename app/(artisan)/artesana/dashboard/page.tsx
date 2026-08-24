@@ -26,9 +26,6 @@ import { isSupportedImageUrl } from "@/shared/lib/image-url";
 import { ArtisanDashboardService } from "@/shared/services/artisan-dashboard.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 
-const textilePattern =
-  "linear-gradient(45deg, rgba(241,122,42,0.12) 12.5%, transparent 12.5%, transparent 37.5%, rgba(181,36,91,0.12) 37.5%, rgba(181,36,91,0.12) 62.5%, transparent 62.5%, transparent 87.5%, rgba(47,98,163,0.12) 87.5%)";
-
 export default async function ArtisanDashboardPage() {
   const session = await requireRole("ARTESANA");
   const data = await new ArtisanDashboardService().getDashboard(session.user.id);
@@ -166,10 +163,10 @@ export default async function ArtisanDashboardPage() {
               </p>
             </div>
 
-            <button
-              type="button"
+            <Link
+              href="/artesana/perfil"
               className="group flex items-center gap-3 rounded-full px-2 py-1 transition-colors hover:bg-[#fff0f5]"
-              aria-label="Perfil de artesana"
+              aria-label="Ir a mi perfil"
             >
               <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
                 {avatarUrl ? (
@@ -186,16 +183,12 @@ export default async function ArtisanDashboardPage() {
                   </span>
                 )}
               </span>
-              <ChevronRight className="h-5 w-5 rotate-90 text-[#7a3100] transition-transform group-hover:translate-y-0.5" />
-            </button>
+              <ChevronRight className="h-5 w-5 text-[#7a3100] transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </header>
 
           <section className="mt-10 grid gap-8 xl:grid-cols-[1.45fr_0.95fr]">
-            <article className="relative overflow-hidden rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
-              <div
-                className="pointer-events-none absolute -right-8 top-16 h-80 w-48 opacity-70"
-                style={{ backgroundImage: textilePattern, backgroundSize: "28px 28px" }}
-              />
+            <article className="relative overflow-hidden rounded-[20px] border border-[#ecd0bd] bg-[linear-gradient(135deg,#ffffff_0%,#ffffff_70%,#fff7e8_100%)] p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
               <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
                 <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
                   Tu avance general
@@ -272,7 +265,7 @@ export default async function ArtisanDashboardPage() {
                 <h2 className="font-serif text-3xl font-bold text-[#a95511]">
                   Próximo taller
                 </h2>
-                <span className="text-4xl text-[#f0c8a6]">#</span>
+                <CalendarDays className="h-8 w-8 text-[#d7920c]" />
               </header>
 
               <div className="grid gap-6 p-8 md:grid-cols-[190px_1fr]">
@@ -377,6 +370,7 @@ export default async function ArtisanDashboardPage() {
                   data.opportunities.map((item) => (
                     <DashboardRow
                       key={item.id}
+                      href={`/artesana/convocatorias/${item.id}`}
                       title={item.title}
                       description={
                         item.endsAt
@@ -405,6 +399,7 @@ export default async function ArtisanDashboardPage() {
                     .map((item) => (
                       <AchievementRow
                         key={item.id}
+                        href="/artesana/logros"
                         title={item.badge.name}
                         description={item.reason ?? item.badge.description ?? ""}
                       />
@@ -472,10 +467,7 @@ function DashboardBlock({
   return (
     <section className="relative overflow-hidden rounded-[20px] border border-[#ecd0bd] bg-white p-7 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
       {patterned ? (
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-32 opacity-80"
-          style={{ backgroundImage: textilePattern, backgroundSize: "26px 26px" }}
-        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-[#fff7e8]/70" />
       ) : null}
       <header className="relative z-10 mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -494,9 +486,17 @@ function DashboardBlock({
   );
 }
 
-function DashboardRow({ title, description }: { title: string; description: string }) {
-  return (
-    <article className="group grid grid-cols-[86px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white p-3 transition-all duration-300 hover:-translate-y-1 hover:bg-[#fffaf6] hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)]">
+function DashboardRow({
+  title,
+  description,
+  href
+}: {
+  title: string;
+  description: string;
+  href?: string;
+}) {
+  const content = (
+    <>
       <div className="relative h-16 overflow-hidden rounded-md">
         <DashboardImagePlaceholder compact />
       </div>
@@ -507,13 +507,41 @@ function DashboardRow({ title, description }: { title: string; description: stri
       <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f8eadc] text-[#a95511] transition-transform duration-300 group-hover:translate-x-1">
         <ChevronRight className="h-5 w-5" />
       </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href as Route}
+        className="group grid grid-cols-[86px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white p-3 transition-all duration-300 hover:-translate-y-1 hover:bg-[#fffaf6] hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)]"
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <article className="group grid grid-cols-[86px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white p-3">
+      {content}
     </article>
   );
 }
 
-function AchievementRow({ title, description }: { title: string; description: string }) {
+function AchievementRow({
+  title,
+  description,
+  href
+}: {
+  title: string;
+  description: string;
+  href: string;
+}) {
   return (
-    <article className="group grid grid-cols-[88px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white/90 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)]">
+    <Link
+      href={href as Route}
+      className="group grid grid-cols-[88px_1fr_auto] items-center gap-5 rounded-xl border border-[#ecd0bd] bg-white/90 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(122,49,0,0.08)]"
+    >
       <span className="grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-[#f7d064] to-[#d7920c] text-white shadow-[0_14px_28px_rgba(215,146,12,0.24)]">
         <Palette className="h-9 w-9" />
       </span>
@@ -524,7 +552,7 @@ function AchievementRow({ title, description }: { title: string; description: st
       <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f8eadc] text-[#a95511] transition-transform duration-300 group-hover:translate-x-1">
         <ChevronRight className="h-5 w-5" />
       </span>
-    </article>
+    </Link>
   );
 }
 

@@ -359,14 +359,9 @@ export default async function ArtisanLearningPage() {
                   <p className="font-ui text-base font-extrabold text-[#1b1c1a]">
                     En progreso
                   </p>
-                  <div className="flex gap-2 text-[#a95511]">
-                    <button className="grid h-9 w-9 place-items-center rounded-full bg-[#f8eadc]">
-                      <ChevronRight className="h-4 w-4 rotate-180" />
-                    </button>
-                    <button className="grid h-9 w-9 place-items-center rounded-full bg-[#f8eadc]">
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
+                  <span className="font-ui text-sm font-bold text-[#b5245b]">
+                    {inProgressCourses.length} cursos
+                  </span>
                 </div>
                 <div className="grid gap-5 md:grid-cols-3">
                   {enrolled.length ? (

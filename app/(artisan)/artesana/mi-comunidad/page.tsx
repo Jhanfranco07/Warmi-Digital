@@ -30,10 +30,10 @@ export default async function ArtisanCommunityPage() {
             </p>
           </div>
           <div className="hidden items-center gap-5 xl:flex">
-            <button
-              type="button"
+            <Link
+              href="/artesana/mensajes"
               className="relative grid h-12 w-12 place-items-center rounded-full text-[#7a3100]"
-              aria-label="Notificaciones"
+              aria-label="Ver mensajes y notificaciones"
             >
               <Bell className="h-6 w-6" />
               {unreadNotifications ? (
@@ -41,23 +41,29 @@ export default async function ArtisanCommunityPage() {
                   {unreadNotifications}
                 </span>
               ) : null}
-            </button>
-            <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={displayName}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
-              ) : (
-                <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
-                  {displayName.slice(0, 1)}
-                </span>
-              )}
-            </span>
-            <ChevronRight className="h-5 w-5 rotate-90 text-[#7a3100]" />
+            </Link>
+            <Link
+              href="/artesana/perfil"
+              className="group flex items-center gap-3 rounded-full px-2 py-1 transition-colors hover:bg-[#fff0f5]"
+              aria-label="Ir a mi perfil"
+            >
+              <span className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-[0_12px_28px_rgba(122,49,0,0.16)]">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span className="grid h-full w-full place-items-center bg-[#ffe8ef] font-ui text-xl font-extrabold text-[#b5245b]">
+                    {displayName.slice(0, 1)}
+                  </span>
+                )}
+              </span>
+              <ChevronRight className="h-5 w-5 text-[#7a3100] transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </header>
 

@@ -6,6 +6,8 @@ import {
   ArrowLeft,
   BookOpen,
   Camera,
+  Eye,
+  EyeOff,
   HandHeart,
   TrendingUp,
   UsersRound
@@ -22,6 +24,8 @@ type LoginFormProps = {
   callbackUrl?: string;
   initialRole?: "artesana" | "facilitadora";
 };
+
+const REMEMBER_LOGIN_KEY = "warmi:login-remember";
 
 const roles = {
   artesana: {
@@ -80,13 +84,45 @@ const roles = {
   }
 >;
 
-export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormProps) {
+export function LoginForm({ callbackUrl, initialRole }: LoginFormProps) {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [isPending, startTransition] = React.useTransition();
-  const [role, setRole] = React.useState<"artesana" | "facilitadora">(initialRole);
+  const [email, setEmail] = React.useState("");
+  const [rememberLogin, setRememberLogin] = React.useState(true);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [role, setRole] = React.useState<"artesana" | "facilitadora">(
+    initialRole ?? "artesana"
+  );
   const activeRole = roles[role];
   const RoleIcon = activeRole.icon;
+
+  React.useEffect(() => {
+    const storedLogin = window.localStorage.getItem(REMEMBER_LOGIN_KEY);
+
+    if (!storedLogin) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(storedLogin) as {
+        email?: string;
+        role?: "artesana" | "facilitadora";
+      };
+
+      if (parsed.email) {
+        setEmail(parsed.email);
+      }
+
+      if (!initialRole && parsed.role && roles[parsed.role]) {
+        setRole(parsed.role);
+      }
+
+      setRememberLogin(true);
+    } catch {
+      window.localStorage.removeItem(REMEMBER_LOGIN_KEY);
+    }
+  }, [initialRole]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -105,6 +141,16 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
         }
 
         setSuccess(result.message ?? "Ingreso exitoso.");
+
+        if (rememberLogin) {
+          window.localStorage.setItem(
+            REMEMBER_LOGIN_KEY,
+            JSON.stringify({ email: email.trim(), role })
+          );
+        } else {
+          window.localStorage.removeItem(REMEMBER_LOGIN_KEY);
+        }
+
         window.location.assign(result.redirectTo ?? "/artisan");
       } catch (error) {
         setError((error as Error)?.message ?? "Error de autenticacion.");
@@ -272,13 +318,16 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                 ) : null}
                 <label className="block">
                   <span className="font-ui text-sm font-bold text-[#5b4a42] xl:text-base">
-                    Usuario / Correo
+                    Correo / usuario
                   </span>
                   <Input
                     className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 text-base shadow-none focus-visible:ring-0 xl:h-14 xl:text-lg"
                     name="email"
                     type="email"
-                    placeholder="nombre@ejemplo.com"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="Pon tu correo"
+                    autoComplete="email"
                     required
                   />
                 </label>
@@ -286,13 +335,30 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                   <span className="font-ui text-sm font-bold text-[#5b4a42] xl:text-base">
                     Contraseña
                   </span>
-                  <Input
-                    className="mt-2 h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 text-base shadow-none focus-visible:ring-0 xl:h-14 xl:text-lg"
-                    name="password"
-                    type="password"
-                    placeholder="********"
-                    required
-                  />
+                  <div className="relative mt-2">
+                    <Input
+                      className="h-11 rounded-none border-x-0 border-t-0 border-[#d8b9a8] bg-white/30 px-0 pr-12 text-base shadow-none focus-visible:ring-0 xl:h-14 xl:text-lg"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Pon tu contraseña"
+                      autoComplete="current-password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      aria-label={
+                        showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                      }
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="absolute right-0 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-[#7a3100] transition-colors hover:bg-white/75 hover:text-[#b5245b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b] focus-visible:ring-offset-2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" aria-hidden="true" />
+                      ) : (
+                        <Eye className="h-5 w-5" aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
                 </label>
 
                 <div className="flex flex-col gap-3 text-sm text-[#5b4a42] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between xl:text-base">
@@ -300,11 +366,12 @@ export function LoginForm({ callbackUrl, initialRole = "artesana" }: LoginFormPr
                     <input
                       name="remember"
                       type="checkbox"
-                      defaultChecked
+                      checked={rememberLogin}
+                      onChange={(event) => setRememberLogin(event.target.checked)}
                       className="h-4 w-4 rounded border-[#d8b9a8]"
                       style={{ accentColor: activeRole.accent }}
                     />
-                    Recordar sesión
+                    Recordar mi correo
                   </label>
                   <Link
                     href="/forgot-password"

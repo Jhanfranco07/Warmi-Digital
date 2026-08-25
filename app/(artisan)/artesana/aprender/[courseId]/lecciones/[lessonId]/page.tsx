@@ -208,9 +208,6 @@ function LessonResource({ resource }: LessonResourceProps) {
           <p className="text-base leading-7 text-[#5b4a42]">{resource.description}</p>
         ) : null}
         <YouTubePlayer videoId={resource.externalId} title={resource.title} />
-        <p className="text-sm text-[#6b5a4e]">
-          Si el video no carga, puede tener reproducción embebida restringida.
-        </p>
       </section>
     );
   }

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
+import type { CSSProperties } from "react";
+import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   BookOpen,
@@ -20,8 +22,7 @@ import { SpeechButton } from "@/shared/accessibility/speech-button";
 import {
   ArtisanHero,
   ArtisanPanel,
-  ArtisanShell,
-  ArtisanStatCard
+  ArtisanShell
 } from "@/features/artisan/artisan-panel";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -130,83 +131,119 @@ export default async function ArtisanCourseDetailPage({
         }
       />
 
-      <section className="grid gap-5 md:grid-cols-3">
-        <ArtisanStatCard
-          title="Avance"
-          value={`${progress}%`}
-          description={`${completedLessons} de ${totalLessons} lecciones completadas.`}
-          icon={BookOpen}
-          color="bg-[#2f62a3]"
-        />
-        <ArtisanStatCard
-          title="Módulos"
-          value={course.modules.length}
-          description="Bloques cortos para aprender sin perderte."
-          icon={Layers3}
-          color="bg-[#b5245b]"
-        />
-        <ArtisanStatCard
-          title="Estado"
-          value={statusLabel}
-          description="Tu avance se actualiza automáticamente."
-          icon={CheckCircle2}
-          color="bg-[#17c3cf]"
-        />
-      </section>
-
-      <section className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-        <ArtisanPanel title="Cómo avanzar" eyebrow="Guía rápida">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <GuideStep
-              number="1"
-              title="Toca empezar"
-              description="Usa el botón principal para abrir tu siguiente lección."
-            />
-            <GuideStep
-              number="2"
-              title="Lee o mira"
-              description="Revisa el contenido con calma y practica en casa."
-            />
-            <GuideStep
-              number="3"
-              title="Marca avance"
-              description="Al terminar, toca completar para guardar tu progreso."
-            />
-          </div>
-        </ArtisanPanel>
-
-        <ArtisanPanel title="Progreso del curso" eyebrow="Ruta actual">
-          <div className="flex flex-wrap gap-2">
-            <Badge className="bg-[#ffd7c2] text-[#7a3100] hover:bg-[#ffd7c2]">
-              {levelLabels[course.level]}
-            </Badge>
-            <Badge variant="outline">{statusLabel}</Badge>
-          </div>
-          <Progress
-            value={progress}
-            className="mt-6 h-4 bg-[#f4e7df] [&>div]:bg-[#b5245b]"
-            aria-label={`Avance del curso ${progress}%`}
-          />
-          <div className="mt-5 grid gap-4 md:grid-cols-[auto_1fr] md:items-center">
-            <div className="grid h-24 w-24 place-items-center rounded-full bg-[#fff3de] text-center shadow-inner">
-              <span className="font-serif text-4xl font-bold text-[#7a3100]">
-                {progress}%
-              </span>
+      <ArtisanPanel
+        title="Resumen de tu ruta"
+        eyebrow="Avance del curso"
+        action={
+          nextLessonHref ? (
+            <Button
+              asChild
+              className="min-h-[48px] rounded-full bg-[#b5245b] px-6 font-ui font-extrabold text-white hover:bg-[#941747]"
+            >
+              <Link href={nextLessonHref}>
+                <PlayCircle className="h-5 w-5" />
+                {nextLessonLabel}
+              </Link>
+            </Button>
+          ) : null
+        }
+      >
+        <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:items-center">
+          <div
+            className="mx-auto grid h-44 w-44 place-items-center rounded-full bg-[conic-gradient(#b5245b_var(--course-progress),#f4c542_var(--course-progress)_100%)] p-3 [--course-progress:0%] lg:mx-0"
+            style={{ "--course-progress": `${progress}%` } as CSSProperties}
+          >
+            <div className="grid h-full w-full place-items-center rounded-full bg-white text-center shadow-inner">
+              <div>
+                <p className="font-serif text-5xl font-bold text-[#1b1c1a]">
+                  {progress}%
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#5b4a42]">
+                  de avance
+                </p>
+              </div>
             </div>
+          </div>
+
+          <div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <SummaryPill
+                icon={BookOpen}
+                title="Lecciones"
+                value={`${completedLessons} de ${totalLessons}`}
+                description="Completadas"
+                color="bg-[#2f62a3]"
+              />
+              <SummaryPill
+                icon={Layers3}
+                title="Módulos"
+                value={course.modules.length}
+                description="Bloques del curso"
+                color="bg-[#b5245b]"
+              />
+              <SummaryPill
+                icon={CheckCircle2}
+                title="Estado"
+                value={statusLabel}
+                description="Se actualiza solo"
+                color="bg-[#17c3cf]"
+              />
+            </div>
+            <Progress
+              value={progress}
+              className="mt-6 h-4 bg-[#f4e7df] [&>div]:bg-[#b5245b]"
+              aria-label={`Avance del curso ${progress}%`}
+            />
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Badge className="bg-[#ffd7c2] text-[#7a3100] hover:bg-[#ffd7c2]">
+                {levelLabels[course.level]}
+              </Badge>
+              <Badge variant="outline">{statusLabel}</Badge>
+            </div>
+            <div className="mt-5 rounded-2xl border border-[#f0c7bb] bg-[#fffaf6] p-4">
+              <p className="text-base font-semibold leading-7 text-[#5b4a42]">
+                Para avanzar, entra a la siguiente clase, revisa el contenido y al final
+                toca <strong className="text-[#b5245b]">Lección completada</strong>. Tu
+                progreso se calcula automáticamente.
+              </p>
+            </div>
+          </div>
+        </div>
+      </ArtisanPanel>
+
+      <section className="rounded-[28px] border-2 border-[#b5245b] bg-[#fff5f8] p-4 shadow-[0_28px_70px_rgba(181,36,91,0.12)] md:p-6">
+        <header className="mb-6 flex flex-col gap-4 rounded-[22px] bg-white p-5 shadow-[0_16px_40px_rgba(122,49,0,0.08)] md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#b5245b] text-white">
+              <PlayCircle className="h-8 w-8" />
+            </span>
             <div>
-              <p className="text-lg font-semibold text-[#1b1c1a]">
-                {completedLessons} de {totalLessons} lecciones completadas
+              <p className="font-ui text-xs font-extrabold uppercase tracking-[0.08em] text-[#b5245b]">
+                Aquí tomas tus clases
               </p>
+              <h2 className="mt-1 font-serif text-3xl font-bold text-[#1b1c1a] md:text-4xl">
+                Módulos y lecciones
+              </h2>
               <p className="mt-2 text-base leading-7 text-[#5b4a42]">
-                El porcentaje se calcula con tus lecciones completadas. No necesitas
-                escribir nada: Warmi lo guarda cuando marcas una lección como terminada.
+                Toca la tarjeta destacada para abrir tu siguiente clase.
               </p>
             </div>
           </div>
-        </ArtisanPanel>
-      </section>
+          {nextLessonHref ? (
+            <Button
+              asChild
+              size="lg"
+              className="min-h-[56px] rounded-full bg-[#b5245b] px-7 font-ui text-base font-extrabold text-white hover:bg-[#941747]"
+            >
+              <Link href={nextLessonHref}>
+                <PlayCircle className="h-5 w-5" />
+                Entrar a mi clase
+              </Link>
+            </Button>
+          ) : null}
+        </header>
 
-      <section className="space-y-6">
+        <div className="space-y-6">
         {course.modules.map((module, moduleIndex) => {
           const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
             lesson,
@@ -281,6 +318,7 @@ export default async function ArtisanCourseDetailPage({
             </ArtisanPanel>
           );
         })}
+        </div>
       </section>
 
       <ArtisanPanel title="Facilitadora" eyebrow="Acompañamiento">
@@ -305,22 +343,34 @@ export default async function ArtisanCourseDetailPage({
   );
 }
 
-function GuideStep({
-  number,
+function SummaryPill({
+  icon: Icon,
   title,
-  description
+  value,
+  description,
+  color
 }: {
-  number: string;
+  icon: LucideIcon;
   title: string;
+  value: string | number;
   description: string;
+  color: string;
 }) {
   return (
-    <article className="rounded-2xl border border-[#f0c7bb] bg-[#fffaf8] p-4">
-      <span className="grid h-10 w-10 place-items-center rounded-full bg-[#b5245b] font-ui text-sm font-black text-white">
-        {number}
+    <article className="rounded-2xl border border-[#f0c7bb] bg-white p-4 shadow-[0_12px_30px_rgba(122,49,0,0.05)]">
+      <span
+        className={cn(
+          "grid h-11 w-11 place-items-center rounded-2xl text-white",
+          color
+        )}
+      >
+        <Icon className="h-5 w-5" />
       </span>
-      <h3 className="mt-4 font-serif text-2xl font-bold text-[#7a3100]">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-[#5b4a42]">{description}</p>
+      <p className="mt-4 font-ui text-xs font-extrabold uppercase tracking-[0.08em] text-[#b5245b]">
+        {title}
+      </p>
+      <p className="mt-1 font-serif text-3xl font-bold text-[#1b1c1a]">{value}</p>
+      <p className="mt-1 text-sm leading-6 text-[#5b4a42]">{description}</p>
     </article>
   );
 }

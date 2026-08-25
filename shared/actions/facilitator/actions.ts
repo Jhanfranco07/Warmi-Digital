@@ -24,6 +24,10 @@ import {
 } from "@/shared/validations";
 
 const result = (ok: boolean, message: string) => ({ ok, message });
+type ActionState = ReturnType<typeof result>;
+type ConversationActionState = ActionState & {
+  conversationId: string | null;
+};
 const values = (data: FormData) =>
   Object.fromEntries(
     Array.from(data.entries()).map(([key, value]) => [
@@ -342,7 +346,10 @@ export async function createAnnouncementAction(_: unknown, formData: FormData) {
   }
 }
 
-export async function sendMessageAction(_: unknown, formData: FormData) {
+export async function sendMessageAction(
+  _previousState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
   try {
     const session = await requireRole("FACILITADORA");
     const input = messageFormSchema.parse(values(formData));
@@ -359,6 +366,49 @@ export async function sendMessageAction(_: unknown, formData: FormData) {
       error instanceof Error ? error.message : "No fue posible enviar el mensaje."
     );
   }
+}
+
+export async function startConversationAction(
+  _previousState: ConversationActionState,
+  formData: FormData
+): Promise<ConversationActionState> {
+  try {
+    const session = await requireRole("FACILITADORA");
+    const artisanId = String(formData.get("artisanId") ?? "");
+    if (!artisanId) {
+      return {
+        ok: false,
+        message: "Selecciona una artesana para abrir la conversación.",
+        conversationId: null
+      };
+    }
+    const conversation = await new MessagingService().openWithArtisan(
+      session.user.id,
+      artisanId
+    );
+    revalidatePath("/facilitadora/mensajes");
+    return {
+      ok: true,
+      message: "Conversación abierta.",
+      conversationId: conversation.id
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "No fue posible abrir la conversación.",
+      conversationId: null
+    };
+  }
+}
+
+export async function markFacilitatorConversationReadAction(
+  conversationId: string
+): Promise<ActionState> {
+  const session = await requireRole("FACILITADORA");
+  await new MessagingService().markRead(session.user.id, conversationId);
+  revalidatePath("/facilitadora/mensajes");
+  return result(true, "Conversación leída.");
 }
 
 export async function openConversationAction(artisanId: string) {

@@ -7,7 +7,11 @@ export class ConversationRepository {
     return this.db.conversation.findMany({
       where: { participants: { some: { userId } } },
       include: {
-        participants: { include: { user: { include: { profile: true } } } },
+        participants: {
+          include: {
+            user: { include: { profile: { include: { community: true } } } }
+          }
+        },
         messages: {
           include: { sender: { include: { profile: true } } },
           orderBy: { createdAt: "desc" },
@@ -22,7 +26,11 @@ export class ConversationRepository {
     return this.db.conversation.findFirst({
       where: { id, participants: { some: { userId } } },
       include: {
-        participants: { include: { user: { include: { profile: true } } } },
+        participants: {
+          include: {
+            user: { include: { profile: { include: { community: true } } } }
+          }
+        },
         messages: {
           include: { sender: { include: { profile: true } } },
           orderBy: { createdAt: "asc" }

@@ -4,9 +4,11 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, Info, Search, Send, SlidersHorizontal } from "lucide-react";
 
+import { ConversationReadMarker } from "@/features/artisan/conversation-read-marker";
 import { MessageComposer } from "@/features/artisan/message-composer";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { EmptyState } from "@/shared/components/feedback/empty-state";
+import { MessageAutoRefresh } from "@/shared/components/messaging/message-auto-refresh";
 import { ConversationRepository } from "@/shared/repositories/conversation.repository";
 import { requireRole } from "@/shared/server/auth/helpers";
 
@@ -36,6 +38,7 @@ export default async function ArtisanMessagesPage({ searchParams }: PageProps) {
 
   return (
     <>
+      <MessageAutoRefresh />
       <section className="relative overflow-hidden bg-[#fffaf6] px-5 pb-28 pt-6 lg:hidden">
         <MobileDecor />
         <div className="relative">
@@ -287,6 +290,7 @@ function ConversationPanel({
 
   return (
     <section className="flex min-h-[760px] flex-col overflow-hidden rounded-[20px] border border-[#ecd0bd] bg-white shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
+      <ConversationReadMarker conversationId={conversation.id} />
       <header className="flex items-center justify-between border-b border-[#ecd0bd] p-6">
         <div className="flex items-center gap-4">
           <Avatar
@@ -336,6 +340,7 @@ function MobileConversation({
       id="chat-warmi"
       className="relative mt-8 scroll-mt-24 overflow-hidden rounded-t-[28px] border-t border-[#f5cbd5] bg-white/75 pt-4"
     >
+      <ConversationReadMarker conversationId={conversation.id} />
       <header className="flex items-center gap-4 border-b border-[#f5d2dc] px-1 pb-4">
         <Link
           href="/artesana/mensajes"

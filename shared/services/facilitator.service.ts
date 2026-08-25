@@ -182,6 +182,14 @@ export class MessagingService {
     if (!conversation) throw new Error("No tienes acceso a esta conversación.");
     return this.messages.create(conversationId, facilitatorId, content);
   }
+  async markRead(facilitatorId: string, conversationId: string) {
+    const conversation = await this.conversations.findAuthorizedConversation(
+      conversationId,
+      facilitatorId
+    );
+    if (!conversation) throw new Error("No tienes acceso a esta conversación.");
+    return this.messages.markRead(conversationId, facilitatorId);
+  }
 }
 
 export class FacilitatorReportService {

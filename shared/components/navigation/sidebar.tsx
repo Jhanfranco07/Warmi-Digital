@@ -21,7 +21,16 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { logout } from "@/shared/actions/auth/logout";
+import {
+  markAllNotificationsReadAction,
+  markNotificationReadAction
+} from "@/shared/actions/notifications";
 import { WarmiLogo } from "@/shared/components/brand/warmi-logo";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/shared/components/ui/popover";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { roleNavigation, roleNavigationMeta } from "@/shared/config/navigation.config";
 import { cn } from "@/shared/lib/utils";
@@ -30,11 +39,30 @@ type SidebarProps = {
   role: UserRole;
   className?: string;
   badges?: NavigationBadges;
+  notifications?: NotificationPreview[];
 };
 
 type NavigationBadges = {
   notifications?: number;
   messages?: number;
+};
+
+export type NotificationPreview = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  readAt: string | null;
+  createdAt: string;
+};
+
+const notificationTypeLabels: Record<string, string> = {
+  SYSTEM: "Sistema",
+  LEARNING: "Aprendizaje",
+  COMMUNITY: "Comunidad",
+  ORDER: "Pedidos",
+  PAYMENT: "Pagos",
+  SUPPORT: "Soporte"
 };
 
 function getBadgeCount(href: string, badges?: NavigationBadges) {
@@ -98,6 +126,213 @@ function NavigationCountPill({
       {count > 9 ? "9+" : count}
     </span>
   );
+}
+
+function NotificationPopover({
+  role,
+  notifications = [],
+  unreadCount = 0
+}: {
+  role: UserRole;
+  notifications?: NotificationPreview[];
+  unreadCount?: number;
+}) {
+  const isFacilitator = role === "FACILITADORA";
+  const allHref = isFacilitator
+    ? "/facilitadora/notificaciones"
+    : "/artesana/notificaciones";
+  const hasUnread = unreadCount > 0;
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
+          aria-label={
+            hasUnread
+              ? `Abrir notificaciones, ${unreadCount} pendientes`
+              : "Abrir notificaciones"
+          }
+        >
+          <Bell className="h-5 w-5" aria-hidden="true" />
+          <NavigationBadge count={unreadCount} />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        sideOffset={12}
+        className="mr-3 w-[min(calc(100vw-1.5rem),25rem)] overflow-hidden rounded-[24px] border-[#f1c8d8] bg-[#fffaf7] p-0 text-[#2a211c] shadow-[0_24px_70px_rgba(122,16,66,0.18)]"
+      >
+        <div
+          className={cn(
+            "border-b px-5 py-4",
+            isFacilitator
+              ? "border-[#f1d9a5] bg-[#fff8df]"
+              : "border-[#f1c8d8] bg-[#fff0f5]"
+          )}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p
+                className={cn(
+                  "font-ui text-[11px] font-extrabold uppercase tracking-[0.12em]",
+                  isFacilitator ? "text-[#9a6800]" : "text-[#b5245b]"
+                )}
+              >
+                Tu bandeja
+              </p>
+              <h2 className="mt-1 font-serif text-2xl font-bold text-[#101833]">
+                Notificaciones
+              </h2>
+            </div>
+            <span
+              className={cn(
+                "rounded-full px-3 py-1 font-ui text-xs font-extrabold",
+                hasUnread
+                  ? isFacilitator
+                    ? "bg-[#d89b06] text-white"
+                    : "bg-[#b5245b] text-white"
+                  : "bg-white text-[#7a5b4a]"
+              )}
+            >
+              {hasUnread ? `${unreadCount} nuevas` : "Al día"}
+            </span>
+          </div>
+          <p className="mt-2 text-sm leading-5 text-[#6b5146]">
+            Avisos sobre aprendizaje, comunidad, pedidos y acompañamiento.
+          </p>
+        </div>
+
+        <div className="max-h-[62vh] overflow-y-auto px-3 py-3">
+          {notifications.length ? (
+            <div className="space-y-2">
+              {notifications.map((notification) => {
+                const unread = !notification.readAt;
+
+                return (
+                  <article
+                    key={notification.id}
+                    className={cn(
+                      "rounded-2xl border p-4 transition-colors",
+                      unread
+                        ? "border-[#f0b8cf] bg-white shadow-[0_12px_30px_rgba(181,36,91,0.08)]"
+                        : "border-[#ead4ca] bg-white/70"
+                    )}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={cn(
+                          "mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full",
+                          unread
+                            ? isFacilitator
+                              ? "bg-[#fff4cf] text-[#d89b06]"
+                              : "bg-[#fff0f5] text-[#b5245b]"
+                            : "bg-[#f7efe9] text-[#7a5b4a]"
+                        )}
+                      >
+                        <Bell className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-[#fff4cf] px-2 py-0.5 font-ui text-[10px] font-bold text-[#9a6800]">
+                            {notificationTypeLabels[notification.type] ?? "Aviso"}
+                          </span>
+                          {unread ? (
+                            <span className="rounded-full bg-[#b5245b] px-2 py-0.5 font-ui text-[10px] font-extrabold text-white">
+                              Nuevo
+                            </span>
+                          ) : null}
+                        </div>
+                        <h3 className="mt-2 line-clamp-2 font-serif text-lg font-bold leading-tight text-[#1b1c1a]">
+                          {notification.title}
+                        </h3>
+                        <p className="mt-1 line-clamp-2 text-sm leading-5 text-[#5b4a42]">
+                          {notification.body}
+                        </p>
+                        <p className="mt-2 text-xs text-[#8a6d5f]">
+                          {formatNotificationDate(notification.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {unread ? (
+                      <form action={markNotificationReadAction} className="mt-3">
+                        <input
+                          type="hidden"
+                          name="notificationId"
+                          value={notification.id}
+                        />
+                        <Button
+                          type="submit"
+                          variant="outline"
+                          className="h-9 w-full rounded-full border-[#e7c8b8] bg-white text-sm text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
+                        >
+                          Marcar como leída
+                        </Button>
+                      </form>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid place-items-center px-4 py-8 text-center">
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-[#fff0f5] text-[#b5245b]">
+                <Bell className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <h3 className="mt-4 font-serif text-2xl font-bold text-[#7a3100]">
+                No tienes avisos nuevos
+              </h3>
+              <p className="mt-2 max-w-xs text-sm leading-5 text-[#5b4a42]">
+                Cuando haya novedades importantes, aparecerán aquí.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="grid gap-2 border-t border-[#f1d7ca] bg-white px-4 py-4">
+          {hasUnread ? (
+            <form action={markAllNotificationsReadAction}>
+              <Button
+                type="submit"
+                className={cn(
+                  "h-11 w-full rounded-full text-white",
+                  isFacilitator
+                    ? "bg-[#d89b06] hover:bg-[#bf8500]"
+                    : "bg-[#b5245b] hover:bg-[#9d0f4f]"
+                )}
+              >
+                Marcar todo como leído
+              </Button>
+            </form>
+          ) : null}
+          <Button
+            asChild
+            variant="outline"
+            className="h-11 rounded-full border-[#d9b8a7] bg-white text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
+          >
+            <Link href={allHref as Route}>Ver todas las notificaciones</Link>
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function formatNotificationDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Fecha no disponible";
+  }
+
+  return new Intl.DateTimeFormat("es-PE", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
 }
 
 function NavigationContent({ role, badges }: { role: UserRole; badges?: NavigationBadges }) {
@@ -174,7 +409,7 @@ function NavigationContent({ role, badges }: { role: UserRole; badges?: Navigati
               className="min-h-[48px] w-full justify-start rounded-full border-[#d9b8a7] bg-white text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
             >
               <LogOut className="h-5 w-5" />
-              Cerrar sesion
+              Cerrar sesión
             </Button>
           </form>
         </div>
@@ -331,18 +566,13 @@ export function Sidebar({ role, className, badges }: SidebarProps) {
   );
 }
 
-export function MobileNavigation({ role, badges }: SidebarProps) {
+export function MobileNavigation({ role, badges, notifications }: SidebarProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isArtisan = role === "ARTESANA";
   const isFacilitator = role === "FACILITADORA";
-  const notificationHref = isArtisan
-    ? "/artesana/notificaciones"
-    : "/facilitadora/notificaciones";
   const messagesHref = isArtisan ? "/artesana/mensajes" : "/facilitadora/mensajes";
-  const moreBadgeCount = isArtisan
-    ? (badges?.notifications ?? 0) + (badges?.messages ?? 0)
-    : 0;
+  const moreBadgeCount = 0;
   const mainBottomHrefs = [
     "/artesana/dashboard",
     "/artesana/aprender",
@@ -380,14 +610,11 @@ export function MobileNavigation({ role, badges }: SidebarProps) {
                   <MessageCircle className="h-5 w-5" aria-hidden="true" />
                   <NavigationBadge count={badges?.messages} />
                 </Link>
-                <Link
-                  href={notificationHref as Route}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
-                  aria-label="Ver notificaciones"
-                >
-                  <Bell className="h-5 w-5" aria-hidden="true" />
-                  <NavigationBadge count={badges?.notifications} />
-                </Link>
+                <NotificationPopover
+                  role={role}
+                  notifications={notifications}
+                  unreadCount={badges?.notifications}
+                />
               </>
             ) : null}
             {!isArtisan ? (

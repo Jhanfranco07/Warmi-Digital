@@ -12,6 +12,12 @@ const notificationPaths = [
   "/facilitadora/dashboard"
 ];
 
+function revalidateNotificationSurfaces() {
+  notificationPaths.forEach((path) => revalidatePath(path));
+  revalidatePath("/artesana", "layout");
+  revalidatePath("/facilitadora", "layout");
+}
+
 export async function markNotificationReadAction(formData: FormData) {
   const session = await requireAuth();
   const notificationId = String(formData.get("notificationId") ?? "");
@@ -21,12 +27,12 @@ export async function markNotificationReadAction(formData: FormData) {
   }
 
   await new NotificationRepository().markRead(notificationId, session.user.id);
-  notificationPaths.forEach((path) => revalidatePath(path));
+  revalidateNotificationSurfaces();
 }
 
 export async function markAllNotificationsReadAction() {
   const session = await requireAuth();
 
   await new NotificationRepository().markAllRead(session.user.id);
-  notificationPaths.forEach((path) => revalidatePath(path));
+  revalidateNotificationSurfaces();
 }

@@ -25,6 +25,11 @@ const maleVoiceMarkers = [
   "helio"
 ];
 
+const knownMaleVoices = [
+  "google espanol (es-es)",
+  "warmi-default-google-espanol-es-es"
+];
+
 function normalizeVoiceName(value: string) {
   return value
     .normalize("NFD")
@@ -34,9 +39,10 @@ function normalizeVoiceName(value: string) {
 
 function getGuideImage(voiceName?: string) {
   const normalizedVoiceName = normalizeVoiceName(voiceName ?? "");
-  const isMaleVoice = maleVoiceMarkers.some((marker) =>
-    normalizedVoiceName.includes(marker)
-  );
+  const isKnownMaleVoice = knownMaleVoices.includes(normalizedVoiceName);
+  const isMaleVoice =
+    isKnownMaleVoice ||
+    maleVoiceMarkers.some((marker) => normalizedVoiceName.includes(marker));
 
   return isMaleVoice
     ? "/images/accessibility/warmi-voice-guide1.png"

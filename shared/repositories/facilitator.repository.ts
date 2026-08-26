@@ -13,16 +13,36 @@ export class FacilitatorRepository {
               include: { community: true, craftTypes: { include: { craftType: true } } }
             },
             enrollments: {
-              include: { course: true, courseProgress: true, lessonProgresses: true }
+              include: {
+                course: {
+                  include: {
+                    modules: {
+                      include: { lessons: true },
+                      orderBy: { order: "asc" }
+                    }
+                  }
+                },
+                courseProgress: true,
+                lessonProgresses: true
+              }
             },
-            workshopRegistrations: { include: { attendances: true } },
+            workshopRegistrations: {
+              include: {
+                attendances: true,
+                workshop: { include: { community: true, course: true } }
+              }
+            },
             stories: true,
             products: true,
             orders: { include: { items: true } }
           }
         },
         community: true,
-        followUps: { orderBy: { occurredAt: "desc" }, take: 1 }
+        followUps: {
+          include: { facilitator: { include: { profile: true } } },
+          orderBy: { occurredAt: "desc" },
+          take: 5
+        }
       },
       orderBy: { assignedAt: "desc" }
     });

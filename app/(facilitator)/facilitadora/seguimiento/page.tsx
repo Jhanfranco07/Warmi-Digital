@@ -1,210 +1,306 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
 import {
+  ArrowRight,
   BookOpen,
   CalendarDays,
-  ChevronLeft,
-  Mail,
-  MapPin,
+  CircleAlert,
+  Clock,
   MessageCircle,
-  Phone,
-  UserRound,
+  TrendingUp,
   UsersRound
 } from "lucide-react";
 
 import { requireRole } from "@/shared/server/auth/helpers";
-import { ArtisanMonitoringService } from "@/shared/services/facilitator.service";
+import {
+  ArtisanMonitoringService,
+  FacilitatorReportService
+} from "@/shared/services/facilitator.service";
 
-const timeline = [
-  {
-    date: "24 MAY 2024",
-    type: "Visita presencial",
-    observations:
-      "Elena muestra interés por mejorar sus acabados y probar nuevos diseños.",
-    recommendations:
-      "Seguir practicando combinaciones de colores y participar en más ferias locales.",
-    nextAction: "Visitar su taller en 3 semanas y revisar nuevos diseños."
-  },
-  {
-    date: "08 MAY 2024",
-    type: "Mensaje",
-    observations: "Se coordinó el envío de materiales del curso de diseño y color.",
-    recommendations: "Revisar la unidad 2 del curso y practicar con la paleta sugerida.",
-    nextAction: "Hacer seguimiento del avance en la próxima semana."
-  },
-  {
-    date: "25 ABR 2024",
-    type: "Llamada",
-    observations: "Se resolvieron dudas sobre tipos de lana y combinaciones de tonos.",
-    recommendations: "Explorar nuevas texturas y documentar sus pruebas.",
-    nextAction: "Invitarla al taller de fotografía para artesanas."
-  }
-];
+const statusLabels = {
+  AL_DIA: "Al dia",
+  DESTACADA: "Destacada",
+  NECESITA_APOYO: "Necesita apoyo",
+  INACTIVA: "Inactiva"
+} as const;
 
-const summaryCards: {
-  title: string;
-  value: string;
-  detail: string;
-  Icon: LucideIcon;
-}[] = [
-  {
-    title: "Progreso de aprendizaje",
-    value: "72%",
-    detail: "Avance general",
-    Icon: BookOpen
-  },
-  {
-    title: "Curso actual",
-    value: "Diseño y color",
-    detail: "En progreso",
-    Icon: BookOpen
-  },
-  {
-    title: "Último taller",
-    value: "Fotografía",
-    detail: "Asistencia: 100%",
-    Icon: CalendarDays
-  }
-];
+const statusClasses = {
+  AL_DIA: "bg-emerald-100 text-emerald-700",
+  DESTACADA: "bg-[#fff2cf] text-[#9a6800]",
+  NECESITA_APOYO: "bg-[#ffe8f0] text-[#9d0f4f]",
+  INACTIVA: "bg-stone-200 text-stone-700"
+} as const;
+
+function EmptyBlock({ message }: { message: string }) {
+  return (
+    <div className="rounded-[12px] border border-dashed border-[#e8c9b5] bg-[#fffaf6] p-6 text-sm text-[#6b5a4e]">
+      {message}
+    </div>
+  );
+}
 
 export default async function Page() {
   const session = await requireRole("FACILITADORA");
-  const artisans = await new ArtisanMonitoringService().list(session.user.id);
-
-  if (artisans[0]) {
-    redirect(`/facilitadora/artesanas/${artisans[0].id}`);
-  }
+  const [artisans, report] = await Promise.all([
+    new ArtisanMonitoringService().list(session.user.id),
+    new FacilitatorReportService().getReport(session.user.id)
+  ]);
+  const needsAttention = [...artisans]
+    .filter(
+      (artisan) =>
+        artisan.status === "NECESITA_APOYO" || artisan.status === "INACTIVA"
+    )
+    .sort((a, b) => a.progress - b.progress);
+  const visibleAttention = needsAttention.length ? needsAttention : artisans.slice(0, 5);
+  const maxProgress = Math.max(
+    ...report.communityProgress.map((item) => item.averageProgress),
+    1
+  );
 
   return (
     <main className="min-h-screen bg-[#fffaf6] text-[#2a211c]">
-      <section className="border-b border-[#ead4ca] bg-white/75 px-6 py-7 lg:px-10">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="font-ui text-sm font-semibold text-[#624331]">
-              Seguimiento <span className="mx-2 text-[#c69b76]">›</span> Elena Mamani
-            </p>
-            <h1 className="font-display mt-5 text-4xl leading-tight text-[#171412] lg:text-5xl">
-              Detalle y seguimiento de artesana
-            </h1>
-            <p className="mt-2 font-ui text-lg text-[#6b5a4e]">
-              Acompaña su desarrollo, identifica avances y brinda el apoyo que necesita.
-            </p>
-          </div>
-          <Link
-            href="/facilitadora/artesanas"
-            className="inline-flex items-center gap-2 self-start rounded-[8px] border border-[#d89b06] px-5 py-3 font-ui font-bold text-[#b26f00] transition hover:bg-[#fff2cf] lg:self-center"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Volver al listado
-          </Link>
-        </div>
-      </section>
+      <section className="border-b border-[#ead4ca] bg-white/75 px-6 py-7 lg:px-10" />
 
-      <section className="mx-auto max-w-[1500px] space-y-8 px-6 py-10 lg:px-10">
-        <section className="grid gap-6 rounded-[10px] border border-[#eed8bf] bg-white p-8 shadow-[0_20px_50px_rgba(122,73,20,0.07)] xl:grid-cols-[1.3fr_repeat(3,260px)]">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center">
-            <div className="font-display grid h-44 w-44 place-items-center rounded-full bg-[#f7dfac] text-7xl text-[#8a1747]">
-              E
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h2 className="font-display text-4xl">Elena Mamani</h2>
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                  Activa
-                </span>
-              </div>
-              <div className="mt-5 space-y-3 text-[#5f4a3a]">
-                <p className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" /> Comunidad: San Miguel, Cajamarca
-                </p>
-                <p className="flex items-center gap-2">
-                  <UserRound className="h-5 w-5" /> Especialidad: Tejidos y bordados
-                </p>
-                <p className="flex items-center gap-2">
-                  <UsersRound className="h-5 w-5" /> Artesana desde: 2018
-                </p>
-              </div>
-            </div>
+      <section className="mx-auto max-w-[1560px] space-y-7 px-6 py-10 lg:px-10">
+        <div className="grid gap-5 xl:grid-cols-[1fr_360px] xl:items-end">
+          <div>
+            <h1 className="font-display text-5xl leading-tight text-[#0f1f3d] xl:text-6xl">
+              Seguimiento
+            </h1>
+            <p className="mt-3 font-ui text-lg text-[#6b5a4e]">
+              Acompana a tus artesanas con datos reales de aprendizaje, talleres y
+              conversaciones registradas.
+            </p>
           </div>
-          {summaryCards.map(({ title, value, detail, Icon }) => (
-            <div key={title} className="rounded-[10px] border border-[#eed8bf] p-6">
-              <p className="font-ui text-sm text-[#6b5a4e]">{title}</p>
-              <div className="mt-5 flex items-center gap-3">
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-[#fff2cf] text-[#d89b06]">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <p className="font-display text-3xl">{value}</p>
-              </div>
-              <p className="mt-5 text-sm font-bold text-emerald-700">{detail}</p>
-            </div>
+          <blockquote className="rounded-[14px] border border-[#eed8bf] bg-white p-6 font-display text-xl italic text-[#8a1747] shadow-[0_18px_45px_rgba(122,73,20,0.07)]">
+            &ldquo;Acompanarlas tambien es mirar a tiempo donde necesitan apoyo.&rdquo;
+          </blockquote>
+        </div>
+
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              label: "Artesanas acompanadas",
+              value: artisans.length,
+              detail: "Asignadas a tu cuenta",
+              Icon: UsersRound
+            },
+            {
+              label: "Necesitan apoyo",
+              value: report.needsSupport,
+              detail: "Por avance, asistencia o actividad",
+              Icon: CircleAlert
+            },
+            {
+              label: "Progreso promedio",
+              value: `${report.averageProgress}%`,
+              detail: "Promedio de cursos inscritos",
+              Icon: TrendingUp
+            },
+            {
+              label: "Asistencia promedio",
+              value: `${report.attendanceRate}%`,
+              detail: "Talleres con asistencia registrada",
+              Icon: CalendarDays
+            }
+          ].map(({ label, value, detail, Icon }) => (
+            <article
+              key={label}
+              className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_18px_45px_rgba(122,73,20,0.07)]"
+            >
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-[#fff2cf] text-[#d89b06]">
+                <Icon className="h-7 w-7" />
+              </span>
+              <p className="mt-5 font-ui text-sm font-bold text-[#6b5a4e]">{label}</p>
+              <p className="font-display text-4xl text-[#171412]">{value}</p>
+              <p className="mt-1 text-sm text-[#8a1747]">{detail}</p>
+            </article>
           ))}
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[1fr_340px]">
-          <article className="rounded-[10px] border border-[#eed8bf] bg-white p-8 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-            <h2 className="font-display text-3xl">Seguimiento y acompañamiento</h2>
-            <p className="mt-2 text-[#6b5a4e]">
-              Registra tus visitas, conversaciones y acuerdos para acompañar su
-              desarrollo.
-            </p>
-            <div className="mt-8 space-y-5 border-l-2 border-[#d89b06] pl-8">
-              {timeline.map((item) => (
-                <div
-                  key={item.date}
-                  className="relative rounded-[10px] border border-[#eed8bf] bg-[#fffdfb] p-6"
-                >
-                  <span className="absolute -left-[42px] top-7 h-4 w-4 rounded-full border-4 border-white bg-[#d89b06]" />
-                  <div className="grid gap-5 lg:grid-cols-[100px_1fr_1fr_1fr]">
-                    <p className="font-display text-2xl leading-tight">{item.date}</p>
-                    <p className="text-sm">
-                      <span className="rounded-full bg-[#fff2cf] px-3 py-1 text-xs font-bold text-[#9a6800]">
-                        {item.type}
+        <section className="grid gap-5 xl:grid-cols-[1.35fr_0.9fr]">
+          <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-3xl text-[#8a1747]">
+                  Artesanas que requieren atencion
+                </h2>
+                <p className="mt-1 text-sm text-[#6b5a4e]">
+                  Ordenadas por menor avance o falta de actividad reciente.
+                </p>
+              </div>
+              <Link
+                href="/facilitadora/artesanas"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#8a1747]"
+              >
+                Ver listado completo <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              {visibleAttention.length ? (
+                visibleAttention.map((artisan) => (
+                  <div
+                    key={artisan.id}
+                    className="grid gap-4 rounded-[14px] border border-[#f0d8c7] p-4 md:grid-cols-[1.2fr_1fr_1fr_auto]"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#fff2cf] font-display text-2xl text-[#8a1747]">
+                        {artisan.name.charAt(0)}
                       </span>
-                      <br />
-                      <span className="mt-3 block">{item.observations}</span>
-                    </p>
-                    <p className="text-sm">{item.recommendations}</p>
-                    <p className="text-sm">{item.nextAction}</p>
+                      <div>
+                        <p className="font-ui font-bold">{artisan.name}</p>
+                        <p className="text-sm text-[#6b5a4e]">
+                          {artisan.community} -{" "}
+                          {artisan.craftTypes.join(", ") || "Sin especialidad"}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase text-[#be1e5a]">
+                        Avance
+                      </p>
+                      <p className="font-display text-2xl">{artisan.progress}%</p>
+                      <span className="mt-1 block h-1.5 rounded-full bg-[#efe6dc]">
+                        <span
+                          className="block h-full rounded-full bg-[#be1e5a]"
+                          style={{ width: `${artisan.progress}%` }}
+                        />
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase text-[#be1e5a]">
+                        Motivo
+                      </p>
+                      <p className="text-sm">{artisan.supportReason}</p>
+                      <span
+                        className={`mt-2 inline-flex rounded-[6px] px-3 py-1 text-xs font-bold ${statusClasses[artisan.status]}`}
+                      >
+                        {statusLabels[artisan.status]}
+                      </span>
+                    </div>
+                    <div className="grid gap-2">
+                      <Link
+                        href={`/facilitadora/artesanas/${artisan.id}`}
+                        className="rounded-[8px] bg-[#d79a00] px-4 py-2 text-center text-sm font-bold text-white"
+                      >
+                        Ver detalle
+                      </Link>
+                      <Link
+                        href={`/facilitadora/artesanas/${artisan.id}/seguimiento`}
+                        className="rounded-[8px] border border-[#d89b06] px-4 py-2 text-center text-sm font-bold text-[#9a6800]"
+                      >
+                        Registrar
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <EmptyBlock message="Aun no tienes artesanas asignadas para seguimiento." />
+              )}
             </div>
           </article>
 
-          <aside className="space-y-6">
-            <article className="rounded-[10px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-              <h3 className="font-display text-2xl">Acciones rápidas</h3>
-              <div className="mt-5 grid gap-3">
-                <Link
-                  href="/facilitadora/mensajes"
-                  className="rounded-[8px] bg-[#d89b06] px-5 py-3 text-center font-ui font-bold text-white"
-                >
-                  Enviar mensaje
-                </Link>
-                <Link
-                  href="/facilitadora/artesanas"
-                  className="rounded-[8px] border border-[#ead4ca] px-5 py-3 text-center font-ui font-bold text-[#624331]"
-                >
-                  Ver listado
-                </Link>
+          <aside className="space-y-5">
+            <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+              <h2 className="font-display text-3xl text-[#8a1747]">
+                Progreso por comunidad
+              </h2>
+              <div className="mt-6 space-y-4">
+                {report.communityProgress.length ? (
+                  report.communityProgress.map((item) => (
+                    <div key={item.community}>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-bold">{item.community}</span>
+                        <span>{item.averageProgress}%</span>
+                      </div>
+                      <span className="mt-2 block h-2 rounded-full bg-[#efe6dc]">
+                        <span
+                          className="block h-full rounded-full bg-[#d79a00]"
+                          style={{
+                            width: `${Math.max(
+                              4,
+                              (item.averageProgress / maxProgress) * 100
+                            )}%`
+                          }}
+                        />
+                      </span>
+                      <p className="mt-1 text-xs text-[#7a5b4a]">
+                        {item.total} artesanas, {item.needsSupport} alertas
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <EmptyBlock message="Sin comunidades asignadas." />
+                )}
               </div>
             </article>
-            <article className="rounded-[10px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-              <h3 className="font-display text-2xl">Información de contacto</h3>
-              <div className="mt-5 space-y-4 text-[#5f4a3a]">
-                <p className="flex items-center gap-3">
-                  <Phone className="h-5 w-5" /> +51 987 654 321
-                </p>
-                <p className="flex items-center gap-3">
-                  <Mail className="h-5 w-5" /> elena.mamani@gmail.com
-                </p>
-                <p className="flex items-center gap-3">
-                  <MessageCircle className="h-5 w-5" /> WhatsApp disponible
-                </p>
+
+            <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+              <h2 className="font-display text-3xl text-[#8a1747]">
+                Seguimientos recientes
+              </h2>
+              <div className="mt-6 space-y-4">
+                {report.recentFollowUps.length ? (
+                  report.recentFollowUps.slice(0, 4).map((followUp) => (
+                    <Link
+                      key={followUp.id}
+                      href={`/facilitadora/artesanas/${followUp.artisanId}`}
+                      className="flex gap-3 rounded-[12px] border border-[#f0d8c7] p-4 transition hover:bg-[#fffaf6]"
+                    >
+                      <Clock className="mt-1 h-5 w-5 shrink-0 text-[#d79a00]" />
+                      <span>
+                        <span className="block font-ui font-bold">
+                          {followUp.artisanName}
+                        </span>
+                        <span className="block text-xs font-bold uppercase text-[#be1e5a]">
+                          {followUp.type.replaceAll("_", " ")} -{" "}
+                          {followUp.occurredAt.toLocaleDateString("es-PE")}
+                        </span>
+                        <span className="mt-1 line-clamp-2 block text-sm text-[#6b5a4e]">
+                          {followUp.observation}
+                        </span>
+                      </span>
+                    </Link>
+                  ))
+                ) : (
+                  <EmptyBlock message="Aun no se registran seguimientos." />
+                )}
               </div>
             </article>
           </aside>
+        </section>
+
+        <section className="grid gap-5 md:grid-cols-3">
+          <Link
+            href="/facilitadora/cursos"
+            className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_18px_45px_rgba(122,73,20,0.07)] transition hover:-translate-y-0.5"
+          >
+            <BookOpen className="h-8 w-8 text-[#be1e5a]" />
+            <h3 className="mt-4 font-display text-2xl">Revisar cursos</h3>
+            <p className="mt-2 text-sm text-[#6b5a4e]">
+              Mira que cursos tienen menos avance para acompanar mejor.
+            </p>
+          </Link>
+          <Link
+            href="/facilitadora/talleres"
+            className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_18px_45px_rgba(122,73,20,0.07)] transition hover:-translate-y-0.5"
+          >
+            <CalendarDays className="h-8 w-8 text-[#d79a00]" />
+            <h3 className="mt-4 font-display text-2xl">Ver talleres</h3>
+            <p className="mt-2 text-sm text-[#6b5a4e]">
+              Cruza asistencia con progreso para detectar necesidades reales.
+            </p>
+          </Link>
+          <Link
+            href="/facilitadora/mensajes"
+            className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_18px_45px_rgba(122,73,20,0.07)] transition hover:-translate-y-0.5"
+          >
+            <MessageCircle className="h-8 w-8 text-[#8a1747]" />
+            <h3 className="mt-4 font-display text-2xl">Enviar mensaje</h3>
+            <p className="mt-2 text-sm text-[#6b5a4e]">
+              Abre una conversacion de apoyo con la artesana que lo necesite.
+            </p>
+          </Link>
         </section>
       </section>
     </main>

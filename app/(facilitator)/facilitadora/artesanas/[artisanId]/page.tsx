@@ -7,7 +7,6 @@ import {
   Mail,
   MapPin,
   MessageCircle,
-  MoreHorizontal,
   Phone,
   UserRound,
   UsersRound
@@ -16,33 +15,47 @@ import {
 import { requireRole } from "@/shared/server/auth/helpers";
 import { ArtisanMonitoringService } from "@/shared/services/facilitator.service";
 
+const statusLabels = {
+  AL_DIA: "Al dia",
+  DESTACADA: "Destacada",
+  NECESITA_APOYO: "Necesita apoyo",
+  INACTIVA: "Inactiva"
+} as const;
+
+const statusClasses = {
+  AL_DIA: "bg-emerald-100 text-emerald-700",
+  DESTACADA: "bg-[#fff2cf] text-[#9a6800]",
+  NECESITA_APOYO: "bg-[#ffe8f0] text-[#9d0f4f]",
+  INACTIVA: "bg-stone-200 text-stone-700"
+} as const;
+
 const tabs = ["Resumen", "Aprendizaje", "Talleres", "Mi historia", "Seguimiento"];
-const fallbackTimeline = [
-  {
-    date: "24 MAY 2024",
-    type: "Visita presencial",
-    observations:
-      "La artesana mostró interés por mejorar sus acabados y probar nuevos diseños.",
-    recommendations:
-      "Seguir practicando combinaciones de colores y participar en más ferias locales.",
-    nextAction: "Visitar su taller en 3 semanas y revisar nuevos diseños."
-  },
-  {
-    date: "08 MAY 2024",
-    type: "Mensaje",
-    observations: "Se coordinó el envío de materiales del curso de diseño y color.",
-    recommendations: "Revisar la unidad 2 del curso y practicar con la paleta sugerida.",
-    nextAction: "Hacer seguimiento del avance en la próxima semana."
-  },
-  {
-    date: "25 ABR 2024",
-    type: "Llamada",
-    observations: "Resolvió dudas sobre tipos de lana y combinaciones de tonos.",
-    recommendations:
-      "Explorar nuevas texturas de lana de alpaca y documentar sus pruebas.",
-    nextAction: "Invitarla al taller de fotografía para artesanas."
-  }
-];
+
+function formatDate(date: Date | null) {
+  if (!date) return "Sin registro";
+  return date.toLocaleDateString("es-PE", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function fullDate(date: Date | null | undefined) {
+  if (!date) return "Sin fecha";
+  return date.toLocaleDateString("es-PE", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function EmptyBlock({ message }: { message: string }) {
+  return (
+    <div className="rounded-[12px] border border-dashed border-[#e8c9b5] bg-[#fffaf6] p-6 text-sm text-[#6b5a4e]">
+      {message}
+    </div>
+  );
+}
 
 export default async function Page({
   params
@@ -51,43 +64,27 @@ export default async function Page({
 }) {
   const session = await requireRole("FACILITADORA");
   const { artisanId } = await params;
-  const assignment = await new ArtisanMonitoringService().detail(
+  const detail = await new ArtisanMonitoringService().detailSummary(
     session.user.id,
     artisanId
   );
 
-  if (!assignment) notFound();
+  if (!detail) notFound();
 
-  const artisan = assignment.artisan;
-  const displayName =
-    artisan.profile?.displayName ?? artisan.name ?? artisan.email ?? "Elena Mamani";
-  const community = artisan.profile?.community?.name ?? "San Miguel, Cajamarca";
-  const phone = artisan.profile?.phone ?? "+51 987 654 321";
-  const progress = Math.round(
-    artisan.enrollments.length
-      ? artisan.enrollments.reduce(
-          (sum, item) => sum + (item.courseProgress?.percentage ?? 0),
-          0
-        ) / artisan.enrollments.length
-      : 72
-  );
-  const currentCourse =
-    artisan.enrollments.find((item) => item.status === "ACTIVE")?.course.title ??
-    "Diseño y color en tejidos tradicionales";
-  const followUps =
-    assignment.followUps.length > 0
-      ? assignment.followUps.slice(0, 4).map((item) => ({
-          date: item.occurredAt.toLocaleDateString("es-PE", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          }),
-          type: item.type.replaceAll("_", " "),
-          observations: item.observation,
-          recommendations: "Mantener acompañamiento cercano.",
-          nextAction: "Revisar avance en la próxima sesión."
-        }))
-      : fallbackTimeline;
+  const { assignment, summary } = detail;
+  const joinedAt = assignment.assignedAt.getFullYear();
+  const latestFollowUps = summary.followUps.slice(0, 5);
+  const alerts = [
+    summary.status === "INACTIVA"
+      ? "No registra actividad reciente en sus lecciones."
+      : null,
+    summary.progress < 25
+      ? "Su progreso de aprendizaje esta en etapa inicial."
+      : null,
+    summary.registeredWorkshops > 0 && summary.attendanceRate < 50
+      ? "Su asistencia a talleres esta por debajo del promedio."
+      : null
+  ].filter((item): item is string => Boolean(item));
 
   return (
     <main className="min-h-screen bg-[#fffaf6] text-[#2a211c]">
@@ -95,51 +92,64 @@ export default async function Page({
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="font-ui text-sm font-semibold text-[#624331]">
-              Seguimiento <span className="mx-2 text-[#c69b76]">›</span> {displayName}
+              Seguimiento <span className="mx-2 text-[#c69b76]">/</span>{" "}
+              {summary.name}
             </p>
-            <h1 className="font-display mt-5 text-4xl leading-tight text-[#171412] lg:text-5xl">
+            <h1 className="font-display mt-5 text-4xl leading-tight text-[#0f1f3d] lg:text-5xl">
               Detalle y seguimiento de artesana
             </h1>
             <p className="mt-2 font-ui text-lg text-[#6b5a4e]">
-              Acompaña su desarrollo, identifica avances y brinda el apoyo que necesita.
+              Acompana su desarrollo, identifica avances y registra acuerdos de apoyo.
             </p>
           </div>
           <Link
-            href="/facilitadora/artesanas"
+            href="/facilitadora/seguimiento"
             className="inline-flex items-center gap-2 self-start rounded-[8px] border border-[#d89b06] px-5 py-3 font-ui font-bold text-[#b26f00] transition hover:bg-[#fff2cf] lg:self-center"
           >
             <ChevronLeft className="h-4 w-4" />
-            Volver al listado
+            Volver a seguimiento
           </Link>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1500px] space-y-8 px-6 py-10 lg:px-10">
-        <section className="grid gap-6 rounded-[10px] border border-[#eed8bf] bg-white p-8 shadow-[0_20px_50px_rgba(122,73,20,0.07)] xl:grid-cols-[1.3fr_repeat(3,260px)]">
+      <section className="mx-auto max-w-[1560px] space-y-8 px-6 py-10 lg:px-10">
+        <section className="grid gap-6 rounded-[14px] border border-[#eed8bf] bg-white p-8 shadow-[0_20px_50px_rgba(122,73,20,0.07)] xl:grid-cols-[1.3fr_repeat(3,260px)]">
           <div className="flex flex-col gap-6 md:flex-row md:items-center">
-            <div className="font-display grid h-44 w-44 place-items-center rounded-full bg-[#f7dfac] text-7xl text-[#8a1747]">
-              {displayName.charAt(0)}
+            <div className="font-display grid h-44 w-44 shrink-0 place-items-center overflow-hidden rounded-full bg-[#f7dfac] text-7xl text-[#8a1747]">
+              {summary.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={summary.avatarUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                summary.name.charAt(0)
+              )}
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h2 className="font-display text-4xl">{displayName}</h2>
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                  Activa
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="font-display text-4xl">{summary.name}</h2>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-bold ${statusClasses[summary.status]}`}
+                >
+                  {statusLabels[summary.status]}
                 </span>
               </div>
               <div className="mt-5 space-y-3 text-[#5f4a3a]">
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" /> Comunidad: {community}
+                  <MapPin className="h-5 w-5" /> Comunidad: {summary.community}
                 </p>
                 <p className="flex items-center gap-2">
-                  <UserRound className="h-5 w-5" /> Especialidad: Tejidos y bordados
+                  <UserRound className="h-5 w-5" /> Especialidad:{" "}
+                  {summary.craftTypes.join(", ") || "Sin especialidad registrada"}
                 </p>
                 <p className="flex items-center gap-2">
-                  <UsersRound className="h-5 w-5" /> Artesana desde: 2018
+                  <UsersRound className="h-5 w-5" /> Acompanada desde: {joinedAt}
                 </p>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
-                {["Tejidos en telar", "Bordado tradicional"].map((chip) => (
+                {summary.craftTypes.slice(0, 4).map((chip) => (
                   <span
                     key={chip}
                     className="rounded-full bg-[#fff2cf] px-4 py-2 text-sm font-bold text-[#8a5d00]"
@@ -151,45 +161,51 @@ export default async function Page({
             </div>
           </div>
 
-          <div className="rounded-[10px] border border-[#eed8bf] p-6 text-center">
+          <div className="rounded-[12px] border border-[#eed8bf] p-6 text-center">
             <p className="font-ui text-sm text-[#6b5a4e]">Progreso de aprendizaje</p>
             <div className="font-display mx-auto mt-5 grid h-28 w-28 place-items-center rounded-full border-[10px] border-[#d89b06] bg-[#fffaf6] text-3xl">
-              {progress}%
+              {summary.progress}%
             </div>
-            <p className="mt-4 text-sm text-[#6b5a4e]">Avance general</p>
-            <p className="text-sm font-bold text-emerald-700">+10% desde el mes pasado</p>
+            <p className="mt-4 text-sm text-[#6b5a4e]">
+              {summary.completedLessons} de {summary.totalLessons} lecciones
+            </p>
           </div>
 
-          <div className="rounded-[10px] border border-[#eed8bf] p-6">
+          <div className="rounded-[12px] border border-[#eed8bf] p-6">
             <p className="font-ui text-sm text-[#6b5a4e]">Curso actual</p>
             <div className="mt-5 flex items-center gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-full bg-[#fff2cf] text-[#d89b06]">
                 <BookOpen className="h-6 w-6" />
               </span>
-              <p className="font-ui font-bold">{currentCourse}</p>
+              <p className="font-ui font-bold">{summary.currentCourse}</p>
             </div>
-            <p className="mt-5 text-sm text-[#6b5a4e]">En progreso</p>
-            <p className="text-sm font-bold text-emerald-700">
-              {Math.max(progress, 60)}% completado
+            <p className="mt-5 text-sm text-[#6b5a4e]">
+              {summary.completedCourses} de {summary.totalCourses} cursos completados
             </p>
           </div>
 
-          <div className="rounded-[10px] border border-[#eed8bf] p-6">
-            <p className="font-ui text-sm text-[#6b5a4e]">Último taller</p>
+          <div className="rounded-[12px] border border-[#eed8bf] p-6">
+            <p className="font-ui text-sm text-[#6b5a4e]">Ultimo taller</p>
             <div className="mt-5 flex items-center gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-full bg-[#fff2cf] text-[#d89b06]">
                 <CalendarDays className="h-6 w-6" />
               </span>
-              <p className="font-ui font-bold">Fotografía para artesanas</p>
+              <p className="font-ui font-bold">
+                {summary.latestWorkshop?.title ?? "Sin taller registrado"}
+              </p>
             </div>
-            <p className="mt-5 text-sm text-[#6b5a4e]">Asistió el 24 de mayo</p>
-            <p className="text-sm font-bold text-emerald-700">Asistencia: 100%</p>
+            <p className="mt-5 text-sm text-[#6b5a4e]">
+              {fullDate(summary.latestWorkshop?.startsAt)}
+            </p>
+            <p className="text-sm font-bold text-emerald-700">
+              Asistencia: {summary.attendanceRate}%
+            </p>
           </div>
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[1fr_340px]">
-          <article className="rounded-[10px] border border-[#eed8bf] bg-white shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-            <nav className="grid grid-cols-5 border-b border-[#eed8bf] text-center font-ui text-sm font-bold text-[#6b5a4e]">
+        <section className="grid gap-6 xl:grid-cols-[1fr_360px]">
+          <article className="rounded-[14px] border border-[#eed8bf] bg-white shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+            <nav className="grid grid-cols-2 border-b border-[#eed8bf] text-center font-ui text-sm font-bold text-[#6b5a4e] md:grid-cols-5">
               {tabs.map((tab) => (
                 <span
                   key={tab}
@@ -204,87 +220,98 @@ export default async function Page({
               ))}
             </nav>
             <div className="p-8">
-              <h2 className="font-display text-3xl">Seguimiento y acompañamiento</h2>
-              <p className="mt-2 text-[#6b5a4e]">
-                Registra tus visitas, conversaciones y acuerdos para acompañar su
-                desarrollo.
-              </p>
-
-              <div className="mt-8 space-y-5 border-l-2 border-[#d89b06] pl-8">
-                {followUps.map((item) => (
-                  <div
-                    key={`${item.date}-${item.type}`}
-                    className="relative rounded-[10px] border border-[#eed8bf] bg-[#fffdfb] p-6"
-                  >
-                    <span className="absolute -left-[42px] top-7 h-4 w-4 rounded-full border-4 border-white bg-[#d89b06]" />
-                    <div className="grid gap-5 lg:grid-cols-[100px_1fr_1fr_1fr_auto]">
-                      <p className="font-display text-2xl leading-tight">{item.date}</p>
-                      <div>
-                        <span className="rounded-full bg-[#fff2cf] px-3 py-1 text-xs font-bold text-[#9a6800]">
-                          {item.type}
-                        </span>
-                        <p className="mt-3 text-sm">
-                          <span className="font-bold">Observaciones</span>
-                          <br />
-                          {item.observations}
-                        </p>
-                      </div>
-                      <p className="text-sm">
-                        <span className="font-bold">Recomendaciones</span>
-                        <br />
-                        {item.recommendations}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-bold">Próxima acción</span>
-                        <br />
-                        {item.nextAction}
-                      </p>
-                      <MoreHorizontal className="h-5 w-5 text-[#7a5b4a]" />
-                    </div>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="font-display text-3xl text-[#8a1747]">
+                    Seguimiento y acompanamiento
+                  </h2>
+                  <p className="mt-2 text-[#6b5a4e]">
+                    Visitas, conversaciones y acuerdos registrados para esta artesana.
+                  </p>
+                </div>
+                <Link
+                  href={`/facilitadora/artesanas/${artisanId}/seguimiento`}
+                  className="rounded-[8px] bg-[#d79a00] px-5 py-3 font-ui font-bold text-white"
+                >
+                  Registrar seguimiento
+                </Link>
               </div>
 
-              <Link
-                href={`/facilitadora/artesanas/${artisanId}/seguimiento`}
-                className="mx-auto mt-8 flex w-fit rounded-[8px] border border-[#d89b06] px-8 py-3 font-ui font-bold text-[#b26f00] transition hover:bg-[#fff2cf]"
-              >
-                Cargar más seguimiento
-              </Link>
+              <div className="mt-8 space-y-5 border-l-2 border-[#d89b06] pl-8">
+                {latestFollowUps.length ? (
+                  latestFollowUps.map((item) => (
+                    <div
+                      key={item.id}
+                      className="relative rounded-[12px] border border-[#eed8bf] bg-[#fffdfb] p-6"
+                    >
+                      <span className="absolute -left-[42px] top-7 h-4 w-4 rounded-full border-4 border-white bg-[#d89b06]" />
+                      <div className="grid gap-5 lg:grid-cols-[120px_1fr_1fr_1fr]">
+                        <p className="font-display text-2xl leading-tight">
+                          {formatDate(item.occurredAt)}
+                        </p>
+                        <div>
+                          <span className="rounded-full bg-[#fff2cf] px-3 py-1 text-xs font-bold text-[#9a6800]">
+                            {item.type.replaceAll("_", " ")}
+                          </span>
+                          <p className="mt-3 text-sm">
+                            <span className="font-bold">Observacion</span>
+                            <br />
+                            {item.observation}
+                          </p>
+                        </div>
+                        <p className="text-sm">
+                          <span className="font-bold">Recomendacion</span>
+                          <br />
+                          {item.recommendation ?? "Sin recomendacion registrada."}
+                        </p>
+                        <p className="text-sm">
+                          <span className="font-bold">Proxima accion</span>
+                          <br />
+                          {item.commitment ??
+                            (item.nextFollowUpAt
+                              ? `Revisar el ${formatDate(item.nextFollowUpAt)}.`
+                              : "Definir siguiente acompanamiento.")}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <EmptyBlock message="Todavia no se han registrado seguimientos para esta artesana." />
+                )}
+              </div>
             </div>
           </article>
 
           <aside className="space-y-6">
-            <article className="rounded-[10px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-              <h3 className="font-display text-2xl">Alertas de seguimiento</h3>
+            <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+              <h3 className="font-display text-2xl text-[#8a1747]">
+                Alertas de seguimiento
+              </h3>
               <div className="mt-5 space-y-4">
-                {[
-                  [
-                    "Puede requerir acompañamiento",
-                    "Su progreso es menor al promedio del grupo."
-                  ],
-                  [
-                    "Sin actividad reciente",
-                    "No registra actividad en los últimos 14 días."
-                  ],
-                  ["Participación en talleres", "No ha participado en talleres este mes."]
-                ].map(([title, description]) => (
-                  <div key={title} className="rounded-[8px] bg-[#fff8ed] p-4">
-                    <p className="font-ui font-bold">{title}</p>
-                    <p className="mt-1 text-sm text-[#6b5a4e]">{description}</p>
+                {alerts.length ? (
+                  alerts.map((alert) => (
+                    <div key={alert} className="rounded-[10px] bg-[#fff8ed] p-4">
+                      <p className="font-ui font-bold">{alert}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-[10px] bg-emerald-50 p-4 text-sm text-emerald-700">
+                    Sin alertas criticas por ahora.
                   </div>
-                ))}
+                )}
               </div>
               <Link
                 href="/facilitadora/reportes"
                 className="mt-5 inline-flex items-center gap-2 font-ui font-bold text-[#8a1747]"
               >
-                Ver todas las alertas
+                Ver reportes generales
               </Link>
             </article>
 
-            <article className="rounded-[10px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-              <h3 className="font-display text-2xl">Acciones rápidas</h3>
+            <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+              <h3 className="font-display text-2xl text-[#8a1747]">
+                Acciones rapidas
+              </h3>
               <div className="mt-5 grid gap-3">
                 <Link
                   href={`/facilitadora/artesanas/${artisanId}/seguimiento`}
@@ -301,17 +328,19 @@ export default async function Page({
               </div>
             </article>
 
-            <article className="rounded-[10px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
-              <h3 className="font-display text-2xl">Información de contacto</h3>
+            <article className="rounded-[14px] border border-[#eed8bf] bg-white p-6 shadow-[0_20px_50px_rgba(122,73,20,0.07)]">
+              <h3 className="font-display text-2xl text-[#8a1747]">
+                Informacion de contacto
+              </h3>
               <div className="mt-5 space-y-4 text-[#5f4a3a]">
                 <p className="flex items-center gap-3">
-                  <Phone className="h-5 w-5" /> {phone}
+                  <Phone className="h-5 w-5" /> {summary.phone ?? "Sin telefono"}
                 </p>
                 <p className="flex items-center gap-3">
-                  <Mail className="h-5 w-5" /> {artisan.email}
+                  <Mail className="h-5 w-5" /> {summary.email}
                 </p>
                 <p className="flex items-center gap-3">
-                  <MessageCircle className="h-5 w-5" /> WhatsApp disponible
+                  <MessageCircle className="h-5 w-5" /> Comunidad: {summary.community}
                 </p>
               </div>
             </article>

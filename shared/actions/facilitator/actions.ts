@@ -59,6 +59,9 @@ export async function createFollowUpAction(_: unknown, formData: FormData) {
       outcome: input.outcome ?? null
     });
     revalidatePath(`/facilitadora/artesanas/${input.artisanId}`);
+    revalidatePath(`/facilitadora/artesanas/${input.artisanId}/seguimiento`);
+    revalidatePath("/facilitadora/seguimiento");
+    revalidatePath("/facilitadora/reportes");
     return result(true, "Seguimiento registrado.");
   } catch (error) {
     return result(

@@ -13,6 +13,7 @@ import {
   Home,
   LogOut,
   Menu,
+  MessageCircle,
   MoreHorizontal,
   Store,
   Users
@@ -28,9 +29,54 @@ import { cn } from "@/shared/lib/utils";
 type SidebarProps = {
   role: UserRole;
   className?: string;
+  badges?: NavigationBadges;
 };
 
-function NavigationContent({ role }: { role: UserRole }) {
+type NavigationBadges = {
+  notifications?: number;
+  messages?: number;
+};
+
+function getBadgeCount(href: string, badges?: NavigationBadges) {
+  if (href.endsWith("/mensajes")) {
+    return badges?.messages ?? 0;
+  }
+
+  if (href.endsWith("/convocatorias")) {
+    return badges?.notifications ?? 0;
+  }
+
+  return 0;
+}
+
+function NavigationBadge({
+  count,
+  active = false,
+  className
+}: {
+  count?: number;
+  active?: boolean;
+  className?: string;
+}) {
+  if (!count || count <= 0) {
+    return null;
+  }
+
+  return (
+    <span
+      className={cn(
+        "absolute -right-2 -top-2 grid min-h-5 min-w-5 place-items-center rounded-full px-1.5 font-ui text-[10px] font-extrabold leading-none text-white ring-2 ring-white",
+        active ? "bg-[#f5b900] text-[#2a211c]" : "bg-[#b5245b]",
+        className
+      )}
+      aria-label={`${count} pendientes`}
+    >
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
+
+function NavigationContent({ role, badges }: { role: UserRole; badges?: NavigationBadges }) {
   const pathname = usePathname();
   const items = roleNavigation[role];
   const meta = roleNavigationMeta[role];
@@ -57,6 +103,7 @@ function NavigationContent({ role }: { role: UserRole }) {
         {items.map((item) => {
           const Icon = item.icon;
           const active = isActivePath(pathname, item.href);
+          const badgeCount = getBadgeCount(item.href, badges);
 
           return (
             <Link
@@ -74,7 +121,14 @@ function NavigationContent({ role }: { role: UserRole }) {
               )}
               aria-current={active ? "page" : undefined}
             >
-              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span className="relative inline-flex shrink-0">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+                <NavigationBadge
+                  count={badgeCount}
+                  active={active}
+                  className="min-h-4 min-w-4 text-[9px]"
+                />
+              </span>
               <span className="truncate">{item.label}</span>
             </Link>
           );
@@ -140,7 +194,13 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function ArtisanDrawerNavigationContent({ onNavigate }: { onNavigate?: () => void }) {
+function ArtisanDrawerNavigationContent({
+  onNavigate,
+  badges
+}: {
+  onNavigate?: () => void;
+  badges?: NavigationBadges;
+}) {
   const pathname = usePathname();
   const meta = roleNavigationMeta.ARTESANA;
   const items = roleNavigation.ARTESANA;
@@ -168,6 +228,7 @@ function ArtisanDrawerNavigationContent({ onNavigate }: { onNavigate?: () => voi
   function renderItem(item: NonNullable<typeof homeItem>, featured = false) {
     const Icon = item.icon;
     const active = isActivePath(pathname, item.href);
+    const badgeCount = getBadgeCount(item.href, badges);
 
     return (
       <SheetClose asChild key={item.href}>
@@ -182,7 +243,14 @@ function ArtisanDrawerNavigationContent({ onNavigate }: { onNavigate?: () => voi
           )}
           aria-current={active ? "page" : undefined}
         >
-          <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span className="relative inline-flex shrink-0">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+            <NavigationBadge
+              count={badgeCount}
+              active={active}
+              className="min-h-4 min-w-4 text-[9px]"
+            />
+          </span>
           <span className="truncate">{item.label}</span>
         </Link>
       </SheetClose>
@@ -234,7 +302,7 @@ function ArtisanDrawerNavigationContent({ onNavigate }: { onNavigate?: () => voi
   );
 }
 
-export function Sidebar({ role, className }: SidebarProps) {
+export function Sidebar({ role, className, badges }: SidebarProps) {
   return (
     <aside
       className={cn(
@@ -242,15 +310,23 @@ export function Sidebar({ role, className }: SidebarProps) {
         className
       )}
     >
-      <NavigationContent role={role} />
+      <NavigationContent role={role} badges={badges} />
     </aside>
   );
 }
 
-export function MobileNavigation({ role }: SidebarProps) {
+export function MobileNavigation({ role, badges }: SidebarProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isArtisan = role === "ARTESANA";
+  const isFacilitator = role === "FACILITADORA";
+  const notificationHref = isArtisan
+    ? "/artesana/convocatorias"
+    : "/facilitadora/convocatorias";
+  const messagesHref = isArtisan ? "/artesana/mensajes" : "/facilitadora/mensajes";
+  const moreBadgeCount = isArtisan
+    ? (badges?.notifications ?? 0) + (badges?.messages ?? 0)
+    : 0;
   const mainBottomHrefs = [
     "/artesana/dashboard",
     "/artesana/aprender",
@@ -278,15 +354,25 @@ export function MobileNavigation({ role }: SidebarProps) {
           </Link>
 
           <div className="flex items-center gap-1">
-            {isArtisan ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#7a1042]"
-                aria-label="Ver notificaciones"
-              >
-                <Bell className="h-5 w-5" />
-              </Button>
+            {isArtisan || isFacilitator ? (
+              <>
+                <Link
+                  href={notificationHref as Route}
+                  className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
+                  aria-label="Ver notificaciones"
+                >
+                  <Bell className="h-5 w-5" aria-hidden="true" />
+                  <NavigationBadge count={badges?.notifications} />
+                </Link>
+                <Link
+                  href={messagesHref as Route}
+                  className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
+                  aria-label="Ver mensajes"
+                >
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                  <NavigationBadge count={badges?.messages} />
+                </Link>
+              </>
             ) : null}
             {!isArtisan ? (
               <Sheet>
@@ -301,7 +387,7 @@ export function MobileNavigation({ role }: SidebarProps) {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-80 max-w-[90vw]">
-                  <NavigationContent role={role} />
+                  <NavigationContent role={role} badges={badges} />
                 </SheetContent>
               </Sheet>
             ) : null}
@@ -312,7 +398,10 @@ export function MobileNavigation({ role }: SidebarProps) {
       {isArtisan ? (
         <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
           <SheetContent side="left" className="w-80 max-w-[90vw] overflow-y-auto">
-            <ArtisanDrawerNavigationContent onNavigate={() => setDrawerOpen(false)} />
+            <ArtisanDrawerNavigationContent
+              badges={badges}
+              onNavigate={() => setDrawerOpen(false)}
+            />
           </SheetContent>
         </Sheet>
       ) : null}
@@ -341,7 +430,14 @@ export function MobileNavigation({ role }: SidebarProps) {
                   aria-label="Abrir más opciones de navegación"
                   aria-current={active ? "page" : undefined}
                 >
-                  <Icon className="h-5 w-5" aria-hidden="true" />
+                  <span className="relative inline-flex">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                    <NavigationBadge
+                      count={moreBadgeCount}
+                      active={active}
+                      className="ring-[#9d0f4f]"
+                    />
+                  </span>
                   <span>{item.label}</span>
                 </button>
               );

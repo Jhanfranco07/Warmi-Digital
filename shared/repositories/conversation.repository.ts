@@ -80,6 +80,24 @@ export class ConversationRepository {
     });
   }
 
+  async countUnreadForUser(userId: string) {
+    const conversations = await this.findForUser(userId);
+
+    return conversations.filter((conversation) => {
+      const currentParticipant = conversation.participants.find(
+        (participant) => participant.userId === userId
+      );
+      const lastMessage = conversation.messages[0];
+
+      return Boolean(
+        lastMessage &&
+          lastMessage.senderId !== userId &&
+          (!currentParticipant?.lastReadAt ||
+            lastMessage.createdAt > currentParticipant.lastReadAt)
+      );
+    }).length;
+  }
+
   async findOrCreateDirect(createdById: string, otherUserId: string) {
     const existing = await this.db.conversation.findFirst({
       where: {

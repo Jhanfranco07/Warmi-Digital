@@ -42,7 +42,7 @@ function getBadgeCount(href: string, badges?: NavigationBadges) {
     return badges?.messages ?? 0;
   }
 
-  if (href.endsWith("/convocatorias")) {
+  if (href.endsWith("/notificaciones")) {
     return badges?.notifications ?? 0;
   }
 
@@ -68,6 +68,30 @@ function NavigationBadge({
         "absolute -right-2 -top-2 grid min-h-5 min-w-5 place-items-center rounded-full px-1.5 font-ui text-[10px] font-extrabold leading-none text-white ring-2 ring-white",
         active ? "bg-[#f5b900] text-[#2a211c]" : "bg-[#b5245b]",
         className
+      )}
+      aria-label={`${count} pendientes`}
+    >
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
+
+function NavigationCountPill({
+  count,
+  active = false
+}: {
+  count?: number;
+  active?: boolean;
+}) {
+  if (!count || count <= 0) {
+    return null;
+  }
+
+  return (
+    <span
+      className={cn(
+        "ml-auto grid min-h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 font-ui text-[10px] font-extrabold leading-none",
+        active ? "bg-[#f5b900] text-[#2a211c]" : "bg-[#b5245b] text-white"
       )}
       aria-label={`${count} pendientes`}
     >
@@ -110,7 +134,7 @@ function NavigationContent({ role, badges }: { role: UserRole; badges?: Navigati
               key={item.href}
               href={item.href as Route}
               className={cn(
-                "group flex min-h-[48px] items-center gap-4 rounded-full px-4 py-2 font-ui text-base font-semibold text-[#624331] transition-all duration-300",
+                "group flex min-h-[48px] items-center justify-between gap-3 rounded-full px-4 py-2 font-ui text-base font-semibold text-[#624331] transition-all duration-300",
                 isFacilitator
                   ? "hover:bg-[#fff7df] hover:text-[#9a6800]"
                   : "hover:bg-[#fff0f5] hover:text-[#b5245b]",
@@ -121,15 +145,11 @@ function NavigationContent({ role, badges }: { role: UserRole; badges?: Navigati
               )}
               aria-current={active ? "page" : undefined}
             >
-              <span className="relative inline-flex shrink-0">
-                <Icon className="h-5 w-5" aria-hidden="true" />
-                <NavigationBadge
-                  count={badgeCount}
-                  active={active}
-                  className="min-h-4 min-w-4 text-[9px]"
-                />
+              <span className="flex min-w-0 items-center gap-4">
+                <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="truncate">{item.label}</span>
               </span>
-              <span className="truncate">{item.label}</span>
+              <NavigationCountPill count={badgeCount} active={active} />
             </Link>
           );
         })}
@@ -236,22 +256,18 @@ function ArtisanDrawerNavigationContent({
           href={item.href as Route}
           onClick={onNavigate}
           className={cn(
-            "group flex min-h-[48px] items-center gap-4 rounded-2xl px-4 py-3 font-ui text-base font-semibold text-[#624331] transition-all duration-300 hover:bg-[#fff0f5] hover:text-[#b5245b]",
+            "group flex min-h-[48px] items-center justify-between gap-3 rounded-2xl px-4 py-3 font-ui text-base font-semibold text-[#624331] transition-all duration-300 hover:bg-[#fff0f5] hover:text-[#b5245b]",
             featured && "rounded-full",
             active &&
               "bg-[#a40f4d] text-white shadow-[0_14px_30px_rgba(164,15,77,0.24)] hover:bg-[#a40f4d] hover:text-white"
           )}
           aria-current={active ? "page" : undefined}
         >
-          <span className="relative inline-flex shrink-0">
-            <Icon className="h-5 w-5" aria-hidden="true" />
-            <NavigationBadge
-              count={badgeCount}
-              active={active}
-              className="min-h-4 min-w-4 text-[9px]"
-            />
+          <span className="flex min-w-0 items-center gap-4">
+            <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+            <span className="truncate">{item.label}</span>
           </span>
-          <span className="truncate">{item.label}</span>
+          <NavigationCountPill count={badgeCount} active={active} />
         </Link>
       </SheetClose>
     );
@@ -321,8 +337,8 @@ export function MobileNavigation({ role, badges }: SidebarProps) {
   const isArtisan = role === "ARTESANA";
   const isFacilitator = role === "FACILITADORA";
   const notificationHref = isArtisan
-    ? "/artesana/convocatorias"
-    : "/facilitadora/convocatorias";
+    ? "/artesana/notificaciones"
+    : "/facilitadora/notificaciones";
   const messagesHref = isArtisan ? "/artesana/mensajes" : "/facilitadora/mensajes";
   const moreBadgeCount = isArtisan
     ? (badges?.notifications ?? 0) + (badges?.messages ?? 0)
@@ -357,20 +373,20 @@ export function MobileNavigation({ role, badges }: SidebarProps) {
             {isArtisan || isFacilitator ? (
               <>
                 <Link
-                  href={notificationHref as Route}
-                  className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
-                  aria-label="Ver notificaciones"
-                >
-                  <Bell className="h-5 w-5" aria-hidden="true" />
-                  <NavigationBadge count={badges?.notifications} />
-                </Link>
-                <Link
                   href={messagesHref as Route}
                   className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
                   aria-label="Ver mensajes"
                 >
                   <MessageCircle className="h-5 w-5" aria-hidden="true" />
                   <NavigationBadge count={badges?.messages} />
+                </Link>
+                <Link
+                  href={notificationHref as Route}
+                  className="relative grid h-10 w-10 place-items-center rounded-full text-[#7a1042] transition-colors hover:bg-[#fff0f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b5245b]/40"
+                  aria-label="Ver notificaciones"
+                >
+                  <Bell className="h-5 w-5" aria-hidden="true" />
+                  <NavigationBadge count={badges?.notifications} />
                 </Link>
               </>
             ) : null}
@@ -415,7 +431,7 @@ export function MobileNavigation({ role, badges }: SidebarProps) {
             const Icon = item.icon;
             const active = item.href ? isActivePath(pathname, item.href) : moreIsActive;
             const className = cn(
-              "flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[11px] font-semibold text-white/80 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80",
+              "relative flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[11px] font-semibold text-white/80 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80",
               active &&
                 "bg-white/15 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
             );
@@ -430,14 +446,12 @@ export function MobileNavigation({ role, badges }: SidebarProps) {
                   aria-label="Abrir más opciones de navegación"
                   aria-current={active ? "page" : undefined}
                 >
-                  <span className="relative inline-flex">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                    <NavigationBadge
-                      count={moreBadgeCount}
-                      active={active}
-                      className="ring-[#9d0f4f]"
-                    />
-                  </span>
+                  <NavigationBadge
+                    count={moreBadgeCount}
+                    active={active}
+                    className="right-3 top-1 ring-[#9d0f4f]"
+                  />
+                  <Icon className="h-5 w-5" aria-hidden="true" />
                   <span>{item.label}</span>
                 </button>
               );

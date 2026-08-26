@@ -70,10 +70,6 @@ function getBadgeCount(href: string, badges?: NavigationBadges) {
     return badges?.messages ?? 0;
   }
 
-  if (href.endsWith("/notificaciones")) {
-    return badges?.notifications ?? 0;
-  }
-
   return 0;
 }
 
@@ -138,9 +134,6 @@ function NotificationPopover({
   unreadCount?: number;
 }) {
   const isFacilitator = role === "FACILITADORA";
-  const allHref = isFacilitator
-    ? "/facilitadora/notificaciones"
-    : "/artesana/notificaciones";
   const hasUnread = unreadCount > 0;
 
   return (
@@ -291,8 +284,8 @@ function NotificationPopover({
           )}
         </div>
 
-        <div className="grid gap-2 border-t border-[#f1d7ca] bg-white px-4 py-4">
-          {hasUnread ? (
+        {hasUnread ? (
+          <div className="border-t border-[#f1d7ca] bg-white px-4 py-4">
             <form action={markAllNotificationsReadAction}>
               <Button
                 type="submit"
@@ -306,15 +299,8 @@ function NotificationPopover({
                 Marcar todo como leído
               </Button>
             </form>
-          ) : null}
-          <Button
-            asChild
-            variant="outline"
-            className="h-11 rounded-full border-[#d9b8a7] bg-white text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
-          >
-            <Link href={allHref as Route}>Ver todas las notificaciones</Link>
-          </Button>
-        </div>
+          </div>
+        ) : null}
       </PopoverContent>
     </Popover>
   );

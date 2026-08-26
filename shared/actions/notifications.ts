@@ -5,15 +5,9 @@ import { revalidatePath } from "next/cache";
 import { NotificationRepository } from "@/shared/repositories/notification.repository";
 import { requireAuth } from "@/shared/server/auth/helpers";
 
-const notificationPaths = [
-  "/artesana/notificaciones",
-  "/facilitadora/notificaciones",
-  "/artesana/dashboard",
-  "/facilitadora/dashboard"
-];
-
 function revalidateNotificationSurfaces() {
-  notificationPaths.forEach((path) => revalidatePath(path));
+  revalidatePath("/artesana/dashboard");
+  revalidatePath("/facilitadora/dashboard");
   revalidatePath("/artesana", "layout");
   revalidatePath("/facilitadora", "layout");
 }

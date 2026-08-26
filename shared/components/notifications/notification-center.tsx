@@ -45,7 +45,7 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-[#5b4a42] md:text-lg">
               Revisa avisos importantes sobre tu aprendizaje, comunidad, pedidos y
-              acompaÃ±amiento.
+              acompañamiento.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
                 className="h-12 rounded-full border-[#d9b8a7] bg-white px-6 text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
               >
                 <CheckCircle2 className="h-5 w-5" />
-                Marcar todas como leÃ­das
+                Marcar todas como leídas
               </Button>
             </form>
           ) : null}
@@ -71,7 +71,7 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
           />
           <SummaryCard label="Recientes" value={notifications.length} tone="blue" />
           <SummaryCard
-            label="LeÃ­das"
+            label="Leídas"
             value={notifications.length - unreadCount}
             tone="green"
           />
@@ -124,7 +124,7 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
                               : "bg-[#f6efe9] text-[#7a5b4a]"
                           )}
                         >
-                          {unread ? "Nuevo" : "LeÃ­do"}
+                          {unread ? "Nuevo" : "Leído"}
                         </span>
                         <span className="rounded-full bg-[#fff4cf] px-3 py-1 font-ui text-xs font-bold text-[#9a6800]">
                           {typeLabels[notification.type]}
@@ -153,7 +153,7 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
                           variant="outline"
                           className="h-11 rounded-full border-[#d9b8a7] bg-white text-[#7a3100] hover:bg-[#fff0f5] hover:text-[#b5245b]"
                         >
-                          Marcar como leÃ­da
+                          Marcar como leída
                         </Button>
                       </form>
                     ) : null}
@@ -167,10 +167,10 @@ export function NotificationCenter({ role, notifications }: NotificationCenterPr
                 <Megaphone className="h-8 w-8" />
               </span>
               <h3 className="mt-5 font-serif text-3xl font-bold text-[#7a3100]">
-                AÃºn no tienes notificaciones
+                Aún no tienes notificaciones
               </h3>
               <p className="mt-3 max-w-xl text-[#5b4a42]">
-                Cuando haya novedades importantes, aparecerÃ¡n aquÃ­.
+                Cuando haya novedades importantes, aparecerán aquí.
               </p>
             </div>
           )}

@@ -6,10 +6,12 @@ import { Toaster } from "sonner";
 
 import { AccessibilityPreferencesProvider } from "@/shared/accessibility/accessibility-preferences-provider";
 import { QueryProvider } from "@/shared/providers/query-provider";
+import { OfflineRuntime } from "@/shared/offline/offline-runtime";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
+      <OfflineRuntime />
       <ThemeProvider
         attribute="class"
         defaultTheme="light"

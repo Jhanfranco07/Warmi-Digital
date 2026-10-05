@@ -1,0 +1,320 @@
+"use client";
+
+/* eslint-disable @next/next/no-html-link-for-pages -- Offline navigation needs document requests, not uncached RSC payloads. */
+
+import { useEffect, useState, type MouseEvent } from "react";
+import { ArrowLeft, ChevronRight, ExternalLink, Trash2 } from "lucide-react";
+import { SpeechButton } from "@/shared/accessibility/speech-button";
+import { Button } from "@/shared/components/ui/button";
+import {
+  formatBytes,
+  readDownload,
+  removeDownload,
+  verifiedDownload
+} from "@/shared/offline/module3-storage";
+import type { ModuleDownload, OfflineResource } from "@/shared/offline/module3-types";
+
+const unavailable = "Este contenido todavía no está disponible sin conexión.";
+const connectionRequired = "Este recurso necesita conexión a internet.";
+
+export function OfflineLearning() {
+  const [download, setDownload] = useState<ModuleDownload>();
+  const [loading, setLoading] = useState(true);
+  const [path, setPath] = useState("");
+  const [message, setMessage] = useState("");
+  const [online, setOnline] = useState(false);
+  const [hasLocalData, setHasLocalData] = useState(false);
+  useEffect(() => {
+    const connection = () => setOnline(navigator.onLine);
+    connection();
+    window.addEventListener("online", connection);
+    window.addEventListener("offline", connection);
+    const history = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", history);
+    setPath(window.location.pathname);
+    void verifiedDownload()
+      .then(async (saved) => {
+        setDownload(saved);
+        setHasLocalData(
+          Boolean(await readDownload()) ||
+            (await caches.keys()).some((name) => name.startsWith("warmi-module3-"))
+        );
+      })
+      .catch(() => setMessage(unavailable))
+      .finally(() => setLoading(false));
+    return () => {
+      window.removeEventListener("online", connection);
+      window.removeEventListener("offline", connection);
+      window.removeEventListener("popstate", history);
+    };
+  }, []);
+  const segments = path.split("/").filter(Boolean);
+  const courseId = segments[2];
+  const lessonId = segments[4];
+  const isEntry = [
+    "/",
+    "/artesana",
+    "/artesana/dashboard",
+    "/artesana/aprender",
+    "/offline-learning"
+  ].includes(path);
+  const validCourse = !courseId || courseId === download?.courseId;
+  const supportLessons = download?.supportLessons ?? [];
+  const lesson = [...(download?.lessons ?? []), ...supportLessons].find(
+    (item) => item.id === lessonId
+  );
+  const courseHref = `/artesana/aprender/${download?.courseId}`;
+
+  function navigate(event: MouseEvent<HTMLElement>) {
+    const anchor = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
+    if (!anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey)
+      return;
+    const url = new URL(anchor.href);
+    if (url.origin !== location.origin || !url.pathname.startsWith("/artesana/aprender"))
+      return;
+    event.preventDefault();
+    // The shell keeps its local data while preserving the existing lesson URLs.
+    window.history.pushState(null, "", url.href);
+    setPath(url.pathname);
+    setMessage("");
+    window.scrollTo(0, 0);
+  }
+
+  async function remove() {
+    try {
+      await removeDownload();
+      setDownload(undefined);
+      setHasLocalData(false);
+      setMessage("");
+    } catch {
+      setMessage("No se pudo eliminar la descarga. Intenta nuevamente.");
+    }
+  }
+
+  return (
+    <main
+      data-warmi-offline-learning
+      onClick={navigate}
+      className="mx-auto min-h-screen max-w-4xl space-y-6 px-5 py-8"
+    >
+      <header className="space-y-3 border-b pb-5">
+        <p className="font-serif text-2xl font-bold text-[#b5245b]">Warmi Digital</p>
+        <a
+          href="/artesana/aprender"
+          className="inline-flex min-h-12 items-center gap-2 font-semibold text-[#b5245b]"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          Mi aprendizaje
+        </a>
+        <h1 className="break-words font-serif text-3xl font-bold">
+          {lesson?.title ?? "Mi aprendizaje"}
+        </h1>
+      </header>
+      {loading ? (
+        <p role="status">Cargando contenidos descargados...</p>
+      ) : !download ||
+        !validCourse ||
+        (lessonId && !lesson) ||
+        (!isEntry && segments[1] !== "aprender") ? (
+        <p role="status">{unavailable}</p>
+      ) : (
+        <>
+          {lesson ? (
+            <>
+              <a
+                href={courseHref}
+                className="inline-flex min-h-12 items-center gap-2 text-[#b5245b]"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                Volver al curso
+              </a>
+              <p className="text-muted-foreground">{download.title}</p>
+              <SpeechButton
+                text={`${lesson.title}. ${lesson.content ?? ""}`}
+                label="Escuchar explicación"
+                compact
+              />
+              <p className="whitespace-pre-wrap break-words text-lg leading-8">
+                {lesson.content}
+              </p>
+              {lesson.resources.map((resource) => (
+                <OfflineResourceView
+                  key={resource.id}
+                  resource={resource}
+                  download={download}
+                />
+              ))}
+              <nav
+                aria-label="Lecciones del módulo"
+                className="flex flex-wrap gap-3 border-t pt-4"
+              >
+                {download.lessons.map((item, index) => (
+                  <a
+                    key={item.id}
+                    href={`${courseHref}/lecciones/${item.id}`}
+                    aria-current={item.id === lesson.id ? "page" : undefined}
+                    className="inline-flex min-h-12 items-center gap-2 rounded-md border px-4 py-2 font-semibold aria-[current=page]:border-[#b5245b]"
+                  >
+                    {index + 1}. {item.title}
+                    <ChevronRight className="h-4 w-4 shrink-0" />
+                  </a>
+                ))}
+              </nav>
+              {supportLessons.length > 0 && (
+                <SupportNavigation lessons={supportLessons} courseHref={courseHref} />
+              )}
+            </>
+          ) : (
+            <section className="space-y-5">
+              <p className="text-muted-foreground">{download.courseTitle}</p>
+              <h2 className="break-words font-serif text-2xl font-bold">
+                {download.title}
+              </h2>
+              <p>{download.description}</p>
+              <p role="status" className="font-semibold text-green-700">
+                ✓ Disponible sin conexión · {formatBytes(download.bytes)}
+              </p>
+              <SpeechButton
+                text={`${download.title}. ${download.description ?? ""}`}
+                label="Escuchar este módulo"
+                compact
+              />
+              <nav aria-label="Lecciones" className="divide-y border-y">
+                {download.lessons.map((item, index) => (
+                  <a
+                    key={item.id}
+                    href={`${courseHref}/lecciones/${item.id}`}
+                    className="flex min-h-16 items-center justify-between gap-3 py-3 font-semibold"
+                  >
+                    {index + 1}. {item.title}
+                    <ChevronRight className="h-5 w-5 shrink-0" />
+                  </a>
+                ))}
+              </nav>
+              {supportLessons.length > 0 && (
+                <SupportNavigation lessons={supportLessons} courseHref={courseHref} />
+              )}
+            </section>
+          )}
+        </>
+      )}
+      {hasLocalData && (
+        <Button variant="outline" onClick={remove}>
+          <Trash2 className="h-5 w-5" />
+          Eliminar descarga
+        </Button>
+      )}
+      {message && <p role="alert">{message}</p>}
+      {online && (
+        <Button variant="outline" onClick={() => location.reload()}>
+          Volver con conexión
+        </Button>
+      )}
+    </main>
+  );
+}
+
+function SupportNavigation({
+  lessons,
+  courseHref
+}: {
+  lessons: NonNullable<ModuleDownload["supportLessons"]>;
+  courseHref: string;
+}) {
+  return (
+    <nav aria-label="Material de apoyo" className="space-y-3 border-t pt-4">
+      <h2 className="font-serif text-xl font-bold">Material de apoyo</h2>
+      {lessons.map((lesson) => (
+        <a
+          key={lesson.id}
+          href={`${courseHref}/lecciones/${lesson.id}`}
+          className="flex min-h-12 items-center justify-between gap-3 font-semibold"
+        >
+          {lesson.title}
+          <ChevronRight className="h-5 w-5 shrink-0" />
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function OfflineResourceView({
+  resource,
+  download
+}: {
+  resource: OfflineResource;
+  download: ModuleDownload;
+}) {
+  const [message, setMessage] = useState("");
+  const url = resource.file && download.assets[resource.file.id];
+  function external() {
+    if (!navigator.onLine) {
+      setMessage(connectionRequired);
+      return;
+    }
+    if (resource.externalUrl && /^https?:\/\//i.test(resource.externalUrl))
+      window.open(resource.externalUrl, "_blank", "noopener,noreferrer");
+    else setMessage(connectionRequired);
+  }
+  return (
+    <section className="space-y-3 border-t py-5">
+      <h2 className="break-words font-serif text-2xl font-bold">{resource.title}</h2>
+      <p className="break-words">{resource.description}</p>
+      <SpeechButton
+        text={`${resource.title}. ${resource.description ?? ""}`}
+        label="Escuchar descripción"
+        compact
+      />
+      {resource.internalLessonId ? (
+        <a
+          href={`/artesana/aprender/${download.courseId}/lecciones/${resource.internalLessonId}`}
+          className="inline-flex min-h-12 items-center gap-2 font-semibold text-[#b5245b]"
+        >
+          Abrir lección de apoyo
+          <ChevronRight className="h-5 w-5" />
+        </a>
+      ) : url && resource.file?.mimeType.startsWith("image/") ? (
+        // Local service-worker URLs are already the original image, not Next image transforms.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={url}
+          alt={resource.title}
+          className="max-h-[600px] w-full object-contain"
+        />
+      ) : url && resource.file?.mimeType === "video/mp4" ? (
+        <video
+          controls
+          playsInline
+          preload="metadata"
+          src={url}
+          className="aspect-video w-full rounded-md bg-black"
+        />
+      ) : url && resource.file?.mimeType === "application/pdf" ? (
+        <div className="space-y-3">
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-12 items-center gap-2 font-semibold text-[#b5245b]"
+          >
+            <ExternalLink className="h-5 w-5" />
+            Abrir PDF
+          </a>
+          <iframe src={url} title={resource.title} className="h-[560px] w-full border" />
+        </div>
+      ) : resource.type === "EXTERNAL_LINK" || resource.type === "VIDEO_YOUTUBE" ? (
+        <Button
+          variant="outline"
+          onClick={external}
+          className="h-auto min-h-12 whitespace-normal"
+        >
+          <ExternalLink className="h-5 w-5 shrink-0" />
+          {resource.type === "VIDEO_YOUTUBE" ? "Abrir video en internet" : "Abrir enlace"}
+        </Button>
+      ) : (
+        <p>{unavailable}</p>
+      )}
+      {message && <p role="status">{message}</p>}
+    </section>
+  );
+}

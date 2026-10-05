@@ -21,6 +21,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  manifest: "/manifest.webmanifest",
   title: "Warmi Digital",
   description:
     "Ecosistema digital para aprendizaje, comunidad, autonomía y preservación cultural.",

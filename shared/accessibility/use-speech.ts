@@ -63,7 +63,12 @@ function getPreferredVoice(settings: AccessibilitySettings) {
     return null;
   }
 
-  const voices = synthesis.getVoices();
+  const voices = synthesis
+    .getVoices()
+    .filter(
+      (voice) =>
+        typeof navigator === "undefined" || navigator.onLine || voice.localService
+    );
 
   if (
     settings.speechVoiceURI !== "auto" &&
@@ -187,6 +192,13 @@ export function useSpeech() {
       window.dispatchEvent(new CustomEvent("warmi-speech-start", { detail: { id } }));
 
       const selectedVoice = getPreferredVoice(settings);
+      if (!navigator.onLine && !selectedVoice) {
+        setState((current) => ({
+          ...current,
+          message: "Tu dispositivo necesita una voz instalada para leer sin internet."
+        }));
+        return;
+      }
       const utterance = new SpeechSynthesisUtterance(cleanText);
 
       utterance.lang = selectedVoice?.lang ?? "es-ES";

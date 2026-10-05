@@ -30,6 +30,9 @@ import { Progress } from "@/shared/components/ui/progress";
 import { cn } from "@/shared/lib/utils";
 import { requireRole } from "@/shared/server/auth/helpers";
 import { LearningService } from "@/shared/services/learning.service";
+import { ModuleDownload } from "@/features/artisan/offline/module-download";
+import { isOfflineModule } from "@/shared/offline/module3-types";
+import { buildOfflineModule } from "@/shared/services/offline-learning.service";
 
 const levelLabels = {
   BEGINNER: "Inicial",
@@ -263,7 +266,7 @@ export default async function ArtisanCourseDetailPage({
               0
             );
           const moduleNarration = buildModuleNarration({
-            order: moduleIndex + 1,
+            order: isOfflineModule(module.title) ? module.order : moduleIndex + 1,
             title: module.title,
             description: module.description,
             lessonCount: module.lessons.length,
@@ -274,7 +277,7 @@ export default async function ArtisanCourseDetailPage({
           return (
             <ArtisanPanel
               key={module.id}
-              eyebrow={`Módulo ${moduleIndex + 1}`}
+              eyebrow={`Módulo ${isOfflineModule(module.title) ? module.order : moduleIndex + 1}`}
               title={module.title}
               action={
                 <div className="flex flex-wrap items-center gap-3">
@@ -289,6 +292,11 @@ export default async function ArtisanCourseDetailPage({
                 </div>
               }
             >
+              {isOfflineModule(module.title) && (
+                <ModuleDownload
+                  module={buildOfflineModule(session.user.id, course, module)}
+                />
+              )}
               {module.description ? (
                 <p className="mb-5 max-w-4xl text-base leading-7 text-[#5b4a42]">
                   {module.description}

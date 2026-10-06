@@ -12,13 +12,15 @@ type SpeechButtonProps = {
   label?: string;
   className?: string;
   compact?: boolean;
+  preferDefaultVoice?: boolean;
 };
 
 export function SpeechButton({
   text,
   label = "Escuchar",
   className,
-  compact = false
+  compact = false,
+  preferDefaultVoice = false
 }: SpeechButtonProps) {
   const {
     speak,
@@ -31,7 +33,7 @@ export function SpeechButton({
     message,
     selectedVoiceName,
     settings
-  } = useSpeech();
+  } = useSpeech({ preferDefaultVoice });
   const disabled = !isSupported || !settings.voiceEnabled || !text.trim();
 
   if (!isSupported) {

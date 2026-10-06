@@ -1,4 +1,4 @@
-const SHELL_CACHE = "warmi-offline-shell-v2";
+const SHELL_CACHE = "warmi-offline-shell-v3";
 const SHELL_URL = "/offline-learning";
 
 async function prepareShell() {

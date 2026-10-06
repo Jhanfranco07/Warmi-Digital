@@ -3,7 +3,14 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Offline navigation needs document requests, not uncached RSC payloads. */
 
 import { useEffect, useState, type MouseEvent } from "react";
-import { ArrowLeft, ChevronRight, ExternalLink, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
+  PlayCircle,
+  Trash2
+} from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -13,7 +20,11 @@ import {
   removeDownload,
   verifiedDownloads
 } from "@/shared/offline/module3-storage";
-import type { ModuleDownload, OfflineResource } from "@/shared/offline/module3-types";
+import type {
+  ModuleDownload,
+  OfflineLesson,
+  OfflineResource
+} from "@/shared/offline/module3-types";
 import {
   acceptsOfflineCourse,
   LEARNING_PROGRAM,
@@ -82,6 +93,8 @@ export function OfflineLearning() {
   const lesson = [...(download?.lessons ?? []), ...supportLessons].find(
     (item) => item.id === lessonId
   );
+  const lessonIndex = download?.lessons.findIndex((item) => item.id === lessonId) ?? -1;
+  const nextLesson = lessonIndex >= 0 ? download?.lessons[lessonIndex + 1] : undefined;
   const programModule = download && moduleCapability(download.moduleId);
   const courseHref = `/artesana/aprender/${programModule ? LEARNING_PROGRAM.id : download?.courseId}`;
 
@@ -92,6 +105,7 @@ export function OfflineLearning() {
     const url = new URL(anchor.href);
     if (url.origin !== location.origin || !url.pathname.startsWith("/artesana/aprender"))
       return;
+    if (url.pathname === location.pathname && url.hash) return;
     event.preventDefault();
     // The shell keeps its local data while preserving the existing lesson URLs.
     window.history.pushState(null, "", url.href);
@@ -120,15 +134,17 @@ export function OfflineLearning() {
       className="mx-auto min-h-screen max-w-4xl space-y-6 px-5 py-8"
     >
       <header className="space-y-3 border-b pb-5">
-        <p className="font-serif text-2xl font-bold text-[#b5245b]">Warmi Digital</p>
-        <a
-          href="/artesana/aprender"
-          className="inline-flex min-h-12 items-center gap-2 font-semibold text-[#b5245b]"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          Mi aprendizaje
-        </a>
-        <h1 className="break-words font-serif text-3xl font-bold">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="font-serif text-lg font-bold text-[#b5245b]">Warmi Digital</p>
+          <a
+            href="/artesana/aprender"
+            className="inline-flex min-h-12 items-center gap-2 font-semibold text-[#b5245b]"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Mi aprendizaje
+          </a>
+        </div>
+        <h1 className="break-words font-serif text-2xl font-bold">
           {lesson?.title ?? "Mi aprendizaje"}
         </h1>
       </header>
@@ -163,22 +179,17 @@ export function OfflineLearning() {
                 <ArrowLeft className="h-5 w-5" />
                 Volver al curso
               </a>
-              <p className="text-muted-foreground">{download.title}</p>
-              <SpeechButton
-                text={`${lesson.title}. ${lesson.content ?? ""}`}
-                label="Escuchar explicación"
-                compact
-              />
-              <p className="whitespace-pre-wrap break-words text-lg leading-8">
-                {lesson.content}
-              </p>
-              {lesson.resources.map((resource) => (
-                <OfflineResourceView
-                  key={resource.id}
-                  resource={resource}
-                  download={download}
-                />
-              ))}
+              <p className="text-sm text-muted-foreground">{download.title}</p>
+              <OfflineLessonContent key={lesson.id} lesson={lesson} download={download} />
+              {nextLesson && (
+                <a
+                  href={`${courseHref}/lecciones/${nextLesson.id}`}
+                  className="flex min-h-12 items-center justify-between gap-3 rounded-md bg-[#b5245b] px-4 py-3 font-semibold text-white"
+                >
+                  Siguiente sesión
+                  <ChevronRight className="h-5 w-5 shrink-0" />
+                </a>
+              )}
               <nav
                 aria-label="Lecciones del módulo"
                 className="flex flex-wrap gap-3 border-t pt-4"
@@ -212,6 +223,7 @@ export function OfflineLearning() {
                 ✓ Disponible sin conexión · {formatBytes(download.bytes)}
               </p>
               <SpeechButton
+                preferDefaultVoice
                 text={`${download.title}. ${download.description ?? ""}`}
                 label="Escuchar este módulo"
                 compact
@@ -251,6 +263,87 @@ export function OfflineLearning() {
   );
 }
 
+function OfflineLessonContent({
+  lesson,
+  download
+}: {
+  lesson: OfflineLesson;
+  download: ModuleDownload;
+}) {
+  const videos = lesson.resources.filter(
+    (resource) => resource.file?.mimeType === "video/mp4"
+  );
+  const materials = lesson.resources.filter(
+    (resource) => resource.file?.mimeType !== "video/mp4"
+  );
+  const index = download.lessons.findIndex((item) => item.id === lesson.id);
+  return (
+    <div className="space-y-6">
+      <p className="text-sm font-semibold text-[#b5245b]">
+        {index >= 0
+          ? `Sesión ${index + 1} de ${download.lessons.length}`
+          : "Material de apoyo"}
+      </p>
+      {videos.length > 0 && (
+        <section aria-label="Videos de esta sesión" className="space-y-3">
+          <h2 className="font-serif text-xl font-bold">Videos de esta sesión</h2>
+          {videos.map((resource, index) => (
+            <details
+              key={resource.id}
+              open={index === 0}
+              className="group border-y border-[#b5245b]/20"
+            >
+              <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 py-3 font-semibold [&::-webkit-details-marker]:hidden">
+                <PlayCircle className="h-6 w-6 shrink-0 text-[#b5245b]" />
+                <span className="min-w-0 flex-1 break-words">
+                  {index + 1}. {resource.title}
+                </span>
+                <ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" />
+              </summary>
+              <OfflineResourceView
+                resource={resource}
+                download={download}
+                showHeading={false}
+              />
+            </details>
+          ))}
+        </section>
+      )}
+      {lesson.content && (
+        <section className="space-y-3">
+          <SpeechButton
+            text={`${lesson.title}. ${lesson.content}`}
+            label="Escuchar explicación"
+            compact
+            preferDefaultVoice
+          />
+          <details data-offline-lesson-text className="group border-y">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 font-semibold [&::-webkit-details-marker]:hidden">
+              Leer texto completo
+              <ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" />
+            </summary>
+            <p className="whitespace-pre-wrap break-words pb-5 text-base leading-7">
+              {lesson.content}
+            </p>
+          </details>
+        </section>
+      )}
+      {materials.length > 0 && (
+        <section aria-label="Recursos y material de apoyo">
+          <h2 className="font-serif text-xl font-bold">Recursos y material de apoyo</h2>
+          {materials.map((resource) => (
+            <OfflineResourceView
+              key={resource.id}
+              resource={resource}
+              download={download}
+            />
+          ))}
+        </section>
+      )}
+    </div>
+  );
+}
+
 function SupportNavigation({
   lessons,
   courseHref
@@ -277,10 +370,12 @@ function SupportNavigation({
 
 function OfflineResourceView({
   resource,
-  download
+  download,
+  showHeading = true
 }: {
   resource: OfflineResource;
   download: ModuleDownload;
+  showHeading?: boolean;
 }) {
   const [message, setMessage] = useState("");
   const url = resource.file && download.assets[resource.file.id];
@@ -294,10 +389,17 @@ function OfflineResourceView({
     else setMessage(connectionRequired);
   }
   return (
-    <section className="space-y-3 border-t py-5">
-      <h2 className="break-words font-serif text-2xl font-bold">{resource.title}</h2>
-      <p className="break-words">{resource.description}</p>
+    <section id={`recurso-${resource.id}`} className="scroll-mt-5 space-y-3 py-4">
+      {showHeading && (
+        <h3 className="break-words font-serif text-xl font-bold">{resource.title}</h3>
+      )}
+      {resource.description && (
+        <p className="break-words text-sm text-muted-foreground">
+          {resource.description}
+        </p>
+      )}
       <SpeechButton
+        preferDefaultVoice
         text={`${resource.title}. ${resource.description ?? ""}`}
         label="Escuchar descripción"
         compact
@@ -320,6 +422,7 @@ function OfflineResourceView({
         />
       ) : url && resource.file?.mimeType === "video/mp4" ? (
         <video
+          aria-label={resource.title}
           controls
           playsInline
           preload="metadata"

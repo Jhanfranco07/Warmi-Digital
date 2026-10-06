@@ -4,12 +4,12 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import {
-  DEFAULT_SPANISH_VOICE_URI,
   type AccessibilitySettings,
   readAccessibilitySettings,
   speechRateOptions,
   speechToneOptions
 } from "@/shared/accessibility/accessibility-settings";
+import { selectSpeechVoice } from "@/shared/accessibility/speech-voice";
 
 type SpeechState = {
   isSpeaking: boolean;
@@ -27,66 +27,24 @@ function getBrowserSynthesis() {
   return window.speechSynthesis;
 }
 
-function normalizeVoiceText(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
-
-function isRecommendedGoogleSpanishVoice(voice: SpeechSynthesisVoice) {
-  const name = normalizeVoiceText(voice.name);
-
-  return (
-    voice.lang.toLowerCase() === "es-es" &&
-    name.includes("google") &&
-    name.includes("espanol")
-  );
-}
-
-function getFallbackSpanishVoice(voices: SpeechSynthesisVoice[]) {
-  return (
-    voices.find(isRecommendedGoogleSpanishVoice) ??
-    voices.find((voice) => voice.lang.toLowerCase() === "es-es") ??
-    voices.find((voice) => voice.lang.toLowerCase() === "es-pe") ??
-    voices.find((voice) => voice.lang.toLowerCase() === "es-419") ??
-    voices.find((voice) => voice.lang.toLowerCase().startsWith("es")) ??
-    voices[0] ??
-    null
-  );
-}
-
-function getPreferredVoice(settings: AccessibilitySettings) {
+function getPreferredVoice(settings: AccessibilitySettings, preferDefaultVoice: boolean) {
   const synthesis = getBrowserSynthesis();
 
   if (!synthesis) {
     return null;
   }
 
-  const voices = synthesis
-    .getVoices()
-    .filter(
-      (voice) =>
-        typeof navigator === "undefined" || navigator.onLine || voice.localService
-    );
-
-  if (
-    settings.speechVoiceURI !== "auto" &&
-    settings.speechVoiceURI !== DEFAULT_SPANISH_VOICE_URI
-  ) {
-    const selectedVoice = voices.find(
-      (voice) => voice.voiceURI === settings.speechVoiceURI
-    );
-
-    if (selectedVoice) {
-      return selectedVoice;
-    }
-  }
-
-  return getFallbackSpanishVoice(voices);
+  return selectSpeechVoice(
+    synthesis.getVoices(),
+    settings.speechVoiceURI,
+    typeof navigator === "undefined" || navigator.onLine,
+    preferDefaultVoice
+  );
 }
 
-export function useSpeech() {
+export function useSpeech({
+  preferDefaultVoice = false
+}: { preferDefaultVoice?: boolean } = {}) {
   const id = useId();
   const pathname = usePathname();
   const [state, setState] = useState<SpeechState>(() => ({
@@ -97,7 +55,21 @@ export function useSpeech() {
     settings: readAccessibilitySettings()
   }));
   const settings = state.settings;
-  const selectedVoiceName = getPreferredVoice(settings)?.name ?? settings.speechVoiceURI;
+  const selectedVoiceName =
+    getPreferredVoice(settings, preferDefaultVoice)?.name ?? settings.speechVoiceURI;
+
+  useEffect(() => {
+    const synthesis = getBrowserSynthesis();
+    const update = () => setState((current) => ({ ...current }));
+    synthesis?.addEventListener("voiceschanged", update);
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      synthesis?.removeEventListener("voiceschanged", update);
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
 
   useEffect(() => {
     setState((current) => ({
@@ -191,7 +163,7 @@ export function useSpeech() {
       synthesis.cancel();
       window.dispatchEvent(new CustomEvent("warmi-speech-start", { detail: { id } }));
 
-      const selectedVoice = getPreferredVoice(settings);
+      const selectedVoice = getPreferredVoice(settings, preferDefaultVoice);
       if (!navigator.onLine && !selectedVoice) {
         setState((current) => ({
           ...current,
@@ -237,7 +209,7 @@ export function useSpeech() {
 
       synthesis.speak(utterance);
     },
-    [id, settings]
+    [id, settings, preferDefaultVoice]
   );
 
   const pause = useCallback(() => {

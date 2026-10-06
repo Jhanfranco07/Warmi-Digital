@@ -26,6 +26,10 @@ async function playVideos(page, count, offline) {
   const played = [];
   for (let index = 0; index < count; index++) {
     const video = page.locator("video").nth(index);
+    await video.evaluate((element) => {
+      const details = element.closest("details");
+      if (details) details.open = true;
+    });
     const src = await video.getAttribute("src");
     assert.equal(
       offline
@@ -239,10 +243,17 @@ try {
   await page
     .getByRole("link", { name: "1. Sesión 1: Publica tu arte en redes", exact: true })
     .click();
+  assert.equal(
+    await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
+    false
+  );
+  assert.equal(await page.locator("details:has(video)[open]").count(), 1);
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page
     .getByText(/Crea tu catálogo de productos/)
     .first()
     .waitFor();
+  await page.getByText("Leer texto completo", { exact: true }).click();
   if (verifyVideos) await playVideos(page, 4, true);
   await page
     .getByRole("link", { name: "Abrir lección de apoyo", exact: true })
@@ -251,6 +262,7 @@ try {
   await page
     .getByRole("heading", { name: "¿Qué es WhatsApp Business?", exact: true })
     .waitFor();
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText(/Conoce las diferencias entre WhatsApp normal/).waitFor();
   await page
     .getByRole("link", { name: "Configura tu perfil de negocio", exact: true })
@@ -264,6 +276,14 @@ try {
   await page
     .getByRole("heading", { name: "Sesión 2: Llega a nuevos clientes", exact: true })
     .waitFor();
+  assert.equal(
+    await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
+    false
+  );
+  await page.screenshot({
+    path: join(tmpdir(), "warmi-offline-session-mobile.png"),
+    fullPage: false
+  });
   if (verifyVideos) await playVideos(page, 2, true);
   await page.getByRole("button", { name: "Escuchar explicación", exact: true }).click();
   assert.equal(await page.evaluate(() => "speechSynthesis" in window), true);

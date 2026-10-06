@@ -238,11 +238,23 @@ try {
   await page.goto(`${origin}/artesana/aprender`);
   await page.getByText(snapshot.title, { exact: true }).waitFor();
   await page.getByRole("link", { name: "1. Primera lección" }).click();
+  assert.equal(
+    await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
+    false
+  );
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Texto disponible sin internet.", { exact: true }).waitFor();
   await page.getByRole("link", { name: "Abrir lección de apoyo" }).click();
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Texto de apoyo local.", { exact: true }).waitFor();
   await page.getByRole("link", { name: "1. Primera lección" }).click();
+  assert.equal(
+    await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
+    false
+  );
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Texto disponible sin internet.", { exact: true }).waitFor();
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.locator("img[src^='/__warmi_offline__']").waitFor();
   assert.equal(
     await page
@@ -285,6 +297,7 @@ try {
     fullPage: true
   });
   await page.getByRole("link", { name: "2. Segunda lección" }).click();
+  await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Otra lectura local.", { exact: true }).waitFor();
   await page.goto(
     `${origin}/artesana/aprender/offline-test-course/lecciones/not-downloaded`

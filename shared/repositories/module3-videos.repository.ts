@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/shared/server/db/prisma";
 import { MODULE3_TITLE } from "@/shared/offline/module3-types";
 import type { Module3Video } from "@/shared/services/module3-videos.service";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 
-const courseId = "3889134e-620b-40db-98cf-8f6b2a0c43ec";
 const moduleId = "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2";
 
 export class Module3VideosRepository {
@@ -28,14 +28,21 @@ export class Module3VideosRepository {
     return this.db.$transaction(
       async (tx) => {
         await tx.$queryRaw(
+          Prisma.sql`SELECT "id" FROM "Module" WHERE "id" = ${moduleId} FOR UPDATE`
+        );
+        const learningModule = await tx.module.findUnique({ where: { id: moduleId } });
+        if (!learningModule) throw new Error("No existe el módulo autorizado.");
+        const courseId = learningModule.courseId;
+        await tx.$queryRaw(
           Prisma.sql`SELECT "id" FROM "Course" WHERE "id" = ${courseId} FOR UPDATE`
         );
         const course = await tx.course.findUnique({ where: { id: courseId } });
-        const learningModule = await tx.module.findUnique({ where: { id: moduleId } });
         if (
           !course ||
           course.deletedAt ||
-          course.title !== "Aprende a usar WhatsApp Business para tu negocio" ||
+          ![LEARNING_PROGRAM.id, LEARNING_PROGRAM.modules[2].previousCourseId].some(
+            (id) => id === course.id
+          ) ||
           !learningModule ||
           learningModule.courseId !== courseId ||
           learningModule.title !== MODULE3_TITLE ||

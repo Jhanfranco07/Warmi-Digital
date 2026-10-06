@@ -192,13 +192,16 @@ try {
   await button.click();
   await page.getByText("Error de descarga", { exact: true }).waitFor({ timeout: 90000 });
   assert.equal(
-    await page.evaluate(async () => Boolean(await window.offlineTest.readDownload())),
+    await page.evaluate(async () =>
+      Boolean(await window.offlineTest.readDownload("offline-test-module"))
+    ),
     false
   );
   assert.equal(
     await page.evaluate(
       async () =>
-        (await caches.keys()).filter((name) => name.startsWith("warmi-module3-")).length
+        (await caches.keys()).filter((name) => name.startsWith("warmi-learning-module-"))
+          .length
     ),
     0
   );
@@ -209,12 +212,27 @@ try {
     .waitFor({ timeout: 90000 });
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   const bytes = await page.evaluate(
-    async () => (await window.offlineTest.readDownload()).bytes
+    async () => (await window.offlineTest.readDownload("offline-test-module")).bytes
   );
   assert.equal(
     bytes,
     Object.values(files).reduce((total, file) => total + file.body.length, 0)
   );
+  const isolation = await page.evaluate(async (snapshot) => {
+    await window.offlineTest.downloadModule(
+      { ...snapshot, moduleId: "second-module-test" },
+      () => {}
+    );
+    const two = await window.offlineTest.verifiedDownloads();
+    await window.offlineTest.removeDownload("second-module-test");
+    const first = await window.offlineTest.verifiedDownload(snapshot.moduleId);
+    return {
+      count: two.length,
+      preserved: Boolean(first),
+      remaining: (await window.offlineTest.readDownloads()).length
+    };
+  }, snapshot);
+  assert.deepEqual(isolation, { count: 2, preserved: true, remaining: 1 });
   await context.close();
   page = await openBrowser(false);
   await page.goto(`${origin}/artesana/aprender`);
@@ -288,14 +306,19 @@ try {
       request.onerror = reject;
     });
     const record = await new Promise((resolve, reject) => {
-      const request = db.transaction("downloads").objectStore("downloads").get("module3");
+      const request = db
+        .transaction("downloads")
+        .objectStore("downloads")
+        .get("module:offline-test-module");
       request.onsuccess = () => resolve(request.result);
       request.onerror = reject;
     });
     db.close();
     return {
       record: Boolean(record),
-      caches: (await caches.keys()).filter((name) => name.startsWith("warmi-module3-"))
+      caches: (await caches.keys()).filter((name) =>
+        name.startsWith("warmi-learning-module-")
+      )
     };
   });
   assert.equal(remaining.record, false);

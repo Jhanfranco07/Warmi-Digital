@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { CSSProperties } from "react";
+import { Fragment } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -32,7 +33,8 @@ import { requireRole } from "@/shared/server/auth/helpers";
 import { LearningService } from "@/shared/services/learning.service";
 import { ModuleDownload } from "@/features/artisan/offline/module-download";
 import { isOfflineModule } from "@/shared/offline/module3-types";
-import { buildOfflineModule } from "@/shared/services/offline-learning.service";
+import { OfflineLearningService } from "@/shared/services/offline-learning.service";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 
 const levelLabels = {
   BEGINNER: "Inicial",
@@ -60,6 +62,23 @@ export default async function ArtisanCourseDetailPage({
     await new LearningService().getCourseDetail(session.user.id, courseId);
 
   const course = enrollment.course;
+  const offlineSnapshots = new Map(
+    await Promise.all(
+      course.modules
+        .filter((module) => isOfflineModule(module.id))
+        .map(
+          async (module) =>
+            [
+              module.id,
+              await new OfflineLearningService().getModuleSnapshot(
+                session.user.id,
+                course,
+                module
+              )
+            ] as const
+        )
+    )
+  );
   const lessons = course.modules.flatMap((module, moduleIndex) =>
     module.lessons.map((lesson, lessonIndex) => ({
       lesson,
@@ -100,7 +119,7 @@ export default async function ArtisanCourseDetailPage({
   return (
     <ArtisanShell>
       <ArtisanHero
-        eyebrow="Curso"
+        eyebrow={course.id === LEARNING_PROGRAM.id ? "Programa" : "Curso"}
         title={course.title}
         description={
           course.description ??
@@ -161,9 +180,7 @@ export default async function ArtisanCourseDetailPage({
                 <p className="font-serif text-5xl font-bold text-[#1b1c1a]">
                   {progress}%
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#5b4a42]">
-                  de avance
-                </p>
+                <p className="mt-1 text-sm font-semibold text-[#5b4a42]">de avance</p>
               </div>
             </div>
           </div>
@@ -247,85 +264,98 @@ export default async function ArtisanCourseDetailPage({
         </header>
 
         <div className="space-y-6">
-        {course.modules.map((module, moduleIndex) => {
-          const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
-            lesson,
-            lessonIndex,
-            progressItem: lessonProgress.get(lesson.id)
-          }));
-          const moduleCompleted = moduleLessons.filter(
-            (item) => item.progressItem?.completed
-          ).length;
-          const moduleProgress = moduleLessons.length
-            ? Math.round((moduleCompleted / moduleLessons.length) * 100)
-            : 0;
-          const moduleDuration =
-            module.durationMin ??
-            module.lessons.reduce(
-              (total, lesson) => total + (lesson.durationMin ?? 0),
-              0
+          {course.modules.map((module, moduleIndex) => {
+            const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
+              lesson,
+              lessonIndex,
+              progressItem: lessonProgress.get(lesson.id)
+            }));
+            const moduleCompleted = moduleLessons.filter(
+              (item) => item.progressItem?.completed
+            ).length;
+            const moduleProgress = moduleLessons.length
+              ? Math.round((moduleCompleted / moduleLessons.length) * 100)
+              : 0;
+            const moduleDuration =
+              module.durationMin ??
+              module.lessons.reduce(
+                (total, lesson) => total + (lesson.durationMin ?? 0),
+                0
+              );
+            const moduleNarration = buildModuleNarration({
+              order:
+                course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
+                  ? module.order
+                  : moduleIndex + 1,
+              title: module.title,
+              description: module.description,
+              lessonCount: module.lessons.length,
+              durationMin: moduleDuration,
+              lessonTitles: module.lessons.map((lesson) => lesson.title)
+            });
+
+            return (
+              <Fragment key={module.id}>
+                {course.id === LEARNING_PROGRAM.id &&
+                  module.order === 3 &&
+                  !course.modules.some((item) => item.order === 2) && (
+                    <ArtisanPanel
+                      eyebrow="Módulo 2"
+                      title={LEARNING_PROGRAM.modules[1].title}
+                    >
+                      <p role="status">Contenido pendiente de preparación.</p>
+                    </ArtisanPanel>
+                  )}
+                <ArtisanPanel
+                  key={module.id}
+                  eyebrow={`Módulo ${course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id) ? module.order : moduleIndex + 1}`}
+                  title={module.title}
+                  action={
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
+                        {moduleProgress}% completado
+                      </span>
+                      <SpeechButton
+                        text={moduleNarration}
+                        label="Escuchar este módulo"
+                        compact
+                      />
+                    </div>
+                  }
+                >
+                  {offlineSnapshots.has(module.id) && (
+                    <ModuleDownload module={offlineSnapshots.get(module.id)!} />
+                  )}
+                  {module.description ? (
+                    <p className="mb-5 max-w-4xl text-base leading-7 text-[#5b4a42]">
+                      {module.description}
+                    </p>
+                  ) : null}
+                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {moduleLessons.map(({ lesson, lessonIndex, progressItem }) => {
+                      const completed = Boolean(progressItem?.completed);
+                      const current = firstIncompleteLesson?.id === lesson.id;
+
+                      return (
+                        <LessonStepCard
+                          key={lesson.id}
+                          href={
+                            `/artesana/aprender/${courseId}/lecciones/${lesson.id}` as Route
+                          }
+                          number={lessonIndex + 1}
+                          title={lesson.title}
+                          type={lessonTypeLabels[lesson.type]}
+                          durationMin={lesson.durationMin ?? 0}
+                          completed={completed}
+                          current={current}
+                        />
+                      );
+                    })}
+                  </div>
+                </ArtisanPanel>
+              </Fragment>
             );
-          const moduleNarration = buildModuleNarration({
-            order: isOfflineModule(module.title) ? module.order : moduleIndex + 1,
-            title: module.title,
-            description: module.description,
-            lessonCount: module.lessons.length,
-            durationMin: moduleDuration,
-            lessonTitles: module.lessons.map((lesson) => lesson.title)
-          });
-
-          return (
-            <ArtisanPanel
-              key={module.id}
-              eyebrow={`Módulo ${isOfflineModule(module.title) ? module.order : moduleIndex + 1}`}
-              title={module.title}
-              action={
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
-                    {moduleProgress}% completado
-                  </span>
-                  <SpeechButton
-                    text={moduleNarration}
-                    label="Escuchar este módulo"
-                    compact
-                  />
-                </div>
-              }
-            >
-              {isOfflineModule(module.title) && (
-                <ModuleDownload
-                  module={buildOfflineModule(session.user.id, course, module)}
-                />
-              )}
-              {module.description ? (
-                <p className="mb-5 max-w-4xl text-base leading-7 text-[#5b4a42]">
-                  {module.description}
-                </p>
-              ) : null}
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {moduleLessons.map(({ lesson, lessonIndex, progressItem }) => {
-                  const completed = Boolean(progressItem?.completed);
-                  const current = firstIncompleteLesson?.id === lesson.id;
-
-                  return (
-                    <LessonStepCard
-                      key={lesson.id}
-                      href={
-                        `/artesana/aprender/${courseId}/lecciones/${lesson.id}` as Route
-                      }
-                      number={lessonIndex + 1}
-                      title={lesson.title}
-                      type={lessonTypeLabels[lesson.type]}
-                      durationMin={lesson.durationMin ?? 0}
-                      completed={completed}
-                      current={current}
-                    />
-                  );
-                })}
-              </div>
-            </ArtisanPanel>
-          );
-        })}
+          })}
         </div>
       </section>
 
@@ -367,10 +397,7 @@ function SummaryPill({
   return (
     <article className="rounded-2xl border border-[#f0c7bb] bg-white p-4 shadow-[0_12px_30px_rgba(122,49,0,0.05)]">
       <span
-        className={cn(
-          "grid h-11 w-11 place-items-center rounded-2xl text-white",
-          color
-        )}
+        className={cn("grid h-11 w-11 place-items-center rounded-2xl text-white", color)}
       >
         <Icon className="h-5 w-5" />
       </span>

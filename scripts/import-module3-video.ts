@@ -28,11 +28,7 @@ async function main() {
       where: { id: lessonId },
       include: { module: { include: { course: true } } }
     });
-    if (
-      !lesson ||
-      !isOfflineModule(lesson.module.title) ||
-      lesson.module.course.deletedAt
-    ) {
+    if (!lesson || !isOfflineModule(lesson.module.id) || lesson.module.course.deletedAt) {
       throw new Error(
         "La lección debe pertenecer al módulo existente Módulo 3: Herramientas digitales para vender."
       );

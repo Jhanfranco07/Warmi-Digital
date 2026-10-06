@@ -6,6 +6,22 @@ import {
   type ModuleDownload,
   type OfflineModule
 } from "@/shared/offline/module3-types";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
+
+const defaultModuleId = LEARNING_PROGRAM.modules[2].id;
+const downloadKey = (moduleId: string) => `module:${moduleId}`;
+export function moduleCachePrefix(moduleId: string) {
+  return `warmi-learning-module-${moduleId}-`;
+}
+export function isLearningCache(name: string) {
+  return name.startsWith("warmi-learning-module-") || name.startsWith("warmi-module3-");
+}
+function belongsToModule(name: string, moduleId: string) {
+  return (
+    name.startsWith(moduleCachePrefix(moduleId)) ||
+    (moduleId === defaultModuleId && name.startsWith("warmi-module3-"))
+  );
+}
 
 async function database() {
   return new Promise<IDBDatabase>((resolve, reject) => {
@@ -36,12 +52,27 @@ async function transaction<T>(
   }
 }
 
-export async function readDownload(): Promise<ModuleDownload | undefined> {
-  return transaction("readonly", (store) => store.get(OFFLINE_KEY));
+export async function readDownloads(): Promise<ModuleDownload[]> {
+  const records = await transaction<ModuleDownload[]>("readonly", (store) =>
+    store.getAll()
+  );
+  return [
+    ...new Map(
+      records
+        .sort((a, b) => a.downloadedAt.localeCompare(b.downloadedAt))
+        .map((item) => [item.moduleId, item])
+    ).values()
+  ];
 }
 
-export async function verifiedDownload() {
-  const download = await readDownload();
+export async function readDownload(
+  moduleId: string = defaultModuleId
+): Promise<ModuleDownload | undefined> {
+  return (await readDownloads()).find((item) => item.moduleId === moduleId);
+}
+
+export async function verifiedDownload(moduleId: string = defaultModuleId) {
+  const download = await readDownload(moduleId);
   if (!download) return undefined;
   if (!(await caches.has(download.cacheName))) return undefined;
   const cache = await caches.open(download.cacheName);
@@ -51,26 +82,42 @@ export async function verifiedDownload() {
   return download;
 }
 
+export async function verifiedDownloads() {
+  const records = await readDownloads();
+  const verified = await Promise.all(
+    records.map((record) => verifiedDownload(record.moduleId))
+  );
+  return verified.filter((item): item is ModuleDownload => Boolean(item));
+}
+
 function changed() {
   window.dispatchEvent(new Event("warmi-offline-download-change"));
 }
 
-async function removeDownloadUnlocked() {
-  await transaction("readwrite", (store) => store.delete(OFFLINE_KEY));
+async function removeDownloadUnlocked(moduleId?: string) {
+  if (moduleId) {
+    await transaction("readwrite", (store) => store.delete(downloadKey(moduleId)));
+    const legacy = await transaction<ModuleDownload | undefined>("readonly", (store) =>
+      store.get(OFFLINE_KEY)
+    );
+    if (legacy?.moduleId === moduleId)
+      await transaction("readwrite", (store) => store.delete(OFFLINE_KEY));
+  } else await transaction("readwrite", (store) => store.clear());
   for (const name of await caches.keys()) {
-    if (name.startsWith("warmi-module3-")) await caches.delete(name);
+    if (moduleId ? belongsToModule(name, moduleId) : isLearningCache(name))
+      await caches.delete(name);
   }
   changed();
 }
 
 async function exclusive<T>(operation: () => Promise<T>) {
   return navigator.locks
-    ? navigator.locks.request("warmi-module3-download", operation)
+    ? navigator.locks.request("warmi-learning-downloads", operation)
     : operation();
 }
 
-export async function removeDownload() {
-  return exclusive(removeDownloadUnlocked);
+export async function removeDownload(moduleId?: string) {
+  return exclusive(() => removeDownloadUnlocked(moduleId));
 }
 
 export async function prepareOfflineShell() {
@@ -121,9 +168,9 @@ async function downloadModuleUnlocked(
 ) {
   signal?.throwIfAborted();
   await prepareOfflineShell();
-  const previous = await readDownload();
+  const previous = await readDownload(module.moduleId);
   const generation = crypto.randomUUID();
-  const cacheName = `warmi-module3-${generation}`;
+  const cacheName = `${moduleCachePrefix(module.moduleId)}${generation}`;
   const assets: Record<string, string> = {};
   const files = [
     ...new Map(
@@ -142,7 +189,7 @@ async function downloadModuleUnlocked(
   }
   // Remove abandoned generations left by a closed browser, preserving a complete download.
   for (const name of await caches.keys()) {
-    if (name.startsWith("warmi-module3-") && name !== previous?.cacheName) {
+    if (belongsToModule(name, module.moduleId) && name !== previous?.cacheName) {
       await caches.delete(name);
     }
   }
@@ -190,7 +237,15 @@ async function downloadModuleUnlocked(
       downloadedAt: new Date().toISOString()
     };
     signal?.throwIfAborted();
-    await transaction("readwrite", (store) => store.put(download, OFFLINE_KEY));
+    await transaction("readwrite", (store) => {
+      const saved = store.put(download, downloadKey(module.moduleId));
+      const legacy = store.get(OFFLINE_KEY);
+      legacy.onsuccess = () => {
+        if ((legacy.result as ModuleDownload | undefined)?.moduleId === module.moduleId)
+          store.delete(OFFLINE_KEY);
+      };
+      return saved;
+    });
     if (previous && previous.cacheName !== cacheName)
       await caches.delete(previous.cacheName).catch(() => false);
     onProgress(100, bytes);

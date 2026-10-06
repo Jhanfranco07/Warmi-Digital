@@ -4,6 +4,26 @@ import type { Prisma } from "@prisma/client";
 export class CourseRepository {
   constructor(protected readonly db = prisma) {}
 
+  findPublishedSupportLesson(courseId: string, lessonId: string) {
+    return this.db.lesson.findFirst({
+      where: {
+        id: lessonId,
+        module: { courseId, course: { status: "PUBLISHED", deletedAt: null } }
+      },
+      include: {
+        module: true,
+        lessonFiles: { include: { file: true }, orderBy: { position: "asc" } }
+      }
+    });
+  }
+
+  findLessonCourse(lessonId: string) {
+    return this.db.lesson.findUnique({
+      where: { id: lessonId },
+      select: { module: { select: { courseId: true } } }
+    });
+  }
+
   findEnrolledCourses(userId: string) {
     return this.db.enrollment.findMany({
       where: { userId },

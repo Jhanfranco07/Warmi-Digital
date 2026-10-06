@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { getReferencedLesson } from "@/shared/offline/module3-types";
 
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { ProgressService } from "@/shared/services/progress.service";
@@ -48,40 +50,61 @@ export class LearningService {
     ]);
 
     return {
-      enrolledCourses: enrollments.map((enrollment) => ({
-        id: enrollment.course.id,
-        title: enrollment.course.title,
-        description: enrollment.course.description,
-        level: enrollment.course.level,
-        imageUrl: enrollment.course.imageUrl,
-        facilitatorName:
-          enrollment.course.facilitator?.profile?.displayName ??
-          enrollment.course.facilitator?.name ??
-          null,
-        status: enrollment.status,
-        progress: getCourseSummaryProgress(enrollment),
-        durationMin: enrollment.course.modules.reduce(
-          (total, module) => total + (module.durationMin ?? 0),
-          0
-        ),
-        modulesCount: enrollment.course.modules.length,
-        lastAccessedAt: enrollment.lastActivityAt,
-        href: `/artesana/aprender/${enrollment.course.id}`
-      })),
-      availableCourses: availableCourses.map((course) => ({
-        id: course.id,
-        title: course.title,
-        description: course.description,
-        level: course.level,
-        imageUrl: course.imageUrl,
-        facilitatorName:
-          course.facilitator?.profile?.displayName ?? course.facilitator?.name ?? null,
-        durationMin: course.modules.reduce(
-          (total, module) => total + (module.durationMin ?? 0),
-          0
-        ),
-        modulesCount: course.modules.length
-      }))
+      enrolledCourses: enrollments
+        .filter(
+          (enrollment) =>
+            enrollment.course.id !== LEARNING_PROGRAM.modules[0].previousCourseId ||
+            enrollment.course.modules.length > 0
+        )
+        .sort(
+          (a, b) =>
+            Number(b.course.id === LEARNING_PROGRAM.id) -
+            Number(a.course.id === LEARNING_PROGRAM.id)
+        )
+        .map((enrollment) => ({
+          id: enrollment.course.id,
+          title: enrollment.course.title,
+          description: enrollment.course.description,
+          level: enrollment.course.level,
+          imageUrl: enrollment.course.imageUrl,
+          facilitatorName:
+            enrollment.course.facilitator?.profile?.displayName ??
+            enrollment.course.facilitator?.name ??
+            null,
+          status: enrollment.status,
+          progress: getCourseSummaryProgress(enrollment),
+          durationMin: enrollment.course.modules.reduce(
+            (total, module) => total + (module.durationMin ?? 0),
+            0
+          ),
+          modulesCount: enrollment.course.modules.length,
+          lastAccessedAt: enrollment.lastActivityAt,
+          href: `/artesana/aprender/${enrollment.course.id}`
+        })),
+      availableCourses: availableCourses
+        .filter(
+          (course) =>
+            course.id !== LEARNING_PROGRAM.modules[0].previousCourseId ||
+            course.modules.length > 0
+        )
+        .sort(
+          (a, b) =>
+            Number(b.id === LEARNING_PROGRAM.id) - Number(a.id === LEARNING_PROGRAM.id)
+        )
+        .map((course) => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          level: course.level,
+          imageUrl: course.imageUrl,
+          facilitatorName:
+            course.facilitator?.profile?.displayName ?? course.facilitator?.name ?? null,
+          durationMin: course.modules.reduce(
+            (total, module) => total + (module.durationMin ?? 0),
+            0
+          ),
+          modulesCount: course.modules.length
+        }))
     };
   }
 
@@ -91,6 +114,12 @@ export class LearningService {
     if (!enrollment) {
       notFound();
     }
+    if (
+      courseId === LEARNING_PROGRAM.modules[0].previousCourseId &&
+      enrollment.course.modules.length === 0 &&
+      (await this.courseRepository.findEnrollmentCourse(userId, LEARNING_PROGRAM.id))
+    )
+      redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}`);
 
     const progress = getCourseProgress(enrollment);
     const lessonProgress = new Map(
@@ -116,6 +145,37 @@ export class LearningService {
     );
 
     if (!result) {
+      const program = await this.courseRepository.findEnrollmentCourse(
+        userId,
+        LEARNING_PROGRAM.id
+      );
+      const reference = program?.course.modules
+        .flatMap((module) => module.lessons)
+        .flatMap((lesson) => lesson.lessonFiles)
+        .map(getReferencedLesson)
+        .find(
+          (item) =>
+            item?.lessonId === lessonId &&
+            (courseId === LEARNING_PROGRAM.id || courseId === item.courseId)
+        );
+      if (program && reference) {
+        const support = await this.courseRepository.findPublishedSupportLesson(
+          reference.courseId,
+          lessonId
+        );
+        if (support) {
+          if (courseId !== LEARNING_PROGRAM.id)
+            redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}/lecciones/${lessonId}`);
+          return { enrollment: program, lesson: support, progress: undefined };
+        }
+      }
+      const destination = await this.courseRepository.findLessonCourse(lessonId);
+      if (
+        destination?.module.courseId === LEARNING_PROGRAM.id &&
+        LEARNING_PROGRAM.modules.some((module) => module.previousCourseId === courseId) &&
+        (await this.courseRepository.findEnrollmentCourse(userId, LEARNING_PROGRAM.id))
+      )
+        redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}/lecciones/${lessonId}`);
       notFound();
     }
 

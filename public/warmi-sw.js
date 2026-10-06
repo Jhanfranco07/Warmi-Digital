@@ -1,4 +1,4 @@
-const SHELL_CACHE = "warmi-offline-shell-v1";
+const SHELL_CACHE = "warmi-offline-shell-v2";
 const SHELL_URL = "/offline-learning";
 
 async function prepareShell() {
@@ -37,7 +37,13 @@ self.addEventListener("install", (event) => {
   event.waitUntil(prepareShell().then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil((async () => {
+    // Installation has already saved the new shell; downloaded media is never removed.
+    for (const name of await caches.keys()) {
+      if (name.startsWith("warmi-offline-shell-") && name !== SHELL_CACHE) await caches.delete(name);
+    }
+    await self.clients.claim();
+  })());
 });
 self.addEventListener("message", (event) => {
   if (event.data?.type === "PREPARE_SHELL") {

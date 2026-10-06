@@ -1,5 +1,6 @@
 import { LessonResourceType, Prisma } from "@prisma/client";
 import { prisma } from "@/shared/server/db/prisma";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 
 type ModuleContent = {
   courseId: string;
@@ -63,7 +64,12 @@ export class Module3ContentRepository {
         }
         const originalSnapshot = JSON.stringify(support);
         const existing = await tx.module.findFirst({
-          where: { courseId: course.id, title: content.title },
+          where: {
+            OR: [
+              { id: LEARNING_PROGRAM.modules[2].id },
+              { courseId: course.id, title: content.title }
+            ]
+          },
           include: {
             lessons: {
               orderBy: { order: "asc" },

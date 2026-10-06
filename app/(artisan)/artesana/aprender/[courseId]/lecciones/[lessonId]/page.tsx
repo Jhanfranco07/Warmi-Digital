@@ -31,7 +31,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { requireRole } from "@/shared/server/auth/helpers";
 import { LearningService } from "@/shared/services/learning.service";
-import { getReferencedLessonId, isOfflineModule } from "@/shared/offline/module3-types";
+import { getReferencedLesson, isOfflineModule } from "@/shared/offline/module3-types";
 
 const lessonTypeLabels = {
   TEXT: "Lectura",
@@ -106,7 +106,7 @@ export default async function ArtisanLessonPage({
           <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
             <p
               className={
-                isOfflineModule(lesson.module.title) ? "whitespace-pre-line" : undefined
+                isOfflineModule(lesson.module.id) ? "whitespace-pre-line" : undefined
               }
             >
               {lesson.content ?? "Contenido de la lección pendiente de ampliar."}
@@ -117,14 +117,16 @@ export default async function ArtisanLessonPage({
               <LessonResource key={resource.id} resource={resource} courseId={courseId} />
             ))}
           </div>
-          <div className="mt-7">
-            <LessonCompletionButton
-              courseId={courseId}
-              lessonId={lessonId}
-              completed={completed}
-              courseHref={courseHref}
-            />
-          </div>
+          {lesson.module.courseId === enrollment.course.id && (
+            <div className="mt-7">
+              <LessonCompletionButton
+                courseId={courseId}
+                lessonId={lessonId}
+                completed={completed}
+                courseHref={courseHref}
+              />
+            </div>
+          )}
         </ArtisanPanel>
 
         <div className="space-y-6">
@@ -206,15 +208,17 @@ function ResourceNavigationCard({ resource }: LessonResourceProps) {
 function LessonResource({ resource, courseId }: LessonResourceProps) {
   const resourceSpeech = <ResourceSpeechButton resource={resource} />;
 
-  const supportId = courseId && getReferencedLessonId(courseId, resource);
-  if (supportId) {
+  const support = courseId && getReferencedLesson(resource);
+  if (support) {
     return (
       <section
         id={`recurso-${resource.id}`}
         className="scroll-mt-24 space-y-3 rounded-lg border bg-white p-4"
       >
         <Link
-          href={`/artesana/aprender/${courseId}/lecciones/${supportId}` as Route}
+          href={
+            `/artesana/aprender/${support.courseId}/lecciones/${support.lessonId}` as Route
+          }
           className="flex items-start gap-4 focus:outline-none focus:ring-2 focus:ring-[#b5245b]"
         >
           <BookOpen className="mt-1 h-6 w-6 shrink-0 text-[#b5245b]" />

@@ -4,9 +4,9 @@ Implementacion acotada a `Módulo 3: Herramientas digitales para vender`, dentro
 
 ## Contenido real del curso
 
-Con autorizacion de la usuaria, se creo el modulo en el curso `Aprende a usar WhatsApp Business para tu negocio`, ID `3889134e-620b-40db-98cf-8f6b2a0c43ec`. Su ID es `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2` y `Module.order = 3`.
+El modulo se creo inicialmente en WhatsApp Business y ahora pertenece al programa `Aprender para crecer`, Course ID `93dc7355-d746-4acd-87df-29f71d16a955`. Conserva su ID `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`, `Module.order = 3`, textos y todos sus File/LessonFile. Ver `LEARNING_PROGRAM.md`.
 
-El boton se inserta en el panel del modulo cuando su titulo completo coincide exactamente, tras normalizacion Unicode NFC. No se ignoran mayusculas, prefijos ni espacios exteriores. La etiqueta del nuevo modulo usa su `Module.order`; las etiquetas de los modulos existentes no cambian.
+La capacidad offline se configura por ID estable de modulo en `shared/learning/program.ts`, no por titulo. Solo el Modulo 3 esta habilitado. Las etiquetas del programa respetan `Module.order`.
 
 Se crearon dos lecciones TEXT, con guias, ejemplos y practicas:
 
@@ -24,12 +24,12 @@ Las indicaciones sobre catalogos y espacios de venta se contrastaron con la docu
 ## Arquitectura
 
 - Service Worker nativo: `public/warmi-sw.js`, registrado al iniciar la primera descarga. Guarda el shell publico `/offline-learning`, sus JS, CSS, fuentes y las imagenes de la guia de voz.
-- IndexedDB: base `warmi-learning-offline`, store `downloads`, clave `module3`. Guarda textos, titulos, orden de lecciones, metadatos, referencias locales e ID de propietaria. No guarda sesiones, contrasenas ni tokens.
-- Cache Storage: cache `warmi-module3-<UUID>` para imagenes, PDF y MP4. La cache `warmi-offline-shell-v1` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
+- IndexedDB: base `warmi-learning-offline`, store `downloads`, clave `module:<moduleId>`. Mantiene lectura de la clave antigua `module3`. Guarda textos, titulos, orden de lecciones, metadatos, referencias locales e ID de propietaria. No guarda sesiones, contrasenas ni tokens.
+- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v2` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
 - PostgreSQL conserva los registros `File` y `LessonFile`; los binarios permanecen en Cloudinary y en el dispositivo tras descargarlos. No requiere migracion ni dependencias nuevas.
 - Descarga por streaming, progreso por bytes y tamano aproximado a partir de `File.size`. El registro local se confirma al terminar todos los archivos. Un fallo elimina esa generacion y conserva la descarga anterior. Web Locks coordina operaciones entre pestanas cuando esta disponible.
 
-El endpoint `GET /api/learning/offline/[courseId]/files/[fileId]` exige rol ARTESANA y verifica inscripcion, pertenencia al modulo exacto o a una leccion de apoyo referenciada del mismo curso, formato compatible y origen Cloudinary. No permite descargar archivos arbitrarios por ID ni seguir referencias de otros cursos. El proxy evita depender de CORS para PDF/MP4 y no guarda la respuesta autenticada en la cache del shell.
+El endpoint `GET /api/learning/offline/[courseId]/files/[fileId]` exige rol ARTESANA e inscripcion al contenedor. Comprueba capacidad offline por ID, pertenencia del archivo al modulo o a una leccion publicada explicitamente referenciada, formato compatible y origen Cloudinary. Las referencias internas entre cursos permiten conservar las lecciones originales de WhatsApp como apoyo sin moverlas ni copiarlas. No permite solicitar archivos arbitrarios. El proxy evita depender de CORS para PDF/MP4 y no guarda respuestas autenticadas en el shell.
 
 ## Uso sin red
 

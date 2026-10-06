@@ -7,7 +7,7 @@ import { join } from "node:path";
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.WARMI_TEST_URL || "http://localhost:3100";
-const courseId = "3889134e-620b-40db-98cf-8f6b2a0c43ec";
+const courseId = "93dc7355-d746-4acd-87df-29f71d16a955";
 const title = "Módulo 3: Herramientas digitales para vender";
 const email = process.env.WARMI_TEST_EMAIL;
 const password = process.env.WARMI_TEST_PASSWORD;
@@ -77,7 +77,52 @@ try {
   await page.waitForURL("**/artesana/**", { timeout: 60000 });
   await page.goto(`${origin}/artesana/aprender/${courseId}`);
   await page.getByRole("heading", { name: title, exact: true }).waitFor();
+  await page
+    .getByRole("heading", { name: "Aprender para crecer", exact: true })
+    .waitFor();
+  await page
+    .getByRole("heading", {
+      name: "Módulo 1: Mi celular como herramienta de acceso al Estado",
+      exact: true
+    })
+    .waitFor();
+  await page
+    .getByRole("heading", {
+      name: "Módulo 2: Oportunidades para mi negocio",
+      exact: true
+    })
+    .waitFor();
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
+      .count(),
+    1
+  );
   await page.getByText("Módulo 3", { exact: true }).waitFor();
+  assert.equal(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    true
+  );
+  await page.screenshot({
+    path: join(tmpdir(), "warmi-program-mobile.png"),
+    fullPage: true
+  });
+  await page.setViewportSize({ width: 1365, height: 900 });
+  assert.equal(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    true
+  );
+  await page.screenshot({
+    path: join(tmpdir(), "warmi-program-desktop.png"),
+    fullPage: true
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(
+    `${origin}/artesana/aprender/3889134e-620b-40db-98cf-8f6b2a0c43ec/lecciones/${sessionIds[0]}`
+  );
+  await page.waitForURL(`**/artesana/aprender/${courseId}/lecciones/${sessionIds[0]}`);
+  await page.goto(`${origin}/artesana/aprender/de47675b-fd20-4fbd-b980-41dbd71a94ae`);
+  await page.waitForURL(`**/artesana/aprender/${courseId}`);
   if (verifyVideos) {
     for (const [index, sessionId] of sessionIds.entries()) {
       await page.goto(`${origin}/artesana/aprender/${courseId}/lecciones/${sessionId}`);
@@ -104,7 +149,7 @@ try {
         const request = db
           .transaction("downloads")
           .objectStore("downloads")
-          .get("module3");
+          .get("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
         request.onsuccess = () => resolve(request.result);
         request.onerror = reject;
       });
@@ -113,7 +158,7 @@ try {
       let shellBytes = 0;
       for (const name of await caches.keys()) {
         if (
-          !name.startsWith("warmi-module3-") &&
+          !name.startsWith("warmi-learning-module-") &&
           !name.startsWith("warmi-offline-shell-")
         )
           continue;
@@ -138,6 +183,52 @@ try {
     assert.equal(sizes.resourceBytes, 104293181);
     assert.equal(sizes.declaredBytes, sizes.resourceBytes);
     console.log(JSON.stringify({ packageSizes: sizes }));
+  }
+  if (process.env.WARMI_LEGACY_DOWNLOAD === "1") {
+    await page.evaluate(async () => {
+      const db = await new Promise((resolve, reject) => {
+        const request = indexedDB.open("warmi-learning-offline", 1);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = reject;
+      });
+      const current = await new Promise((resolve, reject) => {
+        const request = db
+          .transaction("downloads")
+          .objectStore("downloads")
+          .get("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = reject;
+      });
+      const legacyCacheName = `warmi-module3-${crypto.randomUUID()}`;
+      const oldCache = await caches.open(current.cacheName);
+      const legacyCache = await caches.open(legacyCacheName);
+      for (const request of await oldCache.keys())
+        await legacyCache.put(request, await oldCache.match(request));
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction("downloads", "readwrite");
+        const store = tx.objectStore("downloads");
+        const request = store.get("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
+        request.onsuccess = () => {
+          store.put(
+            {
+              ...request.result,
+              cacheName: legacyCacheName,
+              courseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec",
+              courseTitle: "Aprende a usar WhatsApp Business para tu negocio"
+            },
+            "module3"
+          );
+          store.delete("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
+        };
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+      });
+      await caches.delete(current.cacheName);
+      db.close();
+    });
+    console.log(
+      "Legacy module3 key, old courseId and warmi-module3-* cache prepared for compatibility test."
+    );
   }
   await context.close();
   page = await open(true);
@@ -202,7 +293,10 @@ try {
   await page.getByText("No descargado", { exact: true }).waitFor();
   assert.deepEqual(
     await page.evaluate(async () =>
-      (await caches.keys()).filter((name) => name.startsWith("warmi-module3-"))
+      (await caches.keys()).filter(
+        (name) =>
+          name.startsWith("warmi-learning-module-") || name.startsWith("warmi-module3-")
+      )
     ),
     []
   );
@@ -214,15 +308,12 @@ try {
         request.onerror = reject;
       });
       const saved = await new Promise((resolve, reject) => {
-        const request = db
-          .transaction("downloads")
-          .objectStore("downloads")
-          .get("module3");
+        const request = db.transaction("downloads").objectStore("downloads").getAll();
         request.onsuccess = () => resolve(request.result);
         request.onerror = reject;
       });
       db.close();
-      return Boolean(saved);
+      return saved.length > 0;
     }),
     false
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { readDownload, removeDownload } from "@/shared/offline/module3-storage";
+import { readDownloads, removeDownload } from "@/shared/offline/module3-storage";
 
 export function OfflineRuntime() {
   const [online, setOnline] = useState(true);
@@ -60,10 +60,11 @@ export function OfflineRuntime() {
       return;
     let cancelled = false;
     async function checkOwner() {
-      const download = await readDownload();
-      if (!download || cancelled) return;
+      const downloads = await readDownloads();
+      if (!downloads.length || cancelled) return;
       if (status === "authenticated") {
-        if (download.userId !== session?.user.id) await removeDownload();
+        if (downloads.some((download) => download.userId !== session?.user.id))
+          await removeDownload();
       } else {
         // A failed network request is not proof that the user signed out.
         const response = await fetch("/api/auth/session", { cache: "no-store" });

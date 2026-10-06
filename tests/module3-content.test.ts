@@ -5,6 +5,7 @@ import {
   getReferencedLessonId,
   isOfflineModule
 } from "@/shared/offline/module3-types";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import {
   buildOfflineModule,
@@ -75,7 +76,7 @@ function fixture() {
           ]
         },
         {
-          id: "module3",
+          id: LEARNING_PROGRAM.modules[2].id,
           title: MODULE3_TITLE,
           description: "Descripción",
           lessons: [
@@ -106,17 +107,11 @@ class FixtureRepository {
   }
 }
 
-test("offline only recognizes the exact new title, including its prefix", () => {
-  assert.equal(isOfflineModule(MODULE3_TITLE), true);
-  assert.equal(isOfflineModule(MODULE3_TITLE.normalize("NFD")), true);
-  for (const title of [
-    "Herramientas digitales para vender",
-    "Conoce WhatsApp Business",
-    MODULE3_TITLE.toLowerCase(),
-    `${MODULE3_TITLE} extra`,
-    ` ${MODULE3_TITLE}`
-  ])
-    assert.equal(isOfflineModule(title), false);
+test("offline capability uses stable module identity, not the displayed title", () => {
+  assert.equal(isOfflineModule(LEARNING_PROGRAM.modules[2].id), true);
+  assert.equal(isOfflineModule(LEARNING_PROGRAM.modules[0].id), false);
+  assert.equal(isOfflineModule(MODULE3_TITLE), false);
+  assert.equal(isOfflineModule("unrelated-module"), false);
 });
 
 test("internal references stay inside the same course and cannot masquerade as external links", () => {
@@ -206,4 +201,45 @@ test("syllabus has two ordered new sessions and keeps the two originals as refer
   assert.match(MODULE3_SESSIONS[0].content, /Estados de WhatsApp/);
   assert.match(MODULE3_SESSIONS[1].content, /Facebook/);
   assert.match(MODULE3_SESSIONS[1].content, /Marketplace/);
+});
+
+test("published cross-course support is included only when explicitly referenced", async () => {
+  const enrollment = fixture();
+  const learningModule = enrollment.course.modules[1];
+  learningModule.lessons[0].lessonFiles.push(
+    resource(
+      "published-support",
+      "/artesana/aprender/other/lecciones/public-support"
+    ) as unknown as (typeof learningModule.lessons)[0]["lessonFiles"][number]
+  );
+  const original = enrollment.course.modules[0].lessons[0];
+  const support = {
+    ...original,
+    id: "public-support",
+    lessonFiles: original.lessonFiles.map((item) => ({
+      ...item,
+      file: item.file ? { ...item.file, id: "public-pdf" } : null
+    }))
+  } as Awaited<ReturnType<CourseRepository["findPublishedSupportLesson"]>>;
+  const repository = {
+    findEnrollmentCourse: async () => enrollment,
+    findPublishedSupportLesson: async (courseId: string, lessonId: string) =>
+      courseId === "other" && lessonId === "public-support" ? support : null
+  };
+  const service = new OfflineLearningService(repository);
+  const snapshot = await service.getModuleSnapshot(
+    "user",
+    enrollment.course,
+    learningModule
+  );
+  assert.deepEqual(
+    snapshot.supportLessons?.map((lesson) => lesson.id),
+    ["support", "public-support"]
+  );
+  assert.equal(snapshot.lessons[0].resources.at(-1)?.internalLessonId, "public-support");
+  assert.equal(
+    (await service.getAuthorizedFile("user", "course", "public-pdf"))?.id,
+    "public-pdf"
+  );
+  assert.equal(await service.getAuthorizedFile("user", "course", "private-pdf"), null);
 });

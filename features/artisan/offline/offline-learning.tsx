@@ -8,17 +8,24 @@ import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import {
   formatBytes,
-  readDownload,
+  readDownloads,
+  isLearningCache,
   removeDownload,
-  verifiedDownload
+  verifiedDownloads
 } from "@/shared/offline/module3-storage";
 import type { ModuleDownload, OfflineResource } from "@/shared/offline/module3-types";
+import {
+  acceptsOfflineCourse,
+  LEARNING_PROGRAM,
+  moduleCapability
+} from "@/shared/learning/program";
 
 const unavailable = "Este contenido todavía no está disponible sin conexión.";
 const connectionRequired = "Este recurso necesita conexión a internet.";
 
 export function OfflineLearning() {
   const [download, setDownload] = useState<ModuleDownload>();
+  const [downloads, setDownloads] = useState<ModuleDownload[]>([]);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
   const [message, setMessage] = useState("");
@@ -32,12 +39,20 @@ export function OfflineLearning() {
     const history = () => setPath(window.location.pathname);
     window.addEventListener("popstate", history);
     setPath(window.location.pathname);
-    void verifiedDownload()
+    void verifiedDownloads()
       .then(async (saved) => {
-        setDownload(saved);
+        setDownloads(saved);
+        const segments = window.location.pathname.split("/").filter(Boolean);
+        setDownload(
+          saved.find((item) =>
+            [...item.lessons, ...(item.supportLessons ?? [])].some(
+              (lesson) => lesson.id === segments[4]
+            )
+          ) ?? saved[0]
+        );
         setHasLocalData(
-          Boolean(await readDownload()) ||
-            (await caches.keys()).some((name) => name.startsWith("warmi-module3-"))
+          (await readDownloads()).length > 0 ||
+            (await caches.keys()).some(isLearningCache)
         );
       })
       .catch(() => setMessage(unavailable))
@@ -58,12 +73,17 @@ export function OfflineLearning() {
     "/artesana/aprender",
     "/offline-learning"
   ].includes(path);
-  const validCourse = !courseId || courseId === download?.courseId;
+  const validCourse =
+    !courseId ||
+    Boolean(
+      download && acceptsOfflineCourse(download.moduleId, download.courseId, courseId)
+    );
   const supportLessons = download?.supportLessons ?? [];
   const lesson = [...(download?.lessons ?? []), ...supportLessons].find(
     (item) => item.id === lessonId
   );
-  const courseHref = `/artesana/aprender/${download?.courseId}`;
+  const programModule = download && moduleCapability(download.moduleId);
+  const courseHref = `/artesana/aprender/${programModule ? LEARNING_PROGRAM.id : download?.courseId}`;
 
   function navigate(event: MouseEvent<HTMLElement>) {
     const anchor = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
@@ -82,9 +102,11 @@ export function OfflineLearning() {
 
   async function remove() {
     try {
-      await removeDownload();
-      setDownload(undefined);
-      setHasLocalData(false);
+      await removeDownload(download?.moduleId);
+      const remaining = await verifiedDownloads();
+      setDownloads(remaining);
+      setDownload(remaining[0]);
+      setHasLocalData(remaining.length > 0);
       setMessage("");
     } catch {
       setMessage("No se pudo eliminar la descarga. Intenta nuevamente.");
@@ -110,6 +132,19 @@ export function OfflineLearning() {
           {lesson?.title ?? "Mi aprendizaje"}
         </h1>
       </header>
+      {!lessonId && downloads.length > 1 && (
+        <nav aria-label="Módulos descargados" className="flex flex-wrap gap-3">
+          {downloads.map((item) => (
+            <Button
+              key={item.moduleId}
+              variant="outline"
+              onClick={() => setDownload(item)}
+            >
+              {item.title}
+            </Button>
+          ))}
+        </nav>
+      )}
       {loading ? (
         <p role="status">Cargando contenidos descargados...</p>
       ) : !download ||
@@ -166,7 +201,9 @@ export function OfflineLearning() {
             </>
           ) : (
             <section className="space-y-5">
-              <p className="text-muted-foreground">{download.courseTitle}</p>
+              <p className="text-muted-foreground">
+                {programModule ? LEARNING_PROGRAM.title : download.courseTitle}
+              </p>
               <h2 className="break-words font-serif text-2xl font-bold">
                 {download.title}
               </h2>

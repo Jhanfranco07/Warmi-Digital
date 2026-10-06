@@ -1,10 +1,12 @@
+import { moduleCapability } from "@/shared/learning/program";
+
 export const MODULE3_TITLE = "Módulo 3: Herramientas digitales para vender";
 export const OFFLINE_DB = "warmi-learning-offline";
 export const OFFLINE_STORE = "downloads";
 export const OFFLINE_KEY = "module3";
 
-export function isOfflineModule(title: string) {
-  return title.normalize("NFC") === MODULE3_TITLE;
+export function isOfflineModule(moduleId: string) {
+  return moduleCapability(moduleId)?.offline === true;
 }
 
 export function getReferencedLessonId(
@@ -37,6 +39,16 @@ export function getReferencedLessonId(
   )
     return null;
   return segments[5] || null;
+}
+
+export function getReferencedLesson(
+  resource: Parameters<typeof getReferencedLessonId>[1]
+) {
+  const segments = resource.originalUrl?.split("/");
+  const courseId = segments?.[3];
+  if (!courseId) return null;
+  const lessonId = getReferencedLessonId(courseId, resource);
+  return lessonId ? { courseId, lessonId } : null;
 }
 
 export type OfflineResource = {

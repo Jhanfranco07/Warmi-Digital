@@ -7,6 +7,8 @@ import { Progress } from "@/shared/components/ui/progress";
 import {
   downloadModule,
   formatBytes,
+  moduleCachePrefix,
+  readDownload,
   removeDownload,
   verifiedDownload
 } from "@/shared/offline/module3-storage";
@@ -38,11 +40,13 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
     connection();
     window.addEventListener("online", connection);
     window.addEventListener("offline", connection);
-    void verifiedDownload()
+    void verifiedDownload(module.moduleId)
       .then(async (download) => {
         setHasLocalData(
-          Boolean(download) ||
-            (await caches.keys()).some((name) => name.startsWith("warmi-module3-"))
+          Boolean(await readDownload(module.moduleId)) ||
+            (await caches.keys()).some((name) =>
+              name.startsWith(moduleCachePrefix(module.moduleId))
+            )
         );
         if (download?.moduleId === module.moduleId && download.userId === module.userId) {
           setStatus("ready");
@@ -86,7 +90,7 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
 
   async function remove() {
     try {
-      await removeDownload();
+      await removeDownload(module.moduleId);
       setStatus("idle");
       setHasLocalData(false);
       setBytes(0);

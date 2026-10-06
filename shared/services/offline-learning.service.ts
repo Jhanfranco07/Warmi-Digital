@@ -3,6 +3,7 @@ import {
   isDownloadableFile,
   isOfflineModule,
   getReferencedLessonId,
+  getReferencedLesson,
   type OfflineLesson,
   type OfflineModule
 } from "@/shared/offline/module3-types";
@@ -14,6 +15,10 @@ type Course = Enrollment["course"];
 type LearningModule = Course["modules"][number];
 type EnrollmentReader = {
   findEnrollmentCourse(userId: string, courseId: string): PromiseLike<Enrollment | null>;
+  findPublishedSupportLesson?: (
+    courseId: string,
+    lessonId: string
+  ) => PromiseLike<Awaited<ReturnType<CourseRepository["findPublishedSupportLesson"]>>>;
 };
 
 export function getOfflineSupportLessons(course: Course, learningModule: LearningModule) {
@@ -39,7 +44,7 @@ function snapshotLesson(
     title: lesson.title,
     content: lesson.content,
     resources: lesson.lessonFiles.map((resource) => {
-      const internalId = getReferencedLessonId(courseId, resource);
+      const internalId = getReferencedLesson(resource)?.lessonId;
       return {
         id: resource.id,
         title: resource.title,
@@ -68,9 +73,16 @@ function snapshotLesson(
 export function buildOfflineModule(
   userId: string,
   course: Course,
-  module: LearningModule
+  module: LearningModule,
+  additionalSupport: LearningModule["lessons"] = []
 ): OfflineModule {
-  const support = getOfflineSupportLessons(course, module);
+  const support = [
+    ...new Map(
+      [...getOfflineSupportLessons(course, module), ...additionalSupport].map(
+        (lesson) => [lesson.id, lesson]
+      )
+    ).values()
+  ];
   const supportIds = new Set(support.map((lesson) => lesson.id));
   return {
     userId,
@@ -89,11 +101,29 @@ export function buildOfflineModule(
 export class OfflineLearningService {
   constructor(private readonly courses: EnrollmentReader = new CourseRepository()) {}
 
+  async getModuleSnapshot(userId: string, course: Course, module: LearningModule) {
+    const support: LearningModule["lessons"] = [];
+    const seen = new Set<string>();
+    for (const resource of module.lessons.flatMap((lesson) => lesson.lessonFiles)) {
+      const reference = getReferencedLesson(resource);
+      if (!reference || reference.courseId === course.id || seen.has(reference.lessonId))
+        continue;
+      seen.add(reference.lessonId);
+      // Only published lessons explicitly referenced by this enrolled module are included.
+      const lesson = await this.courses.findPublishedSupportLesson?.(
+        reference.courseId,
+        reference.lessonId
+      );
+      if (lesson) support.push(lesson);
+    }
+    return buildOfflineModule(userId, course, module, support);
+  }
+
   async getAuthorizedFile(userId: string, courseId: string, fileId: string) {
     const enrollment = await this.courses.findEnrollmentCourse(userId, courseId);
     if (!enrollment || enrollment.course.deletedAt) return null;
     for (const learningModule of enrollment.course.modules) {
-      if (!isOfflineModule(learningModule.title)) continue;
+      if (!isOfflineModule(learningModule.id)) continue;
       const lessons = [
         ...learningModule.lessons,
         ...getOfflineSupportLessons(enrollment.course, learningModule)
@@ -102,6 +132,18 @@ export class OfflineLearningService {
         const file = lesson.lessonFiles.find(
           (resource) => resource.file?.id === fileId
         )?.file;
+        if (file && isDownloadableFile(file)) return file;
+      }
+      for (const resource of learningModule.lessons.flatMap(
+        (lesson) => lesson.lessonFiles
+      )) {
+        const reference = getReferencedLesson(resource);
+        if (!reference || reference.courseId === courseId) continue;
+        const support = await this.courses.findPublishedSupportLesson?.(
+          reference.courseId,
+          reference.lessonId
+        );
+        const file = support?.lessonFiles.find((item) => item.file?.id === fileId)?.file;
         if (file && isDownloadableFile(file)) return file;
       }
     }

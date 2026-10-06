@@ -30,7 +30,7 @@ async function main() {
     });
     if (!lesson || !isOfflineModule(lesson.module.id) || lesson.module.course.deletedAt) {
       throw new Error(
-        "La lección debe pertenecer al módulo existente Módulo 3: Herramientas digitales para vender."
+        "La lección debe pertenecer al Módulo 3 existente con capacidad offline."
       );
     }
     const duplicate = await db.lessonFile.findFirst({

@@ -1,6 +1,6 @@
-import { moduleCapability } from "@/shared/learning/program";
+import { LEARNING_PROGRAM, moduleCapability } from "@/shared/learning/program";
 
-export const MODULE3_TITLE = "Módulo 3: Herramientas digitales para vender";
+export const MODULE3_TITLE = LEARNING_PROGRAM.modules[2].title;
 export const OFFLINE_DB = "warmi-learning-offline";
 export const OFFLINE_STORE = "downloads";
 export const OFFLINE_KEY = "module3";

@@ -96,6 +96,7 @@ export function OfflineLearning() {
   const lessonIndex = download?.lessons.findIndex((item) => item.id === lessonId) ?? -1;
   const nextLesson = lessonIndex >= 0 ? download?.lessons[lessonIndex + 1] : undefined;
   const programModule = download && moduleCapability(download.moduleId);
+  const moduleTitle = programModule?.title ?? download?.title;
   const courseHref = `/artesana/aprender/${programModule ? LEARNING_PROGRAM.id : download?.courseId}`;
 
   function navigate(event: MouseEvent<HTMLElement>) {
@@ -156,7 +157,7 @@ export function OfflineLearning() {
               variant="outline"
               onClick={() => setDownload(item)}
             >
-              {item.title}
+              {moduleCapability(item.moduleId)?.title ?? item.title}
             </Button>
           ))}
         </nav>
@@ -179,7 +180,7 @@ export function OfflineLearning() {
                 <ArrowLeft className="h-5 w-5" />
                 Volver al curso
               </a>
-              <p className="text-sm text-muted-foreground">{download.title}</p>
+              <p className="text-sm text-muted-foreground">{moduleTitle}</p>
               <OfflineLessonContent key={lesson.id} lesson={lesson} download={download} />
               {nextLesson && (
                 <a
@@ -215,16 +216,14 @@ export function OfflineLearning() {
               <p className="text-muted-foreground">
                 {programModule ? LEARNING_PROGRAM.title : download.courseTitle}
               </p>
-              <h2 className="break-words font-serif text-2xl font-bold">
-                {download.title}
-              </h2>
+              <h2 className="break-words font-serif text-2xl font-bold">{moduleTitle}</h2>
               <p>{download.description}</p>
               <p role="status" className="font-semibold text-green-700">
                 ✓ Disponible sin conexión · {formatBytes(download.bytes)}
               </p>
               <SpeechButton
                 preferDefaultVoice
-                text={`${download.title}. ${download.description ?? ""}`}
+                text={`${moduleTitle}. ${download.description ?? ""}`}
                 label="Escuchar este módulo"
                 compact
               />

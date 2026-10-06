@@ -20,7 +20,7 @@ export const LEARNING_PROGRAM = {
     {
       id: "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2",
       order: 3,
-      title: "Módulo 3: Herramientas digitales para vender",
+      title: "Módulo 3: Herramienta digitales para crecer",
       offline: true,
       previousCourseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec"
     }

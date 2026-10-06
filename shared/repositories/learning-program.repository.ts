@@ -5,6 +5,57 @@ import { LEARNING_PROGRAM } from "@/shared/learning/program";
 export class LearningProgramRepository {
   constructor(private readonly db = prisma) {}
 
+  async updatePresentation(imageUrl: string) {
+    if (!imageUrl.startsWith("https://res.cloudinary.com/szhwzy4q/image/"))
+      throw new Error("La portada debe proceder de la cuenta Cloudinary de Warmi.");
+    return this.db.$transaction(
+      async (tx) => {
+        const moduleId = LEARNING_PROGRAM.modules[2].id;
+        const include = {
+          lessons: {
+            include: {
+              lessonFiles: { include: { file: true }, orderBy: { id: "asc" as const } }
+            },
+            orderBy: { id: "asc" as const }
+          }
+        };
+        const before = await tx.module.findUniqueOrThrow({
+          where: { id: moduleId },
+          include
+        });
+        if (before.courseId !== LEARNING_PROGRAM.id)
+          throw new Error("El módulo cambió de contenedor; se canceló la actualización.");
+        const links = before.lessons
+          .flatMap((lesson) => lesson.lessonFiles)
+          .filter((resource) => resource.file?.mimeType === "video/mp4");
+        if (links.length !== 6)
+          throw new Error("Deben conservarse los seis videos existentes.");
+        const course = await tx.course.update({
+          where: { id: LEARNING_PROGRAM.id, deletedAt: null },
+          data: { imageUrl },
+          select: { id: true, title: true, imageUrl: true }
+        });
+        const after = await tx.module.update({
+          where: { id: moduleId },
+          data: { title: LEARNING_PROGRAM.modules[2].title },
+          include
+        });
+        if (JSON.stringify(before.lessons) !== JSON.stringify(after.lessons))
+          throw new Error("Los contenidos cambiaron; se canceló la actualización.");
+        return {
+          course,
+          module: { id: after.id, title: after.title, order: after.order },
+          preservedVideoLinks: links.map((resource) => ({
+            id: resource.id,
+            fileId: resource.fileId,
+            position: resource.position
+          }))
+        };
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+    );
+  }
+
   async migrate() {
     return this.db.$transaction(
       async (tx) => {

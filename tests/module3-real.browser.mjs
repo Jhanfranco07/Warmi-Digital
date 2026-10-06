@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.WARMI_TEST_URL || "http://localhost:3100";
 const courseId = "93dc7355-d746-4acd-87df-29f71d16a955";
-const title = "Módulo 3: Herramientas digitales para vender";
+const title = "Módulo 3: Herramienta digitales para crecer";
 const email = process.env.WARMI_TEST_EMAIL;
 const password = process.env.WARMI_TEST_PASSWORD;
 if (!email || !password)
@@ -79,6 +79,13 @@ try {
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "Ingresar como artesana", exact: true }).click();
   await page.waitForURL("**/artesana/**", { timeout: 60000 });
+  await page.goto(`${origin}/artesana/aprender`);
+  const cover = page.locator('img[src*="aprender-para-crecer-cover-v1"]').first();
+  await cover.waitFor();
+  await cover.scrollIntoViewIfNeeded();
+  await cover.evaluate((image) => image.decode());
+  assert.equal(await cover.evaluate((image) => image.naturalWidth > 0), true);
+  await page.screenshot({ path: join(tmpdir(), "warmi-learning-cover-mobile.png") });
   await page.goto(`${origin}/artesana/aprender/${courseId}`);
   await page.getByRole("heading", { name: title, exact: true }).waitFor();
   await page
@@ -216,6 +223,7 @@ try {
           store.put(
             {
               ...request.result,
+              title: "Módulo 3: Herramientas digitales para vender",
               cacheName: legacyCacheName,
               courseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec",
               courseTitle: "Aprende a usar WhatsApp Business para tu negocio"

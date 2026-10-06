@@ -1,6 +1,6 @@
 # Offline del Modulo 3
 
-Implementacion acotada a `Módulo 3: Herramientas digitales para vender`, dentro de Mi aprendizaje. No agrega entradas al menu ni modifica rutas existentes.
+Implementacion acotada a `Módulo 3: Herramienta digitales para crecer`, dentro de Mi aprendizaje. No agrega entradas al menu ni modifica rutas existentes. El cambio de nombre conserva el ID y los paquetes descargados; el shell muestra el titulo actual del catalogo por ID.
 
 ## Contenido real del curso
 
@@ -25,7 +25,7 @@ Las indicaciones sobre catalogos y espacios de venta se contrastaron con la docu
 
 - Service Worker nativo: `public/warmi-sw.js`, registrado al iniciar la primera descarga. Guarda el shell publico `/offline-learning`, sus JS, CSS, fuentes y las imagenes de la guia de voz.
 - IndexedDB: base `warmi-learning-offline`, store `downloads`, clave `module:<moduleId>`. Mantiene lectura de la clave antigua `module3`. Guarda textos, titulos, orden de lecciones, metadatos, referencias locales e ID de propietaria. No guarda sesiones, contrasenas ni tokens.
-- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v2` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
+- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v4` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
 - PostgreSQL conserva los registros `File` y `LessonFile`; los binarios permanecen en Cloudinary y en el dispositivo tras descargarlos. No requiere migracion ni dependencias nuevas.
 - Descarga por streaming, progreso por bytes y tamano aproximado a partir de `File.size`. El registro local se confirma al terminar todos los archivos. Un fallo elimina esa generacion y conserva la descarga anterior. Web Locks coordina operaciones entre pestanas cuando esta disponible.
 

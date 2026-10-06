@@ -2,6 +2,10 @@
 
 Course ID: `93dc7355-d746-4acd-87df-29f71d16a955`. Contenedor publicado dentro de Mi aprendizaje, sin nuevas entradas de navegacion.
 
+El Modulo 3 se llama `Módulo 3: Herramienta digitales para crecer`, conservando ID, contenido y videos. La portada del curso es una imagen generada para representar aprendizaje digital entre artesanas, no una fotografia de participantes reales. Copia optimizada: `public/images/courses/aprender-para-crecer.webp` (1200 x 800, 167598 bytes). Origen online: Cloudinary `warmi/courses/aprender-para-crecer-cover-v1`, enlazado mediante `Course.imageUrl`.
+
+`pnpm exec tsx scripts/update-learning-presentation.ts` inspecciona los datos sin escribir. Con `--apply` reutiliza/sube esa portada en la cuenta `szhwzy4q` y actualiza solamente el titulo del modulo y la imagen del curso; verifica que las lecciones y sus File/LessonFile permanezcan intactos. No crea File ni LessonFile para la portada del curso.
+
 ## Contenido reutilizado
 
 - Modulo 1, order 1: `7dd54036-26d9-4104-8008-9d559135b461`. Antes CONOCIENDO GMAIL. Conserva las dos lecciones, sus ordenes originales 0/1, el video YouTube y el PDF original. Es contenido inicial online; falta preparar acceso al Estado y uso basico del celular.
@@ -24,7 +28,7 @@ Catalogo `shared/learning/program.ts`: capacidad por ID estable, independiente d
 
 IndexedDB almacena una ficha por `module:<id>` y Cache Storage una generacion por modulo. Descargar/eliminar un modulo conserva los demas; cierre de sesion confirmado elimina todas las descargas. El shell puede listar varias fichas descargadas. Se conserva lectura de `module3`, las caches antiguas y los antiguos courseId del Modulo 3. Actualizar una descarga confirma ficha nueva y reemplazo de clave antigua en una sola transaccion.
 
-Service Worker v2 actualiza el shell publico sin eliminar MP4/PDF descargados. Una PWA previamente instalada debe conectarse al menos una vez para recibir esta version; estando ya offline puede continuar con su shell anterior. No se implemento descarga completa del programa.
+Service Worker v4 actualiza el shell publico y el nombre visible del modulo sin eliminar MP4/PDF descargados. Una PWA previamente instalada debe conectarse al menos una vez para recibir esta version; estando ya offline puede continuar con su shell anterior. No se implemento descarga completa del programa.
 
 ## Validacion
 

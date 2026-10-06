@@ -2,7 +2,7 @@
 
 Course ID: `93dc7355-d746-4acd-87df-29f71d16a955`. Contenedor publicado dentro de Mi aprendizaje, sin nuevas entradas de navegacion.
 
-El Modulo 3 se llama `Módulo 3: Herramienta digitales para crecer`, conservando ID, contenido y videos. La portada del curso es una imagen generada para representar aprendizaje digital entre artesanas, no una fotografia de participantes reales. Copia optimizada: `public/images/courses/aprender-para-crecer.webp` (1200 x 800, 167598 bytes). Origen online: Cloudinary `warmi/courses/aprender-para-crecer-cover-v1`, enlazado mediante `Course.imageUrl`.
+El Modulo 3 se llama `Módulo 3: Herramientas digitales para vender`, conservando ID, contenido y videos. La portada del curso es una imagen generada para representar aprendizaje digital entre artesanas, no una fotografia de participantes reales. Copia optimizada: `public/images/courses/aprender-para-crecer.webp` (1200 x 800, 167598 bytes). Origen online: Cloudinary `warmi/courses/aprender-para-crecer-cover-v1`, enlazado mediante `Course.imageUrl`.
 
 `pnpm exec tsx scripts/update-learning-presentation.ts` inspecciona los datos sin escribir. Con `--apply` reutiliza/sube esa portada en la cuenta `szhwzy4q` y actualiza solamente el titulo del modulo y la imagen del curso; verifica que las lecciones y sus File/LessonFile permanezcan intactos. No crea File ni LessonFile para la portada del curso.
 
@@ -11,6 +11,8 @@ El Modulo 3 se llama `Módulo 3: Herramienta digitales para crecer`, conservando
 - Modulo 1, order 1: `7dd54036-26d9-4104-8008-9d559135b461`. Antes CONOCIENDO GMAIL. Conserva las dos lecciones, sus ordenes originales 0/1, el video YouTube y el PDF original. Es contenido inicial online; falta preparar acceso al Estado y uso basico del celular.
 - Modulo 2: pendiente de contenido. Gestion de productos culturales no tiene modulos/lecciones; el curso de conversion PDF tambien esta vacio y en borrador. La interfaz muestra el bloque pendiente, pero no se crearon registros vacios ni lecciones artificiales.
 - Modulo 3, order 3: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Conserva las dos sesiones, sus textos, orden 1/2, seis MP4 y todos los recursos. Las dos lecciones introductorias de WhatsApp permanecen en su curso original y se resuelven como material de apoyo publicado.
+
+- Modulo 4: pendiente de contenido. La interfaz muestra `Módulo 4: Estrategias de venta y autonomía digital` sin crear lecciones artificiales.
 
 Los cursos antiguos no se eliminaron. El curso Gmail, ahora sin modulos propios, no se lista como curso vacio; sus enlaces de artesanas inscritas se redirigen al programa. WhatsApp mantiene Conoce WhatsApp Business y sus dos lecciones originales. Los enlaces antiguos a las sesiones trasladadas redirigen al programa tras comprobar inscripcion al destino.
 

@@ -107,10 +107,12 @@ export default async function ArtisanCourseDetailPage({
     : hasStarted
       ? "Continuar mi curso"
       : "Empezar aquí";
+  const visibleModuleCount =
+    course.id === LEARNING_PROGRAM.id ? LEARNING_PROGRAM.modules.length : course.modules.length;
   const courseNarration = buildCourseNarration({
     title: course.title,
     description: course.description,
-    moduleCount: course.modules.length,
+    moduleCount: visibleModuleCount,
     lessonCount: totalLessons,
     progress,
     nextLessonTitle: nextLesson?.title
@@ -197,7 +199,7 @@ export default async function ArtisanCourseDetailPage({
               <SummaryPill
                 icon={Layers3}
                 title="Módulos"
-                value={course.modules.length}
+                value={visibleModuleCount}
                 description="Bloques del curso"
                 color="bg-[#b5245b]"
               />
@@ -282,12 +284,19 @@ export default async function ArtisanCourseDetailPage({
                 (total, lesson) => total + (lesson.durationMin ?? 0),
                 0
               );
+            const canonicalModule =
+              course.id === LEARNING_PROGRAM.id
+                ? LEARNING_PROGRAM.modules.find(
+                    (item) => item.id === module.id || item.order === module.order
+                  )
+                : undefined;
+            const moduleTitle = canonicalModule?.title ?? module.title;
             const moduleNarration = buildModuleNarration({
               order:
                 course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
                   ? module.order
                   : moduleIndex + 1,
-              title: module.title,
+              title: moduleTitle,
               description: module.description,
               lessonCount: module.lessons.length,
               durationMin: moduleDuration,
@@ -309,7 +318,7 @@ export default async function ArtisanCourseDetailPage({
                 <ArtisanPanel
                   key={module.id}
                   eyebrow={`Módulo ${course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id) ? module.order : moduleIndex + 1}`}
-                  title={module.title}
+                  title={moduleTitle}
                   action={
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
@@ -353,6 +362,16 @@ export default async function ArtisanCourseDetailPage({
                     })}
                   </div>
                 </ArtisanPanel>
+                {course.id === LEARNING_PROGRAM.id &&
+                  module.order === 3 &&
+                  !course.modules.some((item) => item.order === 4) && (
+                    <ArtisanPanel
+                      eyebrow="Módulo 4"
+                      title={LEARNING_PROGRAM.modules[3].title}
+                    >
+                      <p role="status">Contenido pendiente de preparación.</p>
+                    </ArtisanPanel>
+                  )}
               </Fragment>
             );
           })}

@@ -9,9 +9,7 @@ import {
   HandHeart,
   LayoutDashboard,
   MessageCircle,
-  Package,
   ScrollText,
-  Store,
   User,
   Users,
   WalletCards
@@ -32,8 +30,6 @@ export const roleNavigation: Record<UserRole, NavigationItem[]> = {
     { label: "Talleres", href: "/artesana/talleres", icon: CalendarDays },
     { label: "Mi comunidad", href: "/artesana/mi-comunidad", icon: Users },
     { label: "Mi historia", href: "/artesana/mi-historia", icon: ScrollText },
-    { label: "Mi vitrina", href: "/artesana/mi-vitrina", icon: Store },
-    { label: "Mis pedidos", href: "/artesana/mis-pedidos", icon: Package },
     { label: "Convocatorias", href: "/artesana/convocatorias", icon: Bell },
     { label: "Mensajes", href: "/artesana/mensajes", icon: MessageCircle },
     { label: "Mi perfil", href: "/artesana/perfil", icon: User },

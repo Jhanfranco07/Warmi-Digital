@@ -15,7 +15,7 @@ import {
   Menu,
   MessageCircle,
   MoreHorizontal,
-  Store,
+  CalendarDays,
   Users
 } from "lucide-react";
 
@@ -193,7 +193,7 @@ function NotificationPopover({
             </span>
           </div>
           <p className="mt-2 text-sm leading-5 text-[#6b5146]">
-            Avisos sobre aprendizaje, comunidad, pedidos y acompañamiento.
+            Avisos sobre aprendizaje, comunidad y acompañamiento.
           </p>
         </div>
 
@@ -454,7 +454,7 @@ function ArtisanDrawerNavigationContent({
     },
     {
       title: "Mi actividad",
-      hrefs: ["/artesana/mi-vitrina", "/artesana/mis-pedidos", "/artesana/mi-historia"]
+      hrefs: ["/artesana/mi-historia"]
     },
     {
       title: "Comunidad",
@@ -562,14 +562,14 @@ export function MobileNavigation({ role, badges, notifications }: SidebarProps) 
   const mainBottomHrefs = [
     "/artesana/dashboard",
     "/artesana/aprender",
-    "/artesana/mi-vitrina",
+    "/artesana/talleres",
     "/artesana/mi-comunidad"
   ];
   const bottomItems = isArtisan
     ? [
         { label: "Inicio", href: "/artesana/dashboard", icon: Home },
         { label: "Aprender", href: "/artesana/aprender", icon: BookOpen },
-        { label: "Mi vitrina", href: "/artesana/mi-vitrina", icon: Store },
+        { label: "Talleres", href: "/artesana/talleres", icon: CalendarDays },
         { label: "Comunidad", href: "/artesana/mi-comunidad", icon: Users },
         { label: "Más", href: null, icon: MoreHorizontal }
       ]

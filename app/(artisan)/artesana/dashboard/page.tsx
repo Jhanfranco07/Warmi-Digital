@@ -37,7 +37,7 @@ export default async function ArtisanDashboardPage() {
   const firstName = displayName.split(" ")[0] ?? "artesana";
   const avatarUrl = profile?.avatarUrl ?? null;
   const enrolledCourses = data.enrollments.slice(0, 3);
-  const dashboardNarration = `Estás en tu inicio de Warmi Digital. Hola ${firstName}. Tu avance general es de ${data.generalProgress} por ciento. Tu próximo objetivo es ${data.nextObjective}. Desde aquí puedes continuar tu aprendizaje, revisar talleres, mirar convocatorias, editar tu historia o entrar a tu vitrina.`;
+  const dashboardNarration = `Estás en tu inicio de Warmi Digital. Hola ${firstName}. Tu avance general es de ${data.generalProgress} por ciento. Tu próximo objetivo es ${data.nextObjective}. Desde aquí puedes continuar tu aprendizaje, revisar talleres, mirar convocatorias, editar tu historia o revisar tu comunidad.`;
 
   return (
     <>
@@ -325,7 +325,7 @@ export default async function ArtisanDashboardPage() {
             </article>
           </section>
 
-          <section className="mt-8 grid gap-4 xl:grid-cols-6">
+          <section className="mt-8 grid gap-4 xl:grid-cols-5">
             <DesktopQuickAccess
               href="/artesana/aprender"
               icon={BookOpen}
@@ -339,13 +339,6 @@ export default async function ArtisanDashboardPage() {
               title="Ver talleres"
               description="Explora y participa"
               color="bg-[#d7920c]"
-            />
-            <DesktopQuickAccess
-              href="/artesana/mi-vitrina"
-              icon={Store}
-              title="Mi vitrina"
-              description="Muestra tu trabajo"
-              color="bg-[#1f2d55]"
             />
             <DesktopQuickAccess
               href="/artesana/convocatorias"

@@ -33,6 +33,7 @@ export default async function ArtisanDashboardPage() {
   const profile = data.artisan?.profile;
   const craft = profile?.craftTypes[0]?.craftType.name ?? "Especialidad por registrar";
   const currentCourse = data.currentEnrollment?.course;
+  const currentCourseProgress = data.currentEnrollment?.courseProgress?.percentage ?? 0;
   const displayName = profile?.displayName ?? session.user.name ?? "artesana";
   const firstName = displayName.split(" ")[0] ?? "artesana";
   const avatarUrl = profile?.avatarUrl ?? null;
@@ -109,10 +110,10 @@ export default async function ArtisanDashboardPage() {
                 {currentCourse?.title ?? "No tienes curso activo"}
               </p>
               <p className="mt-3 text-[11px] font-bold text-[#b5245b]">
-                {data.generalProgress}% completado
+                {currentCourseProgress}% completado
               </p>
               <Progress
-                value={data.generalProgress}
+                value={currentCourseProgress}
                 className="mt-1.5 h-1.5 bg-[#f4dbe4] [&>div]:bg-[#b5245b]"
               />
               <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import curriculum from "../shared/learning/curriculum.json" with { type: "json" };
+import legacyFixture from "./fixtures/module3-legacy.json" with { type: "json" };
 import { createRequire } from "node:module";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -17,6 +19,7 @@ if (!email || !password)
   );
 const profile = await mkdtemp(join(tmpdir(), "warmi-real-module3-"));
 const verifyVideos = process.env.WARMI_REAL_MP4 === "1";
+const screenshotDir = process.env.WARMI_SCREENSHOT_DIR || tmpdir();
 const sessionIds = [
   "8a8e449b-76a6-4a6d-9693-6238f75092bc",
   "9bd401d6-5c80-4099-aa7b-e1b90b62d9b7"
@@ -85,7 +88,7 @@ try {
   await cover.scrollIntoViewIfNeeded();
   await cover.evaluate((image) => image.decode());
   assert.equal(await cover.evaluate((image) => image.naturalWidth > 0), true);
-  await page.screenshot({ path: join(tmpdir(), "warmi-learning-cover-mobile.png") });
+  await page.screenshot({ path: join(screenshotDir, "warmi-learning-cover-mobile.png") });
   await page.goto(`${origin}/artesana/aprender/${courseId}`);
   await page.getByRole("heading", { name: title, exact: true }).waitFor();
   await page
@@ -120,10 +123,10 @@ try {
   );
   assert.equal(
     await page.getByText("Contenido en preparación.", { exact: true }).count(),
-    3
+    0
   );
   assert.equal(
-    await page.getByRole("link", { name: /Mi vitrina|Mis pedidos|Gmail/i }).count(),
+    await page.getByRole("link", { name: /Mi vitrina|Mis pedidos/i }).count(),
     0
   );
   assert.equal(
@@ -133,6 +136,16 @@ try {
     1
   );
   await page.getByText("Módulo 3", { exact: true }).waitFor();
+  const forbiddenGuide = await page.request.get(
+    `${origin}/api/learning/offline/${courseId}/files/${curriculum.sessions[0].guides[0].id}`
+  );
+  assert.equal(forbiddenGuide.status(), 404);
+  const allowedGuide = await page.request.get(
+    `${origin}/api/learning/offline/${courseId}/files/${curriculum.sessions[8].guides[0].id}`
+  );
+  assert.equal(allowedGuide.status(), 200);
+  assert.equal((await allowedGuide.body()).length, curriculum.sessions[8].guides[0].size);
+
   assert.equal(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     true
@@ -143,16 +156,27 @@ try {
   }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
-    path: join(tmpdir(), "warmi-program-mobile.png"),
+    path: join(screenshotDir, "warmi-program-mobile.png"),
     fullPage: true
   });
   await page.setViewportSize({ width: 1365, height: 900 });
+  await page.evaluate(async () => {
+    for (const element of document.querySelectorAll('main [style*="background-image"]')) {
+      const match =
+        getComputedStyle(element).backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+      if (match) {
+        const image = new Image();
+        image.src = match[1];
+        await image.decode();
+      }
+    }
+  });
   assert.equal(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     true
   );
   await page.screenshot({
-    path: join(tmpdir(), "warmi-program-desktop.png"),
+    path: join(screenshotDir, "warmi-program-desktop.png"),
     fullPage: true
   });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -162,6 +186,52 @@ try {
   await page.waitForURL(`**/artesana/aprender/${courseId}/lecciones/${sessionIds[0]}`);
   await page.goto(`${origin}/artesana/aprender/de47675b-fd20-4fbd-b980-41dbd71a94ae`);
   await page.waitForURL(`**/artesana/aprender/${courseId}`);
+  assert.equal(await page.getByRole("link", { name: /Sesión [1-4]:/ }).count(), 16);
+  for (const source of curriculum.sessions) {
+    await page.goto(`${origin}/artesana/aprender/${courseId}/lecciones/${source.id}`);
+    await page.getByRole("heading", { name: source.title, exact: true }).waitFor();
+    assert.equal(
+      await page.getByRole("link", { name: /^Ampliar guía:/ }).count(),
+      source.guides.length
+    );
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Escuchar explicación", exact: true })
+        .count(),
+      1
+    );
+    for (const image of await page
+      .locator('img[src*="module-"][src*="session-"]')
+      .all()) {
+      await image.scrollIntoViewIfNeeded();
+      await image.evaluate((element) => element.decode());
+      assert.equal(await image.evaluate((element) => element.naturalWidth > 0), true);
+    }
+    assert.equal(
+      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+      true
+    );
+    if (verifyVideos && source.module !== 3 && (await page.locator("video").count()))
+      await playVideos(page, source.module === 1 ? 1 : 2, false);
+    if (
+      (source.module === 1 && source.order === 1) ||
+      (source.module === 2 && source.order === 3) ||
+      (source.module === 3 && source.order === 3) ||
+      (source.module === 4 && source.order === 4)
+    ) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({
+        path: join(screenshotDir, `warmi-curriculum-m${source.module}-mobile.png`),
+        fullPage: true
+      });
+    }
+  }
+  await page.goto(
+    `${origin}/artesana/aprender/${courseId}/lecciones/5a317a3f-dc5c-4000-b059-ddf8b5f9e149`
+  );
+  await page.getByRole("heading", { name: "¿Qué es Gmail?", exact: true }).waitFor();
+  assert.equal(await page.getByRole("button", { name: /complet/i }).count(), 0);
+  await page.goto(`${origin}/artesana/aprender/${courseId}`);
   if (verifyVideos) {
     for (const [index, sessionId] of sessionIds.entries()) {
       await page.goto(`${origin}/artesana/aprender/${courseId}/lecciones/${sessionId}`);
@@ -218,13 +288,20 @@ try {
         totalPayloadBytes: resourceBytes + metadataBytes + shellBytes
       };
     });
-    assert.equal(sizes.assets, 6);
-    assert.equal(sizes.resourceBytes, 104293181);
+    assert.equal(sizes.assets, 23);
+    assert.equal(
+      sizes.resourceBytes,
+      104293181 +
+        curriculum.sessions
+          .filter((session) => session.module === 3)
+          .flatMap((session) => session.guides)
+          .reduce((sum, guide) => sum + guide.size, 0)
+    );
     assert.equal(sizes.declaredBytes, sizes.resourceBytes);
     console.log(JSON.stringify({ packageSizes: sizes }));
   }
   if (process.env.WARMI_LEGACY_DOWNLOAD === "1") {
-    await page.evaluate(async () => {
+    await page.evaluate(async (fixture) => {
       const db = await new Promise((resolve, reject) => {
         const request = indexedDB.open("warmi-learning-offline", 1);
         request.onsuccess = () => resolve(request.result);
@@ -241,8 +318,27 @@ try {
       const legacyCacheName = `warmi-module3-${crypto.randomUUID()}`;
       const oldCache = await caches.open(current.cacheName);
       const legacyCache = await caches.open(legacyCacheName);
-      for (const request of await oldCache.keys())
-        await legacyCache.put(request, await oldCache.match(request));
+      const legacyLessons = current.lessons.slice(0, 2).map((lesson, index) => ({
+        ...lesson,
+        title:
+          index === 0
+            ? "Sesión 1: Publica tu arte en redes"
+            : "Sesión 2: Llega a nuevos clientes",
+        resources: lesson.resources.filter(
+          (resource) => resource.file?.mimeType !== "image/webp"
+        )
+      }));
+      const ids = new Set(
+        legacyLessons
+          .flatMap((lesson) => lesson.resources)
+          .filter((resource) => resource.file)
+          .map((resource) => resource.file.id)
+      );
+      const assets = Object.fromEntries(
+        Object.entries(current.assets).filter(([id]) => ids.has(id))
+      );
+      for (const url of Object.values(assets))
+        await legacyCache.put(url, await oldCache.match(url));
       await new Promise((resolve, reject) => {
         const tx = db.transaction("downloads", "readwrite");
         const store = tx.objectStore("downloads");
@@ -251,6 +347,10 @@ try {
           store.put(
             {
               ...request.result,
+              description: fixture.description,
+              lessons: legacyLessons,
+              assets,
+              bytes: 104293181,
               title: "Módulo 3: Herramienta digitales para crecer",
               cacheName: legacyCacheName,
               courseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec",
@@ -265,7 +365,7 @@ try {
       });
       await caches.delete(current.cacheName);
       db.close();
-    });
+    }, legacyFixture);
     console.log(
       "Legacy module3 key, old courseId and warmi-module3-* cache prepared for compatibility test."
     );
@@ -286,7 +386,11 @@ try {
   assert.equal(await page.locator("details:has(video)[open]").count(), 1);
   await page.getByText("Leer texto completo", { exact: true }).click();
   await page
-    .getByText(/Crea tu catálogo de productos/)
+    .getByText(
+      process.env.WARMI_LEGACY_DOWNLOAD === "1"
+        ? /Crea tu catálogo de productos/
+        : /CREA UN CATÁLOGO BÁSICO/
+    )
     .first()
     .waitFor();
   await page.getByText("Leer texto completo", { exact: true }).click();
@@ -307,17 +411,17 @@ try {
     .getByRole("heading", { name: "Configura tu perfil de negocio", exact: true })
     .waitFor();
   await page
-    .getByRole("link", { name: "2. Sesión 2: Llega a nuevos clientes", exact: true })
+    .getByRole("link", { name: /^2\. Sesión 2: Llega a nuevos clientes/ })
     .click();
   await page
-    .getByRole("heading", { name: "Sesión 2: Llega a nuevos clientes", exact: true })
+    .getByRole("heading", { name: /^Sesión 2: Llega a nuevos clientes/ })
     .waitFor();
   assert.equal(
     await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
     false
   );
   await page.screenshot({
-    path: join(tmpdir(), "warmi-offline-session-mobile.png"),
+    path: join(screenshotDir, "warmi-offline-session-mobile.png"),
     fullPage: false
   });
   if (verifyVideos) await playVideos(page, 2, true);
@@ -332,14 +436,39 @@ try {
     true
   );
   await page.screenshot({
-    path: join(tmpdir(), "warmi-module3-real-mobile.png"),
+    path: join(screenshotDir, "warmi-module3-real-mobile.png"),
     fullPage: true
   });
   await page.setViewportSize({ width: 1365, height: 900 });
   await page.screenshot({
-    path: join(tmpdir(), "warmi-module3-real-desktop.png"),
+    path: join(screenshotDir, "warmi-module3-real-desktop.png"),
     fullPage: true
   });
+  if (process.env.WARMI_LEGACY_DOWNLOAD !== "1") {
+    for (const source of curriculum.sessions.filter(
+      (session) => session.module === 3 && session.order >= 3
+    )) {
+      await page
+        .getByRole("link", { name: `${source.order}. ${source.title}`, exact: true })
+        .click();
+      await page.getByRole("heading", { name: source.title, exact: true }).waitFor();
+      assert.equal(await page.locator("video").count(), 0);
+      for (const image of await page.locator('img[src^="/__warmi_offline__/"]').all()) {
+        await image.scrollIntoViewIfNeeded();
+        await image.evaluate((element) => element.decode());
+      }
+      await page.getByText("Leer texto completo", { exact: true }).click();
+      await page
+        .getByText(source.order === 3 ? /La captura no es el pago/ : /Empaco con cuidado/)
+        .first()
+        .waitFor();
+    }
+  } else {
+    assert.equal(
+      await page.getByRole("link", { name: /^3\. Sesión 3:|^4\. Sesión 4:/ }).count(),
+      0
+    );
+  }
   await context.setOffline(false);
   await page.getByRole("button", { name: "Volver con conexión", exact: true }).waitFor();
   await page.getByRole("link", { name: "Volver al curso", exact: true }).click();
@@ -374,7 +503,7 @@ try {
     false
   );
   console.log(
-    `PASS: real course, login, download, full browser restart offline, both sessions, original support lessons, voice API, external guard, reconnect and deletion. Real MP4 online/offline: ${verifyVideos ? "6/6 PASS" : "not requested"}. No media records created by this test.`
+    `PASS: real course, login, download, full browser restart offline, all 16 online sessions, current four-session or legacy two-session offline package, original support lessons, voice API, external guard, reconnect and deletion. Real MP4 online/offline: ${verifyVideos ? "6/6 PASS" : "not requested"}. No media records created by this test.`
   );
 } catch (error) {
   const page = context?.pages()[0];
@@ -392,7 +521,10 @@ try {
         .catch(() => "Page unavailable")
     );
     await page
-      .screenshot({ path: join(tmpdir(), "warmi-module3-failure.png"), fullPage: true })
+      .screenshot({
+        path: join(screenshotDir, "warmi-module3-failure.png"),
+        fullPage: true
+      })
       .catch(() => undefined);
   }
   throw error;

@@ -1,5 +1,6 @@
 import { requireRole } from "@/shared/server/auth/helpers";
 import { OfflineLearningService } from "@/shared/services/offline-learning.service";
+import { localCurriculumResponse } from "@/shared/server/learning/local-curriculum-file";
 
 export async function GET(
   _request: Request,
@@ -17,6 +18,10 @@ export async function GET(
       { message: "Recurso no disponible para descargar." },
       { status: 404 }
     );
+  const local = await localCurriculumResponse(file);
+  if (local) return local;
+  if (file.provider === "warmi-curriculum")
+    return Response.json({ message: "Recurso no disponible." }, { status: 404 });
   const url = new URL(file.url);
   // This proxy is limited to stored Cloudinary assets, not arbitrary external URLs.
   if (

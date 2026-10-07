@@ -282,50 +282,50 @@ export default async function ArtisanCourseDetailPage({
             if (!module) {
               if (!presentation) return null;
               return (
-              <ArtisanPanel
-                key={`preparing-${presentation.order}`}
-                eyebrow={`Módulo ${presentation.order}`}
-                title={presentation.title}
-              >
-                <ModuleCover image={presentation.image} />
-                <p role="status" className="text-base leading-7 text-[#5b4a42]">
-                  Contenido en preparación.
-                </p>
-              </ArtisanPanel>
-            );
-          }
-          const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
-            lesson,
-            lessonIndex,
-            progressItem: lessonProgress.get(lesson.id)
-          }));
-          const moduleCompleted = moduleLessons.filter(
-            (item) => item.progressItem?.completed
-          ).length;
-          const moduleProgress = moduleLessons.length
-            ? Math.round((moduleCompleted / moduleLessons.length) * 100)
-            : 0;
-          const moduleDuration =
-            module.durationMin ??
-            module.lessons.reduce(
-              (total, lesson) => total + (lesson.durationMin ?? 0),
-              0
-            );
-          const canonicalModule = presentation;
-          const moduleTitle = canonicalModule?.title ?? module.title;
-          const moduleNarration = buildModuleNarration({
-            order:
-              course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
-                ? module.order
-                : moduleIndex + 1,
-            title: moduleTitle,
-            description: module.description,
-            lessonCount: module.lessons.length,
-            durationMin: moduleDuration,
-            lessonTitles: module.lessons.map((lesson) => lesson.title)
-          });
+                <ArtisanPanel
+                  key={`preparing-${presentation.order}`}
+                  eyebrow={`Módulo ${presentation.order}`}
+                  title={presentation.title}
+                >
+                  <ModuleCover image={presentation.image} />
+                  <p role="status" className="text-base leading-7 text-[#5b4a42]">
+                    Contenido en preparación.
+                  </p>
+                </ArtisanPanel>
+              );
+            }
+            const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
+              lesson,
+              lessonIndex,
+              progressItem: lessonProgress.get(lesson.id)
+            }));
+            const moduleCompleted = moduleLessons.filter(
+              (item) => item.progressItem?.completed
+            ).length;
+            const moduleProgress = moduleLessons.length
+              ? Math.round((moduleCompleted / moduleLessons.length) * 100)
+              : 0;
+            const moduleDuration =
+              module.durationMin ??
+              module.lessons.reduce(
+                (total, lesson) => total + (lesson.durationMin ?? 0),
+                0
+              );
+            const canonicalModule = presentation;
+            const moduleTitle = canonicalModule?.title ?? module.title;
+            const moduleNarration = buildModuleNarration({
+              order:
+                course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
+                  ? module.order
+                  : moduleIndex + 1,
+              title: moduleTitle,
+              description: module.description,
+              lessonCount: module.lessons.length,
+              durationMin: moduleDuration,
+              lessonTitles: module.lessons.map((lesson) => lesson.title)
+            });
 
-          return (
+            return (
               <ArtisanPanel
                 key={module.id}
                 eyebrow={`Módulo ${course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id) ? module.order : moduleIndex + 1}`}
@@ -366,7 +366,7 @@ export default async function ArtisanCourseDetailPage({
                         number={lessonIndex + 1}
                         title={lesson.title}
                         type={lessonTypeLabels[lesson.type]}
-                        durationMin={lesson.durationMin ?? 0}
+                        durationMin={lesson.durationMin}
                         completed={completed}
                         current={current}
                       />
@@ -457,7 +457,7 @@ function LessonStepCard({
   number: number;
   title: string;
   type: string;
-  durationMin: number;
+  durationMin: number | null;
   completed: boolean;
   current: boolean;
 }) {
@@ -503,7 +503,8 @@ function LessonStepCard({
         </div>
         <p className="mt-5 flex items-center gap-2 font-ui text-xs font-extrabold uppercase tracking-[0.08em] text-[#b5245b]">
           <Clock3 className="h-4 w-4" />
-          {type} · {durationMin} min
+          {type}
+          {durationMin != null ? ` · ${durationMin} min` : ""}
         </p>
         <h3 className="mt-2 font-serif text-2xl font-bold leading-tight text-[#1b1c1a]">
           {title}

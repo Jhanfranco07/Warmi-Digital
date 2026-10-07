@@ -3,6 +3,7 @@ import {
   LEARNING_PROGRAM,
   availableLearningModules,
   isLearningModuleAvailable,
+  isLearningLessonAvailable,
   learningProgress
 } from "@/shared/learning/program";
 import { getReferencedLesson } from "@/shared/offline/module3-types";
@@ -60,10 +61,7 @@ export class LearningService {
             durationMin: availableLearningModules(
               enrollment.course.id,
               enrollment.course.modules
-            ).reduce(
-              (total, module) => total + (module.durationMin ?? 0),
-              0
-            ),
+            ).reduce((total, module) => total + (module.durationMin ?? 0), 0),
             modulesCount:
               enrollment.course.id === LEARNING_PROGRAM.id
                 ? LEARNING_PROGRAM.modules.length
@@ -149,7 +147,7 @@ export class LearningService {
   }
 
   async getLessonDetail(userId: string, courseId: string, lessonId: string) {
-    const result = await this.courseRepository.findEnrollmentLesson(
+    let result = await this.courseRepository.findEnrollmentLesson(
       userId,
       courseId,
       lessonId
@@ -158,12 +156,17 @@ export class LearningService {
     if (result && !isLearningModuleAvailable(courseId, result.lesson.module.id))
       redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}`);
 
+    // Historical lessons explicitly referenced as support remain readable, without completion.
+    if (result && !isLearningLessonAvailable(courseId, result.lesson.module.id, lessonId))
+      result = null;
+
     if (!result) {
       const program = await this.courseRepository.findEnrollmentCourse(
         userId,
         LEARNING_PROGRAM.id
       );
-      const reference = program &&
+      const reference =
+        program &&
         availableLearningModules(program.course.id, program.course.modules)
           .flatMap((module) => module.lessons)
           .flatMap((lesson) => lesson.lessonFiles)

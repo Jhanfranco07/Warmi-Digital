@@ -13,6 +13,9 @@ import {
   Video
 } from "lucide-react";
 
+import { CurriculumLesson } from "@/features/artisan/curriculum-lesson";
+import { curriculumSession } from "@/shared/learning/curriculum";
+import { isLearningLessonAvailable } from "@/shared/learning/program";
 import { LessonCompletionButton } from "@/features/artisan/lesson-completion-button";
 import {
   ArtisanHero,
@@ -54,7 +57,10 @@ export default async function ArtisanLessonPage({
     courseId,
     lessonId
   );
-  const resources = lesson.lessonFiles;
+  const sourceSession = curriculumSession(lesson.id);
+  const resources = lesson.lessonFiles.filter(
+    (resource) => !sourceSession || resource.provider !== "warmi-curriculum"
+  );
   const completed = Boolean(progress?.completed);
   const courseHref = `/artesana/aprender/${courseId}` as Route;
   const lessonNarration = buildLessonNarration({
@@ -101,32 +107,39 @@ export default async function ArtisanLessonPage({
         <ArtisanPanel title="Contenido de la lección" eyebrow="Aprendizaje">
           <div className="flex flex-wrap gap-2">
             <Badge>{lessonTypeLabels[lesson.type]}</Badge>
-            <Badge variant="outline">{lesson.durationMin ?? 0} min</Badge>
+            {lesson.durationMin != null && (
+              <Badge variant="outline">{lesson.durationMin} min</Badge>
+            )}
           </div>
           <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
-            <p
-              className={
-                isOfflineModule(lesson.module.id) ? "whitespace-pre-line" : undefined
-              }
-            >
-              {lesson.content ?? "Contenido de la lección pendiente de ampliar."}
-            </p>
+            {sourceSession ? (
+              <CurriculumLesson session={sourceSession} />
+            ) : (
+              <p
+                className={
+                  isOfflineModule(lesson.module.id) ? "whitespace-pre-line" : undefined
+                }
+              >
+                {lesson.content ?? "Contenido de la lección pendiente de ampliar."}
+              </p>
+            )}
           </div>
           <div className="mt-7 space-y-6">
             {resources.map((resource) => (
               <LessonResource key={resource.id} resource={resource} courseId={courseId} />
             ))}
           </div>
-          {lesson.module.courseId === enrollment.course.id && (
-            <div className="mt-7">
-              <LessonCompletionButton
-                courseId={courseId}
-                lessonId={lessonId}
-                completed={completed}
-                courseHref={courseHref}
-              />
-            </div>
-          )}
+          {lesson.module.courseId === enrollment.course.id &&
+            isLearningLessonAvailable(courseId, lesson.module.id, lesson.id) && (
+              <div className="mt-7">
+                <LessonCompletionButton
+                  courseId={courseId}
+                  lessonId={lessonId}
+                  completed={completed}
+                  courseHref={courseHref}
+                />
+              </div>
+            )}
         </ArtisanPanel>
 
         <div className="space-y-6">
@@ -144,29 +157,33 @@ export default async function ArtisanLessonPage({
             </div>
           </ArtisanPanel>
 
-          <ArtisanPanel title="Actividad práctica" eyebrow="Aplicar">
-            <div className="flex items-start gap-4">
-              <span className="inline-flex rounded-full bg-[#fff0f5] p-3 text-[#b5245b]">
-                <NotebookPen className="h-5 w-5" />
-              </span>
-              <p className="text-base leading-7 text-[#5b4a42]">
-                Aplica esta lección en una pieza, foto o nota de tu proceso artesanal.
-                Luego puedes compartir tu avance con tu facilitadora.
-              </p>
-            </div>
-          </ArtisanPanel>
+          {!sourceSession && (
+            <>
+              <ArtisanPanel title="Actividad práctica" eyebrow="Aplicar">
+                <div className="flex items-start gap-4">
+                  <span className="inline-flex rounded-full bg-[#fff0f5] p-3 text-[#b5245b]">
+                    <NotebookPen className="h-5 w-5" />
+                  </span>
+                  <p className="text-base leading-7 text-[#5b4a42]">
+                    Aplica esta lección en una pieza, foto o nota de tu proceso artesanal.
+                    Luego puedes compartir tu avance con tu facilitadora.
+                  </p>
+                </div>
+              </ArtisanPanel>
 
-          <ArtisanPanel title="Sugerencia" eyebrow="Guardar evidencia">
-            <div className="flex items-start gap-4">
-              <span className="inline-flex rounded-full bg-[#e8fbfc] p-3 text-[#0b7f88]">
-                <FileText className="h-5 w-5" />
-              </span>
-              <p className="text-base leading-7 text-[#5b4a42]">
-                Toma una captura o fotografía de tu avance para usarla luego en tu
-                historia o en tu vitrina cultural.
-              </p>
-            </div>
-          </ArtisanPanel>
+              <ArtisanPanel title="Sugerencia" eyebrow="Guardar evidencia">
+                <div className="flex items-start gap-4">
+                  <span className="inline-flex rounded-full bg-[#e8fbfc] p-3 text-[#0b7f88]">
+                    <FileText className="h-5 w-5" />
+                  </span>
+                  <p className="text-base leading-7 text-[#5b4a42]">
+                    Toma una captura o fotografía de tu avance para usarla luego en tu
+                    historia o en tu vitrina cultural.
+                  </p>
+                </div>
+              </ArtisanPanel>
+            </>
+          )}
         </div>
       </section>
     </ArtisanShell>

@@ -1,5 +1,13 @@
 # Offline del Modulo 3
 
+## Actualización del currículo (2026-10-07)
+
+M3 ahora tiene cuatro sesiones (PDF pp.31–47), pagos, entrega y 17 guías WebP.
+Sus seis MP4 y posiciones no cambian. Paquetes nuevos: 23 archivos; paquetes legacy de
+dos sesiones siguen válidos sin migrar IndexedDB o Cache Storage. Formato y Service Worker
+intactos. Ver [LEARNING_PROGRAM.md](LEARNING_PROGRAM.md) para el impacto documentado antes
+de aplicar y el comando no destructivo. Los detalles previos de dos sesiones quedan como historial.
+
 Implementacion acotada a `Módulo 3: Herramienta digitales para crecer`, dentro de Mi aprendizaje. No agrega entradas al menu ni modifica rutas existentes. El cambio de nombre conserva el ID y los paquetes descargados; el shell muestra el titulo actual del catalogo por ID.
 
 ## Contenido real del curso

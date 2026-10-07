@@ -6,9 +6,7 @@ import {
   Award,
   BookOpen,
   CalendarDays,
-  Camera,
   ChevronRight,
-  Gem,
   Megaphone,
   Palette,
   Pencil,
@@ -146,15 +144,6 @@ export default async function ArtisanDashboardPage() {
             ) : (
               <DashboardInlineEmpty text="No tienes cursos asignados todavía." />
             )}
-          </div>
-
-          <h2 className="mt-6 font-serif text-lg font-bold text-[#5a1d2f]">Categorías</h2>
-          <div className="mt-3 grid grid-cols-5 gap-2">
-            <MobileCategory icon={Palette} label="Tejido" />
-            <MobileCategory icon={Gem} label="Bordado" />
-            <MobileCategory icon={Store} label="Emprendimiento" />
-            <MobileCategory icon={Megaphone} label="Marketing" />
-            <MobileCategory icon={Camera} label="Fotografía" />
           </div>
         </div>
       </section>
@@ -629,23 +618,5 @@ function DashboardImagePlaceholder({ compact = false }: { compact?: boolean }) {
         <BookOpen className={compact ? "h-5 w-5" : "h-8 w-8"} />
       </div>
     </div>
-  );
-}
-
-function MobileCategory({
-  icon: Icon,
-  label
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-}) {
-  return (
-    <Link
-      href="/artesana/aprender"
-      className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl bg-[#ffe4ec] px-1 text-center text-[#9d0f4f] shadow-[0_8px_18px_rgba(122,16,66,0.05)]"
-    >
-      <Icon className="h-6 w-6" />
-      <span className="text-[9px] leading-tight">{label}</span>
-    </Link>
   );
 }

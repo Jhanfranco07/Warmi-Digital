@@ -130,6 +130,14 @@ async function layout(page, name) {
   await page.setViewportSize({ width: 390, height: 844 });
 }
 
+async function nextStep(page) {
+  await page
+    .getByRole("button", { name: "Continuar al siguiente paso", exact: true })
+    .click();
+  assert.equal(await page.locator("[data-learning-step]").count(), 1);
+  assert.equal(await page.locator("video, iframe").count(), 0);
+}
+
 try {
   const role = await prisma.role.findUniqueOrThrow({ where: { name: "ARTESANA" } });
   await prisma.user.create({
@@ -186,19 +194,23 @@ try {
   await page.goto(courseHref);
   await page.getByRole("link", { name: "Empezar Módulo 1", exact: true }).click();
   await page.waitForURL(`**/${MODULE1_SESSIONS[0].id}`);
-  assert.equal(
-    await page
-      .getByText("Material adicional", { exact: true })
-      .locator("..")
-      .evaluate((element) => element.open),
-    false
-  );
+  assert.equal(await page.getByText("Material adicional", { exact: true }).count(), 0);
   assert.equal(
     await page.getByRole("link", { name: "Sesión anterior", exact: true }).count(),
     0
   );
   await playMp4(page, MODULE1_VIDEOS[0]);
+  await page
+    .getByRole("button", { name: "Ya sé cómo crear mi cuenta", exact: true })
+    .click();
+  assert.equal(await page.locator("video").count(), 0);
   await playMp4(page, MODULE1_VIDEOS[1]);
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Material adicional", exact: true })
+      .getAttribute("aria-expanded"),
+    "false"
+  );
   await page.getByText("Material adicional", { exact: true }).click();
   await playMp4(page, MODULE1_VIDEOS[2]);
   await playMp4(page, MODULE1_VIDEOS[3]);
@@ -209,8 +221,11 @@ try {
   assert.equal(pdfResponse.status(), 200);
   assert.match(pdfResponse.headers()["content-type"], /application\/pdf/);
   await layout(page, "session1");
-  await page.getByRole("button", { name: "Escuchar esta sesión", exact: true }).click();
+  await page.getByRole("button", { name: "Escuchar este paso", exact: true }).click();
   assert.equal(await page.evaluate(() => "speechSynthesis" in window), true);
+  await page
+    .getByRole("button", { name: "Ya sé cómo adjuntar un archivo", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Completar sesión y continuar", exact: true })
     .click();
@@ -238,9 +253,12 @@ try {
     await image.scrollIntoViewIfNeeded();
     await image.evaluate((element) => element.decode());
   }
+  await nextStep(page);
   await playMp4(page, MODULE1_VIDEOS[4]);
+  await nextStep(page);
   await youtube(page, "artesanias");
   await layout(page, "session2");
+  await nextStep(page);
   await page
     .getByRole("button", { name: "Completar sesión y continuar", exact: true })
     .click();
@@ -250,10 +268,14 @@ try {
     .waitFor();
   assert.equal(await page.getByRole("checkbox").count(), 6);
   await page.getByRole("checkbox").first().check();
+  await nextStep(page);
   await playMp4(page, MODULE1_VIDEOS[5]);
+  await nextStep(page);
   await playMp4(page, MODULE1_VIDEOS[6]);
+  await nextStep(page);
   await youtube(page, "bank");
   await layout(page, "session3");
+  await nextStep(page);
   await page
     .getByRole("button", { name: "Completar sesión y continuar", exact: true })
     .click();
@@ -262,6 +284,7 @@ try {
     .getByRole("heading", { name: MODULE1_SESSIONS[3].title, exact: true })
     .waitFor();
   await youtube(page, "zoom");
+  await nextStep(page);
   await youtube(page, "meet");
   assert.equal(
     results.youtube.filter(
@@ -272,12 +295,13 @@ try {
     "Los cuatro tutoriales deben reproducirse, no solo cargar el iframe."
   );
   await layout(page, "session4");
+  await nextStep(page);
   await page
     .getByRole("heading", { name: "Al terminar el Módulo 1, yo puedo…", exact: true })
     .waitFor();
   await page.getByRole("button", { name: "Finalizar Módulo 1", exact: true }).click();
   await page.waitForURL(courseHref);
-  await page.getByText("67%", { exact: true }).waitFor();
+  await page.getByText("40%", { exact: true }).waitFor();
   const enrollment = await prisma.enrollment.findUniqueOrThrow({
     where: { userId_courseId: { userId, courseId: LEARNING_PROGRAM.id } },
     include: {
@@ -288,10 +312,10 @@ try {
   });
   assert.deepEqual(learningProgress(enrollment.course, enrollment.lessonProgresses), {
     completedLessons: 4,
-    totalLessons: 6,
-    percentage: 67
+    totalLessons: 10,
+    percentage: 40
   });
-  assert.equal(enrollment.courseProgress.percentage, 67);
+  assert.equal(enrollment.courseProgress.percentage, 40);
   console.log(
     JSON.stringify(
       {

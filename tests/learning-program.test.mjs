@@ -17,6 +17,10 @@ function course() {
       },
       { id: "historical-module-2", lessons: [{ id: "old-2" }] },
       {
+        id: LEARNING_PROGRAM.modules[1].id,
+        lessons: [1, 2, 3, 4].map((order) => ({ id: `m2-session-${order}` }))
+      },
+      {
         id: LEARNING_PROGRAM.modules[2].id,
         lessons: [{ id: "session-1" }, { id: "session-2" }]
       },
@@ -25,14 +29,14 @@ function course() {
   };
 }
 
-test("progress counts M1 and M3, never preparing or historical support", () => {
+test("progress counts all available M1/M2/M3, never preparing or historical support", () => {
   const input = course();
   const historical = ["gmail-intro", "old-2", "old-4"].map((lessonId) => ({
     lessonId,
     completed: true
   }));
   assert.deepEqual(learningProgress(input, historical), {
-    totalLessons: 6,
+    totalLessons: 10,
     completedLessons: 0,
     percentage: 0
   });
@@ -42,7 +46,7 @@ test("progress counts M1 and M3, never preparing or historical support", () => {
       { lessonId: "m1-session-1", completed: true },
       { lessonId: "session-1", completed: true }
     ]),
-    { totalLessons: 6, completedLessons: 2, percentage: 33 }
+    { totalLessons: 10, completedLessons: 2, percentage: 20 }
   );
   assert.equal(
     learningProgress(
@@ -58,7 +62,7 @@ test("progress counts M1 and M3, never preparing or historical support", () => {
       input,
       [1, 2, 3, 4].map((order) => ({ lessonId: `m1-session-${order}`, completed: true }))
     ).percentage,
-    67
+    40
   );
 });
 
@@ -85,16 +89,17 @@ test("unknown modules cannot expose legacy content; other courses remain availab
     availableLearningModules("other-course", input.modules),
     input.modules
   );
-  assert.equal(learningProgress({ ...input, id: "other-course" }, []).totalLessons, 8);
+  assert.equal(learningProgress({ ...input, id: "other-course" }, []).totalLessons, 12);
 });
 
 test("unavailable-only programs have no artificial completion", () => {
   const input = course();
   input.modules = input.modules.filter(
     (module) =>
-      ![LEARNING_PROGRAM.modules[0].id, LEARNING_PROGRAM.modules[2].id].includes(
-        module.id
-      )
+      !LEARNING_PROGRAM.modules
+        .filter((item) => item.status === "available")
+        .map((item) => item.id)
+        .includes(module.id)
   );
   assert.deepEqual(learningProgress(input, [{ lessonId: "old-2", completed: true }]), {
     totalLessons: 0,
@@ -103,14 +108,14 @@ test("unavailable-only programs have no artificial completion", () => {
   });
 });
 
-test("four stable cards: M1 available online, M3 available offline, M2/M4 preparing", () => {
+test("four stable cards: M1/M2 online, only M3 offline, M4 preparing", () => {
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.order),
     [1, 2, 3, 4]
   );
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.status),
-    ["available", "preparing", "available", "preparing"]
+    ["available", "available", "available", "preparing"]
   );
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.offline),
@@ -118,6 +123,6 @@ test("four stable cards: M1 available online, M3 available offline, M2/M4 prepar
   );
   assert.equal(LEARNING_PROGRAM.modules[0].id, "7dd54036-26d9-4104-8008-9d559135b461");
   assert.equal(LEARNING_PROGRAM.modules[2].id, "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
-  assert.equal(LEARNING_PROGRAM.modules[1].id, null);
+  assert.equal(LEARNING_PROGRAM.modules[1].id, "c156c5d5-8c81-48f8-85d4-234ecb21ec0e");
   assert.equal(LEARNING_PROGRAM.modules[3].id, null);
 });

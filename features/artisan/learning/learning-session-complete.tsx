@@ -8,18 +8,20 @@ import { toast } from "sonner";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { Button } from "@/shared/components/ui/button";
 
-export function Module1Completion({
+export function LearningSessionComplete({
   courseId,
   lessonId,
   completed,
   nextHref,
-  last
+  last,
+  moduleNumber
 }: {
   courseId: string;
   lessonId: string;
   completed: boolean;
   nextHref: Route;
   last: boolean;
+  moduleNumber: number;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -58,7 +60,7 @@ export function Module1Completion({
       {pending
         ? "Guardando tu avance…"
         : last
-          ? "Finalizar Módulo 1"
+          ? `Finalizar Módulo ${moduleNumber}`
           : completed
             ? "Continuar a la siguiente sesión"
             : "Completar sesión y continuar"}

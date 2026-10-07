@@ -2,6 +2,10 @@
 
 Publicado el 7 de octubre de 2026 en **Aprender para crecer**, sin crear otra entrada de navegación. Módulo histórico `7dd54036-26d9-4104-8008-9d559135b461`, `Module.order = 1`, disponible **solo online**. M2 y M4 siguen en preparación; M3 mantiene sus registros y su descarga offline.
 
+## Presentación guiada actual (M1/M2)
+
+La mejora posterior convierte cada sesión en un recorrido con un solo paso principal visible, avance/regreso, detalles colapsados y narración del paso mediante SpeechButton. Comparte LearningSession, LearningDisclosure, LearningVideo, LearningChecklist y LearningSessionComplete con M2; los anteriores module1-video/module1-completion se renombraron para reutilizarlos. No cambia registros, textos persistidos, IDs, URLs ni posiciones de M1. Los recursos históricos y alternativos siguen accesibles. El progreso actual considera 10 sesiones (M1+M2+M3): completar M1 da 40%, no el 67% de la publicación histórica descrita más abajo. Detalles y validación nueva en [MODULE2_LEARNING.md](MODULE2_LEARNING.md).
+
 ## Cuatro sesiones
 
 | Lesson.order | Sesión                                                                         | ID                                                   |

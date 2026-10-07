@@ -16,10 +16,10 @@ export const LEARNING_PROGRAM = {
       previousCourseId: "de47675b-fd20-4fbd-b980-41dbd71a94ae"
     },
     {
-      id: null,
+      id: "c156c5d5-8c81-48f8-85d4-234ecb21ec0e",
       order: 2,
       title: "Módulo 2: Oportunidades para mi negocio",
-      status: "preparing",
+      status: "available",
       image: {
         src: "/images/discover/aprende.png",
         alt: "Artesanas participando en una capacitación con sus celulares"

@@ -36,6 +36,7 @@ import { isOfflineModule } from "@/shared/offline/module3-types";
 import { OfflineLearningService } from "@/shared/services/offline-learning.service";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
 import { MODULE1_ID } from "@/shared/learning/module1";
+import { MODULE2_ID } from "@/shared/learning/module2";
 
 const levelLabels = {
   BEGINNER: "Inicial",
@@ -353,29 +354,30 @@ export default async function ArtisanCourseDetailPage({
                     {module.description}
                   </p>
                 ) : null}
-                {module.id === MODULE1_ID && moduleLessons.length > 0 && (
-                  <div className="mb-6 flex flex-col items-start gap-3">
-                    <p className="text-base font-bold text-[#24756f]">4 sesiones</p>
-                    <Button
-                      asChild
-                      className="h-auto min-h-12 whitespace-normal rounded-md bg-[#b5245b] px-5 py-3 text-base text-white hover:bg-[#941747]"
-                    >
-                      <Link
-                        href={
-                          `/artesana/aprender/${courseId}/lecciones/${(moduleLessons.find((item) => !item.progressItem?.completed) ?? moduleLessons[0]).lesson.id}` as Route
-                        }
+                {[MODULE1_ID, MODULE2_ID].includes(module.id) &&
+                  moduleLessons.length > 0 && (
+                    <div className="mb-6 flex flex-col items-start gap-3">
+                      <p className="text-base font-bold text-[#24756f]">4 sesiones</p>
+                      <Button
+                        asChild
+                        className="h-auto min-h-12 whitespace-normal rounded-md bg-[#b5245b] px-5 py-3 text-base text-white hover:bg-[#941747]"
                       >
-                        <PlayCircle className="h-5 w-5 shrink-0" />
-                        {moduleLessons.some(
-                          (item) =>
-                            item.progressItem?.startedAt || item.progressItem?.completed
-                        )
-                          ? "Continuar Módulo 1"
-                          : "Empezar Módulo 1"}
-                      </Link>
-                    </Button>
-                  </div>
-                )}
+                        <Link
+                          href={
+                            `/artesana/aprender/${courseId}/lecciones/${(moduleLessons.find((item) => !item.progressItem?.completed) ?? moduleLessons[0]).lesson.id}` as Route
+                          }
+                        >
+                          <PlayCircle className="h-5 w-5 shrink-0" />
+                          {moduleLessons.some(
+                            (item) =>
+                              item.progressItem?.startedAt || item.progressItem?.completed
+                          )
+                            ? `Continuar Módulo ${module.order}`
+                            : `Empezar Módulo ${module.order}`}
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {moduleLessons.map(({ lesson, lessonIndex, progressItem }) => {
                     const completed = Boolean(progressItem?.completed);

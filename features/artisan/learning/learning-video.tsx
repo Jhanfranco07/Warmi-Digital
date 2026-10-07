@@ -12,14 +12,18 @@ type Props = {
   author?: string;
 };
 
-export function Module1Video({ sourceType, url, title, action, author }: Props) {
+export function LearningVideo({ sourceType, url, title, action, author }: Props) {
   const [open, setOpen] = useState(false);
   return (
     <details
+      name="learning-video"
       onToggle={(event) => setOpen(event.currentTarget.open)}
       className="group mt-4"
     >
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-md bg-[#b5245b] px-4 py-3 text-base font-bold text-white hover:bg-[#941747] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b5245b] [&::-webkit-details-marker]:hidden">
+      <summary
+        aria-expanded={open}
+        className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-md border border-[#b5245b] px-4 py-3 text-base font-bold text-[#b5245b] hover:bg-[#fff0f5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b5245b] [&::-webkit-details-marker]:hidden"
+      >
         <span className="flex min-w-0 items-center gap-3">
           <PlayCircle className="h-5 w-5 shrink-0" />
           {action}

@@ -34,6 +34,8 @@ import { LearningService } from "@/shared/services/learning.service";
 import { getReferencedLesson, isOfflineModule } from "@/shared/offline/module3-types";
 import { MODULE1_ID } from "@/shared/learning/module1";
 import { Module1Lesson } from "@/features/artisan/learning/module1-lesson";
+import { MODULE2_ID } from "@/shared/learning/module2";
+import { Module2Lesson } from "@/features/artisan/learning/module2-lesson";
 
 const lessonTypeLabels = {
   TEXT: "Lectura",
@@ -60,6 +62,9 @@ export default async function ArtisanLessonPage({
   const completed = Boolean(progress?.completed);
   if (lesson.module.id === MODULE1_ID) {
     return <Module1Lesson courseId={courseId} lesson={lesson} completed={completed} />;
+  }
+  if (lesson.module.id === MODULE2_ID) {
+    return <Module2Lesson courseId={courseId} lesson={lesson} completed={completed} />;
   }
   const courseHref = `/artesana/aprender/${courseId}` as Route;
   const lessonNarration = buildLessonNarration({

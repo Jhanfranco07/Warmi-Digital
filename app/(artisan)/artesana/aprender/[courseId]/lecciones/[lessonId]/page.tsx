@@ -36,6 +36,8 @@ import { MODULE1_ID } from "@/shared/learning/module1";
 import { Module1Lesson } from "@/features/artisan/learning/module1-lesson";
 import { MODULE2_ID } from "@/shared/learning/module2";
 import { Module2Lesson } from "@/features/artisan/learning/module2-lesson";
+import { MODULE3_SESSION1_ID } from "@/shared/learning/module3-session1";
+import { Module3Session1Lesson } from "@/features/artisan/learning/module3-session1-lesson";
 
 const lessonTypeLabels = {
   TEXT: "Lectura",
@@ -60,6 +62,16 @@ export default async function ArtisanLessonPage({
   );
   const resources = lesson.lessonFiles;
   const completed = Boolean(progress?.completed);
+  if (lesson.id === MODULE3_SESSION1_ID && isOfflineModule(lesson.module.id)) {
+    return (
+      <Module3Session1Lesson
+        courseId={courseId}
+        userId={session.user.id}
+        lesson={lesson}
+        completed={completed}
+      />
+    );
+  }
   if (lesson.module.id === MODULE1_ID) {
     return <Module1Lesson courseId={courseId} lesson={lesson} completed={completed} />;
   }

@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
+import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
+import {
+  MODULE3_SESSION1_ID,
+  MODULE3_SESSION2_ID,
+  type Session1Resource
+} from "@/shared/learning/module3-session1";
 import {
   formatBytes,
   readDownloads,
@@ -269,6 +275,41 @@ function OfflineLessonContent({
   lesson: OfflineLesson;
   download: ModuleDownload;
 }) {
+  if (lesson.id === MODULE3_SESSION1_ID) {
+    const resourceView = (resource: OfflineResource): Session1Resource => ({
+      id: resource.id,
+      title: resource.title,
+      description: resource.description,
+      ...(resource.internalLessonId
+        ? {
+            internalHref: `/artesana/aprender/${LEARNING_PROGRAM.id}/lecciones/${resource.internalLessonId}`
+          }
+        : {}),
+      ...(resource.file
+        ? {
+            fileId: resource.file.id,
+            mimeType: resource.file.mimeType,
+            size: resource.file.size,
+            url: download.assets[resource.file.id],
+            downloadUrl: download.assets[resource.file.id]
+          }
+        : {})
+    });
+    return (
+      <Module3Session1Content
+        offline
+        title={lesson.title}
+        content={lesson.content}
+        resources={lesson.resources.map(resourceView)}
+        relatedResources={(
+          download.lessons.find((item) => item.id === MODULE3_SESSION2_ID)?.resources ??
+          []
+        )
+          .filter((item) => item.file?.mimeType === "video/mp4")
+          .map(resourceView)}
+      />
+    );
+  }
   const videos = lesson.resources.filter(
     (resource) => resource.file?.mimeType === "video/mp4"
   );

@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
@@ -17,6 +18,15 @@ if (!email || !password)
   );
 const profile = await mkdtemp(join(tmpdir(), "warmi-real-module3-"));
 const verifyVideos = process.env.WARMI_REAL_MP4 === "1";
+const verifyGuides = process.env.WARMI_REAL_GUIDES !== "0";
+const guides = JSON.parse(
+  await readFile(
+    new URL("../output/pdf/module3-session1/manifest.json", import.meta.url),
+    "utf8"
+  )
+);
+const { MODULE3_SESSION1_TOPICS } =
+  await import("../shared/learning/module3-session1.ts");
 const sessionIds = [
   "8a8e449b-76a6-4a6d-9693-6238f75092bc",
   "9bd401d6-5c80-4099-aa7b-e1b90b62d9b7"
@@ -61,10 +71,133 @@ async function playVideos(page, count, offline) {
   }
   console.log(JSON.stringify({ mode: offline ? "offline" : "online", played }));
 }
+async function checkSession1(page, offline, withGuides = verifyGuides) {
+  await page.locator("[data-module3-session1]").waitFor();
+  for (const topic of MODULE3_SESSION1_TOPICS) {
+    const section = page.locator(`[data-session1-topic="${topic.key}"]`);
+    const trigger = section.getByRole("button").first();
+    if ((await trigger.getAttribute("aria-expanded")) !== "true") await trigger.click();
+    assert.equal(await page.locator("[data-session1-active]").count(), 1);
+    if (verifyVideos && topic.videoIds.length)
+      await playVideos(page, topic.videoIds.length, offline);
+    if (withGuides) {
+      const link = section.getByRole("link", {
+        name: `Abrir guía PDF: ${topic.title}`,
+        exact: true
+      });
+      const href = await link.getAttribute("href");
+      const data = await page.evaluate(async (url) => {
+        const response = await fetch(url);
+        const bytes = await response.arrayBuffer();
+        return {
+          status: response.status,
+          type: response.headers.get("content-type"),
+          size: bytes.byteLength,
+          magic: new TextDecoder().decode(bytes.slice(0, 5)),
+          hash: Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)))
+            .map((v) => v.toString(16).padStart(2, "0"))
+            .join("")
+        };
+      }, href);
+      const expected = guides.find((item) => item.key === topic.key);
+      assert.equal(data.status, 200);
+      assert.equal(data.type.split(";")[0], "application/pdf");
+      assert.equal(data.magic, "%PDF-");
+      assert.equal(data.size, expected.bytes);
+      assert.equal(data.hash, expected.sha256);
+      const downloadLink = section.getByRole("link", {
+        name: `Descargar guía PDF: ${topic.title}`,
+        exact: true
+      });
+      const downloadHref = await downloadLink.getAttribute("href");
+      const downloadEvent = page.waitForEvent("download", {
+        predicate: (download) =>
+          offline
+            ? download.url().startsWith("blob:") &&
+              download.suggestedFilename() === `${topic.key}.pdf`
+            : download.url() === new URL(downloadHref, origin).href
+      });
+      await downloadLink.click();
+      const download = await downloadEvent;
+      assert.equal(await download.failure(), null);
+      assert.equal(
+        createHash("sha256")
+          .update(await readFile(await download.path()))
+          .digest("hex"),
+        expected.sha256
+      );
+      const opened = page.waitForEvent("popup");
+      await link.click();
+      const pdfPage = await opened;
+      await pdfPage.waitForURL((url) =>
+        offline ? url.href.startsWith("blob:") : url.href === new URL(href, origin).href
+      );
+      await pdfPage.goto("about:blank");
+      await pdfPage.close();
+      console.log(
+        JSON.stringify({
+          guide: topic.key,
+          mode: offline ? "offline" : "online",
+          http: data.status,
+          opened: true,
+          downloaded: true,
+          sha256Match: true
+        })
+      );
+    }
+    if (!withGuides && offline) {
+      await section
+        .getByRole("button", { name: "Descargar guía PDF", exact: true })
+        .click();
+      await page
+        .getByRole("alert")
+        .getByText("Este contenido todavía no está disponible sin conexión.", {
+          exact: true
+        })
+        .waitFor();
+    }
+    if (offline && topic.key === "crear-cuenta-facebook") {
+      await section.getByRole("button", { name: "Abrir Facebook", exact: true }).click();
+      await page
+        .getByRole("alert")
+        .getByText("Este recurso necesita conexión a internet.", { exact: true })
+        .waitFor();
+    }
+    for (const width of [320, 390, 1365]) {
+      await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+        true
+      );
+      await page.screenshot({
+        path: join(
+          tmpdir(),
+          `warmi-m3-s1-${topic.key}-${offline ? "offline" : "online"}-${width}.png`
+        ),
+        fullPage: true,
+        animations: "disabled"
+      });
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await section
+      .getByRole("button", { name: "Escuchar este tema", exact: true })
+      .click();
+  }
+  const first = page
+    .locator(`[data-session1-topic="${MODULE3_SESSION1_TOPICS[0].key}"]`)
+    .getByRole("button")
+    .first();
+  await first.click();
+}
 let context;
 async function open(offline) {
   context = await chromium.launchPersistentContext(profile, {
-    headless: true,
+    headless: process.env.WARMI_HEADED !== "1",
+    args: [
+      "--disable-gpu",
+      ...(process.env.WARMI_HEADED === "1" ? ["--window-position=-10000,-10000"] : [])
+    ],
+    acceptDownloads: true,
     channel: process.env.WARMI_BROWSER_CHANNEL || undefined,
     viewport: { width: 390, height: 844 },
     offline
@@ -166,7 +299,8 @@ try {
     for (const [index, sessionId] of sessionIds.entries()) {
       await page.goto(`${origin}/artesana/aprender/${courseId}/lecciones/${sessionId}`);
       await page.locator("video").first().waitFor();
-      await playVideos(page, index === 0 ? 4 : 2, false);
+      if (index === 0) await checkSession1(page, false);
+      else await playVideos(page, 2, false);
     }
     await page.goto(`${origin}/artesana/aprender/${courseId}`);
   }
@@ -218,8 +352,9 @@ try {
         totalPayloadBytes: resourceBytes + metadataBytes + shellBytes
       };
     });
-    assert.equal(sizes.assets, 6);
-    assert.equal(sizes.resourceBytes, 104293181);
+    const pdfBytes = verifyGuides ? guides.reduce((sum, item) => sum + item.bytes, 0) : 0;
+    assert.equal(sizes.assets, verifyGuides ? 13 : 6);
+    assert.equal(sizes.resourceBytes, 104293181 + pdfBytes);
     assert.equal(sizes.declaredBytes, sizes.resourceBytes);
     console.log(JSON.stringify({ packageSizes: sizes }));
   }
@@ -241,8 +376,13 @@ try {
       const legacyCacheName = `warmi-module3-${crypto.randomUUID()}`;
       const oldCache = await caches.open(current.cacheName);
       const legacyCache = await caches.open(legacyCacheName);
-      for (const request of await oldCache.keys())
-        await legacyCache.put(request, await oldCache.match(request));
+      for (const request of await oldCache.keys()) {
+        const response = await oldCache.match(request);
+        await legacyCache.put(
+          request,
+          new Response(await response.arrayBuffer(), { headers: response.headers })
+        );
+      }
       await new Promise((resolve, reject) => {
         const tx = db.transaction("downloads", "readwrite");
         const store = tx.objectStore("downloads");
@@ -283,16 +423,16 @@ try {
     await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
     false
   );
-  assert.equal(await page.locator("details:has(video)[open]").count(), 1);
+  assert.equal(await page.locator("[data-session1-active]").count(), 1);
   await page.getByText("Leer texto completo", { exact: true }).click();
   await page
     .getByText(/Crea tu catálogo de productos/)
     .first()
     .waitFor();
   await page.getByText("Leer texto completo", { exact: true }).click();
-  if (verifyVideos) await playVideos(page, 4, true);
+  await checkSession1(page, true);
   await page
-    .getByRole("link", { name: "Abrir lección de apoyo", exact: true })
+    .getByRole("link", { name: /Abrir lección de apoyo/ })
     .first()
     .click();
   await page
@@ -373,10 +513,91 @@ try {
     }),
     false
   );
+  if (verifyGuides) {
+    await page
+      .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
+      .click();
+    await page
+      .getByText("Disponible sin conexión", { exact: true })
+      .waitFor({ timeout: 300000 });
+    await page.evaluate(async () => {
+      const db = await new Promise((resolve, reject) => {
+        const request = indexedDB.open("warmi-learning-offline", 1);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = reject;
+      });
+      const saved = await new Promise((resolve, reject) => {
+        const request = db
+          .transaction("downloads")
+          .objectStore("downloads")
+          .get("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = reject;
+      });
+      const pdfIds = new Set(
+        saved.lessons
+          .flatMap((lesson) => lesson.resources)
+          .filter((resource) => resource.file?.mimeType === "application/pdf")
+          .map((resource) => resource.file.id)
+      );
+      const cache = await caches.open(saved.cacheName);
+      for (const fileId of pdfIds) {
+        await cache.delete(saved.assets[fileId]);
+        delete saved.assets[fileId];
+      }
+      saved.lessons = saved.lessons.map((lesson) => ({
+        ...lesson,
+        resources: lesson.resources.filter((resource) => !pdfIds.has(resource.file?.id))
+      }));
+      saved.bytes = 104293181;
+      const legacyName = `warmi-module3-${crypto.randomUUID()}`;
+      const legacyCache = await caches.open(legacyName);
+      for (const request of await cache.keys()) {
+        const response = await cache.match(request);
+        await legacyCache.put(
+          request,
+          new Response(await response.arrayBuffer(), { headers: response.headers })
+        );
+      }
+      const previousCache = saved.cacheName;
+      saved.cacheName = legacyName;
+      saved.courseId = "3889134e-620b-40db-98cf-8f6b2a0c43ec";
+      saved.courseTitle = "Aprende a usar WhatsApp Business para tu negocio";
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction("downloads", "readwrite");
+        tx.objectStore("downloads").put(saved, "module3");
+        tx.objectStore("downloads").delete("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+      });
+      db.close();
+      await caches.delete(previousCache);
+    });
+    await context.close();
+    page = await open(true);
+    await page.goto(`${origin}/artesana/aprender`);
+    await page
+      .getByRole("link", { name: "1. Sesión 1: Publica tu arte en redes", exact: true })
+      .click();
+    await checkSession1(page, true, false);
+    await page
+      .getByRole("link", { name: "2. Sesión 2: Llega a nuevos clientes", exact: true })
+      .click();
+    if (verifyVideos) await playVideos(page, 2, true);
+    await context.setOffline(false);
+    await page.getByRole("link", { name: "Volver al curso", exact: true }).click();
+    await page.getByRole("button", { name: "Volver con conexión", exact: true }).click();
+    await page.getByRole("button", { name: "Eliminar descarga", exact: true }).click();
+    await page.getByText("No descargado", { exact: true }).waitFor();
+    console.log(
+      "PASS: older six-MP4 package without PDFs survives full offline restart; missing guides show the correct message and deletion still works."
+    );
+  }
   console.log(
-    `PASS: real course, login, download, full browser restart offline, both sessions, original support lessons, voice API, external guard, reconnect and deletion. Real MP4 online/offline: ${verifyVideos ? "6/6 PASS" : "not requested"}. No media records created by this test.`
+    `PASS: real course, login, download, full browser restart offline, both sessions, original support lessons, voice API, external guard, reconnect and deletion. Real MP4 online/offline: ${verifyVideos ? "6/6 PASS" : "not requested"}. Real PDF online/offline: ${verifyGuides ? "7/7 PASS" : "not requested; older package without guides tested"}. No media records created by this test.`
   );
 } catch (error) {
+  console.error(error);
   const page = context?.pages()[0];
   if (page) {
     console.error(
@@ -398,5 +619,7 @@ try {
   throw error;
 } finally {
   await context?.close();
-  await rm(profile, { recursive: true, force: true });
+  assert.equal(dirname(resolve(profile)), resolve(tmpdir()));
+  assert.equal(basename(profile).startsWith("warmi-real-module3-"), true);
+  await rm(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 250 });
 }

@@ -1,0 +1,72 @@
+[
+  {
+    "key": "whatsapp-o-business",
+    "filename": "whatsapp-o-business.pdf",
+    "pages": 1,
+    "sourcePages": [31],
+    "mode": "recreated",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 74936,
+    "sha256": "19149e251ce9b70dce14b863b4b09e3b747730182884d2b024db6aa0a2ac59a1"
+  },
+  {
+    "key": "configurar-whatsapp-business",
+    "filename": "configurar-whatsapp-business.pdf",
+    "pages": 2,
+    "sourcePages": [32],
+    "mode": "recreated",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 76481,
+    "sha256": "470151745ac896561a6b2d3cb6f0ca18432866bd924f61e020b8c183b6de1c79"
+  },
+  {
+    "key": "crear-catalogo-basico",
+    "filename": "crear-catalogo-basico.pdf",
+    "pages": 4,
+    "sourcePages": [33, 34],
+    "mode": "recreated-with-extracts",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 189435,
+    "sha256": "e92f239416bb9e0c5e25fdc88c1e187b0c11541fbefab51831b1746b0c9aef3a"
+  },
+  {
+    "key": "publicar-estados-whatsapp",
+    "filename": "publicar-estados-whatsapp.pdf",
+    "pages": 3,
+    "sourcePages": [35, 36],
+    "mode": "recreated-with-extracts",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 501842,
+    "sha256": "8b2cc2c0cab27ec5b8b37ea52c84cc93319d549fef8ffa905291004c17e8dfcf"
+  },
+  {
+    "key": "crear-cuenta-facebook",
+    "filename": "crear-cuenta-facebook.pdf",
+    "pages": 6,
+    "sourcePages": [37, 38],
+    "mode": "extracted",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 1073248,
+    "sha256": "c536d58dd6cb984b8347e6b1dc4ca21daaa1165fb545e6c5b8f348851052a6b3"
+  },
+  {
+    "key": "vender-facebook-marketplace",
+    "filename": "vender-facebook-marketplace.pdf",
+    "pages": 4,
+    "sourcePages": [39, 40, 41],
+    "mode": "recreated-with-extracts",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 239549,
+    "sha256": "d6aae5e184e1323efb49c4464d4d5e03b8352b8629886e0f7a09a7dddcef73b9"
+  },
+  {
+    "key": "estados-o-facebook",
+    "filename": "estados-o-facebook.pdf",
+    "pages": 2,
+    "sourcePages": [42],
+    "mode": "recreated",
+    "sourceSha256": "8b6748e32a93d1c98afc70659db3b00ba08a588b3331a7821653b22129aa1918",
+    "bytes": 76229,
+    "sha256": "f40b35612bac3d387d6ba1a662d317b5d6bb8eaecbd389a106c1f95d0f635212"
+  }
+]

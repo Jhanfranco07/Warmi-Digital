@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.WARMI_TEST_URL || "http://localhost:3100";
 const courseId = "93dc7355-d746-4acd-87df-29f71d16a955";
-const title = "Módulo 3: Herramienta digitales para crecer";
+const title = "Módulo 3: Herramientas digitales para vender";
 const email = process.env.WARMI_TEST_EMAIL;
 const password = process.env.WARMI_TEST_PASSWORD;
 if (!email || !password)
@@ -103,6 +103,29 @@ try {
       exact: true
     })
     .waitFor();
+  await page
+    .getByRole("heading", {
+      name: "Módulo 4: Estrategias de venta y autonomía digital",
+      exact: true
+    })
+    .waitFor();
+  assert.deepEqual(
+    await page.getByRole("heading", { name: /^Módulo [1-4]:/ }).allTextContents(),
+    [
+      "Módulo 1: Mi celular como herramienta de acceso al Estado",
+      "Módulo 2: Oportunidades para mi negocio",
+      title,
+      "Módulo 4: Estrategias de venta y autonomía digital"
+    ]
+  );
+  assert.equal(
+    await page.getByText("Contenido en preparación.", { exact: true }).count(),
+    3
+  );
+  assert.equal(
+    await page.getByRole("link", { name: /Mi vitrina|Mis pedidos|Gmail/i }).count(),
+    0
+  );
   assert.equal(
     await page
       .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
@@ -114,6 +137,11 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     true
   );
+  for (const image of await page.locator("main img").all()) {
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate((element) => element.decode());
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
     path: join(tmpdir(), "warmi-program-mobile.png"),
     fullPage: true
@@ -223,7 +251,7 @@ try {
           store.put(
             {
               ...request.result,
-              title: "Módulo 3: Herramientas digitales para vender",
+              title: "Módulo 3: Herramienta digitales para crecer",
               cacheName: legacyCacheName,
               courseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec",
               courseTitle: "Aprende a usar WhatsApp Business para tu negocio"

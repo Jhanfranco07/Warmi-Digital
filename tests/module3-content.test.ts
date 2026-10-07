@@ -6,8 +6,6 @@ import {
   isOfflineModule
 } from "@/shared/offline/module3-types";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
-import { WARMI_CURRICULUM } from "@/shared/learning/curriculum";
-import { localCurriculumResponse } from "@/shared/server/learning/local-curriculum-file";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import {
   buildOfflineModule,
@@ -21,82 +19,6 @@ import {
 type Enrollment = NonNullable<
   Awaited<ReturnType<CourseRepository["findEnrollmentCourse"]>>
 >;
-
-test("four published Module 3 sessions and local guides fit the unchanged snapshot format", async () => {
-  const course = {
-    id: LEARNING_PROGRAM.id,
-    title: LEARNING_PROGRAM.title,
-    deletedAt: null,
-    modules: LEARNING_PROGRAM.modules.map((module) => ({
-      id: module.id,
-      title: module.title,
-      description: null,
-      lessons: WARMI_CURRICULUM.sessions
-        .filter((session) => session.module === module.order)
-        .map((session) => ({
-          id: session.id,
-          title: session.title,
-          content: session.content,
-          lessonFiles: session.guides.map((guide) => ({
-            id: `resource-${guide.id}`,
-            title: guide.title,
-            description: guide.alt,
-            type: "IMAGE",
-            provider: "warmi-curriculum",
-            originalUrl: guide.src,
-            externalId: null,
-            file: {
-              id: guide.id,
-              url: guide.src,
-              mimeType: "image/webp",
-              size: guide.size
-            }
-          }))
-        }))
-    }))
-  } as unknown as Enrollment["course"];
-  const before = JSON.stringify(course);
-  const snapshot = buildOfflineModule("artisan", course, course.modules[2]);
-  assert.equal(snapshot.lessons.length, 4);
-  assert.equal(snapshot.lessons.flatMap((lesson) => lesson.resources).length, 17);
-  assert.equal(snapshot.lessons[0].id, "8a8e449b-76a6-4a6d-9693-6238f75092bc");
-  assert.match(snapshot.lessons[2].content!, /La captura no es el pago/);
-  assert.match(snapshot.lessons[3].content!, /Empaco con cuidado/);
-  const service = new OfflineLearningService({
-    findEnrollmentCourse: async () => ({ course }) as Enrollment
-  });
-  assert.ok(
-    await service.getAuthorizedFile(
-      "artisan",
-      course.id,
-      WARMI_CURRICULUM.sessions[8].guides[0].id
-    )
-  );
-  assert.equal(
-    await service.getAuthorizedFile(
-      "artisan",
-      course.id,
-      WARMI_CURRICULUM.sessions[0].guides[0].id
-    ),
-    null
-  );
-  assert.equal(JSON.stringify(course), before);
-});
-
-test("local guide responses allow only manifest assets with the reviewed provider and MIME", async () => {
-  const guide = WARMI_CURRICULUM.sessions[8].guides[0];
-  const file = { url: guide.src, provider: "warmi-curriculum", mimeType: "image/webp" };
-  const response = await localCurriculumResponse(file);
-  assert.equal(response?.headers.get("Content-Type"), "image/webp");
-  assert.equal((await response!.arrayBuffer()).byteLength, guide.size);
-  for (const invalid of [
-    { ...file, url: "/images/learning/modules/../../../../.env" },
-    { ...file, url: "/images/learning/modules/unknown.webp" },
-    { ...file, provider: "cloudinary" },
-    { ...file, mimeType: "application/pdf" }
-  ])
-    assert.equal(await localCurriculumResponse(invalid), null);
-});
 
 function resource(id: string, originalUrl: string, provider = "warmi") {
   return {

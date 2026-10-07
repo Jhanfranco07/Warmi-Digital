@@ -414,22 +414,11 @@ function OfflineResourceView({
       ) : url && resource.file?.mimeType.startsWith("image/") ? (
         // Local service-worker URLs are already the original image, not Next image transforms.
         // eslint-disable-next-line @next/next/no-img-element
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="block space-y-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#b5245b]"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={url}
-            alt={resource.description ?? resource.title}
-            className="h-auto w-full object-contain"
-          />
-          <span className="inline-flex min-h-12 items-center font-semibold text-[#b5245b]">
-            Ampliar guía: {resource.title}
-          </span>
-        </a>
+        <img
+          src={url}
+          alt={resource.title}
+          className="max-h-[600px] w-full object-contain"
+        />
       ) : url && resource.file?.mimeType === "video/mp4" ? (
         <video
           aria-label={resource.title}

@@ -1,3 +1,4 @@
+import { learningProgress } from "@/shared/learning/program";
 import { prisma } from "@/shared/server/db/prisma";
 
 export class ProgressRepository {
@@ -58,15 +59,10 @@ export class ProgressRepository {
       throw new Error("Inscripcion no encontrada.");
     }
 
-    const totalLessons = enrollment.course.modules.reduce(
-      (total, module) => total + module.lessons.length,
-      0
+    const { totalLessons, completedLessons, percentage } = learningProgress(
+      enrollment.course,
+      enrollment.lessonProgresses
     );
-    const completedLessons = enrollment.lessonProgresses.filter(
-      (progress) => progress.completed
-    ).length;
-    const percentage =
-      totalLessons === 0 ? 0 : Math.round((completedLessons / totalLessons) * 100);
 
     await this.db.enrollment.update({
       where: { id: enrollmentId },

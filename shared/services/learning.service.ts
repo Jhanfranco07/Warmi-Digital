@@ -1,41 +1,14 @@
 import { notFound, redirect } from "next/navigation";
-import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import {
+  LEARNING_PROGRAM,
+  availableLearningModules,
+  isLearningModuleAvailable,
+  learningProgress
+} from "@/shared/learning/program";
 import { getReferencedLesson } from "@/shared/offline/module3-types";
 
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { ProgressService } from "@/shared/services/progress.service";
-
-function getCourseProgress(
-  enrollment: Awaited<ReturnType<CourseRepository["findEnrolledCourses"]>>[number]
-) {
-  const lessonIds = new Set(
-    enrollment.course.modules.flatMap((module) =>
-      module.lessons.map((lesson) => lesson.id)
-    )
-  );
-  const lessonCount = lessonIds.size;
-  const completedLessons = enrollment.lessonProgresses.filter(
-    (progress) => progress.completed && lessonIds.has(progress.lessonId)
-  ).length;
-
-  return lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0;
-}
-
-function getCourseSummaryProgress(
-  enrollment: Awaited<ReturnType<CourseRepository["findEnrolledCourseSummaries"]>>[number]
-) {
-  const lessonIds = new Set(
-    enrollment.course.modules.flatMap((module) =>
-      module.lessons.map((lesson) => lesson.id)
-    )
-  );
-  const lessonCount = lessonIds.size;
-  const completedLessons = enrollment.lessonProgresses.filter(
-    (progress) => progress.completed && lessonIds.has(progress.lessonId)
-  ).length;
-
-  return lessonCount ? Math.round((completedLessons / lessonCount) * 100) : 0;
-}
 
 export class LearningService {
   constructor(
@@ -61,26 +34,44 @@ export class LearningService {
             Number(b.course.id === LEARNING_PROGRAM.id) -
             Number(a.course.id === LEARNING_PROGRAM.id)
         )
-        .map((enrollment) => ({
-          id: enrollment.course.id,
-          title: enrollment.course.title,
-          description: enrollment.course.description,
-          level: enrollment.course.level,
-          imageUrl: enrollment.course.imageUrl,
-          facilitatorName:
-            enrollment.course.facilitator?.profile?.displayName ??
-            enrollment.course.facilitator?.name ??
-            null,
-          status: enrollment.status,
-          progress: getCourseSummaryProgress(enrollment),
-          durationMin: enrollment.course.modules.reduce(
-            (total, module) => total + (module.durationMin ?? 0),
-            0
-          ),
-          modulesCount: enrollment.course.modules.length,
-          lastAccessedAt: enrollment.lastActivityAt,
-          href: `/artesana/aprender/${enrollment.course.id}`
-        })),
+        .map((enrollment) => {
+          const progress = learningProgress(
+            enrollment.course,
+            enrollment.lessonProgresses
+          ).percentage;
+          return {
+            id: enrollment.course.id,
+            title: enrollment.course.title,
+            description: enrollment.course.description,
+            level: enrollment.course.level,
+            imageUrl: enrollment.course.imageUrl,
+            facilitatorName:
+              enrollment.course.facilitator?.profile?.displayName ??
+              enrollment.course.facilitator?.name ??
+              null,
+            status:
+              enrollment.course.id === LEARNING_PROGRAM.id &&
+              ["ACTIVE", "COMPLETED"].includes(enrollment.status)
+                ? progress === 100
+                  ? "COMPLETED"
+                  : "ACTIVE"
+                : enrollment.status,
+            progress,
+            durationMin: availableLearningModules(
+              enrollment.course.id,
+              enrollment.course.modules
+            ).reduce(
+              (total, module) => total + (module.durationMin ?? 0),
+              0
+            ),
+            modulesCount:
+              enrollment.course.id === LEARNING_PROGRAM.id
+                ? LEARNING_PROGRAM.modules.length
+                : enrollment.course.modules.length,
+            lastAccessedAt: enrollment.lastActivityAt,
+            href: `/artesana/aprender/${enrollment.course.id}`
+          };
+        }),
       availableCourses: availableCourses
         .filter(
           (course) =>
@@ -99,17 +90,27 @@ export class LearningService {
           imageUrl: course.imageUrl,
           facilitatorName:
             course.facilitator?.profile?.displayName ?? course.facilitator?.name ?? null,
-          durationMin: course.modules.reduce(
+          durationMin: availableLearningModules(course.id, course.modules).reduce(
             (total, module) => total + (module.durationMin ?? 0),
             0
           ),
-          modulesCount: course.modules.length
+          modulesCount:
+            course.id === LEARNING_PROGRAM.id
+              ? LEARNING_PROGRAM.modules.length
+              : course.modules.length
         }))
     };
   }
 
   async getCourseDetail(userId: string, courseId: string) {
-    const enrollment = await this.courseRepository.findEnrollmentCourse(userId, courseId);
+    const original = await this.courseRepository.findEnrollmentCourse(userId, courseId);
+    const enrollment = original && {
+      ...original,
+      course: {
+        ...original.course,
+        modules: availableLearningModules(original.course.id, original.course.modules)
+      }
+    };
 
     if (!enrollment) {
       notFound();
@@ -121,9 +122,19 @@ export class LearningService {
     )
       redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}`);
 
-    const progress = getCourseProgress(enrollment);
+    const progress = learningProgress(
+      enrollment.course,
+      enrollment.lessonProgresses
+    ).percentage;
+    const availableLessonIds = new Set(
+      enrollment.course.modules.flatMap((module) =>
+        module.lessons.map((lesson) => lesson.id)
+      )
+    );
     const lessonProgress = new Map(
-      enrollment.lessonProgresses.map((item) => [item.lessonId, item])
+      enrollment.lessonProgresses
+        .filter((item) => availableLessonIds.has(item.lessonId))
+        .map((item) => [item.lessonId, item])
     );
     const firstIncompleteLesson = enrollment.course.modules
       .flatMap((module) => module.lessons)
@@ -144,20 +155,24 @@ export class LearningService {
       lessonId
     );
 
+    if (result && !isLearningModuleAvailable(courseId, result.lesson.module.id))
+      redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}`);
+
     if (!result) {
       const program = await this.courseRepository.findEnrollmentCourse(
         userId,
         LEARNING_PROGRAM.id
       );
-      const reference = program?.course.modules
-        .flatMap((module) => module.lessons)
-        .flatMap((lesson) => lesson.lessonFiles)
-        .map(getReferencedLesson)
-        .find(
-          (item) =>
-            item?.lessonId === lessonId &&
-            (courseId === LEARNING_PROGRAM.id || courseId === item.courseId)
-        );
+      const reference = program &&
+        availableLearningModules(program.course.id, program.course.modules)
+          .flatMap((module) => module.lessons)
+          .flatMap((lesson) => lesson.lessonFiles)
+          .map(getReferencedLesson)
+          .find(
+            (item) =>
+              item?.lessonId === lessonId &&
+              (courseId === LEARNING_PROGRAM.id || courseId === item.courseId)
+          );
       if (program && reference) {
         const support = await this.courseRepository.findPublishedSupportLesson(
           reference.courseId,

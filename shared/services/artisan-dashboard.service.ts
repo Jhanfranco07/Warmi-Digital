@@ -1,3 +1,4 @@
+import { LEARNING_PROGRAM, learningProgress } from "@/shared/learning/program";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { NotificationRepository } from "@/shared/repositories/notification.repository";
@@ -62,6 +63,8 @@ export class ArtisanDashboardService {
     );
 
     const courseProgress = enrollments.map((enrollment) => {
+      if (enrollment.course.id === LEARNING_PROGRAM.id)
+        return learningProgress(enrollment.course, enrollment.lessonProgresses).percentage;
       const totalLessons = enrollment.course.modules.reduce(
         (total, module) => total + module.lessons.length,
         0
@@ -75,6 +78,12 @@ export class ArtisanDashboardService {
       );
     });
 
+    const learningEnrollments = enrollments.map((enrollment, index) =>
+      enrollment.course.id === LEARNING_PROGRAM.id
+        ? { ...enrollment, courseProgress: { percentage: courseProgress[index] } }
+        : enrollment
+    );
+
     const attendedWorkshops = workshops.completed.length;
     const workshopContribution =
       workshops.upcoming.length || attendedWorkshops
@@ -84,16 +93,15 @@ export class ArtisanDashboardService {
       [...courseProgress, workshopContribution].filter((value) => value >= 0)
     );
     const currentEnrollment =
-      enrollments.find(
-        (enrollment) => (enrollment.courseProgress?.percentage ?? 0) < 100
-      ) ?? enrollments[0];
+      learningEnrollments.find((_, index) => courseProgress[index] < 100) ??
+      learningEnrollments[0];
     const currentBadge = artisan?.userBadges[0]?.badge ?? null;
 
     return {
       artisan,
       story,
       generalProgress,
-      enrollments,
+      enrollments: learningEnrollments,
       currentEnrollment,
       currentBadge,
       nextWorkshop: workshops.upcoming[0] ?? null,

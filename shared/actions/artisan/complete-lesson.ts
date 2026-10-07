@@ -1,5 +1,6 @@
 "use server";
 
+import { availableLearningModules } from "@/shared/learning/program";
 import { revalidatePath } from "next/cache";
 
 import { CourseRepository } from "@/shared/repositories/course.repository";
@@ -27,7 +28,10 @@ export async function completeLessonAction(
     };
   }
 
-  const ownsLesson = enrollment.course.modules.some((module) =>
+  const ownsLesson = availableLearningModules(
+    enrollment.course.id,
+    enrollment.course.modules
+  ).some((module) =>
     module.lessons.some((lesson) => lesson.id === lessonId)
   );
 

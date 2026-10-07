@@ -120,10 +120,10 @@ try {
   );
   assert.equal(
     await page.getByText("Contenido en preparación.", { exact: true }).count(),
-    3
+    2
   );
   assert.equal(
-    await page.getByRole("link", { name: /Mi vitrina|Mis pedidos|Gmail/i }).count(),
+    await page.getByRole("link", { name: /Mi vitrina|Mis pedidos/i }).count(),
     0
   );
   assert.equal(

@@ -7,7 +7,7 @@ export const LEARNING_PROGRAM = {
       id: "7dd54036-26d9-4104-8008-9d559135b461",
       order: 1,
       title: "Módulo 1: Mi celular como herramienta de acceso al Estado",
-      status: "preparing",
+      status: "available",
       image: {
         src: "/images/discover/recursos.png",
         alt: "Artesanas usando celulares y una computadora en una capacitación digital"

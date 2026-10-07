@@ -4,7 +4,26 @@ Modulo: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`, titulo exacto `Módulo 3: Herram
 Contenedor actual: `Aprender para crecer`, Course ID `93dc7355-d746-4acd-87df-29f71d16a955`. La reestructuracion conserva los seis File y LessonFile de esta tabla, sin cambiar public_id, URL ni position.
 Cuenta Cloudinary local verificada: `szhwzy4q`. No se modificaron credenciales, schema, migraciones, editor general, lecciones ni recursos existentes.
 
-## Origen y relacion
+## Correccion autorizada de referencias (7 de octubre de 2026)
+
+Las seis URLs de la tabla historica siguiente devolvian 404. Con autorizacion expresa se reutilizaron los assets actuales en `Warmi/MODULO 3`, sin uploads, movimientos ni renombrados. Se mantienen los seis File.id, LessonFile.id, titulos, posiciones, bytes, lecciones y textos. Los public_id y secure_url actuales sustituyen las referencias historicas, no los registros.
+
+| Video   | public_id actual                                          | secure_url actual                                                                                                          |
+| ------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| video02 | M3-S1-02_-_Diferencias_WhatsApp_y_WhatsApp_Business       | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387045/M3-S1-02_-_Diferencias_WhatsApp_y_WhatsApp_Business.mp4       |
+| video03 | M3-S1-04_-_Configurar_WhatsApp_Business_tutorial_completo | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387045/M3-S1-04_-_Configurar_WhatsApp_Business_tutorial_completo.mp4 |
+| video04 | M3-S1-05_-_Crear_catalogo_en_WhatsApp_Business            | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387045/M3-S1-05_-_Crear_catalogo_en_WhatsApp_Business.mp4            |
+| video08 | M3-S1-06_-_Publicar_estados_de_WhatsApp                   | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387043/M3-S1-06_-_Publicar_estados_de_WhatsApp.mp4                   |
+| video07 | M3-S2-01_-_Facebook_Marketplace_y_Facebook_Shops          | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387064/M3-S2-01_-_Facebook_Marketplace_y_Facebook_Shops.mp4          |
+| video09 | M3-S2-02_-_Crear_publicacion_de_producto_en_Marketplace   | https://res.cloudinary.com/szhwzy4q/video/upload/v1791387063/M3-S2-02_-_Crear_publicacion_de_producto_en_Marketplace.mp4   |
+
+Operacion actual: `pnpm exec tsx scripts/repair-module3-video-references.ts` es dry-run; `--apply` actualiza solo las referencias. Exige cuenta, carpeta, IDs, MIME, bytes, dimensiones y duraciones coincidentes; rechaza otros File con public_id/URL iguales. La transaccion serializable verifica que lecciones, modulo, posiciones, demas recursos y cantidades de registros no cambien.
+
+Campos actualizados: File.publicId/url/metadata.assetId y LessonFile.externalId/originalUrl; sus timestamps de actualizacion cambian. Los asset_id actuales difieren de los historicos, sin afirmar que Cloudinary conserve esa identidad. Primera ejecucion: 12 filas actualizadas, cero creadas. Repeticion: **writes: 0**. Los caches offline usan los mismos File IDs, sin modificar Service Worker, IndexedDB ni Cache Storage. Los seis MP4 siguen sumando **104293181 bytes**.
+
+Regresion real tras la correccion: seis reproducciones online y seis offline despues de cierre/reapertura completa sin red, materiales de apoyo, voz, bloqueo de enlaces externos, reconexion y eliminacion: PASS. Payload de este build: **108926595 bytes** (104293181 MP4 + 12104 metadatos JSON + 4621310 shell), sin overhead interno del navegador. Validaciones de tipos, lint, build, Prisma y 25 pruebas unitarias: PASS. No se modifican las reglas de VIDEO_UPLOAD del editor general.
+
+## Origen y relacion historicos (URLs anteriores, no usar para nuevas descargas)
 
 Todos conservan `resource_type = video`, `format = mp4`, MIME `video/mp4`, provider `cloudinary` y el public_id original. Las URLs siguientes son los secure_url originales, sin transformaciones.
 

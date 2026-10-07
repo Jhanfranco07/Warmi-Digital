@@ -7,6 +7,7 @@ import {
   learningProgress
 } from "@/shared/learning/program";
 import { getReferencedLesson } from "@/shared/offline/module3-types";
+import { MODULE1_GMAIL_SUPPORT_ID } from "@/shared/learning/module1";
 
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { ProgressService } from "@/shared/services/progress.service";
@@ -98,7 +99,9 @@ export class LearningService {
     }
     if (
       courseId === LEARNING_PROGRAM.modules[0].previousCourseId &&
-      enrollment.course.modules.length === 0 &&
+      enrollment.course.modules.every((module) =>
+        module.lessons.every((lesson) => lesson.id === MODULE1_GMAIL_SUPPORT_ID)
+      ) &&
       (await this.courseRepository.findEnrollmentCourse(userId, LEARNING_PROGRAM.id))
     )
       redirect(`/artesana/aprender/${LEARNING_PROGRAM.id}`);

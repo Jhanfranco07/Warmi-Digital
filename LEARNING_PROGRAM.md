@@ -8,30 +8,30 @@ El Modulo 3 se llama `Módulo 3: Herramientas digitales para vender`, conservand
 
 ## Contenido reutilizado
 
-- Modulo 1, order 1: `7dd54036-26d9-4104-8008-9d559135b461`. Antes CONOCIENDO GMAIL. Las lecciones, recursos y progreso de Gmail se conservan como historial en PostgreSQL, pero no se muestran ni participan en el programa. La tarjeta muestra únicamente el título, la imagen y `Contenido en preparación.`.
+- Modulo 1, order 1: `7dd54036-26d9-4104-8008-9d559135b461`. Disponible online con exactamente cuatro sesiones: Gmail/adjuntos, instituciones, requisitos previos y Zoom/Meet. Reutiliza la lección histórica de creación de Gmail y su PDF. La introducción histórica se conserva como apoyo enlazado, fuera de las cuatro sesiones. Detalles, IDs y fuentes en [MODULE1_LEARNING.md](MODULE1_LEARNING.md).
 - Modulo 2: tarjeta `Módulo 2: Oportunidades para mi negocio`, imagen y `Contenido en preparación.`. No se crean módulos persistentes ni lecciones artificiales.
 - Modulo 3, order 3: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Conserva las dos sesiones, sus textos, orden 1/2, seis MP4 y todos los recursos. Las dos lecciones introductorias de WhatsApp permanecen en su curso original y se resuelven como material de apoyo publicado.
 
 - Modulo 4: tarjeta `Módulo 4: Estrategias de venta y autonomía digital`, imagen y `Contenido en preparación.`. No se crean módulos persistentes ni lecciones artificiales.
 
-Los cursos antiguos no se eliminaron. El curso Gmail, ahora sin modulos propios, no se lista como curso vacio; sus enlaces de artesanas inscritas se redirigen al programa. WhatsApp mantiene Conoce WhatsApp Business y sus dos lecciones originales. Los enlaces antiguos a las sesiones trasladadas redirigen al programa tras comprobar inscripcion al destino.
+Los cursos antiguos no se eliminaron. El curso Gmail conserva un módulo histórico de apoyo y no se ofrece como curso independiente en el catálogo artesano; sus enlaces de artesanas inscritas se redirigen al programa. WhatsApp mantiene Conoce WhatsApp Business y sus dos lecciones originales. Los enlaces antiguos a las sesiones trasladadas redirigen al programa tras comprobar inscripcion al destino.
 
 ## Disponibilidad, progreso e imágenes temporales
 
-El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden, independientemente de los registros históricos de PostgreSQL. Solo el ID estable del Módulo 3 tiene `status: available`; los otros tres tienen `status: preparing`. Para publicar contenido futuro hay que revisar su ID y cambiar ese estado después de preparar contenido real.
+El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden. Los IDs estables de M1 y M3 tienen `status: available`; M2/M4 siguen `preparing`. El progreso cuenta cuatro sesiones M1 y dos M3. Solo M3 conserva `offline: true`; publicar M1 online no habilita otra descarga ni cambia el Service Worker.
 
 `availableLearningModules` y `learningProgress` excluyen las lecciones ocultas del porcentaje, duración y siguiente lección. Mi aprendizaje y el dashboard calculan el avance del programa desde sus lecciones disponibles, sin usar un porcentaje histórico guardado. `ProgressRepository` guarda el resumen con ese mismo criterio al completar una sesión. Los enlaces directos del programa a lecciones ocultas vuelven a su tarjeta de curso; la acción de completar rechaza esas lecciones. Los LessonProgress antiguos permanecen en PostgreSQL.
 
-No se ejecutan migraciones, seed, importadores, borrados ni operaciones Cloudinary. El ID del Módulo 3, las sesiones, recursos, File, LessonFile y posiciones no se modifican. El Service Worker, IndexedDB, Cache Storage, la descarga y el reproductor conservan su implementación actual.
+La publicación específica de M1 se realiza con `scripts/publish-module1.ts`, transaccional, idempotente y con dry-run. No se ejecutan migraciones de schema, seed, borrados ni uploads Cloudinary. El ID del Módulo 3, sus sesiones, recursos, File, LessonFile y posiciones no se modifican. El Service Worker, IndexedDB, Cache Storage, la descarga y el reproductor offline conservan su implementación actual. Las verificaciones históricas siguientes corresponden a entregas anteriores; la validación de M1 está en MODULE1_LEARNING.md.
 
 `3108 WARMI DIGITAL.pdf` no está en el árbol del repositorio revisado. El conector de Canva no pudo entregar el diseño: repitió una solicitud de autenticación. Se reutilizan imágenes **existentes**, revisadas visualmente, sin generar ni subir otras:
 
-| Módulo | Imagen temporal | Contenido observado / motivo |
-| --- | --- | --- |
-| 1 | `/images/discover/recursos.png` | Artesanas usando celulares y computadora; herramientas digitales. |
-| 2 | `/images/discover/aprende.png` | Capacitación grupal con celulares; oportunidades de formación. |
-| 3 | `/images/discover/emprende.png` | Artesana fotografiando un tejido con su celular; presentación digital del producto. |
-| 4 | `/images/discover/emprende.png` | Tejido presentado para una fotografía; referencia temporal de producto y autonomía digital. |
+| Módulo | Imagen temporal                 | Contenido observado / motivo                                                                |
+| ------ | ------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1      | `/images/discover/recursos.png` | Artesanas usando celulares y computadora; herramientas digitales.                           |
+| 2      | `/images/discover/aprende.png`  | Capacitación grupal con celulares; oportunidades de formación.                              |
+| 3      | `/images/discover/emprende.png` | Artesana fotografiando un tejido con su celular; presentación digital del producto.         |
+| 4      | `/images/discover/emprende.png` | Tejido presentado para una fotografía; referencia temporal de producto y autonomía digital. |
 
 Los módulos 3 y 4 reutilizan temporalmente la misma fotografía. No es la imagen exacta del Canva ni representa específicamente WhatsApp Business, una feria o atención a clientes. Reemplazar `image.src` y `image.alt` en la entrada correspondiente cuando estén disponibles las imágenes exactas del PDF; no hace falta crear File/LessonFile ni tocar recursos offline.
 

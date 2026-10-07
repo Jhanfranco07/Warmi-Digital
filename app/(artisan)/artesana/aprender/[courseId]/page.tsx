@@ -35,6 +35,7 @@ import { ModuleDownload } from "@/features/artisan/offline/module-download";
 import { isOfflineModule } from "@/shared/offline/module3-types";
 import { OfflineLearningService } from "@/shared/services/offline-learning.service";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { MODULE1_ID } from "@/shared/learning/module1";
 
 const levelLabels = {
   BEGINNER: "Inicial",
@@ -282,50 +283,50 @@ export default async function ArtisanCourseDetailPage({
             if (!module) {
               if (!presentation) return null;
               return (
-              <ArtisanPanel
-                key={`preparing-${presentation.order}`}
-                eyebrow={`Módulo ${presentation.order}`}
-                title={presentation.title}
-              >
-                <ModuleCover image={presentation.image} />
-                <p role="status" className="text-base leading-7 text-[#5b4a42]">
-                  Contenido en preparación.
-                </p>
-              </ArtisanPanel>
-            );
-          }
-          const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
-            lesson,
-            lessonIndex,
-            progressItem: lessonProgress.get(lesson.id)
-          }));
-          const moduleCompleted = moduleLessons.filter(
-            (item) => item.progressItem?.completed
-          ).length;
-          const moduleProgress = moduleLessons.length
-            ? Math.round((moduleCompleted / moduleLessons.length) * 100)
-            : 0;
-          const moduleDuration =
-            module.durationMin ??
-            module.lessons.reduce(
-              (total, lesson) => total + (lesson.durationMin ?? 0),
-              0
-            );
-          const canonicalModule = presentation;
-          const moduleTitle = canonicalModule?.title ?? module.title;
-          const moduleNarration = buildModuleNarration({
-            order:
-              course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
-                ? module.order
-                : moduleIndex + 1,
-            title: moduleTitle,
-            description: module.description,
-            lessonCount: module.lessons.length,
-            durationMin: moduleDuration,
-            lessonTitles: module.lessons.map((lesson) => lesson.title)
-          });
+                <ArtisanPanel
+                  key={`preparing-${presentation.order}`}
+                  eyebrow={`Módulo ${presentation.order}`}
+                  title={presentation.title}
+                >
+                  <ModuleCover image={presentation.image} />
+                  <p role="status" className="text-base leading-7 text-[#5b4a42]">
+                    Contenido en preparación.
+                  </p>
+                </ArtisanPanel>
+              );
+            }
+            const moduleLessons = module.lessons.map((lesson, lessonIndex) => ({
+              lesson,
+              lessonIndex,
+              progressItem: lessonProgress.get(lesson.id)
+            }));
+            const moduleCompleted = moduleLessons.filter(
+              (item) => item.progressItem?.completed
+            ).length;
+            const moduleProgress = moduleLessons.length
+              ? Math.round((moduleCompleted / moduleLessons.length) * 100)
+              : 0;
+            const moduleDuration =
+              module.durationMin ??
+              module.lessons.reduce(
+                (total, lesson) => total + (lesson.durationMin ?? 0),
+                0
+              );
+            const canonicalModule = presentation;
+            const moduleTitle = canonicalModule?.title ?? module.title;
+            const moduleNarration = buildModuleNarration({
+              order:
+                course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id)
+                  ? module.order
+                  : moduleIndex + 1,
+              title: moduleTitle,
+              description: module.description,
+              lessonCount: module.lessons.length,
+              durationMin: moduleDuration,
+              lessonTitles: module.lessons.map((lesson) => lesson.title)
+            });
 
-          return (
+            return (
               <ArtisanPanel
                 key={module.id}
                 eyebrow={`Módulo ${course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id) ? module.order : moduleIndex + 1}`}
@@ -352,6 +353,29 @@ export default async function ArtisanCourseDetailPage({
                     {module.description}
                   </p>
                 ) : null}
+                {module.id === MODULE1_ID && moduleLessons.length > 0 && (
+                  <div className="mb-6 flex flex-col items-start gap-3">
+                    <p className="text-base font-bold text-[#24756f]">4 sesiones</p>
+                    <Button
+                      asChild
+                      className="h-auto min-h-12 whitespace-normal rounded-md bg-[#b5245b] px-5 py-3 text-base text-white hover:bg-[#941747]"
+                    >
+                      <Link
+                        href={
+                          `/artesana/aprender/${courseId}/lecciones/${(moduleLessons.find((item) => !item.progressItem?.completed) ?? moduleLessons[0]).lesson.id}` as Route
+                        }
+                      >
+                        <PlayCircle className="h-5 w-5 shrink-0" />
+                        {moduleLessons.some(
+                          (item) =>
+                            item.progressItem?.startedAt || item.progressItem?.completed
+                        )
+                          ? "Continuar Módulo 1"
+                          : "Empezar Módulo 1"}
+                      </Link>
+                    </Button>
+                  </div>
+                )}
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {moduleLessons.map(({ lesson, lessonIndex, progressItem }) => {
                     const completed = Boolean(progressItem?.completed);

@@ -2,6 +2,12 @@
 
 Entrega del 7 de octubre de 2026. Integra las siete guías y su presentación en `8a8e449b-76a6-4a6d-9693-6238f75092bc`, dentro del módulo `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Los cambios locales de checklists M1/M2 corresponden a la solicitud anterior y se conservaron, sin nuevas modificaciones a esos módulos en esta tarea.
 
+## Versión funcional provisional aprobada
+
+Las guías actuales corresponden a una versión funcional provisional. Su contenido pedagógico y estructura están validados, pero los recursos gráficos podrán ser reemplazados posteriormente por material definitivo proporcionado por la cliente.
+
+El usuario aprobó publicar y mantener la versión actualmente vinculada, sin rediseñar ni regenerar los PDF o sus imágenes. Los siete assets `-v1.pdf`, sus File/LessonFile, IDs y posiciones 10–16 se conservan. La propuesta visual v2 local no se publica ni reemplaza esta versión. La mejora gráfica posterior requiere una entrega y validación independientes; su calidad visual actual no bloquea esta publicación.
+
 ## Recorrido
 
 Siete temas numerados, un contenido principal abierto, explicaciones breves, pasos cortos, voz existente y controles PDF independientes. El mismo componente `Module3Session1Content` se utiliza online y offline. El texto persistido original se conserva íntegro en Leer texto completo y los dos enlaces de apoyo siguen disponibles.
@@ -88,3 +94,19 @@ Los siete enlaces públicos responden HTTP 200. La idempotencia en BD ya se veri
 **Validación final offline manual pendiente, a cargo del usuario.** Debe completar apertura offline 7/7, reproducción offline 6/6, materiales de apoyo, reconexión, eliminación y compatibilidad legacy con el paquete nuevo en dispositivo/navegador físico. El recorrido completo del paquete anterior pasó por separado, como se indica arriba. Android/iOS físicos tampoco están validados. Por autorización expresa del usuario, la prueba automatizada inconclusa no bloquea el commit/push si las comprobaciones finales restantes pasan. No se volvió a ejecutar ese recorrido ni se hicieron nuevas modificaciones funcionales.
 
 La comprobación final de solo lectura confirmó siete File y siete LessonFile de guías, posiciones 10–16, sin duplicados; los seis MP4 conservan IDs, relaciones, posiciones, public_id y secure_url comparados con las referencias previamente publicadas. El constructor offline incluye las siete guías y los seis videos, 13 recursos en total. No se modificó la BD ni Cloudinary durante esta comprobación.
+
+## Confirmación de publicación provisional
+
+La integración funcional ya estaba publicada en `main` mediante el commit `2de45a73250249b19728be081d23107df155a1b3`. Esta confirmación añade únicamente documentación: no modifica código funcional, archivos PDF, Cloudinary, base de datos, Service Worker, IndexedDB ni Cache Storage. Los cambios locales de checklists M1/M2, `.obsidian/`, el generador y las vistas previas v2 quedan fuera del commit.
+
+Comprobaciones repetidas el 7 de octubre de 2026:
+
+- Inspección `--dry-run` y consultas de solo lectura: siete File DOCUMENT/application/pdf y siete LessonFile PDF vinculados a la sesión 1, con los mismos IDs de la tabla anterior, posiciones 10–16 y cero duplicados por identidad, URL o relación.
+- Descarga HTTP de los siete PDF: 200, application/pdf, tamaños y SHA-256 idénticos al manifiesto publicado. Total de PDF: 2231720 bytes. No se ejecutó `--apply`, ninguna subida ni ninguna operación de modificación de assets.
+- Seis videos originales: mismos File.id, LessonFile.id, lecciones, posiciones, public_id y secure_url de `MODULE3_VIDEOS.md`; sus seis URLs responden HTTP 200 como video/mp4, con tamaño coincidente.
+- Constructor offline sobre los registros reales: siete PDF y seis MP4 descargables, sin repetir File.id; 13 recursos y 106524901 bytes, más shell/metadatos. Módulo 3 mantiene capacidad offline por su ID.
+- `pnpm typecheck`, `pnpm lint`, `pnpm build` (47 páginas estáticas), `pnpm exec prisma validate`, las 35 pruebas unitarias existentes y `git diff --check`: PASS.
+
+Los botones de abrir y descargar no cambiaron. Su recorrido online 7/7 ya pasó en la prueba real documentada arriba; no se volvió a ejecutar el recorrido autenticado completo ni el test que cierra el contexto Playwright. Las pruebas unitarias de Service Worker volvieron a confirmar respuestas completas y por rango para PDF/MP4 sin red y recuperación del shell. Esto, junto con la inspección del paquete real, confirma que no se alteró la infraestructura offline, pero no sustituye la prueba física pendiente.
+
+**La validación offline final de las siete guías, los seis videos, reapertura, reconexión y eliminación sigue pendiente de prueba manual por el usuario.** Se publica por su aprobación expresa de la versión funcional provisional, sin presentar la automatización inconclusa como PASS ni como un fallo funcional confirmado.

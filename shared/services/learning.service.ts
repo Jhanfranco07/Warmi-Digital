@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   LEARNING_PROGRAM,
   availableLearningModules,
+  isArtisanLearningCourse,
   isLearningModuleAvailable,
   learningProgress
 } from "@/shared/learning/program";
@@ -24,16 +25,7 @@ export class LearningService {
 
     return {
       enrolledCourses: enrollments
-        .filter(
-          (enrollment) =>
-            enrollment.course.id !== LEARNING_PROGRAM.modules[0].previousCourseId ||
-            enrollment.course.modules.length > 0
-        )
-        .sort(
-          (a, b) =>
-            Number(b.course.id === LEARNING_PROGRAM.id) -
-            Number(a.course.id === LEARNING_PROGRAM.id)
-        )
+        .filter((enrollment) => isArtisanLearningCourse(enrollment.course.id))
         .map((enrollment) => {
           const progress = learningProgress(
             enrollment.course,
@@ -60,10 +52,7 @@ export class LearningService {
             durationMin: availableLearningModules(
               enrollment.course.id,
               enrollment.course.modules
-            ).reduce(
-              (total, module) => total + (module.durationMin ?? 0),
-              0
-            ),
+            ).reduce((total, module) => total + (module.durationMin ?? 0), 0),
             modulesCount:
               enrollment.course.id === LEARNING_PROGRAM.id
                 ? LEARNING_PROGRAM.modules.length
@@ -73,15 +62,7 @@ export class LearningService {
           };
         }),
       availableCourses: availableCourses
-        .filter(
-          (course) =>
-            course.id !== LEARNING_PROGRAM.modules[0].previousCourseId ||
-            course.modules.length > 0
-        )
-        .sort(
-          (a, b) =>
-            Number(b.id === LEARNING_PROGRAM.id) - Number(a.id === LEARNING_PROGRAM.id)
-        )
+        .filter((course) => isArtisanLearningCourse(course.id))
         .map((course) => ({
           id: course.id,
           title: course.title,
@@ -163,7 +144,8 @@ export class LearningService {
         userId,
         LEARNING_PROGRAM.id
       );
-      const reference = program &&
+      const reference =
+        program &&
         availableLearningModules(program.course.id, program.course.modules)
           .flatMap((module) => module.lessons)
           .flatMap((lesson) => lesson.lessonFiles)

@@ -1,4 +1,8 @@
-import { LEARNING_PROGRAM, learningProgress } from "@/shared/learning/program";
+import {
+  LEARNING_PROGRAM,
+  isArtisanLearningCourse,
+  learningProgress
+} from "@/shared/learning/program";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { NotificationRepository } from "@/shared/repositories/notification.repository";
@@ -62,9 +66,13 @@ export class ArtisanDashboardService {
       artisan?.profile?.communityId
     );
 
-    const courseProgress = enrollments.map((enrollment) => {
+    const visibleEnrollments = enrollments.filter((enrollment) =>
+      isArtisanLearningCourse(enrollment.course.id)
+    );
+    const courseProgress = visibleEnrollments.map((enrollment) => {
       if (enrollment.course.id === LEARNING_PROGRAM.id)
-        return learningProgress(enrollment.course, enrollment.lessonProgresses).percentage;
+        return learningProgress(enrollment.course, enrollment.lessonProgresses)
+          .percentage;
       const totalLessons = enrollment.course.modules.reduce(
         (total, module) => total + module.lessons.length,
         0
@@ -78,7 +86,7 @@ export class ArtisanDashboardService {
       );
     });
 
-    const learningEnrollments = enrollments.map((enrollment, index) =>
+    const learningEnrollments = visibleEnrollments.map((enrollment, index) =>
       enrollment.course.id === LEARNING_PROGRAM.id
         ? { ...enrollment, courseProgress: { percentage: courseProgress[index] } }
         : enrollment

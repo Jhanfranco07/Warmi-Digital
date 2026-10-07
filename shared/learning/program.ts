@@ -54,6 +54,10 @@ export const LEARNING_PROGRAM = {
   ]
 } as const;
 
+export function isArtisanLearningCourse(courseId: string) {
+  return courseId === LEARNING_PROGRAM.id;
+}
+
 // Only real, available content participates in the program. Historical data stays in DB.
 export function isLearningModuleAvailable(courseId: string, moduleId: string) {
   return (

@@ -1,92 +1,104 @@
-# Offline Home y presentación del aprendizaje
+# Offline Home y navegación del aprendizaje
 
-## Regla vigente de descarga
+## Estado vigente
 
-**Actualmente el único módulo descargable para uso offline es Módulo 3.** Offline Home no habilita otros módulos: muestra las fichas completas que realmente existen en el dispositivo. M1/M2/M4 no generan manifiestos descargables ni controles de descarga; los archivos exclusivos de esos módulos son rechazados por la API offline. El cliente también rechaza iniciarlos antes de tocar almacenamiento.
+HEAD inicial de esta mejora: `b318374f80ddc077eba7f1341b6814c5c9755f6d`, sincronizado con `origin/main` y sin cambios locales. Esta tarea modifica presentación, recursos institucionales del shell y pruebas. No modifica PostgreSQL, Auth, roles, Prisma, Cloudinary ni contenido pedagógico.
 
-Se conserva la lectura/eliminación de copias M4 históricas para no borrar datos locales sin instrucción. Una copia previa no puede actualizarse ni descargarse otra vez. Los textos que describen M3/M4 conjuntamente más abajo registran la validación de `ce7c877`, anterior a esta corrección. Estado y auditoría actual: [MODULE4_AUDIT.md](MODULE4_AUDIT.md).
+| Módulo | Nuevas descargas / actualización offline |
+| ------ | ---------------------------------------- |
+| M1     | No                                       |
+| M2     | No                                       |
+| M3     | Sí                                       |
+| M4     | No                                       |
 
-## Validación de la restricción vigente
+Una descarga histórica de M4 sigue siendo legible y eliminable. No se actualiza, vuelve a descargar ni se elimina automáticamente. Su renderer, cuatro sesiones, nueve File, once LessonFile, imágenes, textos, cierre y progreso permanecen intactos. Las comprobaciones por identidad estable en catálogo, servicio, autorización de archivos y cliente no cambian.
 
-52/52 tests unitarios y las dos pruebas de navegador aislada/real aprobados. En un perfil nuevo solo M3 ofrece control de descarga y genera ficha; la API rechaza archivos exclusivos de M1/M2/M4. Home, landing público, manifest, cuatro sesiones, ocho MP4/diez PDF, rangos, reinicio, legacy, actualización/rollback y borrado siguen funcionando. La prueba aislada conserva lectura/eliminación de un paquete M4 histórico sin habilitar nuevas descargas. PostgreSQL idéntico antes/después. Detalle y límites en MODULE4_AUDIT.md.
+## Inicio institucional completo
 
-## Motivo y alcance
+Home sigue siendo la primera vista tras abrir la PWA sin conexión, incluso desde la URL guardada de una lección. Incluye hero, isotipo, WARMI DIGITAL, lema, cuatro accesos, bienvenida con fotografía y cita, Programa (objetivo, misión, visión y pilares), Descubre (cuatro fotografías y áreas), Identidad/Riqsichiq Warmi y footer institucional. Los contenidos provienen del landing y sus páginas existentes.
 
-Una artesana que vuelve sin conexión debe reconocer Warmi antes de abrir sus contenidos. Se mejora el shell público existente, su presentación y navegación. No se crea otra infraestructura offline ni se modifican textos pedagógicos, Course/Module/Lesson, File/LessonFile, Cloudinary, esquema, seed o autenticación.
+Se extraen únicamente sus bloques de presentación para compartirlos:
 
-Antes: las rutas de entrada mostraban directamente el primer módulo descargado o la lección de la URL. El shell añadía un encabezado genérico al encabezado de cada recorrido y repetía dos enlaces de apoyo de S1. La barra de conexión ocupaba más espacio.
+- `WarmiPublicHeader`: hero y cuatro accesos.
+- `WarmiWelcomeContent`: bienvenida, fotografía y cita de `/`.
+- `WarmiProgrammeContent`: contenido completo de `/programa`, incluido `WarmiLogo`.
+- `WarmiDiscoveryContent`: contenido de `/descubre`.
+- `WarmiIdentityContent`: contenido de `/identidad`.
+- `Footer`: mismo cierre institucional del layout público.
 
-Ahora: **Inicio Warmi → Continuar mi aprendizaje → módulo descargado → sesión**. Cada arranque documental del shell presenta Home, incluso si la PWA conserva una URL de lección. La dirección original no se usa como prueba de una última sesión fiable. No se agrega persistencia para reanudar visitas.
+Las páginas públicas siguen componiendo estos bloques con su header habitual. Offline Home los compone en una sola página con anclas a Programa, Descubre e Identidad. Las áreas de Descubre que requieren red se presentan como información; Aprender y Elegir mi camino abren el aprendizaje local. No se simula mercado o talleres sin red.
 
-## Landing público / online / offline
+El cuarto acceso mantiene **UNETE A WARMI → /login** en el landing público. Solo en Offline Home pasa a **CONTINUAR MI APRENDIZAJE → /artesana/aprender**, con énfasis rosa, nombre accesible y altura mínima de 48 px. Su destino contiene las descargas verificadas del dispositivo, incluyendo copias históricas válidas; Home no habilita otros módulos.
 
-- Landing público online: conserva `WarmiPublicHeader`, Programa Warmi, Descubre, Identidad y Únete. No se modifica su código.
-- Online autenticado: conserva sus rutas actuales, login y acceso a aprendizaje. El manifest mantiene `start_url: /artesana/aprender`; no obliga a visitar el landing.
-- Sin conexión: el Service Worker responde con `/offline-learning`, como antes. Su primer render muestra identidad Warmi, estado normal sin red, frase institucional y CTA destacado. Los módulos se leen de `verifiedDownloads()`.
-- No se usa una sesión almacenada para autenticar offline. Se consulta el contenido previamente descargado y se mantiene la comprobación online de propietaria/cierre de sesión existente.
-- El botón “Volver con conexión” lleva a aprendizaje desde Home o recarga la vista actual desde aprendizaje. Las acciones de guardar progreso siguen necesitando conexión.
+El aviso compacto conserva “Sin conexión · Contenido descargado disponible”. La navegación inferior mantiene Inicio Warmi y Mi aprendizaje, safe area y padding inferior. Las anclas y los enlaces de aprendizaje offline usan el router local existente, sin peticiones RSC. Las anclas conservan la marca Home del historial incluso al abrir en frío una URL de aprendizaje, y atrás/adelante restaura la sección. La bienvenida permite envolver su encabezado largo en móvil sin recortarlo.
 
-## Presentación compartida
+## Imágenes y shell
 
-`LearningLessonHeader` se utiliza en S1 online y offline. `Module3Session1Content` ya era compartido y se conserva: siete temas, explicación, numeración, aria-expanded, pasos, voz, videos, PDF y texto completo.
+`shared/offline/landing-assets.ts` centraliza la correspondencia entre los PNG institucionales existentes y nueve WebP en `public/images/offline/`. Se conservan todos los originales. Las copias se generan con Sharp instalado por Next, calidad 80 y ancho máximo 1440 px (560 para marcas), sin ampliar.
 
-Los recursos se adaptan a los mismos componentes, cambiando únicamente sus URLs por las del cache local. S2/S3/S4 siguen usando `Module3JourneyContent`; M4 sigue usando su componente propio existente. Se evita un encabezado genérico duplicado alrededor de los recorridos que ya incluyen título y navegación.
+| Copia cacheada              |      Bytes |
+| --------------------------- | ---------: |
+| warmi-hero.webp             |      96734 |
+| warmi-isotipo.webp          |      87880 |
+| warmi-logo-transparent.webp |      94470 |
+| bienvenida-warmi.webp       |      66528 |
+| programa-warmi.webp         |     130374 |
+| aprende.webp                |      33312 |
+| emprende.webp               |      26406 |
+| taller.webp                 |      20624 |
+| recursos.webp               |      49266 |
+| **Total adicional**         | **605594** |
 
-Los dos bloques de apoyo correspondían a las mismas lecciones originales: sus `internalLessonId` coinciden con `supportLessons`. Se conservan ambos recursos y se muestra una única lista “Material de apoyo” en S1. Solo se muestran materiales adicionales al pie cuando sus IDs no están ya representados dentro de la sesión. No se borran recursos.
+El shell público pasa de **v5 a v6** para distribuir la nueva presentación y precachear estas imágenes. Se mantienen recursos de voz, favicon, JS, CSS y fuentes. Los componentes usan imágenes sin transformación remota en contexto offline. Los iconos Lucide forman parte del JavaScript cacheado. No se guarda HTML autenticado ni RSC.
 
-## Navegación
+No cambia el manifest de instalación ni el manifiesto/versionado de M3. Tampoco IndexedDB v1, store `downloads`, claves `module:<id>`/legacy `module3`, caches de medios por generación, rutas locales, rangos MP4/PDF, descarga atómica, rollback o eliminación. La activación del worker elimina únicamente shells públicos anteriores; conserva todas las generaciones de aprendizaje, incluidas M4 históricas.
 
-- Home: CTA principal “Continuar mi aprendizaje”, ancho completo y al menos 56 px; tarjetas por cada módulo descargado con número dinámico de sesiones.
-- Curso: selección entre módulos mediante query `module=<id>` y lista de sus sesiones. La selección también se resuelve por ID de lección, incluyendo apoyos.
-- S1: encabezado compartido, CTA “Siguiente sesión”, lista secundaria desplegable “Todas las sesiones”.
-- S2/S3/S4 y M4: se conservan los controles del recorrido, sin repetir la misma lista global de sesiones al pie.
-- Barra inferior: “Inicio Warmi” / “Mi aprendizaje”. Solo incluye destinos disponibles localmente.
-- Los enlaces locales usan el router actual del shell, `history.pushState` y `popstate`. Atrás/adelante respetan Home/curso/sesión. Una recarga o reapertura vuelve a Home; navegar dentro del shell no lo hace.
-- No se enlazan secciones institucionales no cacheadas ni se invita a registrarse desde Home.
+Una instalación que ya está offline debe conectarse para recibir el nuevo shell. No necesita reinstalar la PWA ni descargar otra vez sus medios.
 
-## Progreso real, sin sincronización offline
+## Sesión 1: un tema activo
 
-Los nuevos manifiestos pueden incluir `progress: { completedLessonIds, capturedAt }`, copiado del progreso existente al descargar. Es una ampliación opcional de la misma ficha IndexedDB. Solo incluye IDs del módulo y se presenta como **“completadas al descargar”**. No cambia al recorrer pantallas offline ni se sincroniza posteriormente.
+`Module3Session1Content` comparte la nueva presentación online y offline. Solo monta un tema principal: orientación “Tema X de 7”, grupo, título, descripción, pasos, SpeechButton, videos existentes, guía PDF y navegación. No monta los otros seis temas como acordeones.
 
-Las copias anteriores carecen de ese dato: se omite el porcentaje o contador, sin asumir cero. `isCurrentDownload` continúa comparando contenido/revisión/recursos y no invalida un paquete por cambios en la instantánea de progreso. No hay nuevo store, versión de IndexedDB, escritura en PostgreSQL ni persistencia de “última visita”.
+“Ver todos los temas” abre el Sheet inferior existente con los siete nombres reales. Seleccionar cambia el tema, cierra el Sheet, enfoca el nuevo h2 y lo desplaza bajo el aviso superior. Escape/cierre conserva el retorno de foco de Radix. El selector admite teclado y marca el tema actual con `aria-current=step`.
 
-## App shell y recursos
+Tema 1 ofrece Siguiente tema; temas intermedios, Anterior/Siguiente; tema 7, Anterior/Continuar a siguiente sesión si esa sesión está disponible. La navegación es estado React transitorio: no escribe progreso, IndexedDB, localStorage ni BD. La finalización online sigue siendo la acción explícita existente.
 
-Se mantiene Service Worker, IndexedDB v1/store `downloads`, claves `module:<id>` y clave legacy `module3`, caches por generación y endpoints autenticados existentes. Los rangos MP4/PDF no cambian. La descarga sigue siendo atómica; un fallo conserva la generación anterior.
+Hay un SpeechButton principal por tema. El texto original, su narración opcional y las dos lecciones de apoyo permanecen bajo Material adicional, cerrado por defecto. No se eliminan textos ni recursos. La lista de sesiones sigue como acceso secundario compacto; se evita duplicar Siguiente sesión fuera del tema activo de S1. S2–S4 conservan su navegación propia.
 
-Solo la revisión pública del shell cambia de **v4 a v5**, para distribuir la nueva UI y su fotografía. Activación elimina shells anteriores, conservando todas las generaciones de contenido M3/M4/legacy.
+Las guías mantienen apertura en visor y descarga nativa desde los bytes locales del worker. Los controles muestran Abrir guía/Descargar PDF en paralelo desde 390 px y se apilan en 360 px, sin reducir objetivos táctiles. Sus nombres accesibles identifican la guía. Los ocho MP4, diez PDF, IDs, URLs, posiciones y versiones no cambian.
 
-Recursos reutilizados sin copias ni uploads:
+## Medición de scroll a 390 px
 
-- `/images/hero/warmi-hero.png`: fotografía del hero público, 2232981 bytes, añadida a la preparación del shell.
-- `/icons/faviconWarmi.png`: logo ya cacheado, reutilizado para identidad y barra superior.
-- JS, CSS, fuentes y las dos imágenes de voz: mismas reglas de preparación actuales.
+La referencia anterior se capturó antes de editar el componente en `b318374`. Usa un contenedor de 390×844 px, header compartido, registros reales de S1 y siete estados de tema activo. `tests/fixtures/offline-scroll-before.json` conserva las alturas anteriores. La prueba repite exactamente ese contenedor con la nueva presentación.
 
-No hay imágenes remotas requeridas por Home. El fondo conserva un color legible durante la carga. El número de recursos de cada módulo proviene de su manifiesto; no se codifican 18 archivos en la UI.
+Altura media anterior: **2209 px**; nueva: **1264 px**; reducción aproximada: **945 px (43%)**. Tema 1: 2274→1309 px. Tema 7: 1953→1082 px. Los siete estados anteriores/nuevos se guardan en `scroll-comparison.json`.
 
-Una instalación ya offline necesita conectarse para recibir el nuevo worker/shell; sus descargas siguen disponibles con la interfaz anterior hasta entonces. No requiere reinstalar la PWA ni volver a descargar los medios para usar Home.
+Se compara altura de contenido, no tiempo ni número de gestos. Los videos, pasos y guías todavía requieren scroll para leerlos; se elimina la necesidad de buscar manualmente otro acordeón. Anterior/Siguiente y selector enfocan el nuevo tema automáticamente.
 
-## Responsive y accesibilidad
+## Pruebas y evidencias
 
-Prioridad 360/390/430 px y revisión a 768/1365 px. Márgenes de lectura, títulos que envuelven líneas, controles de al menos 48 px, foco visible global y CTA antes de la navegación secundaria. La navegación inferior reserva `env(safe-area-inset-bottom)` y el contenido deja espacio equivalente; la barra compacta reserva `safe-area-inset-top`. `viewport-fit=cover` conserva zoom accesible.
+**55/55 tests unitarios aprobados**, incluidos CTA contextual, landing completo, presupuesto/correspondencia de imágenes, capacidades y preservación de caches. **Pruebas de navegador aislada y real aprobadas** sobre build de producción. **Typecheck, lint, build, Prisma validate, formato de archivos modificados y git diff --check correctos.**
 
-SpeechButton/useSpeech/speechSynthesis no se sustituyen. La voz sin conexión sigue dependiendo de una voz local instalada; las pruebas de API no certifican audibilidad ni calidad en un teléfono físico.
+El recorrido real verificó las cinco anchuras, los siete temas con sus descripciones/pasos/guías intactos y un solo tema principal, foco del selector, Anterior/Siguiente, materiales originales colapsados, PDF abierto/exportado y llamada real a speechSynthesis con voz española local disponible. Reprodujo los ocho MP4 únicos (diez reproducciones incluidas las repetidas) y entregó los dieciocho recursos locales con rangos. Verificó M4 histórico legible/eliminable sin controles de nueva descarga, M3 legacy sin versión/progreso, actualización fallida con rollback, reintento y eliminación. **PostgreSQL idéntico antes/después.** Las ocho capturas a 390 px se inspeccionaron visualmente.
 
-## Validación histórica de ce7c877
+La prueba real `tests/offline-home-real.browser.mjs` usa una cuenta inscrita existente: login, descarga real de M3, cierre completo de Edge, reapertura offline, Home, Programa/Descubre/Identidad, aprendizaje, S1, Anterior/Siguiente, salto Tema 2→6, video, PDF, API de voz, siguiente sesión, regreso al inicio, reconexión, actualización fallida/rollback, reintento y eliminación. Comprueba recursos, MIME/tamaño, SHA-256 cuando hay metadata, rangos 206, progreso de descarga y anchuras 360/390/430/768/1365.
 
-Resultado validado sobre el build de producción local:
+Para verificar M4 histórico, siembra únicamente en el perfil temporal una copia basada en los registros/imágenes existentes, abre su renderer sin red y elimina esa copia conservando M3. No llama al servicio de descarga M4 ni habilita nuevas descargas. La prueba aislada también intenta actualizar/repetir la descarga histórica y exige rechazo sin alterar su cache.
 
-- Typecheck, lint, build, Prisma validate, formato de archivos modificados y `git diff --check`: correctos.
-- 48/48 tests unitarios, incluidos Home/rutas, progreso opcional y activación del worker conservando caches de aprendizaje.
-- Prueba aislada de navegador: descarga, rollback, reinicio offline, navegación, imágenes, PDF, MP4, voz, reconexión y eliminación correctos.
-- Prueba real con cuenta existente: login y descarga de M3/M4; cierre completo de Edge y reapertura sin red desde la entrada del manifest y desde una URL de lección; Home primero en ambos casos.
-- CTA, atrás/adelante, cambio de módulo, cuatro sesiones M3 y apertura de M4 correctos. S1 comparte estructura/clases/temas/texto con la presentación online. Siete acordeones y una sola lista de apoyo verificados.
-- Ocho MP4 reproducidos; entrega local de los 18 recursos actuales de M3 (8 MP4 y 10 PDF), MIME/tamaño, rangos 206 y SHA-256 cuando existe en metadata. PDF abierto en visor y exportado con firma `%PDF-`.
-- Cinco anchuras sin desbordamiento horizontal: 360, 390, 430, 768 y 1365 px. CTA visible y pulsable con altura mínima. Capturas Home/sesión en cada anchura y referencia online a 390 px.
-- Compatibilidad con descarga anterior sin versión/progreso; actualización fallida conserva la generación; reintento exitoso; eliminar M3 conserva M4 y eliminar ambos deja cero descargas.
-- Comparación completa del curso, módulos, lecciones, LessonFile/File y progreso de inscripciones: **PostgreSQL sin cambios**. Se bloquea la precarga online de rutas de lección durante la prueba para evitar `markLessonStarted`.
+La comparación online de S1 monta los mismos componentes con datos reales sobre la página del curso. Se bloquea la precarga/GET de lecciones online porque `markLessonStarted` escribiría progreso. Se compara un snapshot completo del curso, módulos, Lesson/File/LessonFile e inscripciones antes/después. Las suites históricas que crean cuentas o completan lecciones no se ejecutan contra la BD para esta tarea; sus selectores afectados se adaptan al nuevo Sheet.
 
-Las capturas y `result.json` se generan en `%TEMP%/warmi-offline-home-ux`; las capturas de entrega a 390 px también quedan en `../entrega-offline-ux/` fuera del repositorio. La prueba usa Edge real con tamaños de viewport móviles; no sustituye una revisión en un dispositivo Android físico o de audibilidad de su voz instalada.
+Capturas obligatorias a 390 px, generadas en `%TEMP%/warmi-offline-home-ux` y entregadas fuera de Git en `../entrega-offline-landing/`:
+
+1. `01-home-hero-390.png`
+2. `02-home-four-accesses-390.png`
+3. `03-programme-offline-390.png`
+4. `04-identity-offline-390.png`
+5. `05-session-topic-390.png`
+6. `06-topic-selector-390.png`
+7. `07-topic-video-390.png`
+8. `08-topic-pdf-390.png`
+
+También se conserva `scroll-comparison.json`, `result.json`, capturas de cinco anchuras y referencia online. Edge real con viewports móviles verifica la presentación; no sustituye una prueba en un Android físico. SpeechButton/useSpeech se reutilizan: voz offline requiere una voz española local instalada; invocar speechSynthesis no certifica audibilidad o calidad del altavoz.
 
 ```powershell
 corepack pnpm typecheck
@@ -99,8 +111,6 @@ corepack pnpm exec tsx tests/offline-home-real.browser.mjs
 git diff --check
 ```
 
-Los navegadores usan Playwright disponible externamente mediante `WARMI_PLAYWRIGHT_PATH` y opcionalmente `WARMI_BROWSER_CHANNEL=msedge`. La prueba real requiere `WARMI_TEST_EMAIL` y `WARMI_TEST_PASSWORD` de una cuenta existente inscrita; no incluye credenciales. Hace login y descarga reales sin crear cuentas ni completar/visitar lecciones online. Para comparar S1 usa sus registros reales y monta los mismos componentes de presentación en un contenedor de prueba, evitando el `markLessonStarted` automático de la ruta online. Compara la BD completa del curso antes/después.
+Los navegadores reciben `WARMI_PLAYWRIGHT_PATH`, canal opcional `WARMI_BROWSER_CHANNEL=msedge` y URL local. La prueba real requiere `WARMI_TEST_EMAIL` y `WARMI_TEST_PASSWORD` configuradas en el proceso, nunca publicadas en documentación. La prueba aislada puede recibir `WARMI_TEST_MP4` como archivo local de un MP4 existente para evitar depender del encoder del equipo.
 
-Las pruebas históricas M3/M4 que crean cuentas y completan sesiones mantienen su finalidad y se adaptan al paso inicial por Home. No se ejecutan contra PostgreSQL para esta entrega, porque la solicitud exige no modificar BD. La prueba real nueva cubre reproducción y entrega de sus recursos existentes con lecturas y operaciones del navegador.
-
-README, ARCHITECTURE y apartados históricos de OFFLINE_MODULE3 describen fases anteriores; el estado UX actual se documenta aquí. No se reescriben sus contenidos históricos.
+Los apartados históricos de OFFLINE_MODULE3 y las validaciones previas de `ce7c877` describen fases anteriores (incluida la habilitación errónea de M4). Este documento y la restricción de `b318374` reflejan el estado vigente.

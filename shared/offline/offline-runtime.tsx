@@ -93,6 +93,7 @@ export function OfflineRuntime() {
         <p className="flex flex-wrap items-center gap-x-2">
           <WifiOff aria-hidden="true" className="h-4 w-4 shrink-0" />
           <strong>Sin conexión</strong>
+          <span aria-hidden="true">·</span>
           <span>Contenido descargado disponible</span>
         </p>
       )}

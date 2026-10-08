@@ -170,11 +170,11 @@ try {
   console.log("PASS honest closing: S4 alone is 25%, never an artificial 100%.");
   await openLesson(page, 1);
   for (const topic of MODULE3_SESSION1_TOPICS.slice(0, 4)) {
-    const section = page.locator(`[data-session1-topic="${topic.key}"]`);
-    if (
-      (await section.getByRole("button").first().getAttribute("aria-expanded")) !== "true"
-    )
-      await section.getByRole("button").first().click();
+    await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: topic.title, exact: true })
+      .click();
     await play(page);
   }
   for (const guide of guides) await pdfBytes(page, guide, false);
@@ -402,11 +402,11 @@ try {
   for (const guide of guides)
     await pdfBytes(page, { ...guide, localUrl: download.assets[guide.fileId] }, true);
   for (const topic of MODULE3_SESSION1_TOPICS.slice(0, 4)) {
-    const section = page.locator(`[data-session1-topic="${topic.key}"]`);
-    if (
-      (await section.getByRole("button").first().getAttribute("aria-expanded")) !== "true"
-    )
-      await section.getByRole("button").first().click();
+    await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: topic.title, exact: true })
+      .click();
     await play(page);
   }
   await openLesson(page, 2);

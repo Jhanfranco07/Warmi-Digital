@@ -10,6 +10,11 @@ require(require.resolve("@next/env", { paths: [require.resolve("next")] })).load
 );
 const { prisma } = await import("../shared/server/db/prisma.ts");
 const { LEARNING_PROGRAM } = await import("../shared/learning/program.ts");
+const { MODULE3_SESSION1_TOPICS } =
+  await import("../shared/learning/module3-session1.ts");
+const { LANDING_OFFLINE_IMAGES } = await import("../shared/offline/landing-assets.ts");
+const { buildOfflineModule } =
+  await import("../shared/services/offline-learning.service.ts");
 const { getReferencedLesson, isOfflineModule } =
   await import("../shared/offline/module3-types.ts");
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
@@ -71,11 +76,11 @@ const modules = await prisma.module.findMany({
     }
   }
 });
-const m3 = modules.find((m) => m.id === LEARNING_PROGRAM.modules[2].id),
-  m4 = modules.find((m) => m.id === LEARNING_PROGRAM.modules[3].id);
+const m3 = modules.find((m) => m.id === LEARNING_PROGRAM.modules[2].id);
 const props = {
   title: m3.lessons[0].title,
   content: m3.lessons[0].content,
+  nextSessionHref: `${courseHref.replace(origin, "")}/lecciones/${m3.lessons[1].id}`,
   resources: m3.lessons[0].lessonFiles.map(view),
   relatedResources: m3.lessons[1].lessonFiles
     .filter((r) => r.file?.mimeType === "video/mp4")
@@ -108,7 +113,7 @@ function view(r) {
 }
 const bundle = await build({
   stdin: {
-    contents: `import React from 'react';import{createRoot}from'react-dom/client';import{Module3Session1Content}from'./features/artisan/learning/module3-session1-content';import{LearningLessonHeader}from'./features/artisan/learning/learning-lesson-header';window.mountReference=(props)=>{const host=document.createElement('div');host.dataset.onlineReference='';host.className='fixed inset-0 z-[100] overflow-auto bg-[#fffaf8] px-4 py-5';document.body.appendChild(host);createRoot(host).render(React.createElement('div',{className:'mx-auto max-w-3xl space-y-5'},React.createElement(LearningLessonHeader,{courseHref:'${courseHref.replace(origin, "")}',moduleTitle:'${LEARNING_PROGRAM.modules[2].title}',title:props.title}),React.createElement(Module3Session1Content,props)));};`,
+    contents: `import React from 'react';import{createRoot}from'react-dom/client';import{Module3Session1Content}from'./features/artisan/learning/module3-session1-content';import{LearningLessonHeader}from'./features/artisan/learning/learning-lesson-header';window.mountReference=(props)=>{document.querySelectorAll('body header,body nav').forEach(el=>el.style.visibility='hidden');const host=document.createElement('div');host.style.zIndex='49';host.dataset.onlineReference='';host.className='fixed inset-0 z-[45] overflow-auto bg-[#fffaf8] px-4 py-5';document.body.appendChild(host);createRoot(host).render(React.createElement('div',{className:'mx-auto max-w-3xl space-y-5'},React.createElement(LearningLessonHeader,{courseHref:'${courseHref.replace(origin, "")}',moduleTitle:'${LEARNING_PROGRAM.modules[2].title}',title:props.title}),React.createElement(Module3Session1Content,props)));};`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -210,6 +215,17 @@ async function lesson(page, id) {
     .locator(`a[href$="/lecciones/${id}"]`)
     .click();
 }
+async function selectTopic(page, title) {
+  await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: title, exact: true })
+    .click();
+  await page.getByRole("dialog").waitFor({ state: "detached" });
+  await page.waitForFunction(() =>
+    document.activeElement?.matches("[data-session1-topic] h2")
+  );
+}
 async function play(page, video = page.locator("video").first()) {
   await video.evaluate(async (el) => {
     el.muted = true;
@@ -230,7 +246,7 @@ async function signature(page, root = "body") {
     topics: [...el.querySelectorAll("[data-session1-topic]")].map((e) => ({
       key: e.dataset.session1Topic,
       text: e.querySelector("h2").innerText,
-      className: e.querySelector("h2 button").className
+      className: e.querySelector("h2").className
     })),
     text: el
       .querySelector("[data-session1-active]")
@@ -312,6 +328,37 @@ try {
   await page.evaluate((props) => window.mountReference(props), props);
   await page.locator("[data-online-reference] [data-module3-session1]").waitFor();
   const onlineSignature = await signature(page, "[data-online-reference]");
+  const afterReferenceHeights = [];
+  for (let i = 0; i < 7; i++) {
+    if (i)
+      await page.getByRole("button", { name: "Siguiente tema", exact: true }).click();
+    await page
+      .locator(`[data-session1-topic="${MODULE3_SESSION1_TOPICS[i].key}"]`)
+      .waitFor();
+    afterReferenceHeights.push(
+      await page.locator("[data-online-reference]").evaluate((el) => el.scrollHeight)
+    );
+  }
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
+  const beforeScroll = JSON.parse(
+    await readFile(
+      new URL("./fixtures/offline-scroll-before.json", import.meta.url),
+      "utf8"
+    )
+  );
+  const afterAverage = Math.round(afterReferenceHeights.reduce((a, b) => a + b) / 7);
+  const scrollComparison = {
+    before: beforeScroll,
+    after: { heights: afterReferenceHeights, averageHeight: afterAverage },
+    reductionPercent: Math.round((1 - afterAverage / beforeScroll.averageHeight) * 100),
+    method:
+      "Same 390x844 reference container, shared header, actual S1 resources and seven active states. Heights, not time or official progress."
+  };
+  await writeFile(
+    join(output, "scroll-comparison.json"),
+    JSON.stringify(scrollComparison, null, 2)
+  );
+
   await page.screenshot({ path: join(output, "online-reference-390.png") });
   const manifest = await (
     await page.request.get(`${origin}/manifest.webmanifest`)
@@ -330,6 +377,7 @@ try {
   assert.equal(
     await page
       .locator("[data-warmi-offline-home] img")
+      .first()
       .evaluate((el) => el.complete && el.naturalWidth > 0),
     true
   );
@@ -346,6 +394,45 @@ try {
     await page.getByRole("link", { name: "UNETE A WARMI", exact: true }).count(),
     0
   );
+  await page.screenshot({ path: join(output, "01-home-hero-390.png") });
+  await page
+    .getByRole("navigation", { name: "Accesos Warmi" })
+    .evaluate((el) => window.scrollTo(0, scrollY + el.getBoundingClientRect().top - 64));
+  await page.screenshot({ path: join(output, "02-home-four-accesses-390.png") });
+  for (const [id, label] of [
+    ["programa", "PROGRAMA WARMI"],
+    ["descubre", "DESCUBRE"],
+    ["identidad", "IDENTIDAD WARMI - RIQSICHIQ WARMI"]
+  ]) {
+    await page
+      .getByRole("navigation", { name: "Accesos Warmi" })
+      .getByRole("link", { name: label, exact: true })
+      .click();
+    await page.waitForFunction((id) => {
+      const el = document.getElementById(id);
+      return el && Math.abs(el.getBoundingClientRect().top - 64) < 10;
+    }, id);
+    if (id === "programa")
+      await page.screenshot({ path: join(output, "03-programme-offline-390.png") });
+    if (id === "identidad")
+      await page.screenshot({ path: join(output, "04-identity-offline-390.png") });
+  }
+  await page.goBack();
+  await page.locator("#descubre").waitFor();
+  await page.goForward();
+  await page.locator("#identidad").waitFor();
+  for (const src of Object.values(LANDING_OFFLINE_IMAGES)) {
+    assert.equal(
+      await page.evaluate(async (src) => {
+        const r = await fetch(src);
+        return r.ok && (await r.blob()).size > 0;
+      }, src),
+      true
+    );
+  }
+  // Ensure the shared offline images actually decode (including the logo and welcome photo).
+  for (const img of await page.locator("[data-warmi-offline-home] img").all())
+    await img.evaluate((el) => el.decode());
   await page.getByRole("link", { name: "Continuar mi aprendizaje", exact: true }).click();
   await page.locator("[data-warmi-offline-home]").waitFor({ state: "detached" });
   await page.goBack();
@@ -357,17 +444,93 @@ try {
   assert.deepEqual(await signature(page), onlineSignature);
   assert.equal(
     await page.getByRole("heading", { name: "Material de apoyo", exact: true }).count(),
-    1
+    0
   );
   await widthCheck(page, "session-offline");
-  for (let i = 0; i < 7; i++) {
-    const topic = page.locator("[data-session1-topic]").nth(i);
-    const trigger = topic.getByRole("button").first();
-    if ((await trigger.getAttribute("aria-expanded")) !== "true") await trigger.click();
-    assert.equal(await trigger.getAttribute("aria-expanded"), "true");
-    assert.equal(await page.locator("[data-session1-active]").count(), 1);
+  const screenshot = async (name) => page.screenshot({ path: join(output, name) });
+  await screenshot("05-session-topic-390.png");
+  // PDF pair at 390/430, stacked at 360; native 48px targets remain.
+  for (const width of [360, 390, 430, 768, 1365]) {
+    await page.setViewportSize({ width, height: 844 });
+    const first = page.getByRole("link", { name: /Abrir guía PDF:/ }),
+      second = page.getByRole("link", { name: /Descargar guía PDF:/ });
+    const a = await first.boundingBox(),
+      b = await second.boundingBox();
+    assert.ok(a.height >= 48 && b.height >= 48);
+    assert.equal(Math.abs(a.y - b.y) < 2, width >= 390);
   }
-  await page.locator("[data-session1-topic]").first().getByRole("button").first().click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Siguiente tema", exact: true }).click();
+  await page.locator('[data-session1-topic="configurar-whatsapp-business"]').waitFor();
+  await page.getByRole("button", { name: "Anterior", exact: true }).click();
+  await page
+    .locator(`[data-session1-topic="${MODULE3_SESSION1_TOPICS[0].key}"]`)
+    .waitFor();
+  await page.getByRole("button", { name: "Siguiente tema", exact: true }).click();
+  await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.waitFor();
+  await screenshot("06-topic-selector-390.png");
+  for (const topic of MODULE3_SESSION1_TOPICS)
+    await dialog.getByRole("button", { name: topic.title, exact: true }).waitFor();
+  await dialog
+    .getByRole("button", { name: MODULE3_SESSION1_TOPICS[5].title, exact: true })
+    .click();
+  await dialog.waitFor({ state: "detached" });
+  await page.waitForFunction(() =>
+    document.activeElement?.matches("[data-session1-topic] h2")
+  );
+  assert.equal(
+    await page.locator("[data-session1-topic]").getAttribute("data-session1-topic"),
+    MODULE3_SESSION1_TOPICS[5].key
+  );
+  await play(page);
+  // Verify every real topic, description, steps and guide without changing official progress.
+  for (const topic of MODULE3_SESSION1_TOPICS) {
+    await selectTopic(page, topic.title);
+    const active = page.locator("[data-session1-active]");
+    assert.equal(await page.locator("[data-session1-topic]").count(), 1);
+    assert.equal(await page.locator("[data-session1-active]").count(), 1);
+    assert.equal(
+      await active
+        .getByRole("button", { name: "Escuchar este tema", exact: true })
+        .count(),
+      1
+    );
+    await active.getByText(topic.description, { exact: true }).waitFor();
+    for (const step of topic.steps)
+      await active.getByText(step, { exact: true }).waitFor();
+    assert.equal(
+      await active
+        .getByRole("link", { name: `Abrir guía PDF: ${topic.title}`, exact: true })
+        .count(),
+      1
+    );
+  }
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
+  await page.locator("video").first().scrollIntoViewIfNeeded();
+  await screenshot("07-topic-video-390.png");
+  await page.getByRole("link", { name: /Abrir guía PDF:/ }).scrollIntoViewIfNeeded();
+  await screenshot("08-topic-pdf-390.png");
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
+  await page.getByText("Material adicional · Ver materiales", { exact: true }).click();
+  await page.getByRole("heading", { name: "Material de apoyo", exact: true }).waitFor();
+  await page.getByText("Leer texto completo", { exact: true }).click();
+  await page.getByText(props.content, { exact: true }).waitFor();
+  await page.getByText("Material adicional · Ver materiales", { exact: true }).click();
+  // Speech API invocation is real; availability of an installed Spanish voice depends on the OS.
+  await page.evaluate(() => {
+    const original = speechSynthesis.speak.bind(speechSynthesis);
+    window.spoken = [];
+    speechSynthesis.speak = (utterance) => {
+      window.spoken.push(utterance.text);
+      original(utterance);
+    };
+  });
+  await page.getByRole("button", { name: "Escuchar este tema", exact: true }).click();
+  await page.waitForFunction(() => window.spoken.length > 0);
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[1].title);
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
   const pdfEvent = page.waitForEvent("download");
   await page.getByRole("link", { name: /Descargar guía PDF:/ }).click();
   const exported = await pdfEvent;
@@ -382,7 +545,11 @@ try {
   await popup.waitForURL("blob:**");
   await popup.close();
   await play(page);
-  const next = page.getByRole("link", { name: "Siguiente sesión", exact: true });
+  await selectTopic(page, MODULE3_SESSION1_TOPICS[6].title);
+  const next = page.getByRole("link", {
+    name: "Continuar a siguiente sesión",
+    exact: true
+  });
   await touch(page, next);
   await next.click();
   await page.locator('[data-session-order="2"]').waitFor();
@@ -396,6 +563,7 @@ try {
     .click();
   await page.locator("[data-warmi-offline-home]").waitFor();
   const d3 = downloads.find((d) => d.moduleId === m3.id);
+  assert.equal(Object.keys(d3.assets).length, 18);
   for (const r of d3.lessons.flatMap((l) => l.resources).filter((r) => r.file)) {
     const result = await page.evaluate(async (url) => {
       const r = await fetch(url);
@@ -427,10 +595,7 @@ try {
     await lesson(page, l.id);
     if (l === m3.lessons[0]) {
       for (let i = 0; i < 4; i++) {
-        const topic = page.locator("[data-session1-topic]").nth(i);
-        const trigger = topic.getByRole("button").first();
-        if ((await trigger.getAttribute("aria-expanded")) !== "true")
-          await trigger.click();
+        await selectTopic(page, MODULE3_SESSION1_TOPICS[i].title);
         await play(page);
       }
     } else if (l.order === 2) {
@@ -446,14 +611,97 @@ try {
       }
     }
   }
-  if (m4) {
-    await lesson(page, m4.lessons[0].id);
-    await page.locator("[data-module4-session]").waitFor();
-    for (const img of await page.locator("[data-m4-image]").all()) {
-      await img.scrollIntoViewIfNeeded();
-      await img.evaluate((el) => el.decode());
-    }
+  assert.equal(new Set(played).size, 8);
+  // Seed a historical copy directly in this disposable test profile. Never use the disabled M4 download service/API.
+  const historicalCourse = JSON.parse(before);
+  const historicalModule = historicalCourse.modules.find(
+    (m) => m.id === LEARNING_PROGRAM.modules[3].id
+  );
+  historicalModule.lessons.sort((a, b) => a.order - b.order);
+  const legacy = buildOfflineModule(account.id, historicalCourse, historicalModule);
+  const legacyFiles = [
+    ...new Map(
+      historicalModule.lessons
+        .flatMap((l) => l.lessonFiles)
+        .filter((r) => r.file)
+        .map((r) => [r.file.id, r.file])
+    ).values()
+  ];
+  const imageBytes = [];
+  for (const file of legacyFiles) {
+    const response = await fetch(file.url);
+    assert.equal(response.ok, true);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (file.metadata?.sha256)
+      assert.equal(
+        createHash("sha256").update(bytes).digest("hex"),
+        file.metadata.sha256
+      );
+    imageBytes.push({ id: file.id, mime: file.mimeType, data: bytes.toString("base64") });
   }
+  await page.evaluate(
+    async ({ legacy, files }) => {
+      const cacheName = `warmi-learning-module-${legacy.moduleId}-historical-test`;
+      const cache = await caches.open(cacheName),
+        assets = {};
+      let bytes = 0;
+      for (const file of files) {
+        const url = `/__warmi_offline__/historical-test-m4/${file.id}`;
+        const data = Uint8Array.from(atob(file.data), (c) => c.charCodeAt(0));
+        bytes += data.length;
+        await cache.put(
+          url,
+          new Response(data, { headers: { "Content-Type": file.mime } })
+        );
+        assets[file.id] = url;
+      }
+      const db = await new Promise((res) => {
+        const q = indexedDB.open("warmi-learning-offline", 1);
+        q.onsuccess = () => res(q.result);
+      });
+      await new Promise((res) => {
+        const tx = db.transaction("downloads", "readwrite");
+        tx.objectStore("downloads").put(
+          { ...legacy, cacheName, assets, bytes, downloadedAt: new Date().toISOString() },
+          `module:${legacy.moduleId}`
+        );
+        tx.oncomplete = res;
+      });
+      db.close();
+    },
+    { legacy, files: imageBytes }
+  );
+  await page.reload();
+  await page.locator("[data-warmi-offline-home]").waitFor();
+  await page
+    .locator(`[data-downloaded-module="${legacy.moduleId}"]`)
+    .getByRole("link")
+    .click();
+  await page
+    .getByRole("navigation", { name: "Lecciones del módulo" })
+    .locator(`a[href$="/lecciones/${legacy.lessons[0].id}"]`)
+    .click();
+  await page.locator("[data-module4-session]").waitFor();
+  for (const img of await page.locator("[data-m4-image]").all())
+    await img.evaluate((el) => el.decode());
+  assert.equal(
+    await page
+      .getByRole("button", {
+        name: /Actualizar descarga|Descargar para usar sin internet/
+      })
+      .count(),
+    0
+  );
+  await page.getByRole("button", { name: "Eliminar descarga", exact: true }).click();
+  await page.locator("[data-module4-session]").waitFor({ state: "detached" });
+  assert.equal(
+    (await read(page)).some((d) => d.moduleId === legacy.moduleId),
+    false
+  );
+  assert.equal(
+    (await read(page)).some((d) => d.moduleId === m3.id),
+    true
+  );
   await context.close();
   context = undefined;
   page = await open(true);
@@ -525,20 +773,6 @@ try {
     (await read(page)).some((d) => d.moduleId === m3.id),
     false
   );
-  if (m4) {
-    assert.equal(
-      (await read(page)).some((d) => d.moduleId === m4.id),
-      true
-    );
-    await page
-      .locator(`#modulo-${m4.id}`)
-      .getByRole("button", { name: "Eliminar descarga", exact: true })
-      .click();
-    await page
-      .locator(`#modulo-${m4.id}`)
-      .getByText("No descargado", { exact: true })
-      .waitFor();
-  }
   assert.equal((await read(page)).length, 0);
   assert.equal(await snapshot(), before);
   await writeFile(
@@ -549,12 +783,19 @@ try {
         dbUnchanged: true,
         downloadableModuleIds: modules.map((m) => m.id),
         played: played.length,
+        scrollComparison,
+        legacyM4: true,
         resources: Object.keys(d3.assets).length,
         widths: [360, 390, 430, 768, 1365],
         screenshots: [
-          "home-390.png",
-          "session-offline-390.png",
-          "online-reference-390.png"
+          "01-home-hero-390.png",
+          "02-home-four-accesses-390.png",
+          "03-programme-offline-390.png",
+          "04-identity-offline-390.png",
+          "05-session-topic-390.png",
+          "06-topic-selector-390.png",
+          "07-topic-video-390.png",
+          "08-topic-pdf-390.png"
         ]
       },
       null,
@@ -562,7 +803,7 @@ try {
     )
   );
   console.log(
-    "PASS: real login/download M3 only; M1/M2/M4 absent from download controls and rejected by file API; public/online flow; Home-first cold launch/deep link/restart; CTA/back/forward/module/session; shared S1 DOM; 7 accordions; PDF viewer/export; 8 MP4 and PDF/range/hash delivery; five widths; legacy; update rollback/success; isolated deletion; PostgreSQL unchanged."
+    "PASS: real login/download M3 only; M1/M2/M4 absent from download controls and rejected by file API; public/online flow; Home-first cold launch/deep link/restart; CTA/back/forward/module/session; shared S1 DOM; single topic/7-choice selector/previous/next; full institutional offline landing; PDF viewer/export; 8 MP4 and PDF/range/hash delivery; five widths; legacy; update rollback/success; isolated deletion; PostgreSQL unchanged."
   );
 } catch (error) {
   const page = context?.pages()[0];

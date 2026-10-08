@@ -80,7 +80,11 @@ export function OfflineLearning() {
       setPath(location.pathname + location.search);
       setEntered(historyStateIsLearning());
       setMessage("");
-      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        const target = location.hash && document.getElementById(location.hash.slice(1));
+        if (target) target.scrollIntoView({ block: "start" });
+        else window.scrollTo(0, 0);
+      });
     };
     function historyStateIsLearning() {
       return (
@@ -156,7 +160,16 @@ export function OfflineLearning() {
       (!url.pathname.startsWith("/artesana/aprender") && !isOfflineHomePath(url.pathname))
     )
       return;
-    if (url.pathname === location.pathname && url.hash) return;
+    if (url.pathname === location.pathname && url.hash) {
+      const target = document.getElementById(url.hash.slice(1));
+      if (home && target) {
+        // Native fragment navigation can emit popstate with no Home marker on a cold learning URL.
+        event.preventDefault();
+        window.history.pushState({ warmiOfflineView: "home" }, "", url.href);
+        target.scrollIntoView({ block: "start" });
+      }
+      return;
+    }
     event.preventDefault();
     const learning = !isOfflineHomePath(url.pathname);
     window.history.pushState(
@@ -255,7 +268,7 @@ export function OfflineLearning() {
                 />
                 {!ownNavigation && (
                   <>
-                    {nextLesson && (
+                    {nextLesson && lesson.id !== MODULE3_SESSION1_ID && (
                       <a
                         href={`${courseHref}/lecciones/${nextLesson.id}`}
                         className="flex min-h-12 items-center justify-between gap-3 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white"
@@ -484,6 +497,11 @@ function OfflineLessonContent({
     return (
       <Module3Session1Content
         offline
+        nextSessionHref={
+          download.lessons.some((item) => item.id === MODULE3_SESSION2_ID)
+            ? `/artesana/aprender/${LEARNING_PROGRAM.id}/lecciones/${MODULE3_SESSION2_ID}`
+            : undefined
+        }
         title={lesson.title}
         content={lesson.content}
         resources={lesson.resources.map(resourceView)}

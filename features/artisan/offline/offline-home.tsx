@@ -1,14 +1,16 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Cache the existing originals, without remote image transforms. */
 /* eslint-disable @next/next/no-html-link-for-pages -- The existing offline shell handles navigation locally. */
-import { ArrowRight, BookOpen, CheckCircle2, WifiOff } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { LEARNING_PROGRAM, moduleCapability } from "@/shared/learning/program";
 import type { ModuleDownload } from "@/shared/offline/module3-types";
-import {
-  OFFLINE_HERO,
-  OFFLINE_LOGO,
-  offlineProgress
-} from "@/shared/offline/offline-presentation";
+import { Footer } from "@/shared/components/layout/footer";
+import { offlineProgress } from "@/shared/offline/offline-presentation";
+import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
+import { WarmiWelcomeContent } from "@/shared/components/landing/welcome-content";
+import { WarmiProgrammeContent } from "@/shared/components/landing/programa-content";
+import { WarmiDiscoveryContent } from "@/shared/components/landing/descubre-content";
+import { WarmiIdentityContent } from "@/shared/components/landing/identidad-content";
 
 export function DownloadedModuleCard({ download }: { download: ModuleDownload }) {
   const progress = offlineProgress(download);
@@ -50,69 +52,64 @@ export function OfflineHome({
   loading: boolean;
 }) {
   return (
-    <div data-warmi-offline-home className="space-y-6">
-      <section className="overflow-hidden rounded-lg border border-[#ead2dc] bg-white">
-        <div
-          className="bg-[#303b36] bg-cover bg-center px-5 py-7 text-center text-white sm:px-8 sm:py-10"
-          style={{
-            backgroundImage: `linear-gradient(rgba(20,30,26,.7),rgba(20,30,26,.8)),url(${OFFLINE_HERO})`
-          }}
+    <div
+      data-warmi-offline-home
+      className="overflow-hidden rounded-lg border border-[#ead2dc] bg-white"
+    >
+      <WarmiPublicHeader offline compact />
+      {loading ? (
+        <p role="status" className="p-5">
+          Cargando contenidos descargados…
+        </p>
+      ) : downloads.length === 0 ? (
+        <p role="status" className="p-5">
+          Todavía no hay contenidos descargados en este dispositivo. Cuando tengas
+          conexión, entra a Mi aprendizaje y descarga un módulo.
+        </p>
+      ) : null}
+      <WarmiWelcomeContent offline />
+      <section id="programa" aria-labelledby="offline-programa" className="scroll-mt-16">
+        <h2
+          id="offline-programa"
+          className="px-4 pt-8 font-serif text-3xl font-bold text-[#123f78]"
         >
-          <img
-            src={OFFLINE_LOGO}
-            alt="Warmi Digital"
-            width={80}
-            height={80}
-            className="mx-auto h-20 w-20 rounded-full bg-white object-contain p-1"
-          />
-          <h1 className="mt-4 font-serif text-3xl font-bold tracking-wide sm:text-4xl">
-            WARMI DIGITAL
-          </h1>
-          <p className="mx-auto mt-3 max-w-sm text-base italic leading-7">
-            Artesanas conectadas, historias que transforman.
-          </p>
-        </div>
-        <div className="space-y-4 p-5 sm:p-8">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-[#185750]">
-            <WifiOff aria-hidden="true" className="h-5 w-5 shrink-0" />
-            Estás sin conexión
-          </h2>
-          <p className="leading-7">
-            Puedes seguir aprendiendo con los contenidos que descargaste.
-          </p>
-          {downloads.length > 0 && (
-            <a
-              data-offline-learning-cta
-              href="/artesana/aprender"
-              className="flex min-h-14 w-full items-center justify-center gap-3 rounded-md bg-[#b5245b] px-4 py-4 text-center font-bold text-white hover:bg-[#941747]"
-            >
-              <BookOpen aria-hidden="true" className="h-5 w-5 shrink-0" />
-              Continuar mi aprendizaje
-              <ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0" />
-            </a>
-          )}
-          {loading ? (
-            <p role="status">Cargando contenidos descargados…</p>
-          ) : (
-            downloads.length === 0 && (
-              <p role="status">
-                Todavía no hay contenidos descargados en este dispositivo. Cuando tengas
-                conexión, entra a Mi aprendizaje y descarga un módulo.
-              </p>
-            )
-          )}
-        </div>
+          Programa Warmi
+        </h2>
+        <WarmiProgrammeContent offline />
+      </section>
+      <section id="descubre" aria-labelledby="offline-descubre" className="scroll-mt-16">
+        <h2
+          id="offline-descubre"
+          className="px-4 pt-8 font-serif text-3xl font-bold text-[#123f78]"
+        >
+          Descubre
+        </h2>
+        <WarmiDiscoveryContent offline />
+      </section>
+      <section
+        id="identidad"
+        aria-labelledby="offline-identidad"
+        className="scroll-mt-16"
+      >
+        <h2
+          id="offline-identidad"
+          className="px-4 py-8 font-serif text-3xl font-bold text-[#123f78]"
+        >
+          Identidad Warmi · Riqsichiq Warmi
+        </h2>
+        <WarmiIdentityContent offline />
       </section>
       {downloads.length > 0 && (
         <section
           aria-label="Contenidos descargados"
-          className="grid gap-4 md:grid-cols-2"
+          className="grid gap-4 p-4 md:grid-cols-2"
         >
           {downloads.map((d) => (
             <DownloadedModuleCard key={d.moduleId} download={d} />
           ))}
         </section>
       )}
+      <Footer />
     </div>
   );
 }

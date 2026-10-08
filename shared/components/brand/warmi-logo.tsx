@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { landingImage } from "@/shared/offline/landing-assets";
 
 import { cn } from "@/shared/lib/utils";
 
@@ -7,13 +8,20 @@ type WarmiLogoProps = {
   markClassName?: string;
   textClassName?: string;
   compact?: boolean;
+  offline?: boolean;
 };
 
-export function WarmiLogo({ className, markClassName, compact = false }: WarmiLogoProps) {
+export function WarmiLogo({
+  className,
+  markClassName,
+  compact = false,
+  offline = false
+}: WarmiLogoProps) {
   return (
     <span className={cn("inline-flex items-center", className)}>
       <Image
-        src="/images/brand/warmi-logo-transparent.png"
+        src={landingImage("/images/brand/warmi-logo-transparent.png", offline)}
+        unoptimized={offline}
         alt="Warmi Digital"
         width={560}
         height={250}

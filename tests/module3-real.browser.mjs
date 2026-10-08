@@ -75,8 +75,11 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
   await page.locator("[data-module3-session1]").waitFor();
   for (const topic of MODULE3_SESSION1_TOPICS) {
     const section = page.locator(`[data-session1-topic="${topic.key}"]`);
-    const trigger = section.getByRole("button").first();
-    if ((await trigger.getAttribute("aria-expanded")) !== "true") await trigger.click();
+    await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: topic.title, exact: true })
+      .click();
     assert.equal(await page.locator("[data-session1-active]").count(), 1);
     if (verifyVideos && topic.videoIds.length)
       await playVideos(page, topic.videoIds.length, offline);
@@ -183,11 +186,11 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
       .getByRole("button", { name: "Escuchar este tema", exact: true })
       .click();
   }
-  const first = page
-    .locator(`[data-session1-topic="${MODULE3_SESSION1_TOPICS[0].key}"]`)
-    .getByRole("button")
-    .first();
-  await first.click();
+  await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: MODULE3_SESSION1_TOPICS[0].title, exact: true })
+    .click();
 }
 let context;
 async function open(offline) {

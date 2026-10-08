@@ -62,6 +62,9 @@ export async function Module3Session1Lesson({
           title={lesson.title}
         />
         <Module3Session1Content
+          nextSessionHref={
+            support ? `/artesana/aprender/${courseId}/lecciones/${support.id}` : undefined
+          }
           title={lesson.title}
           content={lesson.content}
           resources={lesson.lessonFiles.map((item) => resourceView(item, courseId))}

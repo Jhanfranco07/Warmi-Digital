@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Offline links use the existing local router. */
 import Image from "next/image";
 import Link from "next/link";
+import { landingImage } from "@/shared/offline/landing-assets";
 
 import { Container } from "@/shared/components/layout/container";
 
@@ -30,31 +32,35 @@ const actions = [
 
 export function WarmiPublicHeader({
   compact = false,
-  navOnly = false
+  navOnly = false,
+  offline = false
 }: {
   compact?: boolean;
   navOnly?: boolean;
+  offline?: boolean;
 }) {
+  const NavLink = offline ? "a" : Link;
   return (
     <>
       {!navOnly ? (
         <section
-          className={`relative overflow-hidden ${compact ? "min-h-[300px]" : "min-h-[520px]"}`}
+          className={`relative overflow-hidden ${offline ? "min-h-[320px]" : compact ? "min-h-[300px]" : "min-h-[520px]"}`}
         >
           <div
             className="warmi-hero-photo absolute inset-0 bg-cover bg-center grayscale"
             style={{
-              backgroundImage: `linear-gradient(rgba(27,28,26,.42),rgba(27,28,26,.42)),url(${hero})`
+              backgroundImage: `linear-gradient(rgba(27,28,26,.42),rgba(27,28,26,.42)),url(${landingImage(hero, offline)})`
             }}
           />
           <Container
             className={`flex items-center justify-center px-4 text-center ${
-              compact ? "min-h-[300px]" : "min-h-[520px]"
+              offline ? "min-h-[320px]" : compact ? "min-h-[300px]" : "min-h-[520px]"
             }`}
           >
             <div className="relative flex max-w-4xl flex-col items-center">
               <Image
-                src="/images/brand/warmi-isotipo.png"
+                src={landingImage("/images/brand/warmi-isotipo.png", offline)}
+                unoptimized={offline}
                 alt="Isotipo Warmi Digital"
                 width={360}
                 height={360}
@@ -82,15 +88,24 @@ export function WarmiPublicHeader({
         </section>
       ) : null}
 
-      <nav className="sticky top-0 z-30 grid grid-cols-2 font-ui text-sm font-bold text-white shadow-[0_8px_18px_rgba(27,28,26,0.16)] md:grid-cols-4 md:text-label-ui">
-        {actions.map((action) => (
-          <Link
-            key={action.label}
-            className={`${action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:brightness-105 md:min-h-20 md:px-5 md:py-7`}
-            href={action.href}
+      <nav
+        aria-label="Accesos Warmi"
+        className={`${offline ? "relative" : "sticky top-0"} z-30 grid grid-cols-2 font-ui text-sm font-bold text-white shadow-[0_8px_18px_rgba(27,28,26,0.16)] md:grid-cols-4 md:text-label-ui`}
+      >
+        {actions.map((action, index) => (
+          <NavLink
+            key={offline && index === 3 ? "CONTINUAR MI APRENDIZAJE" : action.label}
+            className={`${offline && index === 3 ? "bg-[#b5245b] ring-2 ring-inset ring-white/70" : action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:brightness-105 md:min-h-20 md:px-5 md:py-7`}
+            href={
+              offline
+                ? ["#programa", "#descubre", "#identidad", "/artesana/aprender"][index]
+                : action.href
+            }
+            aria-label={offline && index === 3 ? "Continuar mi aprendizaje" : undefined}
+            data-offline-learning-cta={offline && index === 3 ? "" : undefined}
           >
-            {action.label}
-          </Link>
+            {offline && index === 3 ? "CONTINUAR MI APRENDIZAJE" : action.label}
+          </NavLink>
         ))}
       </nav>
     </>

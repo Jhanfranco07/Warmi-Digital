@@ -256,6 +256,22 @@ try {
     });
     db.close();
     const two = await window.offlineTest.verifiedDownloads();
+    const historical = await window.offlineTest.readDownload(legacyId);
+    await window.offlineTest
+      .downloadModule({ ...snapshot, moduleId: legacyId }, () => {})
+      .then(
+        () => {
+          throw new Error("Historical M4 must not update or download again.");
+        },
+        (error) => {
+          if (!error.message.includes("no está habilitado")) throw error;
+        }
+      );
+    if (
+      (await window.offlineTest.readDownload(legacyId)).cacheName !== historical.cacheName
+    )
+      throw new Error("Historical copy changed.");
+
     await window.offlineTest.removeDownload("2853b850-4032-5e82-b861-8eaaa84913f8");
     const first = await window.offlineTest.verifiedDownload(snapshot.moduleId);
     return {

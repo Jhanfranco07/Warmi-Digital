@@ -14,6 +14,8 @@ import {
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
+import { Module4Content } from "@/features/artisan/learning/module4-content";
+import { MODULE4_ID, MODULE4_SESSIONS, module4ImageKey } from "@/shared/learning/module4";
 import { Module3JourneyContent } from "@/features/artisan/learning/module3-journey-content";
 import { MODULE3_SESSIONS } from "@/shared/learning/module3-journey";
 import { MODULE3_CONTENT_VERSION } from "@/shared/learning/module3-version";
@@ -285,6 +287,21 @@ function OfflineLessonContent({
   lesson: OfflineLesson;
   download: ModuleDownload;
 }) {
+  if (
+    download.moduleId === MODULE4_ID &&
+    MODULE4_SESSIONS.some((s) => s.id === lesson.id)
+  )
+    return (
+      <Module4Content
+        offline
+        courseId={LEARNING_PROGRAM.id}
+        lessonId={lesson.id}
+        visuals={lesson.resources.flatMap((r) => {
+          const key = module4ImageKey(r.externalUrl);
+          return key && r.file ? [{ key, url: download.assets[r.file.id] }] : [];
+        })}
+      />
+    );
   if (
     download.contentVersion === MODULE3_CONTENT_VERSION &&
     MODULE3_SESSIONS.slice(1).some((s) => s.id === lesson.id)

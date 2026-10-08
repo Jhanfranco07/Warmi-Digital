@@ -1,0 +1,121 @@
+[
+  {
+    "key": "artesana",
+    "page": 48,
+    "xref": 1199,
+    "crop": [
+      16,
+      14,
+      261,
+      376
+    ],
+    "filename": "artesana.webp",
+    "width": 245,
+    "height": 362,
+    "bytes": 25344,
+    "sha256": "8cc7c7c7e390ec9b75043346409b85299d77cd40643dc0b5a92ae45b4713bc9a"
+  },
+  {
+    "key": "paisaje",
+    "page": 48,
+    "xref": 1199,
+    "crop": [
+      270,
+      214,
+      419,
+      374
+    ],
+    "filename": "paisaje.webp",
+    "width": 149,
+    "height": 160,
+    "bytes": 9126,
+    "sha256": "2a6c604ae96d61dbfa7920ca4ed83ef5e026636f90754ce0a8f554349752aed3"
+  },
+  {
+    "key": "manos",
+    "page": 48,
+    "xref": 1199,
+    "crop": [
+      434,
+      215,
+      582,
+      375
+    ],
+    "filename": "manos.webp",
+    "width": 148,
+    "height": 160,
+    "bytes": 7186,
+    "sha256": "beef8eb46fdc2f2cc41657d0c237014e850422ed3bd838fd2b9824e2809743d4"
+  },
+  {
+    "key": "munecas",
+    "page": 49,
+    "xref": 1222,
+    "crop": null,
+    "filename": "munecas.webp",
+    "width": 131,
+    "height": 99,
+    "bytes": 5036,
+    "sha256": "e92052a243ff5ad2039697bb72b888168601393576088320a1781b89b334dcb7"
+  },
+  {
+    "key": "bolso",
+    "page": 51,
+    "xref": 1279,
+    "crop": null,
+    "filename": "bolso.webp",
+    "width": 131,
+    "height": 114,
+    "bytes": 4582,
+    "sha256": "cd742477c32d969dc20e980b76e3cfcc33c2caede821c847653b53f7bd14d4bd"
+  },
+  {
+    "key": "tejidos",
+    "page": 51,
+    "xref": 1282,
+    "crop": null,
+    "filename": "tejidos.webp",
+    "width": 400,
+    "height": 267,
+    "bytes": 42914,
+    "sha256": "76c6c26b7c1cf5aa7562f2a9d37d86134a9d5d2de1c67778947c20a07068af84"
+  },
+  {
+    "key": "qallwa",
+    "page": 52,
+    "xref": 1306,
+    "crop": null,
+    "filename": "qallwa.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 65106,
+    "sha256": "c6d674fa8eda05c7bac1434e39f4a4aa39c5adc6d6417433b23839ca7a51ee60"
+  },
+  {
+    "key": "resolucion",
+    "page": 52,
+    "xref": 1304,
+    "crop": null,
+    "filename": "resolucion.webp",
+    "width": 440,
+    "height": 657,
+    "bytes": 69032,
+    "sha256": "c40a6ae077c72ae8843cd21df3d748252c9321609a91f38aa433bf495d9fc1c1"
+  },
+  {
+    "key": "entrega",
+    "page": 54,
+    "xref": 1363,
+    "crop": [
+      0,
+      0,
+      400,
+      512
+    ],
+    "filename": "entrega.webp",
+    "width": 400,
+    "height": 512,
+    "bytes": 54876,
+    "sha256": "661437acca51129aba84e7c27258d99f4e2bb43746ad882b0ad21a5469ee883d"
+  }
+]

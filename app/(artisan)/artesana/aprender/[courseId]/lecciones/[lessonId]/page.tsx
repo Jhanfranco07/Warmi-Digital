@@ -1,3 +1,5 @@
+import { MODULE4_ID } from "@/shared/learning/module4";
+import { Module4Lesson } from "@/features/artisan/learning/module4-lesson";
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
@@ -64,6 +66,16 @@ export default async function ArtisanLessonPage({
   );
   const resources = lesson.lessonFiles;
   const completed = Boolean(progress?.completed);
+  if (lesson.module.id === MODULE4_ID)
+    return (
+      <Module4Lesson
+        courseId={courseId}
+        lesson={lesson}
+        completedIds={enrollment.lessonProgresses
+          .filter((p) => p.completed)
+          .map((p) => p.lessonId)}
+      />
+    );
   if (
     lesson.module.id === MODULE3_ID &&
     MODULE3_SESSIONS.slice(1).some((s) => s.id === lesson.id)

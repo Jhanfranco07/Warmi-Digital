@@ -62,7 +62,7 @@ test("progress is dynamic across available modules, M2 remains online only", () 
   assert.equal(LEARNING_PROGRAM.modules[1].status, "available");
   assert.equal(isOfflineModule(MODULE2_ID), false);
   assert.equal(LEARNING_PROGRAM.modules[2].offline, true);
-  assert.equal(LEARNING_PROGRAM.modules[3].status, "preparing");
+  assert.equal(LEARNING_PROGRAM.modules[3].status, "available");
   const course = {
     id: LEARNING_PROGRAM.id,
     modules: [

@@ -1,3 +1,5 @@
+import { MODULE4_ID } from "@/shared/learning/module4";
+
 export const LEARNING_PROGRAM = {
   id: "93dc7355-d746-4acd-87df-29f71d16a955",
   title: "Aprender para crecer",
@@ -40,15 +42,15 @@ export const LEARNING_PROGRAM = {
       previousCourseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec"
     },
     {
-      id: null,
+      id: MODULE4_ID,
       order: 4,
       title: "Módulo 4: Estrategias de venta y autonomía digital",
-      status: "preparing",
+      status: "available",
       image: {
-        src: "/images/discover/emprende.png",
-        alt: "Artesanas presentando un tejido para fotografiarlo con el celular"
+        src: "/images/learning/module4/qallwa.webp",
+        alt: "Artesana trabajando un tejido en qallwa de colores"
       },
-      offline: false,
+      offline: true,
       previousCourseId: null
     }
   ]

@@ -1,3 +1,4 @@
+import { MODULE4_ID, MODULE4_CONTENT_VERSION } from "@/shared/learning/module4";
 import { CourseRepository } from "@/shared/repositories/course.repository";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
 import { MODULE3_CONTENT_VERSION } from "@/shared/learning/module3-version";
@@ -90,6 +91,7 @@ export function buildOfflineModule(
     ...(module.id === LEARNING_PROGRAM.modules[2].id
       ? { contentVersion: MODULE3_CONTENT_VERSION }
       : {}),
+    ...(module.id === MODULE4_ID ? { contentVersion: MODULE4_CONTENT_VERSION } : {}),
     userId,
     courseId: course.id,
     courseTitle: course.title,

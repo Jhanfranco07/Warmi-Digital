@@ -269,17 +269,19 @@ try {
     include: { lessonProgresses: true, courseProgress: true }
   });
   assert.equal(enrollment.lessonProgresses.filter((p) => p.completed).length, 4);
-  assert.equal(enrollment.courseProgress.percentage, 33);
-  assert.equal(enrollment.courseProgress.totalLessons, 12);
+  assert.equal(enrollment.courseProgress.percentage, 25);
+  assert.equal(enrollment.courseProgress.totalLessons, 16);
   console.log(
-    "PASS S4: four steps, closing 100%, global progress 33% of twelve lessons."
+    "PASS S4: four steps, closing 100%, global progress 25% of sixteen lessons."
   );
   await page.getByRole("link", { name: "Finalizar Módulo 3", exact: true }).click();
   await page.waitForURL(courseHref);
   await page
+    .locator(`#modulo-${MODULE3_ID}`)
     .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
     .click();
   await page
+    .locator(`#modulo-${MODULE3_ID}`)
     .getByText("Disponible sin conexión", { exact: true })
     .waitFor({ timeout: 240000 });
   const read = () =>
@@ -360,9 +362,11 @@ try {
   assert.equal((await read()).cacheName, legacy.cacheName);
   await page.unroute(`**/api/learning/offline/${courseId}/files/*`);
   await page
+    .locator(`#modulo-${MODULE3_ID}`)
     .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
     .click();
   await page
+    .locator(`#modulo-${MODULE3_ID}`)
     .getByText("Disponible sin conexión", { exact: true })
     .waitFor({ timeout: 240000 });
   download = await read();

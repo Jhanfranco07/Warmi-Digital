@@ -108,21 +108,21 @@ test("unavailable-only programs have no artificial completion", () => {
   });
 });
 
-test("four stable cards: M1/M2 online, only M3 offline, M4 preparing", () => {
+test("four stable cards: M1/M2 online, M3/M4 available offline", () => {
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.order),
     [1, 2, 3, 4]
   );
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.status),
-    ["available", "available", "available", "preparing"]
+    ["available", "available", "available", "available"]
   );
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.offline),
-    [false, false, true, false]
+    [false, false, true, true]
   );
   assert.equal(LEARNING_PROGRAM.modules[0].id, "7dd54036-26d9-4104-8008-9d559135b461");
   assert.equal(LEARNING_PROGRAM.modules[2].id, "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
   assert.equal(LEARNING_PROGRAM.modules[1].id, "c156c5d5-8c81-48f8-85d4-234ecb21ec0e");
-  assert.equal(LEARNING_PROGRAM.modules[3].id, null);
+  assert.equal(LEARNING_PROGRAM.modules[3].id, "2853b850-4032-5e82-b861-8eaaa84913f8");
 });

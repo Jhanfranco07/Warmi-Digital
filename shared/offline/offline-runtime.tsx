@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { WifiOff } from "lucide-react";
+import { isOfflineHomePath } from "@/shared/offline/offline-presentation";
 import { readDownloads, removeDownload } from "@/shared/offline/module3-storage";
 
 export function OfflineRuntime() {
@@ -35,6 +37,7 @@ export function OfflineRuntime() {
         event.preventDefault();
         event.stopPropagation();
         if (
+          isOfflineHomePath(url.pathname) ||
           url.pathname === "/artesana/aprender" ||
           url.pathname.startsWith("/artesana/aprender/")
         )
@@ -84,12 +87,13 @@ export function OfflineRuntime() {
     <aside
       role="status"
       aria-live="polite"
-      className="sticky top-0 z-50 space-y-2 border-b border-[#b5245b]/20 bg-[#fff5f8] px-5 py-3 text-sm text-[#7a1042]"
+      className="sticky top-0 z-50 border-b border-[#b5245b]/20 bg-[#fff5f8] px-4 pb-2 pt-[calc(.5rem+env(safe-area-inset-top))] text-xs leading-5 text-[#7a1042] sm:text-sm"
     >
       {!online && (
-        <p>
-          Estás usando Warmi sin internet. Puedes seguir viendo tus contenidos
-          descargados.
+        <p className="flex flex-wrap items-center gap-x-2">
+          <WifiOff aria-hidden="true" className="h-4 w-4 shrink-0" />
+          <strong>Sin conexión</strong>
+          <span>Contenido descargado disponible</span>
         </p>
       )}
       {message && <p>{message}</p>}

@@ -77,7 +77,8 @@ export function buildOfflineModule(
   userId: string,
   course: Course,
   module: LearningModule,
-  additionalSupport: LearningModule["lessons"] = []
+  additionalSupport: LearningModule["lessons"] = [],
+  completedLessonIds?: string[]
 ): OfflineModule {
   const support = [
     ...new Map(
@@ -88,6 +89,16 @@ export function buildOfflineModule(
   ];
   const supportIds = new Set(support.map((lesson) => lesson.id));
   return {
+    ...(completedLessonIds
+      ? {
+          progress: {
+            completedLessonIds: module.lessons
+              .filter((l) => completedLessonIds.includes(l.id))
+              .map((l) => l.id),
+            capturedAt: new Date().toISOString()
+          }
+        }
+      : {}),
     ...(module.id === LEARNING_PROGRAM.modules[2].id
       ? { contentVersion: MODULE3_CONTENT_VERSION }
       : {}),
@@ -108,7 +119,12 @@ export function buildOfflineModule(
 export class OfflineLearningService {
   constructor(private readonly courses: EnrollmentReader = new CourseRepository()) {}
 
-  async getModuleSnapshot(userId: string, course: Course, module: LearningModule) {
+  async getModuleSnapshot(
+    userId: string,
+    course: Course,
+    module: LearningModule,
+    completedLessonIds?: string[]
+  ) {
     const support: LearningModule["lessons"] = [];
     const seen = new Set<string>();
     for (const resource of module.lessons.flatMap((lesson) => lesson.lessonFiles)) {
@@ -123,7 +139,7 @@ export class OfflineLearningService {
       );
       if (lesson) support.push(lesson);
     }
-    return buildOfflineModule(userId, course, module, support);
+    return buildOfflineModule(userId, course, module, support, completedLessonIds);
   }
 
   async getAuthorizedFile(userId: string, courseId: string, fileId: string) {

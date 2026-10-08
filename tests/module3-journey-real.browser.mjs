@@ -1,3 +1,4 @@
+import { navigateDownloadedLearning } from "./offline-navigation.browser.mjs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { randomUUID, createHash } from "node:crypto";
@@ -75,7 +76,10 @@ async function next(page) {
     .click();
 }
 async function openLesson(page, order) {
-  await page.goto(`${courseHref}/lecciones/${MODULE3_SESSIONS[order - 1].id}`);
+  await navigateDownloadedLearning(
+    page,
+    `${courseHref}/lecciones/${MODULE3_SESSIONS[order - 1].id}`
+  );
   await page
     .locator(order === 1 ? "[data-module3-session1]" : `[data-session-order="${order}"]`)
     .waitFor();

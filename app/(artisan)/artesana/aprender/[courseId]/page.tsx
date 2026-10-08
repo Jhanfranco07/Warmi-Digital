@@ -75,7 +75,10 @@ export default async function ArtisanCourseDetailPage({
               await new OfflineLearningService().getModuleSnapshot(
                 session.user.id,
                 course,
-                module
+                module,
+                enrollment.lessonProgresses
+                  .filter((p) => p.completed)
+                  .map((p) => p.lessonId)
               )
             ] as const
         )

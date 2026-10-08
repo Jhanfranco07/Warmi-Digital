@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { Route } from "next";
-import { ArrowLeft } from "lucide-react";
+import { LearningLessonHeader } from "@/features/artisan/learning/learning-lesson-header";
+import { moduleCapability } from "@/shared/learning/program";
 import { ArtisanShell } from "@/features/artisan/artisan-panel";
 import { LessonCompletionButton } from "@/features/artisan/lesson-completion-button";
 import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
@@ -56,19 +56,11 @@ export async function Module3Session1Lesson({
   return (
     <ArtisanShell>
       <div className="mx-auto max-w-3xl space-y-5">
-        <header className="space-y-3 border-b border-[#ead2dc] pb-5">
-          <Link
-            href={href}
-            className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Aprender para crecer
-          </Link>
-          <p className="text-sm font-bold text-[#24756f]">{lesson.module.title}</p>
-          <h1 className="font-display text-2xl font-bold text-[#202b29]">
-            {lesson.title}
-          </h1>
-        </header>
+        <LearningLessonHeader
+          courseHref={href}
+          moduleTitle={moduleCapability(lesson.module.id)?.title ?? lesson.module.title}
+          title={lesson.title}
+        />
         <Module3Session1Content
           title={lesson.title}
           content={lesson.content}

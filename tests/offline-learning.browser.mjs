@@ -1,8 +1,9 @@
+import { navigateDownloadedLearning } from "./offline-navigation.browser.mjs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, dirname, resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
@@ -98,7 +99,7 @@ resources.push({
 });
 const bundled = await build({
   stdin: {
-    contents: `import React from 'react'; import {createRoot} from 'react-dom/client'; import {ModuleDownload} from './features/artisan/offline/module-download'; import * as storage from './shared/offline/module3-storage'; window.offlineTest = {...storage, mount(snapshot) {const host = document.createElement('div'); document.body.append(host); createRoot(host).render(React.createElement(ModuleDownload, {module:snapshot}));}};`,
+    contents: `import React from 'react'; import {createRoot} from 'react-dom/client'; import {ModuleDownload} from './features/artisan/offline/module-download'; import * as storage from './shared/offline/module3-storage'; window.offlineTest = {...storage, mount(snapshot) {const host = document.createElement('div'); host.style.paddingBottom='160px'; document.body.append(host); createRoot(host).render(React.createElement(ModuleDownload, {module:snapshot}));}};`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -236,7 +237,15 @@ try {
   await context.close();
   page = await openBrowser(false);
   await page.goto(`${origin}/artesana/aprender`);
+  await page.getByRole("link", { name: "Continuar mi aprendizaje", exact: true }).click();
   await page.getByText(snapshot.title, { exact: true }).waitFor();
+  if (
+    await page
+      .locator("details:not([open]) > summary")
+      .getByText("Todas las sesiones", { exact: true })
+      .count()
+  )
+    await page.getByText("Todas las sesiones", { exact: true }).click();
   await page.getByRole("link", { name: "1. Primera lección" }).click();
   assert.equal(
     await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
@@ -247,6 +256,13 @@ try {
   await page.getByRole("link", { name: "Abrir lección de apoyo" }).click();
   await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Texto de apoyo local.", { exact: true }).waitFor();
+  if (
+    await page
+      .locator("details:not([open]) > summary")
+      .getByText("Todas las sesiones", { exact: true })
+      .count()
+  )
+    await page.getByText("Todas las sesiones", { exact: true }).click();
   await page.getByRole("link", { name: "1. Primera lección" }).click();
   assert.equal(
     await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
@@ -296,16 +312,27 @@ try {
     path: join(tmpdir(), "warmi-offline-desktop.png"),
     fullPage: true
   });
+  if (
+    await page
+      .locator("details:not([open]) > summary")
+      .getByText("Todas las sesiones", { exact: true })
+      .count()
+  )
+    await page.getByText("Todas las sesiones", { exact: true }).click();
   await page.getByRole("link", { name: "2. Segunda lección" }).click();
   await page.getByText("Leer texto completo", { exact: true }).click();
   await page.getByText("Otra lectura local.", { exact: true }).waitFor();
-  await page.goto(
+  await navigateDownloadedLearning(
+    page,
     `${origin}/artesana/aprender/offline-test-course/lecciones/not-downloaded`
   );
   await page
     .getByText("Este contenido todavía no está disponible sin conexión.", { exact: true })
     .waitFor();
-  await page.goto(`${origin}/artesana/aprender/offline-test-course`);
+  await navigateDownloadedLearning(
+    page,
+    `${origin}/artesana/aprender/offline-test-course`
+  );
   await context.setOffline(false);
   await page.getByRole("button", { name: "Volver con conexión" }).waitFor();
   await page.getByRole("button", { name: "Eliminar descarga" }).click();
@@ -353,5 +380,10 @@ try {
   throw error;
 } finally {
   await context?.close();
-  await rm(profile, { recursive: true, force: true });
+  assert.equal(dirname(resolve(profile)), resolve(tmpdir()));
+  assert.equal(
+    resolve(profile).startsWith(join(resolve(tmpdir()), "warmi-offline-test-")),
+    true
+  );
+  await rm(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 250 });
 }

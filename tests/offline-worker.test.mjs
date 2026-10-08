@@ -46,8 +46,34 @@ function worker() {
     });
     return response;
   }
-  return { request, entries };
+  return { request, entries, handlers, context };
 }
+
+test("shell upgrade removes only previous public shells and preserves every downloaded media generation", async () => {
+  const { handlers, context } = worker();
+  const names = [
+    "warmi-offline-shell-v4",
+    "warmi-offline-shell-v5",
+    "warmi-module3-old",
+    "warmi-learning-module-m3-generation",
+    "warmi-learning-module-m4-generation"
+  ];
+  const removed = [];
+  context.caches.keys = async () => names;
+  context.caches.delete = async (name) => {
+    removed.push(name);
+    return true;
+  };
+  context.self.clients = { claim: async () => {} };
+  let done;
+  handlers.activate({
+    waitUntil: (promise) => {
+      done = promise;
+    }
+  });
+  await done;
+  assert.deepEqual(removed, ["warmi-offline-shell-v4"]);
+});
 
 test("offline shell preserves entry and learning URLs, without caching auth or other modules", async () => {
   const { request, entries } = worker();

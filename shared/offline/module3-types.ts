@@ -69,6 +69,8 @@ export type OfflineLesson = {
 };
 
 export type OfflineModule = {
+  // Read-only snapshot; old packages omit it and must not imply zero progress.
+  progress?: { completedLessonIds: string[]; capturedAt: string };
   contentVersion?: string;
   userId: string;
   courseId: string;

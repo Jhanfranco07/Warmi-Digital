@@ -1,4 +1,4 @@
-const SHELL_CACHE = "warmi-offline-shell-v4";
+const SHELL_CACHE = "warmi-offline-shell-v5";
 const SHELL_URL = "/offline-learning";
 
 async function prepareShell() {
@@ -7,6 +7,7 @@ async function prepareShell() {
   if (!response.ok || response.redirected) throw new Error("Shell unavailable");
   const html = await response.clone().text();
   const urls = new Set([
+    "/images/hero/warmi-hero.png",
     "/icons/faviconWarmi.png",
     "/images/accessibility/warmi-voice-guide1.png",
     "/images/accessibility/warmi-voice-guide2.png"
@@ -105,7 +106,7 @@ self.addEventListener("fetch", (event) => {
     }));
     return;
   }
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/")) {
+  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/") || url.pathname === "/images/hero/warmi-hero.png") {
     event.respondWith(caches.match(request).then((cached) => cached || fetch(request)));
     return;
   }

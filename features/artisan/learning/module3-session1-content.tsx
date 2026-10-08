@@ -344,7 +344,7 @@ export function Module3Session1Content({
           aria-label="Lecciones de apoyo"
           className="space-y-3 border-t border-[#ead2dc] pt-4"
         >
-          <h2 className="text-base font-bold">Material de apoyo existente</h2>
+          <h2 className="text-base font-bold">Material de apoyo</h2>
           {supports.map((item) => (
             <a
               key={item.id}

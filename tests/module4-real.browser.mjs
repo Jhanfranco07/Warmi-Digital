@@ -1,3 +1,4 @@
+import { navigateDownloadedLearning } from "./offline-navigation.browser.mjs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { randomUUID } from "node:crypto";
@@ -57,7 +58,10 @@ async function open(offline = false) {
   return page;
 }
 async function lesson(page, order) {
-  await page.goto(`${courseHref}/lecciones/${MODULE4_SESSIONS[order - 1].id}`);
+  await navigateDownloadedLearning(
+    page,
+    `${courseHref}/lecciones/${MODULE4_SESSIONS[order - 1].id}`
+  );
   await page.locator(`[data-module4-session][data-session-order="${order}"]`).waitFor();
 }
 async function next(page) {
@@ -329,7 +333,10 @@ try {
     assert.equal(result.hash, file.metadata.sha256);
   }
   // M3 stays readable alongside M4 after a full offline restart.
-  await page.goto(`${courseHref}/lecciones/8a8e449b-76a6-4a6d-9693-6238f75092bc`);
+  await navigateDownloadedLearning(
+    page,
+    `${courseHref}/lecciones/8a8e449b-76a6-4a6d-9693-6238f75092bc`
+  );
   await page.locator("[data-module3-session1]").waitFor();
   await context.setOffline(false);
   await page.goto(courseHref);

@@ -69,6 +69,7 @@ export type OfflineLesson = {
 };
 
 export type OfflineModule = {
+  contentVersion?: string;
   userId: string;
   courseId: string;
   courseTitle: string;
@@ -92,5 +93,21 @@ export function isDownloadableFile(file: OfflineResource["file"]) {
     (file.mimeType.startsWith("image/") ||
       file.mimeType === "application/pdf" ||
       file.mimeType === "video/mp4")
+  );
+}
+
+export function isCurrentDownload(download: ModuleDownload, expected: OfflineModule) {
+  const revision = (value: OfflineModule) =>
+    JSON.stringify({
+      contentVersion: value.contentVersion,
+      lessons: value.lessons,
+      supportLessons: value.supportLessons ?? []
+    });
+  return (
+    revision(download) === revision(expected) &&
+    [...expected.lessons, ...(expected.supportLessons ?? [])]
+      .flatMap((lesson) => lesson.resources)
+      .filter((resource) => isDownloadableFile(resource.file))
+      .every((resource) => Boolean(download.assets[resource.file!.id]))
   );
 }

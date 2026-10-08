@@ -10,7 +10,7 @@ El Modulo 3 se llama `Módulo 3: Herramientas digitales para vender`, conservand
 
 - Modulo 1, order 1: `7dd54036-26d9-4104-8008-9d559135b461`. Disponible online con exactamente cuatro sesiones: Gmail/adjuntos, instituciones, requisitos previos y Zoom/Meet. Reutiliza la lección histórica de creación de Gmail y su PDF. La introducción histórica se conserva como apoyo enlazado, fuera de las cuatro sesiones. Detalles, IDs y fuentes en [MODULE1_LEARNING.md](MODULE1_LEARNING.md).
 - Modulo 2, order 2: `c156c5d5-8c81-48f8-85d4-234ecb21ec0e`. Disponible online con cuatro sesiones reales: oportunidades, lectura de convocatoria, documentos/formularios y simulación. Detalles e IDs en [MODULE2_LEARNING.md](MODULE2_LEARNING.md). M1 y M2 comparten recorrido guiado de un paso principal a la vez.
-- Modulo 3, order 3: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Conserva las dos sesiones, sus textos, orden 1/2, seis MP4 y todos los recursos. Las dos lecciones introductorias de WhatsApp permanecen en su curso original y se resuelven como material de apoyo publicado.
+- Modulo 3, order 3: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Tiene cuatro sesiones: S1 conservada, S2 tiendas virtuales, S3 cobros y S4 simulación de entrega. Conserva los seis MP4 originales y todos los recursos previos. Detalles en [MODULE3_SESSIONS_2_4.md](MODULE3_SESSIONS_2_4.md). Las dos lecciones introductorias de WhatsApp permanecen en su curso original y se resuelven como material de apoyo publicado.
 
 - Modulo 4: tarjeta `Módulo 4: Estrategias de venta y autonomía digital`, imagen y `Contenido en preparación.`. No se crean módulos persistentes ni lecciones artificiales.
 
@@ -18,7 +18,7 @@ Los cursos antiguos no se eliminaron. El curso Gmail conserva un módulo histór
 
 ## Disponibilidad, progreso e imágenes temporales
 
-El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden. M1, M2 y M3 tienen `status: available`; M4 sigue `preparing`. El progreso cuenta cuatro sesiones M1, cuatro M2 y dos M3. Solo M3 conserva `offline: true`; los nuevos recorridos online no habilitan otra descarga ni cambian el Service Worker.
+El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden. M1, M2 y M3 tienen `status: available`; M4 sigue `preparing`. El progreso cuenta cuatro sesiones M1, cuatro M2 y cuatro M3. Solo M3 conserva `offline: true`; los nuevos recorridos online no habilitan otra descarga ni cambian el Service Worker.
 
 `availableLearningModules` y `learningProgress` excluyen las lecciones ocultas del porcentaje, duración y siguiente lección. Mi aprendizaje y el dashboard calculan el avance del programa desde sus lecciones disponibles, sin usar un porcentaje histórico guardado. `ProgressRepository` guarda el resumen con ese mismo criterio al completar una sesión. Los enlaces directos del programa a lecciones ocultas vuelven a su tarjeta de curso; la acción de completar rechaza esas lecciones. Los LessonProgress antiguos permanecen en PostgreSQL.
 

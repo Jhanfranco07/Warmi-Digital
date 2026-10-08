@@ -1,5 +1,7 @@
 # Videos reales del Modulo 3
 
+Estado actual de las cuatro sesiones, guías S2/S3/S4 y actualización compatible de descargas: [MODULE3_SESSIONS_2_4.md](MODULE3_SESSIONS_2_4.md). Las secciones siguientes conservan la historia de la implementación anterior.
+
 Modulo: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`, titulo exacto `Módulo 3: Herramienta digitales para crecer`.
 Contenedor actual: `Aprender para crecer`, Course ID `93dc7355-d746-4acd-87df-29f71d16a955`. La reestructuracion conserva los seis File y LessonFile de esta tabla, sin cambiar public_id, URL ni position.
 Cuenta Cloudinary local verificada: `szhwzy4q`. No se modificaron credenciales, schema, migraciones, editor general, lecciones ni recursos existentes.

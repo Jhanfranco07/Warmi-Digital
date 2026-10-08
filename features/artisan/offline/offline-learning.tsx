@@ -14,6 +14,9 @@ import {
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
+import { Module3JourneyContent } from "@/features/artisan/learning/module3-journey-content";
+import { MODULE3_SESSIONS } from "@/shared/learning/module3-journey";
+import { MODULE3_CONTENT_VERSION } from "@/shared/learning/module3-version";
 import {
   MODULE3_SESSION1_ID,
   MODULE3_SESSION2_ID,
@@ -155,6 +158,13 @@ export function OfflineLearning() {
           {lesson?.title ?? "Mi aprendizaje"}
         </h1>
       </header>
+      {download?.moduleId === LEARNING_PROGRAM.modules[2].id &&
+        download.contentVersion !== MODULE3_CONTENT_VERSION && (
+          <p role="status" className="rounded-md border border-[#dfc7d2] p-4">
+            Tienes una descarga anterior del Módulo 3. Puedes seguir usándola. Conéctate y
+            actualiza la descarga para acceder a las cuatro sesiones y sus guías nuevas.
+          </p>
+        )}
       {!lessonId && downloads.length > 1 && (
         <nav aria-label="Módulos descargados" className="flex flex-wrap gap-3">
           {downloads.map((item) => (
@@ -275,6 +285,32 @@ function OfflineLessonContent({
   lesson: OfflineLesson;
   download: ModuleDownload;
 }) {
+  if (
+    download.contentVersion === MODULE3_CONTENT_VERSION &&
+    MODULE3_SESSIONS.slice(1).some((s) => s.id === lesson.id)
+  ) {
+    return (
+      <Module3JourneyContent
+        offline
+        courseId={LEARNING_PROGRAM.id}
+        lessonId={lesson.id}
+        resources={lesson.resources.flatMap((r) =>
+          r.file
+            ? [
+                {
+                  id: r.id,
+                  title: r.title,
+                  mimeType: r.file.mimeType,
+                  publicId: r.externalUrl,
+                  url: download.assets[r.file.id],
+                  downloadUrl: download.assets[r.file.id]
+                }
+              ]
+            : []
+        )}
+      />
+    );
+  }
   if (lesson.id === MODULE3_SESSION1_ID) {
     const resourceView = (resource: OfflineResource): Session1Resource => ({
       id: resource.id,

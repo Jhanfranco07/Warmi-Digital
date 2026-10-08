@@ -1,5 +1,7 @@
 # Offline del Modulo 3
 
+Estado actual de las cuatro sesiones, guías S2/S3/S4 y actualización compatible de descargas: [MODULE3_SESSIONS_2_4.md](MODULE3_SESSIONS_2_4.md). Las secciones siguientes conservan la historia de la implementación anterior.
+
 Implementacion acotada a `Módulo 3: Herramienta digitales para crecer`, dentro de Mi aprendizaje. No agrega entradas al menu ni modifica rutas existentes. El cambio de nombre conserva el ID y los paquetes descargados; el shell muestra el titulo actual del catalogo por ID.
 
 ## Contenido real del curso

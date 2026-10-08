@@ -1,4 +1,6 @@
 import { CourseRepository } from "@/shared/repositories/course.repository";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { MODULE3_CONTENT_VERSION } from "@/shared/learning/module3-version";
 import {
   isDownloadableFile,
   isOfflineModule,
@@ -85,6 +87,9 @@ export function buildOfflineModule(
   ];
   const supportIds = new Set(support.map((lesson) => lesson.id));
   return {
+    ...(module.id === LEARNING_PROGRAM.modules[2].id
+      ? { contentVersion: MODULE3_CONTENT_VERSION }
+      : {}),
     userId,
     courseId: course.id,
     courseTitle: course.title,

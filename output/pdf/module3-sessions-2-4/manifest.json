@@ -1,0 +1,26 @@
+[
+  {
+    "order": 2,
+    "key": "elegir-donde-vender",
+    "title": "Guía para elegir dónde vender por internet",
+    "filename": "elegir-donde-vender.pdf",
+    "bytes": 4504,
+    "sha256": "c08c33dcf2931299c652fcb68a715c5072bb809162374824aee41ef18de5520d"
+  },
+  {
+    "order": 3,
+    "key": "cobros-seguros-yape-plin",
+    "title": "Guía de cobros seguros con Yape y Plin",
+    "filename": "cobros-seguros-yape-plin.pdf",
+    "bytes": 3443,
+    "sha256": "9da67e79a2ed10cfe34ed53f65bae4f96039b11baa8aea2b9a7cb9da5b375f71"
+  },
+  {
+    "order": 4,
+    "key": "entregar-venta-en-linea",
+    "title": "Checklist para entregar una venta en línea",
+    "filename": "entregar-venta-en-linea.pdf",
+    "bytes": 4115,
+    "sha256": "c9895236dafb3729a32328352b1a39696fa46a513c9392b0ef94c4166e3557b0"
+  }
+]

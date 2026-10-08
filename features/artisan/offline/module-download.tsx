@@ -12,13 +12,17 @@ import {
   removeDownload,
   verifiedDownload
 } from "@/shared/offline/module3-storage";
-import { isDownloadableFile, type OfflineModule } from "@/shared/offline/module3-types";
+import {
+  isDownloadableFile,
+  isCurrentDownload,
+  type OfflineModule
+} from "@/shared/offline/module3-types";
 
 export function ModuleDownload({ module }: { module: OfflineModule }) {
   const controller = useRef<AbortController | null>(null);
-  const [status, setStatus] = useState<"idle" | "downloading" | "ready" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "downloading" | "ready" | "outdated" | "error"
+  >("idle");
   const [progress, setProgress] = useState(0);
   const [bytes, setBytes] = useState(0);
   const [error, setError] = useState("");
@@ -34,22 +38,27 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
     ).values()
   ];
   const approximateSize = files.reduce((total, file) => total + file.size, 0);
+  const revision = JSON.stringify(module);
 
   useEffect(() => {
+    const expected = JSON.parse(revision) as OfflineModule;
     const connection = () => setOnline(navigator.onLine);
     connection();
     window.addEventListener("online", connection);
     window.addEventListener("offline", connection);
-    void verifiedDownload(module.moduleId)
+    void verifiedDownload(expected.moduleId)
       .then(async (download) => {
         setHasLocalData(
-          Boolean(await readDownload(module.moduleId)) ||
+          Boolean(await readDownload(expected.moduleId)) ||
             (await caches.keys()).some((name) =>
-              name.startsWith(moduleCachePrefix(module.moduleId))
+              name.startsWith(moduleCachePrefix(expected.moduleId))
             )
         );
-        if (download?.moduleId === module.moduleId && download.userId === module.userId) {
-          setStatus("ready");
+        if (
+          download?.moduleId === expected.moduleId &&
+          download.userId === expected.userId
+        ) {
+          setStatus(isCurrentDownload(download, expected) ? "ready" : "outdated");
           setBytes(download.bytes);
         }
       })
@@ -60,7 +69,7 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
       window.removeEventListener("online", connection);
       window.removeEventListener("offline", connection);
     };
-  }, [module.moduleId, module.userId]);
+  }, [revision]);
 
   async function download() {
     setStatus("downloading");
@@ -113,11 +122,13 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
         {status === "ready" && <CheckCircle2 className="h-5 w-5 text-green-700" />}
         {status === "ready"
           ? "Disponible sin conexión"
-          : status === "downloading"
-            ? "Descargando..."
-            : status === "error"
-              ? "Error de descarga"
-              : "No descargado"}
+          : status === "outdated"
+            ? "Hay contenido nuevo. Actualiza tu descarga con conexión. La anterior sigue disponible."
+            : status === "downloading"
+              ? "Descargando..."
+              : status === "error"
+                ? "Error de descarga"
+                : "No descargado"}
       </p>
       <p className="text-sm text-muted-foreground">
         {status === "ready"
@@ -146,7 +157,9 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
             className="h-auto min-h-12 whitespace-normal text-left"
           >
             <Download className="h-5 w-5 shrink-0" />
-            Descargar para usar sin internet
+            {status === "outdated"
+              ? "Actualizar descarga"
+              : "Descargar para usar sin internet"}
           </Button>
         )}
         {hasLocalData && status !== "downloading" && (

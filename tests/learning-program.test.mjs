@@ -108,7 +108,7 @@ test("unavailable-only programs have no artificial completion", () => {
   });
 });
 
-test("four stable cards: M1/M2 online, M3/M4 available offline", () => {
+test("four stable cards: all available online, only M3 downloadable offline", () => {
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.order),
     [1, 2, 3, 4]
@@ -119,7 +119,7 @@ test("four stable cards: M1/M2 online, M3/M4 available offline", () => {
   );
   assert.deepEqual(
     LEARNING_PROGRAM.modules.map((module) => module.offline),
-    [false, false, true, true]
+    [false, false, true, false]
   );
   assert.equal(LEARNING_PROGRAM.modules[0].id, "7dd54036-26d9-4104-8008-9d559135b461");
   assert.equal(LEARNING_PROGRAM.modules[2].id, "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");

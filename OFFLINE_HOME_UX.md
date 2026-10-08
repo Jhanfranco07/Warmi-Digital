@@ -1,5 +1,15 @@
 # Offline Home y presentación del aprendizaje
 
+## Regla vigente de descarga
+
+**Actualmente el único módulo descargable para uso offline es Módulo 3.** Offline Home no habilita otros módulos: muestra las fichas completas que realmente existen en el dispositivo. M1/M2/M4 no generan manifiestos descargables ni controles de descarga; los archivos exclusivos de esos módulos son rechazados por la API offline. El cliente también rechaza iniciarlos antes de tocar almacenamiento.
+
+Se conserva la lectura/eliminación de copias M4 históricas para no borrar datos locales sin instrucción. Una copia previa no puede actualizarse ni descargarse otra vez. Los textos que describen M3/M4 conjuntamente más abajo registran la validación de `ce7c877`, anterior a esta corrección. Estado y auditoría actual: [MODULE4_AUDIT.md](MODULE4_AUDIT.md).
+
+## Validación de la restricción vigente
+
+52/52 tests unitarios y las dos pruebas de navegador aislada/real aprobados. En un perfil nuevo solo M3 ofrece control de descarga y genera ficha; la API rechaza archivos exclusivos de M1/M2/M4. Home, landing público, manifest, cuatro sesiones, ocho MP4/diez PDF, rangos, reinicio, legacy, actualización/rollback y borrado siguen funcionando. La prueba aislada conserva lectura/eliminación de un paquete M4 histórico sin habilitar nuevas descargas. PostgreSQL idéntico antes/después. Detalle y límites en MODULE4_AUDIT.md.
+
 ## Motivo y alcance
 
 Una artesana que vuelve sin conexión debe reconocer Warmi antes de abrir sus contenidos. Se mejora el shell público existente, su presentación y navegación. No se crea otra infraestructura offline ni se modifican textos pedagógicos, Course/Module/Lesson, File/LessonFile, Cloudinary, esquema, seed o autenticación.
@@ -62,7 +72,7 @@ Prioridad 360/390/430 px y revisión a 768/1365 px. Márgenes de lectura, títul
 
 SpeechButton/useSpeech/speechSynthesis no se sustituyen. La voz sin conexión sigue dependiendo de una voz local instalada; las pruebas de API no certifican audibilidad ni calidad en un teléfono físico.
 
-## Validación
+## Validación histórica de ce7c877
 
 Resultado validado sobre el build de producción local:
 

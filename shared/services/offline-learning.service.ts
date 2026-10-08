@@ -125,6 +125,8 @@ export class OfflineLearningService {
     module: LearningModule,
     completedLessonIds?: string[]
   ) {
+    if (!isOfflineModule(module.id))
+      throw new Error("Este módulo no está habilitado para descargar sin conexión.");
     const support: LearningModule["lessons"] = [];
     const seen = new Set<string>();
     for (const resource of module.lessons.flatMap((lesson) => lesson.lessonFiles)) {

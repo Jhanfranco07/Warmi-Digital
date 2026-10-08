@@ -11,8 +11,7 @@ require(require.resolve("@next/env", { paths: [require.resolve("next")] })).load
 );
 const { prisma } = await import("../shared/server/db/prisma.ts");
 const { LEARNING_PROGRAM } = await import("../shared/learning/program.ts");
-const { MODULE4_ID, MODULE4_SESSIONS, MODULE4_CONTENT_VERSION } =
-  await import("../shared/learning/module4.ts");
+const { MODULE4_ID, MODULE4_SESSIONS } = await import("../shared/learning/module4.ts");
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const { hash } = require("bcrypt");
 const origin = process.env.WARMI_TEST_URL || "http://localhost:3100",
@@ -93,20 +92,7 @@ async function touch(page, button) {
     true
   );
 }
-async function read(page) {
-  return page.evaluate(async () => {
-    const db = await new Promise((res) => {
-      const r = indexedDB.open("warmi-learning-offline", 1);
-      r.onsuccess = () => res(r.result);
-    });
-    const records = await new Promise((res) => {
-      const r = db.transaction("downloads").objectStore("downloads").getAll();
-      r.onsuccess = () => res(r.result);
-    });
-    db.close();
-    return records;
-  });
-}
+
 try {
   const role = await prisma.role.findUniqueOrThrow({ where: { name: "ARTESANA" } });
   await prisma.user.create({
@@ -236,144 +222,30 @@ try {
   );
   await page.getByRole("link", { name: "Finalizar Módulo 4", exact: true }).click();
   await page.waitForURL(courseHref);
-  const m4 = page.locator(`#modulo-${MODULE4_ID}`);
-  await m4
-    .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
-    .click();
-  await m4
-    .getByText("Disponible sin conexión", { exact: true })
-    .waitFor({ timeout: 120000 });
-  const m3 = page.locator(`#modulo-${LEARNING_PROGRAM.modules[2].id}`);
-  await m3
-    .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
-    .click();
-  await m3
-    .getByText("Disponible sin conexión", { exact: true })
-    .waitFor({ timeout: 240000 });
-  const downloads = await read(page);
-  assert.equal(downloads.length, 2);
-  const download = downloads.find((d) => d.moduleId === MODULE4_ID);
-  assert.equal(download.contentVersion, MODULE4_CONTENT_VERSION);
-  assert.equal(download.lessons.length, 4);
-  assert.equal(Object.keys(download.assets).length, 9);
-  assert.equal(download.bytes, 283202);
-  const sizes = await page.evaluate(async (cacheName) => {
-    let resources = 0,
-      shell = 0;
-    for (const name of await caches.keys()) {
-      if (name !== cacheName && !name.startsWith("warmi-offline-shell-")) continue;
-      const cache = await caches.open(name);
-      for (const r of await cache.keys()) {
-        const size = (await (await cache.match(r)).arrayBuffer()).byteLength;
-        if (name === cacheName) resources += size;
-        else shell += size;
-      }
-    }
-    return { resources, shell };
-  }, download.cacheName);
-  sizes.metadata = new TextEncoder().encode(JSON.stringify(download)).byteLength;
-  sizes.total = sizes.resources + sizes.shell + sizes.metadata;
-  await context.close();
-  context = undefined;
-  page = await open(true);
-  for (let order = 1; order <= 4; order++) {
-    await lesson(page, order);
-    const steps = order === 1 ? 3 : order === 2 || order === 3 ? 2 : 4;
-    for (let step = 0; step < steps; step++) {
-      await photos(page);
-      if (order === 3 && step === 0) {
-        await page
-          .getByRole("button", {
-            name: "Consultar el reconocimiento oficial",
-            exact: true
-          })
-          .click();
-        await page
-          .getByText("Este recurso necesita conexión a internet.", { exact: true })
-          .waitFor();
-        await page
-          .getByRole("button", { name: "Ver el documento de apoyo", exact: true })
-          .click();
-        await photos(page);
-      }
-      if (step < steps - 1) await next(page);
-    }
-    if (order === 4) {
-      await page.getByRole("button", { name: "Finalizar práctica", exact: true }).click();
-      await page.locator("[data-module4-closing]").waitFor();
-      await touch(
-        page,
-        page.getByRole("link", { name: "Finalizar Módulo 4", exact: true })
-      );
-      await page.getByText(/Práctica finalizada sin conexión/).waitFor();
-      await photos(page);
-      await page.screenshot({
-        path: join(output, "m4-closing-offline.png"),
-        fullPage: true
-      });
-    }
-  }
-  for (const file of files) {
-    const result = await page.evaluate(async (url) => {
-      const r = await fetch(url);
-      const data = await r.arrayBuffer();
-      const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-      return {
-        status: r.status,
-        mime: r.headers.get("content-type"),
-        bytes: data.byteLength,
-        hash
-      };
-    }, download.assets[file.id]);
-    assert.equal(result.status, 200);
-    assert.equal(result.mime, "image/webp");
-    assert.equal(result.bytes, file.size);
-    assert.equal(result.hash, file.metadata.sha256);
-  }
-  // M3 stays readable alongside M4 after a full offline restart.
-  await navigateDownloadedLearning(
-    page,
-    `${courseHref}/lecciones/8a8e449b-76a6-4a6d-9693-6238f75092bc`
+  assert.equal(await page.locator(`#modulo-${MODULE4_ID}`).count(), 0);
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
+      .count(),
+    1
   );
-  await page.locator("[data-module3-session1]").waitFor();
-  await context.setOffline(false);
-  await page.goto(courseHref);
-  await page
-    .locator(`#modulo-${MODULE4_ID}`)
-    .getByRole("button", { name: "Eliminar descarga", exact: true })
-    .click();
-  await page
-    .locator(`#modulo-${MODULE4_ID}`)
-    .getByText("No descargado", { exact: true })
-    .waitFor();
-  assert.deepEqual(
-    (await read(page)).map((d) => d.moduleId),
-    [LEARNING_PROGRAM.modules[2].id]
-  );
-  assert.equal(await page.evaluate((n) => caches.has(n), download.cacheName), false);
-  await page
-    .locator(`#modulo-${LEARNING_PROGRAM.modules[2].id}`)
-    .getByRole("button", { name: "Eliminar descarga", exact: true })
-    .click();
-  await page
-    .locator(`#modulo-${LEARNING_PROGRAM.modules[2].id}`)
-    .getByText("No descargado", { exact: true })
-    .waitFor();
-  assert.equal((await read(page)).length, 0);
   assert.equal(await snapshot(), before);
   await writeFile(
     join(output, "browser-result.json"),
     JSON.stringify(
-      { passed: true, assets: 9, sizes, sourceImages: [...seenImages], protected: true },
+      {
+        passed: true,
+        assets: 9,
+        sourceImages: [...seenImages],
+        protected: true,
+        offline: false
+      },
       null,
       2
     )
   );
-  console.log(JSON.stringify({ passed: true, assets: 9, sizes }));
   console.log(
-    "PASS offline: full browser restart, four sessions, nine WebP SHA256 checks, voice controls, external guard, closing, coexistence with M3, reconnect and isolated deletion; M1/M2/M3 and original progress unchanged."
+    "PASS capability: M4 remains online with no download control; only M3 is downloadable."
   );
 } catch (error) {
   const page = context?.pages()[0];

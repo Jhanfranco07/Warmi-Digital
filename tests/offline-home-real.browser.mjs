@@ -10,7 +10,8 @@ require(require.resolve("@next/env", { paths: [require.resolve("next")] })).load
 );
 const { prisma } = await import("../shared/server/db/prisma.ts");
 const { LEARNING_PROGRAM } = await import("../shared/learning/program.ts");
-const { getReferencedLesson } = await import("../shared/offline/module3-types.ts");
+const { getReferencedLesson, isOfflineModule } =
+  await import("../shared/offline/module3-types.ts");
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const { build } = require(
   require.resolve("esbuild", { paths: [require.resolve("tsx/package.json")] })
@@ -256,6 +257,36 @@ try {
   await page.goto(`${origin}/artesana/aprender`);
   assert.equal(await page.locator("[data-warmi-offline-home]").count(), 0);
   await page.goto(courseHref);
+  assert.deepEqual(
+    modules.map((m) => m.id),
+    [LEARNING_PROGRAM.modules[2].id]
+  );
+  assert.deepEqual(
+    await page
+      .locator('[id^="modulo-"]')
+      .evaluateAll((elements) => elements.map((el) => el.id)),
+    [`modulo-${LEARNING_PROGRAM.modules[2].id}`]
+  );
+  const onlineOnly = JSON.parse(before).modules.filter((m) => !isOfflineModule(m.id));
+  for (const m of onlineOnly) {
+    await page
+      .getByRole("heading", {
+        name: LEARNING_PROGRAM.modules.find((cap) => cap.id === m.id).title,
+        exact: true
+      })
+      .waitFor();
+    assert.equal(await page.locator(`#modulo-${m.id}`).count(), 0);
+    const file = m.lessons.flatMap((l) => l.lessonFiles).find((r) => r.file)?.file;
+    if (file)
+      assert.equal(
+        (
+          await page.request.get(
+            `${origin}/api/learning/offline/${courseId}/files/${file.id}`
+          )
+        ).status(),
+        404
+      );
+  }
   for (const m of modules) {
     const card = page.locator(`#modulo-${m.id}`);
     await card
@@ -516,6 +547,7 @@ try {
       {
         passed: true,
         dbUnchanged: true,
+        downloadableModuleIds: modules.map((m) => m.id),
         played: played.length,
         resources: Object.keys(d3.assets).length,
         widths: [360, 390, 430, 768, 1365],
@@ -530,7 +562,7 @@ try {
     )
   );
   console.log(
-    "PASS: real login/download; public/online flow; Home-first cold launch/deep link/restart; CTA/back/forward/module/session; shared S1 DOM; 7 accordions; PDF viewer/export; 8 MP4 and PDF/range/hash delivery; five widths; legacy; update rollback/success; isolated deletion; PostgreSQL unchanged."
+    "PASS: real login/download M3 only; M1/M2/M4 absent from download controls and rejected by file API; public/online flow; Home-first cold launch/deep link/restart; CTA/back/forward/module/session; shared S1 DOM; 7 accordions; PDF viewer/export; 8 MP4 and PDF/range/hash delivery; five widths; legacy; update rollback/success; isolated deletion; PostgreSQL unchanged."
   );
 } catch (error) {
   const page = context?.pages()[0];

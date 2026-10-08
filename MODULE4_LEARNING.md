@@ -1,5 +1,7 @@
 # Módulo 4: Estrategias de venta y autonomía digital
 
+**Regla vigente (7 de octubre de 2026): M4 está disponible solo online. Actualmente el único módulo descargable para uso offline es Módulo 3.** La habilitación offline y las pruebas M4 descritas más abajo corresponden a la entrega histórica `b8608bf`, y fueron corregidas sin modificar sesiones, imágenes o progreso. Auditoría real actual: [MODULE4_AUDIT.md](MODULE4_AUDIT.md).
+
 Entrega sobre `main` en `8828843a3e594c8e3f25cf38ecd6f08a8e4081a3`. M1, M2 y M3 conservan sus lecciones, recursos, posiciones y progreso individual. No hay cambios de schema, seed, autenticación ni credenciales.
 
 ## Recorrido

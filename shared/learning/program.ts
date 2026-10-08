@@ -38,6 +38,7 @@ export const LEARNING_PROGRAM = {
         src: "/images/discover/emprende.png",
         alt: "Artesana fotografiando un tejido con su celular"
       },
+      // Currently the only module enabled for new offline downloads.
       offline: true,
       previousCourseId: "3889134e-620b-40db-98cf-8f6b2a0c43ec"
     },
@@ -50,7 +51,7 @@ export const LEARNING_PROGRAM = {
         src: "/images/learning/module4/qallwa.webp",
         alt: "Artesana trabajando un tejido en qallwa de colores"
       },
-      offline: true,
+      offline: false,
       previousCourseId: null
     }
   ]

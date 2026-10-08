@@ -25,7 +25,7 @@ test("four M4 sessions, four sale steps, six outcomes, stable identity and real 
   assert.equal(MODULE4_SALE.length, 4);
   assert.equal(MODULE4_OUTCOMES.length, 6);
   assert.equal(LEARNING_PROGRAM.modules[3].id, MODULE4_ID);
-  assert.equal(LEARNING_PROGRAM.modules[3].offline, true);
+  assert.equal(LEARNING_PROGRAM.modules[3].offline, false);
   assert.equal(module4Progress([MODULE4_SESSIONS[3].id]), 25);
   assert.equal(module4Progress(MODULE4_SESSIONS.map((s) => s.id)), 100);
   assert.equal(
@@ -84,7 +84,7 @@ test("nine lightweight faithful WebP assets have provenance and matching hashes;
     );
   assert.equal(module4ImageKey("unrelated"), undefined);
 });
-test("M4 snapshot uses the shared cache contract and revision detection", () => {
+test("previously saved M4 records retain their cache contract and revision detection", () => {
   type Course = Parameters<typeof buildOfflineModule>[1];
   type Module = Parameters<typeof buildOfflineModule>[2];
   const learningModule = {

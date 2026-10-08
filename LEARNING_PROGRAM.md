@@ -12,13 +12,13 @@ El Modulo 3 se llama `Módulo 3: Herramientas digitales para vender`, conservand
 - Modulo 2, order 2: `c156c5d5-8c81-48f8-85d4-234ecb21ec0e`. Disponible online con cuatro sesiones reales: oportunidades, lectura de convocatoria, documentos/formularios y simulación. Detalles e IDs en [MODULE2_LEARNING.md](MODULE2_LEARNING.md). M1 y M2 comparten recorrido guiado de un paso principal a la vez.
 - Modulo 3, order 3: `6c96bcdf-0b41-48d2-bdcd-394d06acd9d2`. Tiene cuatro sesiones: S1 conservada, S2 tiendas virtuales, S3 cobros y S4 simulación de entrega. Conserva los seis MP4 originales y todos los recursos previos. Detalles en [MODULE3_SESSIONS_2_4.md](MODULE3_SESSIONS_2_4.md). Las dos lecciones introductorias de WhatsApp permanecen en su curso original y se resuelven como material de apoyo publicado.
 
-- Modulo 4, order 4: `2853b850-4032-5e82-b861-8eaaa84913f8`. Disponible con cuatro sesiones visuales: historia del producto, presentación/experiencia de la clienta, valor cultural y simulación autónoma. Nueve imágenes extraídas del material fuente y soporte offline. IDs, posiciones, recortes y publicación en [MODULE4_LEARNING.md](MODULE4_LEARNING.md).
+- Modulo 4, order 4: `2853b850-4032-5e82-b861-8eaaa84913f8`. Disponible con cuatro sesiones visuales: historia del producto, presentación/experiencia de la clienta, valor cultural y simulación autónoma. Nueve imágenes extraídas del material fuente; disponible solo online. IDs, posiciones, recortes y publicación en [MODULE4_LEARNING.md](MODULE4_LEARNING.md).
 
 Los cursos antiguos no se eliminaron. El curso Gmail conserva un módulo histórico de apoyo y no se ofrece como curso independiente en el catálogo artesano; sus enlaces de artesanas inscritas se redirigen al programa. WhatsApp mantiene Conoce WhatsApp Business y sus dos lecciones originales. Los enlaces antiguos a las sesiones trasladadas redirigen al programa tras comprobar inscripcion al destino.
 
 ## Disponibilidad, progreso e imágenes temporales
 
-El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden. Los cuatro módulos tienen `status: available`: 16 sesiones, cuatro por módulo. M3 y M4 tienen `offline: true`; M1 y M2 conservan su recorrido online. M4 reutiliza la descarga existente sin cambiar el Service Worker.
+El catálogo `shared/learning/program.ts` define `status` e `image.src`/`image.alt` para cada tarjeta. La vista recorre las cuatro entradas en orden. Los cuatro módulos tienen `status: available`: 16 sesiones, cuatro por módulo. Solo M3 tiene `offline: true`; M1, M2 y M4 conservan su recorrido online. La capacidad se define por ID estable y se valida también en servicio, API y cliente. Ver [MODULE4_AUDIT.md](MODULE4_AUDIT.md).
 
 `availableLearningModules` y `learningProgress` excluyen las lecciones ocultas del porcentaje, duración y siguiente lección. Mi aprendizaje y el dashboard calculan el avance del programa desde sus lecciones disponibles, sin usar un porcentaje histórico guardado. `ProgressRepository` guarda el resumen con ese mismo criterio al completar una sesión. Los enlaces directos del programa a lecciones ocultas vuelven a su tarjeta de curso; la acción de completar rechaza esas lecciones. Los LessonProgress antiguos permanecen en PostgreSQL.
 
@@ -58,7 +58,7 @@ Inscripciones originales se conservan. Se crea/reutiliza la inscripcion al progr
 
 ## Offline reutilizable
 
-Catalogo `shared/learning/program.ts`: capacidad por ID estable, independiente del nombre. Módulos 3 y 4 tienen offline activo. Cada uno conserva ficha, recursos y borrado independientes.
+Catalogo `shared/learning/program.ts`: capacidad por ID estable, independiente del nombre. Actualmente el único módulo descargable para uso offline es Módulo 3. M4 fue habilitado en `b8608bf` y se corrigió por la regla vigente. Sus copias históricas siguen siendo legibles/eliminables, sin permitir nuevas descargas ni actualizaciones.
 
 IndexedDB almacena una ficha por `module:<id>` y Cache Storage una generacion por modulo. Descargar/eliminar un modulo conserva los demas; cierre de sesion confirmado elimina todas las descargas. El shell puede listar varias fichas descargadas. Se conserva lectura de `module3`, las caches antiguas y los antiguos courseId del Modulo 3. Actualizar una descarga confirma ficha nueva y reemplazo de clave antigua en una sola transaccion.
 

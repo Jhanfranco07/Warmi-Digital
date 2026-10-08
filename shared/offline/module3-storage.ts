@@ -3,6 +3,7 @@ import {
   OFFLINE_KEY,
   OFFLINE_STORE,
   isDownloadableFile,
+  isOfflineModule,
   type ModuleDownload,
   type OfflineModule
 } from "@/shared/offline/module3-types";
@@ -264,6 +265,8 @@ export async function downloadModule(
   onProgress: (percent: number, bytes: number) => void,
   signal?: AbortSignal
 ) {
+  if (!isOfflineModule(module.moduleId))
+    throw new Error("Este módulo no está habilitado para descargar sin conexión.");
   return exclusive(() => downloadModuleUnlocked(module, onProgress, signal));
 }
 

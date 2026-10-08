@@ -62,7 +62,7 @@ const snapshot = {
   userId: "offline-test-artisan",
   courseId: "offline-test-course",
   courseTitle: "Curso de prueba aislada",
-  moduleId: "offline-test-module",
+  moduleId: "6c96bcdf-0b41-48d2-bdcd-394d06acd9d2",
   title: "Módulo 3: Herramientas digitales para vender",
   description: "Texto local de prueba",
   supportLessons: [
@@ -194,7 +194,9 @@ try {
   await page.getByText("Error de descarga", { exact: true }).waitFor({ timeout: 90000 });
   assert.equal(
     await page.evaluate(async () =>
-      Boolean(await window.offlineTest.readDownload("offline-test-module"))
+      Boolean(
+        await window.offlineTest.readDownload("6c96bcdf-0b41-48d2-bdcd-394d06acd9d2")
+      )
     ),
     false
   );
@@ -213,19 +215,48 @@ try {
     .waitFor({ timeout: 90000 });
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   const bytes = await page.evaluate(
-    async () => (await window.offlineTest.readDownload("offline-test-module")).bytes
+    async () =>
+      (await window.offlineTest.readDownload("6c96bcdf-0b41-48d2-bdcd-394d06acd9d2"))
+        .bytes
   );
   assert.equal(
     bytes,
     Object.values(files).reduce((total, file) => total + file.body.length, 0)
   );
   const isolation = await page.evaluate(async (snapshot) => {
-    await window.offlineTest.downloadModule(
-      { ...snapshot, moduleId: "second-module-test" },
-      () => {}
-    );
+    // Previously saved packages remain readable/removable, but cannot be downloaded again.
+    let rejected = false;
+    try {
+      await window.offlineTest.downloadModule(
+        { ...snapshot, moduleId: "2853b850-4032-5e82-b861-8eaaa84913f8" },
+        () => {}
+      );
+    } catch (error) {
+      rejected = error.message.includes("no está habilitado");
+    }
+    if (!rejected) throw new Error("M4 download should be rejected before fetching.");
+    const old = await window.offlineTest.readDownload(snapshot.moduleId);
+    const legacyId = "2853b850-4032-5e82-b861-8eaaa84913f8";
+    const cacheName = window.offlineTest.moduleCachePrefix(legacyId) + "legacy-test";
+    const source = await caches.open(old.cacheName),
+      target = await caches.open(cacheName);
+    for (const url of Object.values(old.assets))
+      await target.put(url, await source.match(url));
+    const db = await new Promise((resolve) => {
+      const q = indexedDB.open("warmi-learning-offline", 1);
+      q.onsuccess = () => resolve(q.result);
+    });
+    await new Promise((resolve) => {
+      const tx = db.transaction("downloads", "readwrite");
+      tx.objectStore("downloads").put(
+        { ...old, moduleId: legacyId, cacheName },
+        `module:${legacyId}`
+      );
+      tx.oncomplete = resolve;
+    });
+    db.close();
     const two = await window.offlineTest.verifiedDownloads();
-    await window.offlineTest.removeDownload("second-module-test");
+    await window.offlineTest.removeDownload("2853b850-4032-5e82-b861-8eaaa84913f8");
     const first = await window.offlineTest.verifiedDownload(snapshot.moduleId);
     return {
       count: two.length,
@@ -349,7 +380,7 @@ try {
       const request = db
         .transaction("downloads")
         .objectStore("downloads")
-        .get("module:offline-test-module");
+        .get("module:6c96bcdf-0b41-48d2-bdcd-394d06acd9d2");
       request.onsuccess = () => resolve(request.result);
       request.onerror = reject;
     });

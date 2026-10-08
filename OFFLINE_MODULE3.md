@@ -1,5 +1,15 @@
 # Offline del Modulo 3
 
+## Regla vigente — 7 de octubre de 2026
+
+**Actualmente el único módulo descargable para uso offline es Módulo 3.** M1, M2 y M4 conservan acceso online, sin acción de descarga. La capacidad se centraliza por ID en `shared/learning/program.ts`; `isOfflineModule` gobierna los controles del curso, los manifiestos del servicio, la autorización de archivos y el inicio de descarga en el cliente.
+
+Se corrige la habilitación de M4 introducida en `b8608bf`, documentada en [MODULE4_AUDIT.md](MODULE4_AUDIT.md). No cambia M3: ocho MP4, diez PDF, revisión de contenido, guías, compatibilidad legacy, IndexedDB, caches, worker, Offline Home, actualización y eliminación. El manifest PWA no es un listado de módulos y conserva su entrada a aprendizaje.
+
+Las copias M4 ya guardadas antes de la corrección no se borran automáticamente: el lector conserva acceso únicamente a sus bytes realmente descargados y permite eliminarlas. No se pueden generar o actualizar paquetes M4. Esto es compatibilidad de lectura, no capacidad de nueva descarga.
+
+## Historia de implementación
+
 Estado actual de las cuatro sesiones, guías S2/S3/S4 y actualización compatible de descargas: [MODULE3_SESSIONS_2_4.md](MODULE3_SESSIONS_2_4.md). Las secciones siguientes conservan la historia de la implementación anterior.
 
 Implementacion acotada a `Módulo 3: Herramienta digitales para crecer`, dentro de Mi aprendizaje. No agrega entradas al menu ni modifica rutas existentes. El cambio de nombre conserva el ID y los paquetes descargados; el shell muestra el titulo actual del catalogo por ID.

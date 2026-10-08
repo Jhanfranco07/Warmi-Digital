@@ -24,6 +24,7 @@ import { Progress } from "@/shared/components/ui/progress";
 import { isSupportedImageUrl } from "@/shared/lib/image-url";
 import { ArtisanDashboardService } from "@/shared/services/artisan-dashboard.service";
 import { requireRole } from "@/shared/server/auth/helpers";
+import { countLabel, learningState } from "@/shared/learning/presentation";
 
 export default async function ArtisanDashboardPage() {
   const session = await requireRole("ARTESANA");
@@ -32,6 +33,12 @@ export default async function ArtisanDashboardPage() {
   const craft = profile?.craftTypes[0]?.craftType.name ?? "Especialidad por registrar";
   const currentCourse = data.currentEnrollment?.course;
   const currentCourseProgress = data.currentEnrollment?.courseProgress?.percentage ?? 0;
+  const courseAction = currentCourse
+    ? learningState(
+        currentCourse.modules.flatMap((module) => module.lessons),
+        data.currentEnrollment?.lessonProgresses ?? []
+      ).action
+    : "Ver";
   const displayName = profile?.displayName ?? session.user.name ?? "artesana";
   const firstName = displayName.split(" ")[0] ?? "artesana";
   const avatarUrl = profile?.avatarUrl ?? null;
@@ -115,7 +122,7 @@ export default async function ArtisanDashboardPage() {
                 className="mt-1.5 h-1.5 bg-[#f4dbe4] [&>div]:bg-[#b5245b]"
               />
               <span className="mt-3 inline-flex items-center rounded-lg bg-[#b5245b] px-4 py-2 text-[11px] font-bold text-white">
-                Continúar curso
+                {courseAction} curso
                 <ChevronRight className="ml-1 h-3.5 w-3.5" />
               </span>
             </div>
@@ -138,7 +145,11 @@ export default async function ArtisanDashboardPage() {
                   href={`/artesana/aprender/${enrollment.course.id}`}
                   image={enrollment.course.imageUrl}
                   title={enrollment.course.title}
-                  modules={`${enrollment.course.modules.length} módulos`}
+                  modules={countLabel(
+                    enrollment.course.modules.length,
+                    "módulo",
+                    "módulos"
+                  )}
                 />
               ))
             ) : (
@@ -254,7 +265,7 @@ export default async function ArtisanDashboardPage() {
                     >
                       <Link href={`/artesana/aprender/${currentCourse.id}` as Route}>
                         <BookOpen className="h-5 w-5" />
-                        Continuar mi aprendizaje
+                        {courseAction} mi aprendizaje
                       </Link>
                     </Button>
                   ) : null}
@@ -319,7 +330,7 @@ export default async function ArtisanDashboardPage() {
             <DesktopQuickAccess
               href="/artesana/aprender"
               icon={BookOpen}
-              title="Continuar curso"
+              title={`${courseAction} curso`}
               description="Sigue aprendiendo"
               color="bg-[#b5245b]"
             />

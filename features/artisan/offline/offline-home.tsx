@@ -1,4 +1,5 @@
 "use client";
+import { countLabel, snapshotProgressLabel } from "@/shared/learning/presentation";
 /* eslint-disable @next/next/no-img-element -- Cache the existing originals, without remote image transforms. */
 /* eslint-disable @next/next/no-html-link-for-pages -- The existing offline shell handles navigation locally. */
 import { ArrowRight, CheckCircle2 } from "lucide-react";
@@ -27,18 +28,22 @@ export function DownloadedModuleCard({ download }: { download: ModuleDownload })
       <h3 className="font-serif text-xl font-bold leading-snug text-[#202b29]">
         {moduleCapability(download.moduleId)?.title ?? download.title}
       </h3>
-      <p>{download.lessons.length} sesiones disponibles</p>
-      {progress && (
+      <p>
+        {countLabel(download.lessons.length, "sesión disponible", "sesiones disponibles")}
+      </p>
+      {progress && progress.total > 0 && (
         <p className="text-sm text-[#24756f]">
-          {progress.completed} de {progress.total} sesiones completadas al descargar
+          {snapshotProgressLabel(progress.completed, progress.total)}
         </p>
       )}
       <a
         href={href}
         className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
-        aria-label={`Continuar: ${moduleCapability(download.moduleId)?.title ?? download.title}`}
+        aria-label={`${progress && progress.total > 0 && progress.completed === progress.total ? "Repasar" : "Continuar"}: ${moduleCapability(download.moduleId)?.title ?? download.title}`}
       >
-        Continuar
+        {progress && progress.total > 0 && progress.completed === progress.total
+          ? "Repasar"
+          : "Continuar"}
         <ArrowRight aria-hidden="true" className="h-5 w-5" />
       </a>
     </article>

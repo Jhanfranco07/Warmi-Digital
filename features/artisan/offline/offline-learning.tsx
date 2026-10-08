@@ -1,4 +1,5 @@
 "use client";
+import { countLabel, snapshotProgressLabel } from "@/shared/learning/presentation";
 /* eslint-disable @next/next/no-html-link-for-pages -- Offline links use the existing local router. */
 /* eslint-disable @next/next/no-img-element -- Original cached images must not depend on Next image transforms. */
 import { useEffect, useState, type MouseEvent } from "react";
@@ -248,10 +249,9 @@ export function OfflineLearning() {
               )}
             {lesson ? (
               <>
-                {progress && (
+                {progress && progress.total > 0 && (
                   <p className="text-sm text-[#24756f]">
-                    {progress.completed} de {progress.total} sesiones completadas al
-                    descargar
+                    {snapshotProgressLabel(progress.completed, progress.total)}
                   </p>
                 )}
                 {!ownNavigation && (
@@ -327,14 +327,12 @@ export function OfflineLearning() {
                 </h2>
                 <p className="leading-7">{download.description}</p>
                 <p className="text-sm font-bold text-[#24756f]">
-                  Disponible sin conexión · {download.lessons.length} sesiones ·{" "}
+                  Disponible sin conexión ·{" "}
+                  {countLabel(download.lessons.length, "sesión", "sesiones")} ·{" "}
                   {formatBytes(download.bytes)}
                 </p>
-                {progress && (
-                  <p>
-                    {progress.completed} de {progress.total} sesiones completadas al
-                    descargar
-                  </p>
+                {progress && progress.total > 0 && (
+                  <p>{snapshotProgressLabel(progress.completed, progress.total)}</p>
                 )}
                 <SpeechButton
                   preferDefaultVoice

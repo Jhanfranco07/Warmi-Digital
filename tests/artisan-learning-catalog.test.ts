@@ -17,12 +17,18 @@ function course(id: string, title: string): Course {
     description: null,
     level: "BEGINNER",
     imageUrl: null,
+    durationMin: null,
     facilitator: null,
     modules: [
       {
         id: LEARNING_PROGRAM.modules[2].id,
         durationMin: 80,
-        lessons: [{ id: "session-1" }, { id: "session-2" }]
+        title: "Módulo 3",
+        order: 3,
+        lessons: [
+          { id: "session-1", durationMin: null },
+          { id: "session-2", durationMin: null }
+        ]
       }
     ]
   };
@@ -36,7 +42,9 @@ function enrollment(input: Course): Enrollment {
     course: input,
     courseProgress: { percentage: 0 },
     lessonProgresses:
-      input.id === LEARNING_PROGRAM.id ? [{ lessonId: "session-1", completed: true }] : []
+      input.id === LEARNING_PROGRAM.id
+        ? [{ lessonId: "session-1", completed: true, startedAt: null, progress: 100 }]
+        : []
   };
 }
 

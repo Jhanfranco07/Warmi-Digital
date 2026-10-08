@@ -58,6 +58,7 @@ export class CourseRepository {
             description: true,
             level: true,
             imageUrl: true,
+            durationMin: true,
             facilitator: {
               select: {
                 id: true,
@@ -69,14 +70,21 @@ export class CourseRepository {
               select: {
                 id: true,
                 durationMin: true,
-                lessons: { select: { id: true } }
+                title: true,
+                order: true,
+                lessons: {
+                  select: { id: true, durationMin: true },
+                  orderBy: { order: "asc" }
+                }
               },
               orderBy: { order: "asc" }
             }
           }
         },
         courseProgress: { select: { percentage: true } },
-        lessonProgresses: { select: { completed: true, lessonId: true } }
+        lessonProgresses: {
+          select: { completed: true, lessonId: true, startedAt: true, progress: true }
+        }
       },
       orderBy: { enrolledAt: "desc" }
     });
@@ -110,6 +118,7 @@ export class CourseRepository {
         description: true,
         level: true,
         imageUrl: true,
+        durationMin: true,
         facilitator: {
           select: {
             id: true,
@@ -120,7 +129,8 @@ export class CourseRepository {
         modules: {
           select: {
             id: true,
-            durationMin: true
+            durationMin: true,
+            lessons: { select: { durationMin: true } }
           },
           orderBy: { order: "asc" }
         }

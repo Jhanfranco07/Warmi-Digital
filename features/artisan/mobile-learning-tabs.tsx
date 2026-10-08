@@ -16,6 +16,7 @@ export type MobileLearningCourse = {
   meta: string;
   progress: number;
   title: string;
+  actionLabel?: string;
 };
 
 type LearningTab = "progress" | "completed" | "available";
@@ -102,7 +103,7 @@ export function MobileLearningTabs({
                     ? "Repasar"
                     : activeTab === "available"
                       ? "Pedir acceso"
-                      : "Continuar"
+                      : (course.actionLabel ?? "Comenzar")
                 }
               />
             ))

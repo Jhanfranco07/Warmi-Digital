@@ -126,12 +126,7 @@ export class ArtisanDashboardService {
           : generalProgress < 75
             ? "Participar en tu siguiente taller"
             : "Documentar y compartir tu historia cultural",
-      routeName:
-        generalProgress < 40
-          ? (currentEnrollment?.course.title ?? "Ruta por iniciar")
-          : generalProgress < 75
-            ? "Colorista Digital"
-            : "Guardiana de la Tradición"
+      routeName: currentEnrollment?.course.title ?? "Ruta por iniciar"
     };
   }
 }

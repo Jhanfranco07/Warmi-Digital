@@ -287,7 +287,9 @@ try {
   for (const m of onlineOnly) {
     await page
       .getByRole("heading", {
-        name: LEARNING_PROGRAM.modules.find((cap) => cap.id === m.id).title,
+        name: LEARNING_PROGRAM.modules
+          .find((cap) => cap.id === m.id)
+          .title.replace(/^Módulo \d+:\s*/, ""),
         exact: true
       })
       .waitFor();

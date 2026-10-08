@@ -1,3 +1,9 @@
+import {
+  learningState,
+  durationLabel,
+  moduleDuration,
+  countLabel
+} from "@/shared/learning/presentation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
@@ -35,8 +41,6 @@ import { ModuleDownload } from "@/features/artisan/offline/module-download";
 import { isOfflineModule } from "@/shared/offline/module3-types";
 import { OfflineLearningService } from "@/shared/services/offline-learning.service";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
-import { MODULE1_ID } from "@/shared/learning/module1";
-import { MODULE2_ID } from "@/shared/learning/module2";
 
 const levelLabels = {
   BEGINNER: "Inicial",
@@ -108,12 +112,16 @@ export default async function ArtisanCourseDetailPage({
   const isCompleted = totalLessons > 0 && completedLessons === totalLessons;
   const firstLesson = lessons[0]?.lesson;
   const nextLesson = firstIncompleteLesson ?? firstLesson;
-  const hasStarted = completedLessons > 0 || progress > 0;
+  const courseState = learningState(
+    lessons.map((item) => item.lesson),
+    enrollment.lessonProgresses
+  );
+  const hasStarted = courseState.started;
   const statusLabel = isCompleted
     ? "Completado"
     : hasStarted
-      ? "En curso"
-      : "Por iniciar";
+      ? "En progreso"
+      : "No iniciado";
   const nextLessonHref = nextLesson
     ? (`/artesana/aprender/${courseId}/lecciones/${nextLesson.id}` as Route)
     : null;
@@ -121,11 +129,8 @@ export default async function ArtisanCourseDetailPage({
     ? "Repasar el curso"
     : hasStarted
       ? "Continuar mi curso"
-      : "Empezar aquí";
-  const visibleModuleCount =
-    course.id === LEARNING_PROGRAM.id
-      ? LEARNING_PROGRAM.modules.length
-      : course.modules.length;
+      : "Comenzar mi curso";
+  const visibleModuleCount = course.modules.length;
   const courseNarration = buildCourseNarration({
     title: course.title,
     description: course.description,
@@ -209,7 +214,9 @@ export default async function ArtisanCourseDetailPage({
               <SummaryPill
                 icon={BookOpen}
                 title="Lecciones"
-                value={`${completedLessons} de ${totalLessons}`}
+                value={
+                  totalLessons ? `${completedLessons} de ${totalLessons}` : "Sin sesiones"
+                }
                 description="Completadas"
                 color="bg-[#2f62a3]"
               />
@@ -304,18 +311,9 @@ export default async function ArtisanCourseDetailPage({
               lessonIndex,
               progressItem: lessonProgress.get(lesson.id)
             }));
-            const moduleCompleted = moduleLessons.filter(
-              (item) => item.progressItem?.completed
-            ).length;
-            const moduleProgress = moduleLessons.length
-              ? Math.round((moduleCompleted / moduleLessons.length) * 100)
-              : 0;
-            const moduleDuration =
-              module.durationMin ??
-              module.lessons.reduce(
-                (total, lesson) => total + (lesson.durationMin ?? 0),
-                0
-              );
+            const estimatedMinutes = moduleDuration(module);
+            const state = learningState(module.lessons, enrollment.lessonProgresses);
+            const moduleProgress = state.percentage;
             const canonicalModule = presentation;
             const moduleTitle = canonicalModule?.title ?? module.title;
             const moduleNarration = buildModuleNarration({
@@ -326,7 +324,7 @@ export default async function ArtisanCourseDetailPage({
               title: moduleTitle,
               description: module.description,
               lessonCount: module.lessons.length,
-              durationMin: moduleDuration,
+              durationMin: estimatedMinutes,
               lessonTitles: module.lessons.map((lesson) => lesson.title)
             });
 
@@ -334,7 +332,7 @@ export default async function ArtisanCourseDetailPage({
               <ArtisanPanel
                 key={module.id}
                 eyebrow={`Módulo ${course.id === LEARNING_PROGRAM.id || isOfflineModule(module.id) ? module.order : moduleIndex + 1}`}
-                title={moduleTitle}
+                title={moduleTitle.replace(/^Módulo \d+:\s*/, "")}
                 action={
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="rounded-full bg-[#fff3de] px-4 py-2 font-ui text-sm font-bold text-[#7a3100]">
@@ -357,32 +355,34 @@ export default async function ArtisanCourseDetailPage({
                     {module.description}
                   </p>
                 ) : null}
-                {[MODULE1_ID, MODULE2_ID].includes(module.id) &&
-                  moduleLessons.length > 0 && (
-                    <div className="mb-6 flex flex-col items-start gap-3">
-                      <p className="text-base font-bold text-[#24756f]">4 sesiones</p>
-                      <Button
-                        asChild
-                        className="h-auto min-h-12 whitespace-normal rounded-md bg-[#b5245b] px-5 py-3 text-base text-white hover:bg-[#941747]"
+                {moduleLessons.length > 0 && (
+                  <div className="mb-6 flex flex-col items-start gap-3">
+                    <p className="text-base font-bold text-[#24756f]">
+                      {[
+                        countLabel(moduleLessons.length, "sesión", "sesiones"),
+                        durationLabel(estimatedMinutes),
+                        state.label
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    <Button
+                      asChild
+                      className="h-auto min-h-12 whitespace-normal rounded-md bg-[#b5245b] px-5 py-3 text-base text-white hover:bg-[#941747]"
+                    >
+                      <Link
+                        href={
+                          `/artesana/aprender/${courseId}/lecciones/${(moduleLessons.find((item) => !item.progressItem?.completed) ?? moduleLessons[0]).lesson.id}` as Route
+                        }
                       >
-                        <Link
-                          href={
-                            `/artesana/aprender/${courseId}/lecciones/${(moduleLessons.find((item) => !item.progressItem?.completed) ?? moduleLessons[0]).lesson.id}` as Route
-                          }
-                        >
-                          <PlayCircle className="h-5 w-5 shrink-0" />
-                          {moduleLessons.some(
-                            (item) =>
-                              item.progressItem?.startedAt || item.progressItem?.completed
-                          )
-                            ? `Continuar Módulo ${module.order}`
-                            : `Empezar Módulo ${module.order}`}
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
+                        <PlayCircle className="h-5 w-5 shrink-0" />
+                        {state.action} Módulo {module.order}
+                      </Link>
+                    </Button>
+                  </div>
+                )}
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {moduleLessons.map(({ lesson, lessonIndex, progressItem }) => {
+                  {moduleLessons.map(({ lesson, progressItem }) => {
                     const completed = Boolean(progressItem?.completed);
                     const current = firstIncompleteLesson?.id === lesson.id;
 
@@ -392,12 +392,15 @@ export default async function ArtisanCourseDetailPage({
                         href={
                           `/artesana/aprender/${courseId}/lecciones/${lesson.id}` as Route
                         }
-                        number={lessonIndex + 1}
+                        number={lesson.order}
                         title={lesson.title}
                         type={lessonTypeLabels[lesson.type]}
-                        durationMin={lesson.durationMin ?? 0}
+                        durationMin={lesson.durationMin}
                         completed={completed}
                         current={current}
+                        started={Boolean(
+                          progressItem?.startedAt || progressItem?.progress
+                        )}
                       />
                     );
                   })}
@@ -480,15 +483,17 @@ function LessonStepCard({
   type,
   durationMin,
   completed,
-  current
+  current,
+  started
 }: {
   href: Route;
   number: number;
   title: string;
   type: string;
-  durationMin: number;
+  durationMin: number | null;
   completed: boolean;
   current: boolean;
+  started: boolean;
 }) {
   return (
     <Link
@@ -527,12 +532,18 @@ function LessonStepCard({
                   : "border-[#e8c7b8] text-[#7a3100]"
             )}
           >
-            {completed ? "Completada" : current ? "Continúa aquí" : "Pendiente"}
+            {completed
+              ? "Completada"
+              : started
+                ? "En progreso"
+                : current
+                  ? "Comienza aquí"
+                  : "Pendiente"}
           </Badge>
         </div>
         <p className="mt-5 flex items-center gap-2 font-ui text-xs font-extrabold uppercase tracking-[0.08em] text-[#b5245b]">
           <Clock3 className="h-4 w-4" />
-          {type} · {durationMin} min
+          {[type, durationLabel(durationMin)].filter(Boolean).join(" · ")}
         </p>
         <h3 className="mt-2 font-serif text-2xl font-bold leading-tight text-[#1b1c1a]">
           {title}

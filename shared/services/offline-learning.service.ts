@@ -1,6 +1,6 @@
 import { MODULE4_ID, MODULE4_CONTENT_VERSION } from "@/shared/learning/module4";
 import { CourseRepository } from "@/shared/repositories/course.repository";
-import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { LEARNING_PROGRAM, moduleCapability } from "@/shared/learning/program";
 import { MODULE3_CONTENT_VERSION } from "@/shared/learning/module3-version";
 import {
   isDownloadableFile,
@@ -107,7 +107,7 @@ export function buildOfflineModule(
     courseId: course.id,
     courseTitle: course.title,
     moduleId: module.id,
-    title: module.title,
+    title: moduleCapability(module.id)?.title ?? module.title,
     description: module.description,
     lessons: module.lessons.map((lesson) =>
       snapshotLesson(course.id, lesson, supportIds)

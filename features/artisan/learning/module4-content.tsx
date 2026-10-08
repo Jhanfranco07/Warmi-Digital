@@ -175,7 +175,7 @@ export function Module4Content({
           Aprender para crecer
         </a>
         <p className="text-sm font-bold text-[#24756f]">
-          Módulo 4 · Sesión {session.order} de 4
+          Módulo 4 · Sesión {session.order} de {MODULE4_SESSIONS.length}
         </p>
         <h1 className="font-serif text-2xl font-bold leading-tight text-[#202b29]">
           {session.title}

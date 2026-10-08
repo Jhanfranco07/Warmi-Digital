@@ -1,3 +1,4 @@
+import { countLabel, durationLabel } from "@/shared/learning/presentation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
@@ -37,17 +38,13 @@ export default async function ArtisanLearningPage() {
         enrolled.reduce((total, course) => total + course.progress, 0) / enrolled.length
       )
     : 0;
-  const completedModules = Math.round((averageProgress / 100) * 5);
+  const completedModules = currentCourse?.completedModules ?? 0;
+  const modulesCount = currentCourse?.modulesCount ?? 0;
   const profile = overview.artisan?.profile;
   const displayName = profile?.displayName ?? session.user.name ?? "Artesana Warmi";
   const craft = profile?.craftTypes[0]?.craftType.name ?? "Especialidad por registrar";
   const avatarUrl = profile?.avatarUrl ?? null;
-  const routeName =
-    averageProgress < 40
-      ? (currentCourse?.title ?? "Ruta por iniciar")
-      : averageProgress < 75
-        ? "Colorista Digital"
-        : "Guardiana de la Tradición";
+  const routeName = currentCourse?.title ?? "Ruta por iniciar";
 
   const mobileCourses = enrolled.map(toDisplayCourse);
   const inProgressCourses = mobileCourses.filter((course) => course.progress < 100);
@@ -257,8 +254,11 @@ export default async function ArtisanLearningPage() {
                         Próximo objetivo
                       </p>
                       <p className="mt-1 text-lg text-[#5b4a42]">
-                        Completar el módulo {Math.min(completedModules + 1, 5)}: Cuenta tu
-                        historia.
+                        {currentCourse?.nextModule
+                          ? `Completar ${currentCourse.nextModule.title}`
+                          : currentCourse
+                            ? "Repasar Aprender para crecer"
+                            : "Comenzar tu aprendizaje"}
                       </p>
                     </div>
                   </div>
@@ -267,7 +267,9 @@ export default async function ArtisanLearningPage() {
                     className="mt-7 h-4 rounded-full bg-[#f2e7de] [&>div]:rounded-full [&>div]:bg-[#b5245b]"
                   />
                   <p className="mt-4 text-base text-[#5b4a42]">
-                    {completedModules} de 5 módulos completados
+                    {modulesCount
+                      ? `${completedModules} de ${countLabel(modulesCount, "módulo completado", "módulos completados")}`
+                      : "Aún no tienes módulos asignados"}
                   </p>
                   {currentCourse ? (
                     <Button
@@ -277,7 +279,7 @@ export default async function ArtisanLearningPage() {
                     >
                       <Link href={currentCourse.href as Route}>
                         <BookOpen className="h-5 w-5" />
-                        Continuar lección
+                        {currentCourse.learningState.action} mi curso
                       </Link>
                     </Button>
                   ) : null}
@@ -365,6 +367,8 @@ export default async function ArtisanLearningPage() {
                           image={course.image}
                           progress={course.progress}
                           meta={course.meta}
+                          statusLabel={course.statusLabel}
+                          actionLabel={course.actionLabel}
                         />
                       ))
                   ) : (
@@ -448,6 +452,8 @@ type DisplayCourse = {
   image: string | null;
   progress: number;
   meta: string;
+  statusLabel: string;
+  actionLabel: string;
 };
 
 function toAvailableDisplayCourse(
@@ -461,7 +467,12 @@ function toAvailableDisplayCourse(
     title: course.title,
     image: course.imageUrl,
     progress: 0,
-    meta: `${course.modulesCount} módulos · ${course.durationMin} min`
+    meta: [
+      countLabel(course.modulesCount, "módulo", "módulos"),
+      durationLabel(course.durationMin)
+    ]
+      .filter(Boolean)
+      .join(" · ")
   };
 }
 
@@ -478,11 +489,16 @@ function toDisplayCourse(
       course.description ?? "Continúa fortaleciendo tus herramientas digitales.",
     image: course.imageUrl,
     progress: course.progress,
-    meta: `${course.modulesCount} módulos · ${
+    statusLabel: course.learningState.label,
+    actionLabel: course.learningState.action,
+    meta: [
+      countLabel(course.modulesCount, "módulo", "módulos"),
       course.lastAccessedAt
         ? `Último acceso ${format(course.lastAccessedAt, "dd/MM/yyyy")}`
-        : `${course.durationMin} min`
-    }`
+        : durationLabel(course.durationMin)
+    ]
+      .filter(Boolean)
+      .join(" · ")
   };
 }
 
@@ -525,7 +541,6 @@ function MobileSectionLabel({
     </div>
   );
 }
-
 
 function MobileWorkshopStat({ label, value }: { label: string; value: string }) {
   return (
@@ -598,7 +613,9 @@ function CourseCard({
   title,
   description,
   progress,
-  meta
+  meta,
+  statusLabel,
+  actionLabel
 }: Omit<DisplayCourse, "id">) {
   return (
     <Link
@@ -612,7 +629,7 @@ function CourseCard({
           <LearningImagePlaceholder />
         )}
         <span className="absolute left-4 top-4 rounded-lg bg-[#c93772] px-3 py-1 font-ui text-xs font-extrabold text-white">
-          En progreso
+          {statusLabel}
         </span>
       </div>
       <div className="p-5">
@@ -626,7 +643,10 @@ function CourseCard({
           />
           <span className="text-sm font-bold text-[#5b4a42]">{progress}%</span>
         </div>
-        <span className="ml-auto mt-4 grid h-10 w-10 place-items-center rounded-full bg-[#f8eadc] text-[#a95511] transition-transform duration-300 group-hover:translate-x-1">
+        <span
+          aria-label={actionLabel}
+          className="ml-auto mt-4 grid h-10 w-10 place-items-center rounded-full bg-[#f8eadc] text-[#a95511] transition-transform duration-300 group-hover:translate-x-1"
+        >
           <ChevronRight className="h-5 w-5" />
         </span>
       </div>

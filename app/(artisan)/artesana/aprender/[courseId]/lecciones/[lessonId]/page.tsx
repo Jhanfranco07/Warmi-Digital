@@ -1,3 +1,4 @@
+import { durationLabel } from "@/shared/learning/presentation";
 import { MODULE4_ID } from "@/shared/learning/module4";
 import { Module4Lesson } from "@/features/artisan/learning/module4-lesson";
 import Image from "next/image";
@@ -151,7 +152,9 @@ export default async function ArtisanLessonPage({
         <ArtisanPanel title="Contenido de la lección" eyebrow="Aprendizaje">
           <div className="flex flex-wrap gap-2">
             <Badge>{lessonTypeLabels[lesson.type]}</Badge>
-            <Badge variant="outline">{lesson.durationMin ?? 0} min</Badge>
+            {durationLabel(lesson.durationMin) && (
+              <Badge variant="outline">{durationLabel(lesson.durationMin)}</Badge>
+            )}
           </div>
           <div className="mt-6 text-lg leading-8 text-[#5b4a42]">
             <p

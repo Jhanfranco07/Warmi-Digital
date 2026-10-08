@@ -55,6 +55,7 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v4",
     "warmi-offline-shell-v5",
     "warmi-offline-shell-v6",
+    "warmi-offline-shell-v7",
     "warmi-module3-old",
     "warmi-learning-module-m3-generation",
     "warmi-learning-module-m4-generation"
@@ -73,7 +74,11 @@ test("shell upgrade removes only previous public shells and preserves every down
     }
   });
   await done;
-  assert.deepEqual(removed, ["warmi-offline-shell-v4", "warmi-offline-shell-v5"]);
+  assert.deepEqual(removed, [
+    "warmi-offline-shell-v4",
+    "warmi-offline-shell-v5",
+    "warmi-offline-shell-v6"
+  ]);
 });
 
 test("offline shell preserves entry and learning URLs, without caching auth or other modules", async () => {

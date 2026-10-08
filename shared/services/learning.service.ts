@@ -1,10 +1,16 @@
+import {
+  aggregateDuration,
+  moduleDuration,
+  learningState
+} from "@/shared/learning/presentation";
 import { notFound, redirect } from "next/navigation";
 import {
   LEARNING_PROGRAM,
   availableLearningModules,
   isArtisanLearningCourse,
   isLearningModuleAvailable,
-  learningProgress
+  learningProgress,
+  moduleCapability
 } from "@/shared/learning/program";
 import { getReferencedLesson } from "@/shared/offline/module3-types";
 import { MODULE1_GMAIL_SUPPORT_ID } from "@/shared/learning/module1";
@@ -32,7 +38,30 @@ export class LearningService {
             enrollment.course,
             enrollment.lessonProgresses
           ).percentage;
+          const modules = availableLearningModules(
+            enrollment.course.id,
+            enrollment.course.modules
+          );
+          const moduleStates = modules.map((module) => ({
+            ...module,
+            ...learningState(module.lessons, enrollment.lessonProgresses)
+          }));
+          const state = learningState(
+            modules.flatMap((module) => module.lessons),
+            enrollment.lessonProgresses
+          );
+          const nextModule = moduleStates.find((module) => module.state !== "completed");
           return {
+            learningState: state,
+            completedModules: moduleStates.filter(
+              (module) => module.state === "completed"
+            ).length,
+            nextModule: nextModule
+              ? {
+                  order: nextModule.order,
+                  title: moduleCapability(nextModule.id)?.title ?? nextModule.title
+                }
+              : null,
             id: enrollment.course.id,
             title: enrollment.course.title,
             description: enrollment.course.description,
@@ -50,14 +79,11 @@ export class LearningService {
                   : "ACTIVE"
                 : enrollment.status,
             progress,
-            durationMin: availableLearningModules(
-              enrollment.course.id,
-              enrollment.course.modules
-            ).reduce((total, module) => total + (module.durationMin ?? 0), 0),
-            modulesCount:
-              enrollment.course.id === LEARNING_PROGRAM.id
-                ? LEARNING_PROGRAM.modules.length
-                : enrollment.course.modules.length,
+            durationMin: aggregateDuration(
+              enrollment.course.durationMin,
+              modules.map(moduleDuration)
+            ),
+            modulesCount: modules.length,
             lastAccessedAt: enrollment.lastActivityAt,
             href: `/artesana/aprender/${enrollment.course.id}`
           };
@@ -72,14 +98,11 @@ export class LearningService {
           imageUrl: course.imageUrl,
           facilitatorName:
             course.facilitator?.profile?.displayName ?? course.facilitator?.name ?? null,
-          durationMin: availableLearningModules(course.id, course.modules).reduce(
-            (total, module) => total + (module.durationMin ?? 0),
-            0
+          durationMin: aggregateDuration(
+            course.durationMin,
+            availableLearningModules(course.id, course.modules).map(moduleDuration)
           ),
-          modulesCount:
-            course.id === LEARNING_PROGRAM.id
-              ? LEARNING_PROGRAM.modules.length
-              : course.modules.length
+          modulesCount: availableLearningModules(course.id, course.modules).length
         }))
     };
   }

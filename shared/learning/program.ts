@@ -98,9 +98,11 @@ export function learningProgress(
   return {
     totalLessons: lessonIds.size,
     completedLessons: completedIds.size,
-    percentage: lessonIds.size
-      ? Math.round((completedIds.size / lessonIds.size) * 100)
-      : 0
+    percentage: !lessonIds.size
+      ? 0
+      : completedIds.size === lessonIds.size
+        ? 100
+        : Math.min(99, Math.round((completedIds.size / lessonIds.size) * 100))
   };
 }
 

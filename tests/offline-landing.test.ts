@@ -24,7 +24,7 @@ test("public join CTA stays public; offline fourth access continues existing lea
     assert.ok(offline.includes(`href="#${section}"`));
 });
 
-test("offline landing includes real institutional sections and cached images", () => {
+test("offline landing includes the three current discovery actions and cached images", () => {
   const html = renderToStaticMarkup(
     createElement(OfflineHome, { downloads: [], loading: false })
   );
@@ -36,10 +36,9 @@ test("offline landing includes real institutional sections and cached images", (
     "Misión",
     "Visión",
     "Descubre",
-    "Aprender",
-    "Emprender",
-    "Colaborar",
-    "Compartir",
+    "APRENDER PARA CRECER",
+    "TALLERES PRESENCIALES",
+    "ACOMPAÑAMIENTO",
     "Riqsichiq Warmi",
     "Nuestra fuerza nace de la comunidad.",
     "Historia",
@@ -47,6 +46,8 @@ test("offline landing includes real institutional sections and cached images", (
     "Comunidad"
   ])
     assert.ok(html.includes(text), text);
+  for (const removedAction of ["EMPRENDE CON MI MERCADO DIGITAL", "RECURSOS Y TALLERES"])
+    assert.doesNotMatch(html, new RegExp(removedAction));
   for (const src of Object.values(LANDING_OFFLINE_IMAGES))
     assert.ok(html.includes(src), src);
   assert.doesNotMatch(html, /UNETE A WARMI|https:\/\//);

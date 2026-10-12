@@ -19,7 +19,14 @@ const discoveryImages = [
   }
 ] as const;
 
-const discoveryActions = [
+type DiscoveryAction = {
+  cta: string;
+  href: string;
+  offlineHref?: string;
+  color: string;
+};
+
+const discoveryActions: readonly DiscoveryAction[] = [
   {
     cta: "APRENDER PARA CRECER",
     href: "/descubre/aprender-para-crecer",

@@ -5,7 +5,10 @@ export class NotificationRepository {
 
   findRecentForUser(userId: string, take = 6) {
     return this.db.notification.findMany({
-      where: { userId },
+      where: {
+        userId,
+        type: { not: "ORDER" }
+      },
       orderBy: { createdAt: "desc" },
       take
     });
@@ -13,7 +16,11 @@ export class NotificationRepository {
 
   countUnread(userId: string) {
     return this.db.notification.count({
-      where: { userId, readAt: null }
+      where: {
+        userId,
+        readAt: null,
+        type: { not: "ORDER" }
+      }
     });
   }
 

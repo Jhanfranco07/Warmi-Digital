@@ -60,7 +60,6 @@ const notificationTypeLabels: Record<string, string> = {
   SYSTEM: "Sistema",
   LEARNING: "Aprendizaje",
   COMMUNITY: "Comunidad",
-  ORDER: "Pedidos",
   PAYMENT: "Pagos",
   SUPPORT: "Soporte"
 };

@@ -494,11 +494,6 @@ async function main() {
       type: "COMMUNITY" as const,
       title: "Tu historia cultural está registrada",
       body: "Puedes editarla y completarla cuando tengas nuevas fotografías."
-    },
-    {
-      type: "ORDER" as const,
-      title: "Tienes un pedido reciente",
-      body: "Revisa el resumen del pedido vinculado a tu pieza cultural."
     }
   ]) {
     await prisma.notification.create({

@@ -10,7 +10,7 @@ import {
 } from "react";
 import Link from "next/link";
 import type { Route } from "next";
-import { ArrowLeft, ArrowRight, Check, ChevronDown } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Trophy } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { LearningSessionComplete } from "@/features/artisan/learning/learning-session-complete";
 
@@ -142,17 +142,39 @@ export function LearningSession({
             label="Escuchar este paso"
           />
           {finish ? (
-            <ul className="space-y-3">
-              {outcomes.map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 border-b border-[#ead2dc] py-3"
-                >
-                  <Check className="mt-1 h-5 w-5 shrink-0 text-[#24756f]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-4">
+              <div className="rounded-[28px] border border-[#f4d5c6] bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_rgba(255,247,242,0.95)_35%,_rgba(254,233,220,0.9)_100%)] p-4 shadow-[0_18px_30px_rgba(122,49,0,0.08)]">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#b5245b] text-white shadow-[0_12px_24px_rgba(181,36,91,0.22)]">
+                    <Trophy className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-ui text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#b5245b]">
+                      Mis logros
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-[#202b29]">
+                      {order === sessions.length
+                        ? `Al terminar el Módulo ${moduleNumber}, yo puedo…`
+                        : "Al terminar esta sesión podrás:"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <ul className="grid gap-3">
+                {outcomes.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-3 rounded-2xl border border-[#e9d0d9] bg-[linear-gradient(135deg,#fff7fa_0%,#fffaf4_100%)] p-3 shadow-[0_10px_22px_rgba(122,49,0,0.04)]"
+                  >
+                    <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#e2f2ef] text-[#24756f] ring-4 ring-white">
+                      <Check className="h-4 w-4" />
+                    </span>
+                    <span className="pt-0.5 text-base leading-7 text-[#123f78]">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : (
             current.content
           )}

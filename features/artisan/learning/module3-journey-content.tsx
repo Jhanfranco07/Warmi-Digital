@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The same links are intercepted by the existing offline shell. */
 import { useRef, useState, useTransition } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, ExternalLink, Trophy } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { LearningDisclosure } from "@/features/artisan/learning/learning-session";
@@ -245,14 +245,26 @@ export function Module3JourneyContent({
         </nav>
       </header>
       {closing ? (
-        <section data-module3-closing className="space-y-4">
-          <h2
-            ref={focus}
-            tabIndex={-1}
-            className="font-serif text-2xl font-bold text-[#202b29]"
-          >
-            Al terminar el Módulo 3, yo puedo…
-          </h2>
+        <section data-module3-closing className="space-y-5">
+          <div className="rounded-[28px] border border-[#f4d5c6] bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.96),_rgba(255,247,242,0.96)_35%,_rgba(254,233,220,0.9)_100%)] p-4 shadow-[0_18px_30px_rgba(122,49,0,0.08)]">
+            <div className="flex items-center gap-3">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#b5245b] text-white shadow-[0_12px_24px_rgba(181,36,91,0.22)]">
+                <Trophy className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="font-ui text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#b5245b]">
+                  Mis logros
+                </p>
+                <h2
+                  ref={focus}
+                  tabIndex={-1}
+                  className="mt-1 font-serif text-2xl font-bold text-[#202b29]"
+                >
+                  Al terminar el Módulo 3, yo puedo…
+                </h2>
+              </div>
+            </div>
+          </div>
           <SpeechButton
             text={
               MODULE3_OUTCOMES.map((o) => `${o.title}. ${o.description}`).join(". ") +
@@ -260,18 +272,25 @@ export function Module3JourneyContent({
             }
             label="Escuchar mis logros"
           />
-          <ul className="space-y-4">
+          <ul className="grid gap-3">
             {MODULE3_OUTCOMES.map((o) => (
-              <li key={o.title} className="flex gap-3 border-b border-[#ead2dc] py-3">
-                <Check className="mt-1 h-5 w-5 shrink-0 text-[#24756f]" />
+              <li
+                key={o.title}
+                className="flex gap-3 rounded-2xl border border-[#e9d0d9] bg-[linear-gradient(135deg,#fff7fa_0%,#fffaf4_100%)] p-3 shadow-[0_10px_22px_rgba(122,49,0,0.04)]"
+              >
+                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#e2f2ef] text-[#24756f] ring-4 ring-white">
+                  <Check className="h-4 w-4" />
+                </span>
                 <div>
-                  <strong>{o.title}</strong>
-                  <p>{o.description}</p>
+                  <strong className="block text-[#202b29]">{o.title}</strong>
+                  <p className="mt-1 text-base leading-7 text-[#123f78]">{o.description}</p>
                 </div>
               </li>
             ))}
           </ul>
-          <p>{MODULE3_CLOSING_MESSAGE}</p>
+          <p className="rounded-xl border border-[#d9e7d8] bg-[#f1fbf4] p-3 text-[#185750]">
+            {MODULE3_CLOSING_MESSAGE}
+          </p>
           {offline ? (
             <p role="status">
               Práctica finalizada sin conexión. Para guardar tu avance en Warmi, vuelve

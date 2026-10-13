@@ -480,6 +480,10 @@ async function main() {
     }
   });
 
+  await prisma.notification.deleteMany({
+    where: { userId: artisan.id }
+  });
+
   for (const notification of [
     {
       type: "LEARNING" as const,

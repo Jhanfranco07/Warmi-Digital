@@ -14,17 +14,17 @@ const programPillars = [
   {
     title: "Objetivo general",
     icon: Target,
-    text: "Fortalecer las capacidades digitales de las artesanas de la región Cajamarca, mediante un proceso de formación y acompañamiento personalizado, que les permita emplear su dispositivo móvil como una herramienta estratégica para la comercialización de sus productos, la postulación a concursos y ferias, y la gestión autónoma de trámites vinculados a su actividad productiva, con el soporte de una facilitadora especializada y el respaldo de la red de artesanas."
+    text: "Que las artesanas alcancen el uso autónomo del celular para acceder a capacitaciones, postular a concursos y gestionar trámites, de modo que puedan incrementar sus ingresos de manera progresiva."
   },
   {
     title: "Misión",
     icon: ShoppingBag,
-    text: "Desarrollar competencias digitales prácticas en las artesanas, mediante un acompañamiento técnico continuo, orientado a transformar su teléfono celular en un instrumento de trabajo efectivo que potencie sus canales de comercialización, facilite su participación en certámenes de reconocimiento y contribuya al fortalecimiento de su emprendimiento."
+    text: "Formar a las artesanas en el uso práctico del celular como herramienta de trabajo, mediante acompañamiento sostenido, para que incrementen sus ventas y participen en concursos que impulsen su desarrollo."
   },
   {
     title: "Visión",
     icon: UsersRound,
-    text: "Constituirnos en un modelo de referencia en la región Cajamarca, que demuestre la viabilidad de articular tecnologías digitales con el tejido asociativo y comunitario del sector artesanal, garantizando que ninguna artesana quede excluida del acceso a oportunidades de desarrollo y que todas cuenten con los recursos técnicos y organizativos necesarios para la sostenibilidad de su actividad productiva."
+    text: "Ser un ejemplo en la región Cajamarca en la integración de tecnología y apoyo comunitario para la inclusión digital y el desarrollo económico de las artesanas rurales."
   }
 ];
 

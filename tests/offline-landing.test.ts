@@ -10,7 +10,7 @@ import { LANDING_OFFLINE_IMAGES } from "@/shared/offline/landing-assets";
 // tsx uses the repository JSX-preserve setting outside Next; provide the test runtime.
 Object.assign(globalThis, { React });
 
-test("public join CTA stays public; offline fourth access continues existing learning", () => {
+test("public landing has three accesses; offline third access continues existing learning", () => {
   const online = renderToStaticMarkup(createElement(WarmiPublicHeader));
   const offline = renderToStaticMarkup(
     createElement(WarmiPublicHeader, { offline: true })
@@ -20,8 +20,10 @@ test("public join CTA stays public; offline fourth access continues existing lea
   assert.doesNotMatch(offline, /UNETE A WARMI|href="\/login"/);
   assert.match(offline, /CONTINUAR MI APRENDIZAJE/);
   assert.match(offline, /data-offline-learning-cta/);
-  for (const section of ["programa", "descubre", "identidad"])
+  for (const section of ["programa", "descubre"])
     assert.ok(offline.includes(`href="#${section}"`));
+  assert.doesNotMatch(online, /IDENTIDAD WARMI|RIQSICHIQ WARMI/);
+  assert.doesNotMatch(offline, /IDENTIDAD WARMI|RIQSICHIQ WARMI/);
 });
 
 test("offline landing includes the three current discovery actions and cached images", () => {
@@ -38,15 +40,7 @@ test("offline landing includes the three current discovery actions and cached im
     "Descubre",
     "APRENDER PARA CRECER",
     "TALLERES PRESENCIALES",
-    "Talleres presenciales",
-    "Próximamente",
-    "Metodología participativa",
-    "ACOMPAÑAMIENTO",
-    "Riqsichiq Warmi",
-    "Nuestra fuerza nace de la comunidad.",
-    "Historia",
-    "Territorio",
-    "Comunidad"
+    "ACOMPAÑAMIENTO"
   ])
     assert.ok(html.includes(text), text);
   for (const removedAction of ["EMPRENDE CON MI MERCADO DIGITAL", "RECURSOS Y TALLERES"])
@@ -54,6 +48,9 @@ test("offline landing includes the three current discovery actions and cached im
   for (const src of Object.values(LANDING_OFFLINE_IMAGES))
     assert.ok(html.includes(src), src);
   assert.doesNotMatch(html, /UNETE A WARMI|https:\/\//);
+  assert.doesNotMatch(html, /Riqsichiq Warmi|Nuestra fuerza nace de la comunidad/);
+  assert.match(html, /aria-expanded="false"/);
+  assert.doesNotMatch(html, /Metodología participativa/);
 });
 
 test("every offline landing image exists, is precached, and additions stay below 700KB", async () => {

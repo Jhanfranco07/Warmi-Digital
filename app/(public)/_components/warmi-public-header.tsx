@@ -19,11 +19,6 @@ const actions = [
     color: "bg-[#f17a2a]"
   },
   {
-    href: "/identidad",
-    label: "IDENTIDAD WARMI - RIQSICHIQ WARMI",
-    color: "bg-[#17c3cf]"
-  },
-  {
     href: "/login",
     label: "UNETE A WARMI",
     color: "bg-[#f5b900]"
@@ -90,21 +85,21 @@ export function WarmiPublicHeader({
 
       <nav
         aria-label="Accesos Warmi"
-        className={`${offline ? "relative" : "sticky top-0"} z-30 grid grid-cols-2 font-ui text-sm font-bold text-white shadow-[0_8px_18px_rgba(27,28,26,0.16)] md:grid-cols-4 md:text-label-ui`}
+        className={`${offline ? "relative" : "sticky top-0"} z-30 grid grid-cols-3 font-ui text-xs font-bold text-white shadow-[0_8px_18px_rgba(27,28,26,0.16)] md:text-label-ui`}
       >
         {actions.map((action, index) => (
           <NavLink
-            key={offline && index === 3 ? "CONTINUAR MI APRENDIZAJE" : action.label}
-            className={`${offline && index === 3 ? "bg-[#b5245b] ring-2 ring-inset ring-white/70" : action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:brightness-105 md:min-h-20 md:px-5 md:py-7`}
+            key={offline && index === 2 ? "CONTINUAR MI APRENDIZAJE" : action.label}
+            className={`${offline && index === 2 ? "bg-[#b5245b] ring-2 ring-inset ring-white/70" : action.color} flex min-h-16 items-center justify-center px-3 py-5 text-center leading-tight transition-opacity hover:brightness-105 md:min-h-20 md:px-5 md:py-7`}
             href={
               offline
-                ? ["#programa", "#descubre", "#identidad", "/artesana/aprender"][index]
+                ? ["#programa", "#descubre", "/artesana/aprender"][index]
                 : action.href
             }
-            aria-label={offline && index === 3 ? "Continuar mi aprendizaje" : undefined}
-            data-offline-learning-cta={offline && index === 3 ? "" : undefined}
+            aria-label={offline && index === 2 ? "Continuar mi aprendizaje" : undefined}
+            data-offline-learning-cta={offline && index === 2 ? "" : undefined}
           >
-            {offline && index === 3 ? "CONTINUAR MI APRENDIZAJE" : action.label}
+            {offline && index === 2 ? "CONTINUAR MI APRENDIZAJE" : action.label}
           </NavLink>
         ))}
       </nav>

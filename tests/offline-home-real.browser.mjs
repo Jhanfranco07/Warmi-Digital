@@ -257,12 +257,7 @@ async function signature(page, root = "body") {
 try {
   let page = await open();
   await page.goto(origin);
-  for (const label of [
-    "PROGRAMA WARMI",
-    "DESCUBRE",
-    "IDENTIDAD WARMI - RIQSICHIQ WARMI",
-    "UNETE A WARMI"
-  ])
+  for (const label of ["PROGRAMA WARMI", "DESCUBRE", "UNETE A WARMI"])
     await page.getByRole("link", { name: label, exact: true }).waitFor();
   assert.equal(await page.locator("[data-warmi-offline-home]").count(), 0);
   await page.goto(`${origin}/login`);
@@ -403,8 +398,7 @@ try {
   await page.screenshot({ path: join(output, "02-home-four-accesses-390.png") });
   for (const [id, label] of [
     ["programa", "PROGRAMA WARMI"],
-    ["descubre", "DESCUBRE"],
-    ["identidad", "IDENTIDAD WARMI - RIQSICHIQ WARMI"]
+    ["descubre", "DESCUBRE"]
   ]) {
     await page
       .getByRole("navigation", { name: "Accesos Warmi" })
@@ -416,13 +410,9 @@ try {
     }, id);
     if (id === "programa")
       await page.screenshot({ path: join(output, "03-programme-offline-390.png") });
-    if (id === "identidad")
-      await page.screenshot({ path: join(output, "04-identity-offline-390.png") });
   }
   await page.goBack();
   await page.locator("#descubre").waitFor();
-  await page.goForward();
-  await page.locator("#identidad").waitFor();
   for (const src of Object.values(LANDING_OFFLINE_IMAGES)) {
     assert.equal(
       await page.evaluate(async (src) => {

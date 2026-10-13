@@ -11,7 +11,6 @@ import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-heade
 import { WarmiWelcomeContent } from "@/shared/components/landing/welcome-content";
 import { WarmiProgrammeContent } from "@/shared/components/landing/programa-content";
 import { WarmiDiscoveryContent } from "@/shared/components/landing/descubre-content";
-import { WarmiIdentityContent } from "@/shared/components/landing/identidad-content";
 
 export function DownloadedModuleCard({ download }: { download: ModuleDownload }) {
   const progress = offlineProgress(download);
@@ -90,19 +89,6 @@ export function OfflineHome({
           Descubre
         </h2>
         <WarmiDiscoveryContent offline />
-      </section>
-      <section
-        id="identidad"
-        aria-labelledby="offline-identidad"
-        className="scroll-mt-16"
-      >
-        <h2
-          id="offline-identidad"
-          className="px-4 py-8 font-serif text-3xl font-bold text-[#123f78]"
-        >
-          Identidad Warmi · Riqsichiq Warmi
-        </h2>
-        <WarmiIdentityContent offline />
       </section>
       {downloads.length > 0 && (
         <section

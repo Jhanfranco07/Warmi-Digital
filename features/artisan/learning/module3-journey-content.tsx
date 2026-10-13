@@ -91,6 +91,29 @@ export function Module3JourneyContent({
   const courseHref = `/artesana/aprender/${courseId}`;
   const href = (id: string) => `${courseHref}/lecciones/${id}`;
   const percentage = module3Progress([...completedIds, ...(saved ? [lessonId] : [])]);
+
+  function goToSession(id: string) {
+    if (id === lessonId) {
+      root.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+      return;
+    }
+    if (offline) {
+      window.history.pushState(null, "", href(id));
+      window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+    window.location.assign(href(id));
+  }
+
+  function downloadFile(url: string, filename: string) {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    root.current?.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  }
+
   function change(next: number) {
     setStep(next);
     setMessage("");
@@ -113,11 +136,10 @@ export function Module3JourneyContent({
       return;
     }
     if (!offline) {
-      window.open(
-        save ? (guide.downloadUrl ?? guide.url) : guide.url,
-        "_blank",
-        "noopener,noreferrer"
-      );
+      if (save) {
+        downloadFile(guide.downloadUrl ?? guide.url, `${guide.title}.pdf`);
+        setMessage("");
+      } else window.open(guide.url, "_blank", "noopener,noreferrer");
       return;
     }
     const popup = save ? null : window.open("about:blank", "_blank");
@@ -209,15 +231,16 @@ export function Module3JourneyContent({
         </h1>
         <nav aria-label="Sesiones del Módulo 3" className="flex gap-3">
           {MODULE3_SESSIONS.map((s) => (
-            <a
+            <button
               key={s.id}
-              href={href(s.id)}
+              type="button"
+              onClick={() => goToSession(s.id)}
               aria-current={s.id === lessonId ? "step" : undefined}
               aria-label={`Sesión ${s.order}: ${s.title}`}
               className="flex min-h-12 min-w-12 items-center justify-center rounded-md border border-[#dfc7d2] font-bold text-[#b5245b] aria-[current=step]:bg-[#b5245b] aria-[current=step]:text-white"
             >
               {s.order}
-            </a>
+            </button>
           ))}
         </nav>
       </header>

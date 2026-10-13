@@ -160,6 +160,27 @@ try {
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "Ingresar como artesana", exact: true }).click();
   await page.waitForURL("**/artesana/**");
+  await openLesson(page, 2);
+  await page
+    .getByRole("navigation", { name: "Sesiones del Módulo 3" })
+    .getByRole("button", { name: `Sesión 4: ${MODULE3_SESSIONS[3].title}` })
+    .click();
+  await page.locator('[data-session-order="4"]').waitFor();
+  await page
+    .getByRole("navigation", { name: "Sesiones del Módulo 3" })
+    .getByRole("button", { name: `Sesión 2: ${MODULE3_SESSIONS[1].title}` })
+    .click();
+  await page.locator('[data-session-order="2"]').waitFor();
+  assert.equal(
+    await prisma.lessonProgress.count({ where: { enrollment: { userId, courseId }, completed: true } }),
+    0
+  );
+  await page.getByRole("button", { name: MODULE3_GUIDES[0].title, exact: true }).click();
+  const guideDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Descargar PDF", exact: true }).click();
+  assert.equal(await (await guideDownload).failure(), null);
+  await page.locator('[data-session-order="2"]').waitFor();
+  console.log("PASS navigation: session buttons skip without completion; PDF downloads without leaving the lesson.");
   await openLesson(page, 4);
   for (let i = 0; i < 3; i++) await next(page);
   await page.getByRole("button", { name: "Finalizar práctica", exact: true }).click();

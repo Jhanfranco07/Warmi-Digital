@@ -13,6 +13,8 @@ const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const { hash } = require("bcrypt");
 const { prisma } = await import("../shared/server/db/prisma.ts");
 const { LEARNING_PROGRAM } = await import("../shared/learning/program.ts");
+const { MODULE1_SESSIONS, MODULE1_CHECKLIST } =
+  await import("../shared/learning/module1.ts");
 const {
   MODULE2_ID,
   MODULE2_SESSIONS,
@@ -152,8 +154,59 @@ try {
           await button.click();
         }
       }
-      if (step.kind === "checklist" || step.kind === "form")
-        await page.getByRole("checkbox").first().check();
+      if (step.kind === "checklist" || step.kind === "form") {
+        const checklist = page.locator("[data-learning-checklist]");
+        const status = checklist.getByRole("status");
+        const boxes = checklist.getByRole("checkbox");
+        assert.equal(await boxes.count(), step.bullets.length);
+        assert.equal(
+          await status.textContent(),
+          `0 de ${step.bullets.length} tareas listas`
+        );
+        assert.equal(
+          await checklist.getByText("Siguiente tarea", { exact: true }).count(),
+          1
+        );
+        await boxes.first().focus();
+        await boxes.first().press("Space");
+        assert.equal(await boxes.first().isChecked(), true);
+        assert.equal(
+          await status.textContent(),
+          `1 de ${step.bullets.length} tareas listas`
+        );
+        assert.equal(await checklist.getByText("Hecho", { exact: true }).count(), 1);
+        await boxes.first().uncheck();
+        assert.equal(
+          await status.textContent(),
+          `0 de ${step.bullets.length} tareas listas`
+        );
+        for (const item of step.bullets)
+          await checklist.getByRole("checkbox", { name: item, exact: true }).check();
+        assert.equal(
+          await status.textContent(),
+          `${step.bullets.length} de ${step.bullets.length} tareas listas`
+        );
+        assert.equal(
+          await checklist.getByText("Hecho", { exact: true }).count(),
+          step.bullets.length
+        );
+        assert.equal(
+          await checklist.getByText("Siguiente tarea", { exact: true }).count(),
+          0
+        );
+        if (step.kind === "form") {
+          await page.screenshot({
+            path: join(tmpdir(), "warmi-checklist-complete-390.png"),
+            fullPage: true
+          });
+          await boxes.first().uncheck();
+          await boxes.nth(1).uncheck();
+          await page.screenshot({
+            path: join(tmpdir(), "warmi-checklist-pending-390.png"),
+            fullPage: true
+          });
+        }
+      }
       if (step.kind === "choice") {
         await page
           .getByRole("button", { name: "Quiero vender directamente", exact: true })
@@ -253,6 +306,28 @@ try {
   assert.equal(enrollment.courseProgress.totalLessons, 10);
   assert.equal(enrollment.courseProgress.completedLessons, 4);
   assert.equal(enrollment.courseProgress.percentage, 40);
+  await page.goto(`${href}/lecciones/${MODULE1_SESSIONS[2].id}`);
+  const preparation = page.getByRole("group", {
+    name: "Prepara tus requisitos",
+    exact: true
+  });
+  await preparation.waitFor();
+  assert.equal(await preparation.getByRole("checkbox").count(), MODULE1_CHECKLIST.length);
+  await preparation.getByRole("checkbox").first().check();
+  assert.equal(
+    await preparation.getByRole("status").textContent(),
+    `1 de ${MODULE1_CHECKLIST.length} tareas listas`
+  );
+  assert.equal(
+    await preparation.getByText("Siguiente tarea", { exact: true }).count(),
+    1
+  );
+  await page.screenshot({
+    path: join(tmpdir(), "warmi-checklist-m1-390.png"),
+    fullPage: true
+  });
+  await page.goto(href);
+  await page.getByText("40%", { exact: true }).waitFor();
   assert.equal(before, await protectedSnapshot());
   console.log(
     JSON.stringify(

@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Offline links use the existing local router. */
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Clock3, HandHeart, MapPin, UsersRound } from "lucide-react";
 
 import { landingImage } from "@/shared/offline/landing-assets";
+import { WORKSHOPS_PRESENTATION } from "@/shared/learning/workshops";
 
 const discoveryImages = [
   {
@@ -86,7 +88,71 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
             </DiscoveryCard>
           ))}
         </div>
+
+        <section
+          aria-labelledby="talleres-presenciales"
+          className="warmi-scroll-reveal mt-12 border-y-2 border-[#ecd6df] bg-[#fff7fa] px-5 py-8 md:px-10 md:py-10"
+        >
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+            <div>
+              <p className="font-ui text-sm font-extrabold uppercase text-[#b5245b]">
+                Próximamente
+              </p>
+              <h2
+                id="talleres-presenciales"
+                className="mt-2 font-serif text-3xl font-bold leading-tight text-[#b5245b] md:text-4xl"
+              >
+                Talleres presenciales
+              </h2>
+              <p className="mt-3 text-base leading-7 text-[#123f78]">
+                Paralelo al uso de la plataforma Warmi.
+              </p>
+            </div>
+            <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+              <WorkshopDetail
+                icon={MapPin}
+                title="Dónde se realizan"
+                text={WORKSHOPS_PRESENTATION.location}
+              />
+              <WorkshopDetail
+                icon={Clock3}
+                title="Duración"
+                text={WORKSHOPS_PRESENTATION.duration}
+              />
+              <WorkshopDetail
+                icon={HandHeart}
+                title="Metodología participativa"
+                text={WORKSHOPS_PRESENTATION.methodology}
+              />
+              <WorkshopDetail
+                icon={UsersRound}
+                title="Acompañamiento"
+                text={`${WORKSHOPS_PRESENTATION.accompaniment} ${WORKSHOPS_PRESENTATION.promoters}`}
+              />
+            </dl>
+          </div>
+        </section>
       </section>
+    </div>
+  );
+}
+
+function WorkshopDetail({
+  icon: Icon,
+  title,
+  text
+}: {
+  icon: typeof MapPin;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="border-t border-[#ead2dc] pt-4">
+      <dt className="flex items-center gap-2 font-ui font-extrabold text-[#123f78]">
+        <Icon aria-hidden="true" className="h-5 w-5 shrink-0 text-[#b5245b]" />
+        {title}
+      </dt>
+      <dd className="mt-2 text-sm leading-6 text-[#344441]">{text}</dd>
     </div>
   );
 }

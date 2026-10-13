@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
+  HandHeart,
   MapPin,
   Users
 } from "lucide-react";
@@ -16,6 +17,7 @@ import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { WorkshopService } from "@/shared/services/workshop.service";
 import { requireRole } from "@/shared/server/auth/helpers";
+import { WORKSHOPS_PRESENTATION } from "@/shared/learning/workshops";
 
 type WorkshopRegistration = Awaited<
   ReturnType<WorkshopService["getWorkshops"]>
@@ -38,7 +40,7 @@ export default async function ArtisanWorkshopsPage() {
       total + Math.max(1, Math.round((endsAt.getTime() - startsAt.getTime()) / 3600000))
     );
   }, 0);
-  const workshopsNarration = `Estás en Talleres. Aquí puedes revisar los espacios donde aprendes herramientas digitales, trámites simples, comunicación y mejora de tu vitrina cultural. Tienes ${upcoming.length} talleres próximos, ${completed.length} talleres completados y ${totalHours} horas de aprendizaje registradas. Revisa fecha, hora, lugar y facilitadora antes de participar.`;
+  const workshopsNarration = `Estás en Talleres. Los talleres presenciales estarán disponibles próximamente y se desarrollarán en locales comunales o talleres artesanales de cada asociación. Cada sesión durará 2 horas durante 4 meses. La metodología tendrá una explicación breve, práctica guiada en la plataforma o el celular y ejercicios individuales. Tendrás acompañamiento constante de tu facilitadora. Tienes ${upcoming.length} talleres próximos, ${completed.length} talleres completados y ${totalHours} horas de aprendizaje registradas.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -87,6 +89,8 @@ export default async function ArtisanWorkshopsPage() {
           compact
         />
 
+        <WorkshopComingSoon />
+
         <section className="mt-8 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
           <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
             <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
@@ -126,7 +130,7 @@ export default async function ArtisanWorkshopsPage() {
                 ))}
               </div>
             ) : (
-              <EmptyWorkshopState text="No tienes talleres próximos." />
+              <EmptyWorkshopState text="Próximamente: cuando tu facilitadora registre el primer taller, aparecerá aquí." />
             )}
           </article>
         </section>
@@ -152,7 +156,7 @@ export default async function ArtisanWorkshopsPage() {
                 ))}
               </div>
             ) : (
-              <EmptyWorkshopState text="No tienes talleres próximos. Cuando una facilitadora te registre, aparecerán aquí." />
+              <EmptyWorkshopState text="Próximamente: cuando una facilitadora te registre en un taller, aparecerá aquí." />
             )}
           </article>
 
@@ -188,6 +192,79 @@ export default async function ArtisanWorkshopsPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+function WorkshopComingSoon() {
+  return (
+    <section
+      aria-labelledby="talleres-proximamente"
+      className="mt-8 border border-[#ecd0bd] bg-[#fff7fa] p-6 shadow-[0_18px_40px_rgba(122,49,0,0.06)] md:p-8"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#ead2dc] pb-5">
+        <div>
+          <p className="font-ui text-sm font-extrabold uppercase text-[#b5245b]">
+            Próximamente
+          </p>
+          <h2
+            id="talleres-proximamente"
+            className="mt-1 font-serif text-3xl font-bold text-[#b5245b]"
+          >
+            Talleres presenciales
+          </h2>
+          <p className="mt-2 text-base text-[#5b4a42]">
+            Paralelo al uso de la plataforma Warmi.
+          </p>
+        </div>
+        <Badge className="bg-[#ffe8ef] text-[#b5245b] hover:bg-[#ffe8ef]">
+          Próximamente
+        </Badge>
+      </div>
+      <dl className="mt-6 grid gap-6 md:grid-cols-2">
+        <WorkshopInfo
+          icon={MapPin}
+          title="Dónde se realizan"
+          text={WORKSHOPS_PRESENTATION.location}
+        />
+        <WorkshopInfo
+          icon={Clock}
+          title="Duración"
+          text={WORKSHOPS_PRESENTATION.duration}
+        />
+        <WorkshopInfo
+          icon={HandHeart}
+          title="Metodología participativa"
+          text={WORKSHOPS_PRESENTATION.methodology}
+        />
+        <WorkshopInfo
+          icon={Users}
+          title="Acompañamiento"
+          text={`${WORKSHOPS_PRESENTATION.accompaniment} ${WORKSHOPS_PRESENTATION.promoters}`}
+        />
+      </dl>
+    </section>
+  );
+}
+
+function WorkshopInfo({
+  icon: Icon,
+  title,
+  text
+}: {
+  icon: typeof MapPin;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="flex gap-3">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#ffe8ef] text-[#b5245b]">
+        <Icon aria-hidden="true" className="h-5 w-5" />
+      </span>
+      <div>
+        <dt className="font-ui font-extrabold text-[#1b1c1a]">{title}</dt>
+        <dd className="mt-1 text-sm leading-6 text-[#5b4a42]">{text}</dd>
+      </div>
+    </div>
   );
 }
 

@@ -124,7 +124,16 @@ export function Module2Lesson({
           )}
           {step.bullets &&
             (step.kind === "checklist" || step.kind === "form" ? (
-              <LearningChecklist items={step.bullets} />
+              <LearningChecklist
+                title={
+                  session.order === 4
+                    ? "Practica este paso"
+                    : step.kind === "form"
+                      ? "Prepara tu formulario"
+                      : "Revisa la convocatoria"
+                }
+                items={step.bullets}
+              />
             ) : (
               <ul className="space-y-3">
                 {step.bullets.map((item, index) => {

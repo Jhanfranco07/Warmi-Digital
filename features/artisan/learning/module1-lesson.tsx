@@ -215,7 +215,7 @@ export function Module1Lesson({
         content: (
           <>
             <p>Antes de postular necesitas preparar algunas cosas.</p>
-            <LearningChecklist items={MODULE1_CHECKLIST} />
+            <LearningChecklist title="Prepara tus requisitos" items={MODULE1_CHECKLIST} />
             <p className="text-sm">{session.intro}</p>
             <p className="text-sm">
               Los requisitos dependen de las bases de cada convocatoria. Revisa cuáles te

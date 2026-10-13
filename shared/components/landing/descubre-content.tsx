@@ -51,6 +51,7 @@ const discoveryActions: readonly DiscoveryAction[] = [
 
 export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }) {
   const [showWorkshops, setShowWorkshops] = useState(false);
+  const [showLearningProgram, setShowLearningProgram] = useState(false);
 
   return (
     <div className="bg-white text-[#10124f]">
@@ -83,6 +84,23 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
           {discoveryActions.map((item) => {
             const className = `warmi-scroll-reveal ${item.color} flex min-h-16 items-center justify-center rounded-2xl px-5 py-4 text-center font-ui text-base font-extrabold uppercase leading-snug text-white transition-transform duration-300 hover:-translate-y-1 md:text-lg`;
 
+            if (item.cta === "APRENDER PARA CRECER" && !offline)
+              return (
+                <button
+                  key={item.cta}
+                  type="button"
+                  aria-controls="aprender-para-crecer"
+                  aria-expanded={showLearningProgram}
+                  onClick={() => {
+                    setShowLearningProgram((visible) => !visible);
+                    setShowWorkshops(false);
+                  }}
+                  className={className}
+                >
+                  {item.cta}
+                </button>
+              );
+
             if (item.cta === "TALLERES PRESENCIALES")
               return (
                 <button
@@ -90,7 +108,10 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
                   type="button"
                   aria-controls="talleres-presenciales"
                   aria-expanded={showWorkshops}
-                  onClick={() => setShowWorkshops((visible) => !visible)}
+                  onClick={() => {
+                    setShowWorkshops((visible) => !visible);
+                    setShowLearningProgram(false);
+                  }}
                   className={className}
                 >
                   {item.cta}
@@ -110,6 +131,53 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
             );
           })}
         </div>
+
+        {showLearningProgram && (
+          <section
+            id="aprender-para-crecer"
+            aria-labelledby="aprender-para-crecer-titulo"
+            className="warmi-scroll-reveal mt-12 rounded-2xl border border-[#d9d9d9] bg-[#f7f7f7] px-5 py-8 md:px-10 md:py-10"
+          >
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="font-ui text-sm font-extrabold uppercase tracking-[0.08em] text-[#b5245b]">
+                  Programa de aprendizaje
+                </p>
+                <h2
+                  id="aprender-para-crecer-titulo"
+                  className="mt-2 font-serif text-3xl font-bold leading-tight text-[#123f78] md:text-4xl"
+                >
+                  Aprender para crecer
+                </h2>
+              </div>
+              <Link
+                href="/descubre/aprender-para-crecer"
+                className="inline-flex items-center justify-center rounded-xl bg-[#2f62a3] px-4 py-2 font-ui text-sm font-extrabold uppercase text-white transition-colors hover:bg-[#244e8b]"
+              >
+                Ver todos los módulos
+              </Link>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {[
+                "Mi celular como herramienta de acceso al Estado",
+                "Oportunidades para mi negocio",
+                "Herramientas digitales para vender",
+                "Estrategias de venta y autonomía digital"
+              ].map((item, index) => (
+                <div
+                  key={item}
+                  className="flex gap-3 rounded-xl border border-[#ead4ca] bg-white p-4"
+                >
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#e7f0ff] font-ui text-xs font-extrabold text-[#2f62a3]">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm leading-6 text-[#123f78] md:text-base">{item}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {showWorkshops && (
           <section

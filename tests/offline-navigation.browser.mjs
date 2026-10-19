@@ -4,6 +4,14 @@ export async function navigateDownloadedLearning(page, href) {
   if (!(await page.locator("[data-warmi-offline-learning]").count()))
     await page.goto(href);
   if (await page.locator("[data-warmi-offline-home]").count()) {
+    // Direct saved lesson URLs now enter learning as soon as IndexedDB finishes loading.
+    // Keep the old Home CTA path only when that transition did not happen.
+    await page
+      .locator("[data-warmi-offline-home]")
+      .waitFor({ state: "detached", timeout: 1000 })
+      .catch(() => {});
+  }
+  if (await page.locator("[data-warmi-offline-home]").count()) {
     await page
       .getByRole("link", { name: "Continuar mi aprendizaje", exact: true })
       .click();

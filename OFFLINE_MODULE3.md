@@ -45,7 +45,7 @@ El endpoint `GET /api/learning/offline/[courseId]/files/[fileId]` exige rol ARTE
 
 ## Uso sin red
 
-Al abrir `/`, `/artesana/dashboard`, Mi aprendizaje o sus URLs de curso/leccion sin red, el Service Worker responde con el shell. La barra de direcciones conserva la ruta solicitada. El shell carga la descarga completa desde IndexedDB, comprueba sus archivos y navega localmente entre las lecciones con las rutas existentes. No consulta PostgreSQL ni necesita una sesion online para leer los contenidos ya guardados.
+Al abrir `/`, `/artesana/dashboard`, Mi aprendizaje o sus URLs de curso/leccion sin red, el Service Worker responde con el shell. La barra de direcciones conserva la ruta solicitada. Si la URL apunta a una leccion que ya fue descargada, el shell la abre directamente sin depender del historial del navegador; si no hay descarga, muestra una salida segura al inicio. El shell carga la descarga completa desde IndexedDB, comprueba sus archivos y navega localmente entre las lecciones con las rutas existentes. No consulta PostgreSQL ni necesita una sesion online para leer los contenidos ya guardados.
 
 Los archivos se sirven bajo `/__warmi_offline__/<generacion>/<fileId>`. PDF y MP4 admiten rangos de bytes con respuestas 206; el PDF tiene enlace para abrir el visor del navegador y el MP4 usa `<video controls playsInline>`. Los enlaces externos y YouTube requieren internet y muestran el aviso correspondiente sin red.
 

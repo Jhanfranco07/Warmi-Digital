@@ -48,6 +48,7 @@ export function Module3Session1Content({
   const selectedInSheet = useRef(false);
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [materialsOpen, setMaterialsOpen] = useState(false);
+  const [guideViewerUrl, setGuideViewerUrl] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const all = [...resources, ...relatedResources];
   const supports = resources.filter((item) => item.internalHref);
@@ -62,6 +63,7 @@ export function Module3Session1Content({
   function choose(index: number) {
     setActive(index);
     setMessage("");
+    setGuideViewerUrl(null);
     if (selectorOpen) {
       selectedInSheet.current = true;
       setSelectorOpen(false);
@@ -77,33 +79,6 @@ export function Module3Session1Content({
     return URL.createObjectURL(
       new Blob([await response.arrayBuffer()], { type: "application/pdf" })
     );
-  }
-  function openOfflineGuide(url: string) {
-    const popup = window.open("about:blank", "_blank");
-    if (!popup) {
-      setMessage("No se pudo abrir la guía. Puedes descargar el PDF.");
-      return;
-    }
-    popup.opener = null;
-    void offlineGuideUrl(url)
-      .then((objectUrl) => {
-        if (popup.closed) {
-          URL.revokeObjectURL(objectUrl);
-          return;
-        }
-        popup.location.replace(objectUrl);
-        const cleanup = setInterval(() => {
-          if (popup.closed) {
-            clearInterval(cleanup);
-            URL.revokeObjectURL(objectUrl);
-          }
-        }, 1000);
-        setMessage("");
-      })
-      .catch(() => {
-        popup.close();
-        setMessage("Este contenido todavía no está disponible sin conexión.");
-      });
   }
   async function saveOfflineGuide(url: string, filename: string) {
     try {
@@ -207,22 +182,15 @@ export function Module3Session1Content({
             <div className="grid gap-3 min-[390px]:grid-cols-2">
               {guide?.url ? (
                 <>
-                  <a
-                    href={guide.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(event) => {
-                      if (offline) {
-                        event.preventDefault();
-                        openOfflineGuide(guide.url!);
-                      }
-                    }}
+                  <button
+                    type="button"
+                    onClick={() => setGuideViewerUrl(guide.url!)}
                     className={`${linkStyle} px-2 text-sm`}
                     aria-label={`Abrir guía PDF: ${topic.title}`}
                   >
                     <ExternalLink aria-hidden="true" className="h-5 w-5 shrink-0" />
                     Abrir guía
-                  </a>
+                  </button>
                   <a
                     href={guide.downloadUrl ?? guide.url}
                     download={`${topic.key}.pdf`}
@@ -260,7 +228,48 @@ export function Module3Session1Content({
                 </button>
               )}
             </div>
+            {guideViewerUrl && guide?.url && (
+              <section
+                aria-label={`Guía abierta: ${topic.title}`}
+                className="space-y-3 rounded-md border border-[#ead2dc] bg-white p-3"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-bold text-[#202b29]">Guía abierta</p>
+                  <button
+                    type="button"
+                    onClick={() => setGuideViewerUrl(null)}
+                    className={linkStyle}
+                  >
+                    Volver a la lección
+                  </button>
+                </div>
+                <iframe
+                  src={guideViewerUrl}
+                  title={`Guía PDF: ${topic.title}`}
+                  className="h-[70dvh] min-h-[420px] w-full border"
+                />
+              </section>
+            )}
           </div>
+          {index === 4 && (
+            <aside className="space-y-3 rounded-md border-l-4 border-[#24756f] bg-[#eaf5f2] p-4">
+              <h3 className="font-bold text-[#185750]">
+                ¿Ya tienes una cuenta de Facebook?
+              </h3>
+              <p>
+                Si ya tienes una cuenta, puedes omitir este paso y continuar con el
+                siguiente. Si todavía no tienes una cuenta, sigue las instrucciones para
+                crearla.
+              </p>
+              <button
+                type="button"
+                onClick={() => choose(index + 1)}
+                className="min-h-12 rounded-md bg-[#24756f] px-4 py-3 font-bold text-white"
+              >
+                Ya tengo Facebook, continuar
+              </button>
+            </aside>
+          )}
           {index === 4 || index === 5 ? (
             <button
               type="button"

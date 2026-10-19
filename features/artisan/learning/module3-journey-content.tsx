@@ -2,7 +2,14 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The same links are intercepted by the existing offline shell. */
 import { useRef, useState, useTransition } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, ExternalLink, Trophy } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Download,
+  ExternalLink,
+  Trophy
+} from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { LearningDisclosure } from "@/features/artisan/learning/learning-session";
@@ -52,6 +59,7 @@ export function Module3JourneyContent({
   const [payment, setPayment] = useState<"Yape" | "Plin" | null>(null);
   const [example, setExample] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [guideViewerOpen, setGuideViewerOpen] = useState(false);
   const [saved, setSaved] = useState(completedIds.includes(lessonId));
   const [message, setMessage] = useState("");
   const [pending, startTransition] = useTransition();
@@ -135,15 +143,16 @@ export function Module3JourneyContent({
       );
       return;
     }
-    if (!offline) {
-      if (save) {
-        downloadFile(guide.downloadUrl ?? guide.url, `${guide.title}.pdf`);
-        setMessage("");
-      } else window.open(guide.url, "_blank", "noopener,noreferrer");
+    if (!save) {
+      setGuideViewerOpen(true);
+      setMessage("");
       return;
     }
-    const popup = save ? null : window.open("about:blank", "_blank");
-    if (popup) popup.opener = null;
+    if (!offline) {
+      downloadFile(guide.downloadUrl ?? guide.url, `${guide.title}.pdf`);
+      setMessage("");
+      return;
+    }
     try {
       const response = await fetch(guide.url);
       if (
@@ -160,20 +169,8 @@ export function Module3JourneyContent({
         anchor.click();
         anchor.remove();
         setTimeout(() => URL.revokeObjectURL(url), 60000);
-      } else if (popup && !popup.closed) {
-        popup.location.replace(url);
-        const timer = setInterval(() => {
-          if (popup.closed) {
-            clearInterval(timer);
-            URL.revokeObjectURL(url);
-          }
-        }, 1000);
-      } else {
-        URL.revokeObjectURL(url);
-        setMessage("No se pudo abrir el visor. Puedes descargar el PDF.");
       }
     } catch {
-      popup?.close();
       setMessage("Esta guía todavía no está disponible sin conexión.");
     }
   }
@@ -221,7 +218,7 @@ export function Module3JourneyContent({
           className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
         >
           <ArrowLeft className="h-5 w-5" />
-          Aprender para crecer
+          Volver a mis módulos
         </a>
         <p className="text-sm font-bold text-[#24756f]">
           Módulo 3 · Sesión {session.order} de {MODULE3_SESSIONS.length}
@@ -283,7 +280,9 @@ export function Module3JourneyContent({
                 </span>
                 <div>
                   <strong className="block text-[#202b29]">{o.title}</strong>
-                  <p className="mt-1 text-base leading-7 text-[#123f78]">{o.description}</p>
+                  <p className="mt-1 text-base leading-7 text-[#123f78]">
+                    {o.description}
+                  </p>
                 </div>
               </li>
             ))}
@@ -529,6 +528,28 @@ export function Module3JourneyContent({
                     <Download className="h-4 w-4" />
                     Descargar PDF
                   </button>
+                  {guideViewerOpen && guide.url && (
+                    <section
+                      aria-label={`Guía abierta: ${guide.title}`}
+                      className="space-y-3 rounded-md border border-[#ead2dc] bg-white p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-bold text-[#202b29]">{guide.title}</p>
+                        <button
+                          type="button"
+                          onClick={() => setGuideViewerOpen(false)}
+                          className={learningLinkStyle}
+                        >
+                          Volver a la lección
+                        </button>
+                      </div>
+                      <iframe
+                        src={guide.url}
+                        title={guide.title}
+                        className="h-[70dvh] min-h-[420px] w-full border"
+                      />
+                    </section>
+                  )}
                 </div>
               </LearningDisclosure>
             )}

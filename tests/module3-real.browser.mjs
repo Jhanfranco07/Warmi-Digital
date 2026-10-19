@@ -84,11 +84,16 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
     if (verifyVideos && topic.videoIds.length)
       await playVideos(page, topic.videoIds.length, offline);
     if (withGuides) {
-      const link = section.getByRole("link", {
+      const openGuide = section.getByRole("button", {
         name: `Abrir guía PDF: ${topic.title}`,
         exact: true
       });
-      const href = await link.getAttribute("href");
+      await openGuide.click();
+      const viewer = page
+        .getByRole("region", { name: `Guía abierta: ${topic.title}`, exact: true })
+        .locator("iframe");
+      await viewer.waitFor();
+      const href = await viewer.getAttribute("src");
       const data = await page.evaluate(async (url) => {
         const response = await fetch(url);
         const bytes = await response.arrayBuffer();
@@ -108,6 +113,9 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
       assert.equal(data.magic, "%PDF-");
       assert.equal(data.size, expected.bytes);
       assert.equal(data.hash, expected.sha256);
+      await page
+        .getByRole("button", { name: "Volver a la lección", exact: true })
+        .click();
       const downloadLink = section.getByRole("link", {
         name: `Descargar guía PDF: ${topic.title}`,
         exact: true
@@ -129,20 +137,12 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
           .digest("hex"),
         expected.sha256
       );
-      const opened = page.waitForEvent("popup");
-      await link.click();
-      const pdfPage = await opened;
-      await pdfPage.waitForURL((url) =>
-        offline ? url.href.startsWith("blob:") : url.href === new URL(href, origin).href
-      );
-      await pdfPage.goto("about:blank");
-      await pdfPage.close();
       console.log(
         JSON.stringify({
           guide: topic.key,
           mode: offline ? "offline" : "online",
           http: data.status,
-          opened: true,
+          opened: "inside Warmi",
           downloaded: true,
           sha256Match: true
         })
@@ -186,6 +186,15 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
       .getByRole("button", { name: "Escuchar este tema", exact: true })
       .click();
   }
+  await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Crear mi cuenta en Facebook", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Ya tengo Facebook, continuar", exact: true })
+    .click();
+  await page.locator('[data-session1-topic="vender-facebook-marketplace"]').waitFor();
   await page.getByRole("button", { name: "Ver todos los temas", exact: true }).click();
   await page
     .getByRole("dialog")
@@ -485,7 +494,7 @@ try {
   });
   await context.setOffline(false);
   await page.getByRole("button", { name: "Volver con conexión", exact: true }).waitFor();
-  await page.getByRole("link", { name: "Volver al curso", exact: true }).click();
+  await page.getByRole("link", { name: "Volver a mis módulos", exact: true }).click();
   await page.getByRole("button", { name: "Volver con conexión", exact: true }).click();
   await page.getByRole("heading", { name: title, exact: true }).waitFor();
   await page.getByRole("button", { name: "Eliminar descarga", exact: true }).click();
@@ -588,7 +597,7 @@ try {
       .click();
     if (verifyVideos) await playVideos(page, 2, true);
     await context.setOffline(false);
-    await page.getByRole("link", { name: "Volver al curso", exact: true }).click();
+    await page.getByRole("link", { name: "Volver a mis módulos", exact: true }).click();
     await page.getByRole("button", { name: "Volver con conexión", exact: true }).click();
     await page.getByRole("button", { name: "Eliminar descarga", exact: true }).click();
     await page.getByText("No descargado", { exact: true }).waitFor();

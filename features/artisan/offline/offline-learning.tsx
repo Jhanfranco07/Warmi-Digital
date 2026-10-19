@@ -71,12 +71,19 @@ export function OfflineLearning() {
     connection();
     window.addEventListener("online", connection);
     window.addEventListener("offline", connection);
-    // Every cold start of the public fallback begins with Warmi context, even on a saved lesson URL.
+    const requestedLearningPath =
+      location.pathname.startsWith("/artesana/aprender") &&
+      !isOfflineHomePath(location.pathname);
+    // A downloaded lesson can be opened from a saved PWA link without relying on browser history.
     window.history.replaceState(
-      { ...window.history.state, warmiOfflineView: "home" },
+      {
+        ...window.history.state,
+        warmiOfflineView: requestedLearningPath ? "learning" : "home"
+      },
       ""
     );
     setPath(location.pathname + location.search);
+    setEntered(requestedLearningPath);
     const history = () => {
       setPath(location.pathname + location.search);
       setEntered(historyStateIsLearning());

@@ -395,7 +395,7 @@ try {
   await page
     .getByRole("navigation", { name: "Accesos Warmi" })
     .evaluate((el) => window.scrollTo(0, scrollY + el.getBoundingClientRect().top - 64));
-  await page.screenshot({ path: join(output, "02-home-four-accesses-390.png") });
+  await page.screenshot({ path: join(output, "02-home-three-accesses-390.png") });
   for (const [id, label] of [
     ["programa", "PROGRAMA WARMI"],
     ["descubre", "DESCUBRE"]
@@ -444,7 +444,7 @@ try {
   // PDF pair at 390/430, stacked at 360; native 48px targets remain.
   for (const width of [360, 390, 430, 768, 1365]) {
     await page.setViewportSize({ width, height: 844 });
-    const first = page.getByRole("link", { name: /Abrir guía PDF:/ }),
+    const first = page.getByRole("button", { name: /Abrir guía PDF:/ }),
       second = page.getByRole("link", { name: /Descargar guía PDF:/ });
     const a = await first.boundingBox(),
       b = await second.boundingBox();
@@ -494,7 +494,7 @@ try {
       await active.getByText(step, { exact: true }).waitFor();
     assert.equal(
       await active
-        .getByRole("link", { name: `Abrir guía PDF: ${topic.title}`, exact: true })
+        .getByRole("button", { name: `Abrir guía PDF: ${topic.title}`, exact: true })
         .count(),
       1
     );
@@ -502,7 +502,7 @@ try {
   await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
   await page.locator("video").first().scrollIntoViewIfNeeded();
   await screenshot("07-topic-video-390.png");
-  await page.getByRole("link", { name: /Abrir guía PDF:/ }).scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: /Abrir guía PDF:/ }).scrollIntoViewIfNeeded();
   await screenshot("08-topic-pdf-390.png");
   await selectTopic(page, MODULE3_SESSION1_TOPICS[0].title);
   await page.getByText("Material adicional · Ver materiales", { exact: true }).click();
@@ -531,11 +531,12 @@ try {
     (await readFile(await exported.path())).subarray(0, 5).toString(),
     "%PDF-"
   );
-  const popupEvent = page.waitForEvent("popup");
-  await page.getByRole("link", { name: /Abrir guía PDF:/ }).click();
-  const popup = await popupEvent;
-  await popup.waitForURL("blob:**");
-  await popup.close();
+  await page.getByRole("button", { name: /Abrir guía PDF:/ }).click();
+  await page
+    .getByRole("region", { name: /Guía abierta:/ })
+    .locator("iframe")
+    .waitFor();
+  await page.getByRole("button", { name: "Volver a la lección", exact: true }).click();
   await play(page);
   await selectTopic(page, MODULE3_SESSION1_TOPICS[6].title);
   const next = page.getByRole("link", {
@@ -781,9 +782,8 @@ try {
         widths: [360, 390, 430, 768, 1365],
         screenshots: [
           "01-home-hero-390.png",
-          "02-home-four-accesses-390.png",
+          "02-home-three-accesses-390.png",
           "03-programme-offline-390.png",
-          "04-identity-offline-390.png",
           "05-session-topic-390.png",
           "06-topic-selector-390.png",
           "07-topic-video-390.png",

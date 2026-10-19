@@ -20,7 +20,7 @@ export function LearningLessonHeader({
         className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
       >
         <ArrowLeft aria-hidden="true" className="h-5 w-5" />
-        Aprender para crecer
+        Volver a mis módulos
       </a>
       <p className="text-sm font-bold text-[#24756f]">{moduleTitle}</p>
       <h1 className="font-serif text-2xl font-bold leading-tight text-[#202b29]">

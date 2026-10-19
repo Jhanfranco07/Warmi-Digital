@@ -172,7 +172,9 @@ try {
     .click();
   await page.locator('[data-session-order="2"]').waitFor();
   assert.equal(
-    await prisma.lessonProgress.count({ where: { enrollment: { userId, courseId }, completed: true } }),
+    await prisma.lessonProgress.count({
+      where: { enrollment: { userId, courseId }, completed: true }
+    }),
     0
   );
   await page.getByRole("button", { name: MODULE3_GUIDES[0].title, exact: true }).click();
@@ -180,7 +182,12 @@ try {
   await page.getByRole("button", { name: "Descargar PDF", exact: true }).click();
   assert.equal(await (await guideDownload).failure(), null);
   await page.locator('[data-session-order="2"]').waitFor();
-  console.log("PASS navigation: session buttons skip without completion; PDF downloads without leaving the lesson.");
+  await page.getByRole("link", { name: "Volver a mis módulos", exact: true }).click();
+  await page.getByRole("heading", { name: /Herramientas digitales para vender/ }).waitFor();
+  await openLesson(page, 2);
+  console.log(
+    "PASS navigation: session buttons skip without completion; PDF downloads without leaving the lesson."
+  );
   await openLesson(page, 4);
   for (let i = 0; i < 3; i++) await next(page);
   await page.getByRole("button", { name: "Finalizar práctica", exact: true }).click();

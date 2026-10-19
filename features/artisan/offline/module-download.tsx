@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, Download, Trash2 } from "lucide-react";
+import { BookOpen, CheckCircle2, Download, Trash2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
 import {
@@ -39,6 +39,9 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
   ];
   const approximateSize = files.reduce((total, file) => total + file.size, 0);
   const revision = JSON.stringify(module);
+  const moduleHref = module.lessons[0]
+    ? `/artesana/aprender/${module.courseId}/lecciones/${module.lessons[0].id}`
+    : `/artesana/aprender/${module.courseId}`;
 
   useEffect(() => {
     const expected = JSON.parse(revision) as OfflineModule;
@@ -169,6 +172,15 @@ export function ModuleDownload({ module }: { module: OfflineModule }) {
           </Button>
         )}
       </div>
+      {status === "ready" && (
+        <a
+          href={moduleHref}
+          className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
+        >
+          <BookOpen aria-hidden="true" className="h-5 w-5" />
+          Abrir módulo descargado
+        </a>
+      )}
       {error && (
         <p role="alert" className="text-sm text-red-700">
           {error}

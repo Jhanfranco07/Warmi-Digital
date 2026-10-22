@@ -1,5 +1,36 @@
 # Offline del Modulo 3
 
+## Diseño offline de Sesión 4 y logros — octubre de 2026
+
+`Module3Session4Offline` presenta los cuatro pasos de entrega y una vista separada
+de repaso de logros. Se activa únicamente para Sesión 4 con `offline`. Conserva
+`step` y `closing` del recorrido actual: abrir los logros solo cambia la vista, no
+llama a completar la lección ni crea una quinta sesión. Online mantiene su render.
+
+Reutiliza `LearningChecklist` (estado React temporal, contador y marcado),
+`SpeechButton`, Sheet y los manejadores actuales del PDF. La primera lista divide
+el acuerdo en las cinco preguntas solicitadas; las demás conservan sus elementos
+del catálogo de contenidos. Al cambiar de paso o cerrar la pantalla, las casillas
+se reinician; no representan avance sincronizado. Los ejemplos son simulaciones
+de texto, sin cámara, recibos inventados, formularios ni envío de mensajes.
+
+El cierre muestra cuatro tarjetas de aprendizajes para revisar con la facilitadora,
+sin marcas de aprobación, certificados ni porcentajes inventados. Permite volver
+al Paso 4, al módulo y a Mi aprendizaje. Solo el Módulo 3 continúa descargable.
+No incorpora imágenes externas, fuentes/CDN ni nuevas dependencias. La voz depende
+de las voces locales instaladas; no se promete audio bilingüe.
+
+La guía conserva File `0acff2a3-2aba-4d1b-9590-17a90435b575`, LessonFile
+`358d9562-9bb2-488c-8ce5-02b65381bb5f`, posición 10 y la URL Cloudinary existente.
+La prueba `tests/module3-session4-offline-design.browser.mjs` la consulta en solo
+lectura y descarga sus bytes para un contexto temporal del navegador. Verifica
+entrada directa tras cerrar/reabrir sin red, selector, cuatro pasos, casillas,
+visor/retorno PDF, API de voz, logros, navegación y ausencia de cambios de progreso.
+Compara online S2/S3/S4 y offline S2/S3 con `6d55cab`; las pruebas de las otras
+sesiones mantienen ese mismo alcance de regresión. No escribe en PostgreSQL.
+La revisión en Android físico, audibilidad de las voces y exportación nativa del
+PDF por dispositivo siguen siendo manuales.
+
 ## Diseño offline de Sesión 3 — octubre de 2026
 
 `Module3Session3Offline` es la presentación de los tres pasos de cobro móvil,

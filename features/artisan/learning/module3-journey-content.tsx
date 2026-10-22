@@ -13,6 +13,7 @@ import {
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Module3Session2Offline } from "@/features/artisan/offline/module3-session2-offline";
 import { Module3Session3Offline } from "@/features/artisan/offline/module3-session3-offline";
+import { Module3Session4Offline } from "@/features/artisan/offline/module3-session4-offline";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { LearningDisclosure } from "@/features/artisan/learning/learning-session";
 import {
@@ -207,6 +208,35 @@ export function Module3JourneyContent({
       }
     });
   }
+  if (offline && session.order === 4)
+    return (
+      <div ref={root} data-module3-journey data-session-order={session.order}>
+        <Module3Session4Offline
+          courseHref={courseHref}
+          step={step}
+          closing={closing}
+          guide={guide}
+          guideViewerOpen={guideViewerOpen}
+          headingRef={focus}
+          onChange={change}
+          onGuide={(save) => void pdf(save)}
+          onCloseGuide={() => setGuideViewerOpen(false)}
+          onShowOutcomes={() => {
+            setGuideViewerOpen(false);
+            finish();
+            requestAnimationFrame(() => {
+              focus.current?.focus({ preventScroll: true });
+              root.current?.scrollIntoView({ block: "start" });
+            });
+          }}
+          onReturnToSession={() => {
+            setClosing(false);
+            change(3);
+          }}
+        />
+        {message && <p role="alert">{message}</p>}
+      </div>
+    );
   if (offline && session.order === 3)
     return (
       <div ref={root} data-module3-journey data-session-order={session.order}>

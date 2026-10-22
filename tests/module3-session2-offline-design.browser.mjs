@@ -12,7 +12,7 @@ const { build } = require(
 );
 const previous = execFileSync(
   "git",
-  ["show", "8939d7d:features/artisan/learning/module3-journey-content.tsx"],
+  ["show", "6d55cab:features/artisan/learning/module3-journey-content.tsx"],
   { encoding: "utf8" }
 );
 const pdf = await readFile("output/pdf/module3-sessions-2-4/elegir-donde-vender.pdf");
@@ -20,7 +20,7 @@ const bundle = await build({
   stdin: {
     contents: `import React from 'react';import{createRoot}from'react-dom/client';import{renderToStaticMarkup}from'react-dom/server';import{Module3JourneyContent as Current}from'./features/artisan/learning/module3-journey-content';import{Module3JourneyContent as Previous}from'baseline';import{MODULE3_SESSIONS,MODULE3_ID}from'./shared/learning/module3-journey';import{SESSION2_OFFLINE_TOPICS}from'./features/artisan/offline/module3-session2-offline';import{downloadModule}from'./shared/offline/module3-storage';import{MODULE3_CONTENT_VERSION}from'./shared/learning/module3-version';
   window.downloadSession2=()=>downloadModule({userId:'isolated-design-test',courseId:'93dc7355-d746-4acd-87df-29f71d16a955',courseTitle:'Aprender para crecer',moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[MODULE3_SESSIONS[0].id],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===2?[{id:'existing-guide',title:'Guía para elegir dónde vender por internet',type:'PDF',externalUrl:null,description:null,file:{id:'design-guide',mimeType:'application/pdf',size:${pdf.length}}}]:[]}))},()=>{});
-  window.topics=SESSION2_OFFLINE_TOPICS;window.mountSession2=()=>{const pdfUrl=URL.createObjectURL(new Blob([new Uint8Array(${JSON.stringify([...pdf])})],{type:'application/pdf'}));const props={courseId:'93dc7355-d746-4acd-87df-29f71d16a955',lessonId:MODULE3_SESSIONS[1].id,resources:[{id:'existing-guide',title:'Guía para elegir dónde vender por internet',mimeType:'application/pdf',url:pdfUrl}],completedIds:[MODULE3_SESSIONS[0].id]};window.unchanged=MODULE3_SESSIONS.slice(1).flatMap(session=>[false,true].filter(offline=>!offline||session.order!==3).map(offline=>{const p={...props,lessonId:session.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);const host=document.createElement('main');[...document.body.children].forEach(el=>el.style.display='none');host.style.cssText='max-width:768px;margin:auto;padding:16px';document.body.append(host);createRoot(host).render(React.createElement(Current,{...props,offline:true}));};`,
+  window.topics=SESSION2_OFFLINE_TOPICS;window.mountSession2=()=>{const pdfUrl=URL.createObjectURL(new Blob([new Uint8Array(${JSON.stringify([...pdf])})],{type:'application/pdf'}));const props={courseId:'93dc7355-d746-4acd-87df-29f71d16a955',lessonId:MODULE3_SESSIONS[1].id,resources:[{id:'existing-guide',title:'Guía para elegir dónde vender por internet',mimeType:'application/pdf',url:pdfUrl}],completedIds:[MODULE3_SESSIONS[0].id]};window.unchanged=MODULE3_SESSIONS.slice(1).flatMap(session=>[false,true].filter(offline=>!offline||session.order!==4).map(offline=>{const p={...props,lessonId:session.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);const host=document.createElement('main');[...document.body.children].forEach(el=>el.style.display='none');host.style.cssText='max-width:768px;margin:auto;padding:16px';document.body.append(host);createRoot(host).render(React.createElement(Current,{...props,offline:true}));};`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -82,7 +82,7 @@ try {
   assert.equal(
     await page.evaluate(() => window.unchanged),
     true,
-    "S2 online/offline, S3 online and S4 online/offline render unchanged"
+    "S2/S3 online/offline and S4 online render unchanged"
   );
   await context.setOffline(true);
   for (const width of [360, 390, 430, 1024]) {
@@ -165,7 +165,7 @@ try {
     .waitFor();
   await context.setOffline(false);
   console.log(
-    `PASS: S2 online/offline, S3 online and S4 unchanged; four offline topics/selector/previous/next/PDF return/external guard/no completion; real shell download, close/reopen S2 offline, cached PDF HTTP200, explicit module return/delete/reconnect; 360/390/430/1024px. Screenshots: ${output}`
+    `PASS: S2/S3 online/offline and S4 online unchanged; four offline topics/selector/previous/next/PDF return/external guard/no completion; real shell download, close/reopen S2 offline, cached PDF HTTP200, explicit module return/delete/reconnect; 360/390/430/1024px. Screenshots: ${output}`
   );
 } finally {
   await browser.close();

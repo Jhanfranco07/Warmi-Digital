@@ -1,5 +1,39 @@
 # Offline del Modulo 3
 
+## Diseño offline de Sesión 2 — octubre de 2026
+
+`Module3Session2Offline` presenta cuatro temas en orden educativo: concepto de
+tienda virtual, preguntas previas, alternativas y elección gradual. Se usa solo
+cuando `Module3JourneyContent` recibe `offline` para la Sesión 2. Online mantiene
+sus tres pasos anteriores; las sesiones 1, 3 y 4 no cambian de diseño.
+
+Reutiliza las descripciones de `MODULE3_PLATFORMS`, la guía de elección existente,
+los dos MP4 de Marketplace presentes en el paquete, `SpeechButton`, Sheet y los
+manejadores de PDF, enlaces externos y navegación del recorrido actual. Las cinco
+preguntas anteriores se agrupan en cuatro tarjetas: envío y pago del envío quedan
+juntos. No se agregan precios, comisiones garantizadas ni requisitos comerciales.
+Las frases comerciales del adjunto difieren de las descripciones prudentes del
+repositorio; estas últimas siguen siendo la fuente de verdad.
+
+La vitrina es un ejemplo educativo con icono local, sin productos ficticios ni
+imágenes remotas. La posición del tema no representa avance acreditado. El último
+tema permite volver al módulo o pasar a Sesión 3 sin completar ni sincronizar el
+progreso. PDF y videos siguen usando las URL locales del paquete guardado; no hay
+cambios en File, LessonFile, Cloudinary, IndexedDB, Cache Storage o Service Worker.
+
+`tests/module3-session2-offline-design.browser.mjs` compara el render online S2 y
+online/offline S3/S4 con `396562b`, y recorre el selector y navegación de los cuatro
+temas en 360/390/430/1024 px. Verifica apertura/retorno de un PDF existente como
+Blob de prueba, guardia de enlaces y ausencia de llamadas a completar la lección.
+Esta prueba de presentación no acredita exportación nativa ni entrega Cloudinary.
+Además prepara un paquete aislado con los IDs de sesión actuales y el PDF existente,
+cierra la página y abre directamente la Sesión 2 sin red mediante el shell real.
+Comprueba la URL local del PDF y HTTP 200, retorno al módulo, eliminación y reconexión.
+Los metadatos de prueba solo se guardan en el contexto temporal del navegador;
+no se crean registros en PostgreSQL ni assets Cloudinary. La prueba aislada general
+del módulo cubre también MP4 y reinicio completo del navegador. La validación de
+Android físico sigue siendo manual.
+
 ## Diseño offline de Sesión 1 — octubre de 2026
 
 Los siete temas conservan su contenido y recursos en `Module3Session1Content`.

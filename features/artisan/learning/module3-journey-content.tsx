@@ -11,6 +11,7 @@ import {
   Trophy
 } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
+import { Module3Session2Offline } from "@/features/artisan/offline/module3-session2-offline";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { LearningDisclosure } from "@/features/artisan/learning/learning-session";
 import {
@@ -205,6 +206,21 @@ export function Module3JourneyContent({
       }
     });
   }
+  if (offline && session.order === 2)
+    return (
+      <div ref={root} data-module3-journey data-session-order={session.order}>
+        <Module3Session2Offline
+          courseHref={courseHref}
+          resources={resources}
+          onGuide={(save) => void pdf(save)}
+          guideViewerOpen={guideViewerOpen}
+          onCloseGuide={() => setGuideViewerOpen(false)}
+          onExternal={external}
+          onNextSession={finish}
+        />
+        {message && <p role="alert">{message}</p>}
+      </div>
+    );
   return (
     <div
       ref={root}

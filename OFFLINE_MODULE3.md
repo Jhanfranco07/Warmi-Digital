@@ -1,5 +1,39 @@
 # Offline del Modulo 3
 
+## Diseño offline de Sesión 3 — octubre de 2026
+
+`Module3Session3Offline` es la presentación de los tres pasos de cobro móvil,
+activada únicamente para Sesión 3 con `offline`. Usa el estado y los manejadores
+de `Module3JourneyContent`: selección Yape/Plin, recurso de video, navegación,
+visor/exportación PDF y salida hacia Sesión 4. La vista online conserva su render.
+La barra segmentada indica posición; no completa ni sincroniza progreso.
+
+Reutiliza `SpeechButton`, Sheet, iconos locales y los textos de verificación y
+alertas existentes. Las cinco alertas tienen botones React con `aria-expanded` y
+paneles asociados. No se incorporan explicaciones ficticias del prototipo ni se
+promete lectura en quechua. La voz offline depende de voces locales instaladas.
+El reproductor nativo conserva sus controles; cambiar de método desmonta el video
+anterior y muestra el MP4 correspondiente. La usuaria inicia su reproducción con
+el control del navegador, sin simulaciones ni autoplay obligatorio.
+
+Los archivos siguen siendo Yape (`749e9521-7964-499f-950b-6b1d98811248`, relación
+`3ba1f453-ef4f-44d3-861a-efff54279fcb`, posición 10), Plin
+(`a9bb92d8-ca09-4f5a-9528-e37f57f839c3`, relación
+`e4df3549-a6cc-4eca-a9aa-0861316443d5`, posición 20) y la guía de cobros seguros
+(`2d8243ad-9700-47fa-9cff-5a70becc7ca9`, relación
+`42aeaec8-ff12-40c6-81da-a3b5043ea444`, posición 30). No hay cambios en BD,
+Cloudinary, capacidad offline ni mecanismos de descarga y almacenamiento.
+
+La prueba `tests/module3-session3-offline-design.browser.mjs` consulta File/LessonFile
+en solo lectura, obtiene los tres archivos desde sus URL reales, prepara un paquete
+en un contexto aislado y abre directamente S3 sin red tras cerrar la página.
+Comprueba reproducción y cambio de ambos MP4 locales, tres pasos, cinco acordeones,
+PDF y retorno, salida a S4, progreso preservado, eliminación y reconexión en
+360/390/430/1024 px. Compara el render online S3 y online/offline S2/S4 con `8939d7d`
+y verifica que las referencias de BD permanezcan idénticas. No realiza login ni
+crea datos de prueba en PostgreSQL. Las pruebas en Android físico y la exportación
+nativa del PDF en cada dispositivo siguen siendo revisión manual.
+
 ## Diseño offline de Sesión 2 — octubre de 2026
 
 `Module3Session2Offline` presenta cuatro temas en orden educativo: concepto de
@@ -21,8 +55,8 @@ tema permite volver al módulo o pasar a Sesión 3 sin completar ni sincronizar 
 progreso. PDF y videos siguen usando las URL locales del paquete guardado; no hay
 cambios en File, LessonFile, Cloudinary, IndexedDB, Cache Storage o Service Worker.
 
-`tests/module3-session2-offline-design.browser.mjs` compara el render online S2 y
-online/offline S3/S4 con `396562b`, y recorre el selector y navegación de los cuatro
+`tests/module3-session2-offline-design.browser.mjs` compara el render online/offline S2,
+online S3 y online/offline S4 con `8939d7d`, y recorre el selector y navegación de los cuatro
 temas en 360/390/430/1024 px. Verifica apertura/retorno de un PDF existente como
 Blob de prueba, guardia de enlaces y ausencia de llamadas a completar la lección.
 Esta prueba de presentación no acredita exportación nativa ni entrega Cloudinary.

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Module3Session2Offline } from "@/features/artisan/offline/module3-session2-offline";
+import { Module3Session3Offline } from "@/features/artisan/offline/module3-session3-offline";
 import { completeLessonAction } from "@/shared/actions/artisan/complete-lesson";
 import { LearningDisclosure } from "@/features/artisan/learning/learning-session";
 import {
@@ -206,6 +207,28 @@ export function Module3JourneyContent({
       }
     });
   }
+  if (offline && session.order === 3)
+    return (
+      <div ref={root} data-module3-journey data-session-order={session.order}>
+        <Module3Session3Offline
+          courseHref={courseHref}
+          step={step}
+          payment={payment}
+          selectedVideo={selectedVideo}
+          guide={guide}
+          guideViewerOpen={guideViewerOpen}
+          headingRef={focus}
+          narration={narration}
+          onPayment={setPayment}
+          onChange={change}
+          onGuide={(save) => void pdf(save)}
+          onCloseGuide={() => setGuideViewerOpen(false)}
+          onNextSession={finish}
+          onExternal={external}
+        />
+        {message && <p role="alert">{message}</p>}
+      </div>
+    );
   if (offline && session.order === 2)
     return (
       <div ref={root} data-module3-journey data-session-order={session.order}>

@@ -6,12 +6,15 @@ import { useEffect, useState, type MouseEvent } from "react";
 import {
   ArrowLeft,
   BookOpen,
+  CheckCircle2,
   ChevronDown,
   ChevronRight,
   ExternalLink,
   Home,
+  HardDrive,
   PlayCircle,
-  Trash2
+  Trash2,
+  WifiOff
 } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
@@ -64,7 +67,7 @@ export function OfflineLearning() {
   const [path, setPath] = useState(OFFLINE_HOME);
   const [entered, setEntered] = useState(false);
   const [message, setMessage] = useState("");
-  const [online, setOnline] = useState(false);
+  const [online, setOnline] = useState<boolean | null>(null);
   const [hasLocalData, setHasLocalData] = useState(false);
   useEffect(() => {
     const connection = () => setOnline(navigator.onLine);
@@ -208,6 +211,12 @@ export function OfflineLearning() {
       className="min-h-screen bg-[#fffaf8] text-[#344441] [&_a]:scroll-mb-32 [&_button]:scroll-mb-32"
     >
       <header className="border-b border-[#ead2dc] bg-white px-4 py-2 sm:px-6">
+        {online === false && (
+          <div className="-mx-4 mb-2 flex min-h-10 items-center justify-center gap-2 border-b border-[#ead2dc] bg-[#fff1f5] px-4 text-center text-xs font-semibold text-[#6b3850] sm:-mx-6">
+            <WifiOff aria-hidden="true" className="h-4 w-4 shrink-0 text-[#b5245b]" />
+            Sin conexión. Tus contenidos descargados siguen disponibles.
+          </div>
+        )}
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2">
           <a
             href={OFFLINE_HOME}
@@ -305,20 +314,17 @@ export function OfflineLearning() {
                 )}
               </>
             ) : (
-              <section className="space-y-5">
-                <a
-                  href={OFFLINE_HOME}
-                  className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
-                >
-                  <ArrowLeft aria-hidden="true" className="h-5 w-5" />
-                  Volver al inicio Warmi
-                </a>
-                <p className="text-sm font-bold text-[#24756f]">
-                  {programModule ? LEARNING_PROGRAM.title : download.courseTitle}
-                </p>
-                <h1 className="font-serif text-3xl font-bold text-[#202b29]">
-                  Mi aprendizaje
-                </h1>
+              <>
+                <OfflineModuleOverview
+                  courseHref={courseHref}
+                  download={download}
+                  moduleTitle={moduleTitle}
+                  programTitle={
+                    programModule ? LEARNING_PROGRAM.title : download.courseTitle
+                  }
+                  progress={progress}
+                  onRemove={remove}
+                />
                 {downloads.length > 1 && (
                   <nav
                     aria-label="Módulos descargados"
@@ -329,33 +335,14 @@ export function OfflineLearning() {
                     ))}
                   </nav>
                 )}
-                <h2 className="font-serif text-2xl font-bold text-[#202b29]">
-                  {moduleTitle}
-                </h2>
-                <p className="leading-7">{download.description}</p>
-                <p className="text-sm font-bold text-[#24756f]">
-                  Disponible sin conexión ·{" "}
-                  {countLabel(download.lessons.length, "sesión", "sesiones")} ·{" "}
-                  {formatBytes(download.bytes)}
-                </p>
-                {progress && progress.total > 0 && (
-                  <p>{snapshotProgressLabel(progress.completed, progress.total)}</p>
-                )}
-                <SpeechButton
-                  preferDefaultVoice
-                  text={`${moduleTitle}. ${download.description ?? ""}`}
-                  label="Escuchar este módulo"
-                  compact
-                />
-                <SessionNavigation download={download} courseHref={courseHref} />
                 {supportLessons.length > 0 && (
                   <SupportNavigation lessons={supportLessons} courseHref={courseHref} />
                 )}
-              </section>
+              </>
             )}
           </div>
         )}
-        {!home && hasLocalData && (
+        {!home && hasLocalData && lesson && (
           <Button variant="outline" className="min-h-12" onClick={remove}>
             <Trash2 aria-hidden="true" className="h-5 w-5" />
             Eliminar descarga
@@ -398,6 +385,189 @@ export function OfflineLearning() {
     </div>
   );
 }
+
+function OfflineModuleOverview({
+  courseHref,
+  download,
+  moduleTitle,
+  programTitle,
+  progress,
+  onRemove
+}: {
+  courseHref: string;
+  download: ModuleDownload;
+  moduleTitle: string;
+  programTitle: string;
+  progress?: { completed: number; total: number };
+  onRemove: () => void;
+}) {
+  const completedIds = new Set(download.progress?.completedLessonIds ?? []);
+  const nextLesson =
+    download.lessons.find((lesson) => !completedIds.has(lesson.id)) ??
+    download.lessons[0];
+  const completed = progress?.completed ?? 0;
+  const total = progress?.total ?? download.lessons.length;
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const resourceCount = download.lessons.reduce(
+    (count, lesson) =>
+      count + lesson.resources.filter((resource) => Boolean(resource.file)).length,
+    0
+  );
+
+  return (
+    <section data-offline-module-overview className="space-y-6 pb-2">
+      <a
+        href={OFFLINE_HOME}
+        className="inline-flex min-h-12 items-center gap-2 font-bold text-[#b5245b]"
+      >
+        <ArrowLeft aria-hidden="true" className="h-5 w-5" />
+        Volver al inicio Warmi
+      </a>
+
+      <header className="space-y-3">
+        <p className="text-sm font-bold uppercase tracking-wide text-[#24756f]">
+          {programTitle}
+        </p>
+        <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-[#24756f]">
+          <CheckCircle2 aria-hidden="true" className="h-5 w-5" />
+          Disponible sin conexión
+          <span aria-hidden="true">·</span>
+          {countLabel(download.lessons.length, "sesión guardada", "sesiones guardadas")}
+          <span aria-hidden="true">·</span>
+          {formatBytes(download.bytes)}
+        </div>
+        <h1 className="font-serif text-3xl font-bold leading-tight text-[#202b29] sm:text-4xl">
+          {moduleTitle}
+        </h1>
+        {download.description && (
+          <p className="max-w-2xl leading-7">{download.description}</p>
+        )}
+      </header>
+
+      <section
+        aria-label="Progreso del módulo"
+        className="space-y-4 rounded-lg border border-[#ead2dc] bg-white p-5 shadow-sm"
+      >
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-serif text-xl font-bold text-[#202b29]">
+            Progreso del módulo
+          </h2>
+          <span className="shrink-0 text-sm font-bold text-[#24756f]">
+            {total > 0 ? `${completed} de ${total} (${percentage}%)` : "Guardado"}
+          </span>
+        </div>
+        <div
+          aria-label={`${percentage}% completado`}
+          className="h-3 overflow-hidden rounded-full bg-[#f4e3eb]"
+        >
+          <div
+            className="h-full rounded-full bg-[#b5245b] transition-[width]"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        {nextLesson && (
+          <a
+            href={`${courseHref}/lecciones/${nextLesson.id}`}
+            className="flex min-h-14 items-center justify-between gap-3 rounded-md bg-[#b5245b] px-4 py-3 text-white shadow-[0_4px_14px_rgba(181,36,91,0.28)]"
+          >
+            <span className="min-w-0">
+              <span className="block text-xs font-bold uppercase tracking-wide text-[#ffd9e2]">
+                {completed === total ? "Repasar el módulo" : "Siguiente sesión"}
+              </span>
+              <span className="block truncate font-bold">{nextLesson.title}</span>
+            </span>
+            <ChevronRight aria-hidden="true" className="h-5 w-5 shrink-0" />
+          </a>
+        )}
+      </section>
+
+      <SpeechButton
+        preferDefaultVoice
+        text={`${moduleTitle}. ${download.description ?? ""}`}
+        label="Escuchar resumen del módulo"
+        compact
+      />
+
+      <section aria-labelledby="offline-sessions" className="space-y-3">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2
+            id="offline-sessions"
+            className="font-serif text-2xl font-bold text-[#202b29]"
+          >
+            Sesiones descargadas
+          </h2>
+          <span className="text-sm font-bold text-[#24756f]">
+            {download.lessons.length} listas
+          </span>
+        </div>
+        <nav aria-label="Sesiones descargadas" className="space-y-3">
+          {download.lessons.map((item, index) => {
+            const complete = completedIds.has(item.id);
+            return (
+              <a
+                key={item.id}
+                href={`${courseHref}/lecciones/${item.id}`}
+                className="flex min-h-20 items-center gap-3 rounded-lg border border-[#ead2dc] bg-white p-4 shadow-sm transition-colors active:bg-[#fff1f5]"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4e3eb] font-serif text-lg font-bold text-[#b5245b]">
+                  {index + 1}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xs font-bold uppercase tracking-wide text-[#24756f]">
+                    {complete ? "Completada" : "Lista para empezar"}
+                  </span>
+                  <span className="block break-words font-bold text-[#202b29]">
+                    {item.title}
+                  </span>
+                </span>
+                <ChevronRight
+                  aria-hidden="true"
+                  className="h-5 w-5 shrink-0 text-[#b5245b]"
+                />
+              </a>
+            );
+          })}
+        </nav>
+      </section>
+
+      {resourceCount > 0 && (
+        <section aria-labelledby="offline-materials" className="space-y-3">
+          <h2
+            id="offline-materials"
+            className="font-serif text-2xl font-bold text-[#202b29]"
+          >
+            Materiales de apoyo
+          </h2>
+          <p className="text-sm leading-6 text-[#5f6663]">
+            Tus videos y guías descargadas se abren dentro de cada sesión, sin usar
+            internet.
+          </p>
+        </section>
+      )}
+
+      <section className="space-y-3 rounded-lg bg-[#f6f0ed] p-5">
+        <div className="flex items-start gap-3">
+          <HardDrive
+            aria-hidden="true"
+            className="mt-0.5 h-5 w-5 shrink-0 text-[#24756f]"
+          />
+          <div>
+            <h2 className="font-bold text-[#202b29]">Espacio en tu teléfono</h2>
+            <p className="mt-1 text-sm leading-6 text-[#5f6663]">
+              Este módulo ocupa {formatBytes(download.bytes)}. Tu progreso no se perderá
+              si eliminas la descarga.
+            </p>
+          </div>
+        </div>
+        <Button variant="outline" className="min-h-12 w-full" onClick={onRemove}>
+          <Trash2 aria-hidden="true" className="h-5 w-5" />
+          Eliminar descarga
+        </Button>
+      </section>
+    </section>
+  );
+}
+
 function SessionNavigation({
   download,
   lessonId,

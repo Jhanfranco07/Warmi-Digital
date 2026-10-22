@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  CheckCircle2,
   List,
   ChevronDown,
   Download,
@@ -25,6 +26,7 @@ import {
   SheetTrigger
 } from "@/shared/components/ui/sheet";
 import { formatBytes } from "@/shared/offline/module3-storage";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 
 export function Module3Session1Content({
   title,
@@ -112,14 +114,65 @@ export function Module3Session1Content({
     <div
       ref={contentRef}
       data-module3-session1
-      className="mx-auto w-full min-w-0 max-w-3xl space-y-5 text-base leading-7 text-[#344441] [&_a]:scroll-mb-28 [&_button]:scroll-mb-28"
+      className={[
+        "mx-auto w-full min-w-0 max-w-3xl space-y-5 text-base leading-7 text-[#344441] [&_a]:scroll-mb-28 [&_button]:scroll-mb-28",
+        offline ? "rounded-lg bg-[#fcf9f4] p-3 sm:p-5" : ""
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
+      {offline && (
+        <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
+          <p className="flex items-center gap-2 text-xs font-bold text-[#006b5a]">
+            <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
+            Disponible sin conexión
+          </p>
+          <a
+            href={`/artesana/aprender/${LEARNING_PROGRAM.id}?module=${LEARNING_PROGRAM.modules[2].id}`}
+            className="inline-flex min-h-12 items-center gap-2 text-sm font-bold text-[#800041]"
+          >
+            <ArrowLeft aria-hidden="true" className="h-5 w-5 shrink-0" />
+            Volver al módulo 3
+          </a>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h1 className="min-w-0 font-serif text-xl font-bold text-[#1c1c19]">
+              {title}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setSelectorOpen(true)}
+              aria-haspopup="dialog"
+              aria-expanded={selectorOpen}
+              className="inline-flex min-h-12 items-center gap-2 rounded-md bg-[#f0ede9] px-4 font-bold text-[#800041]"
+            >
+              <List aria-hidden="true" className="h-5 w-5" />
+              Temas
+              <ChevronDown aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="text-xs font-bold text-[#006b5a]">
+            Tema activo: {index + 1} de {MODULE3_SESSION1_TOPICS.length}
+          </p>
+          <div className="grid grid-cols-7 gap-1.5" aria-hidden="true">
+            {MODULE3_SESSION1_TOPICS.map((item, number) => (
+              <span
+                key={item.key}
+                className={`h-2 rounded-full ${number === index ? "bg-[#006b5a]" : "bg-[#e5e2dd]"}`}
+              />
+            ))}
+          </div>
+        </header>
+      )}
       <section
         key={topic.key}
         data-session1-topic={topic.key}
         aria-labelledby={`${id}-topic`}
       >
-        <div className="mb-4 space-y-2">
+        <div
+          className={
+            offline ? "mb-4 space-y-2 border-b border-[#ddbfc6] pb-4" : "mb-4 space-y-2"
+          }
+        >
           <p role="status" className="text-sm font-bold text-[#24756f]">
             Tema {index + 1} de {MODULE3_SESSION1_TOPICS.length} · {topic.group}
           </p>
@@ -133,17 +186,30 @@ export function Module3Session1Content({
           </h2>
         </div>
         <div data-session1-active className="space-y-4">
-          <p>{topic.description}</p>
+          <p className={offline ? "text-[#574147]" : undefined}>{topic.description}</p>
           <SpeechButton
             preferDefaultVoice
             text={`${topic.title}. ${topic.description}. ${topic.steps.join(". ")}`}
             label="Escuchar este tema"
             compact
           />
-          <ol className="space-y-2">
+          <ol className={offline ? "space-y-3" : "space-y-2"}>
             {topic.steps.map((step, stepIndex) => (
-              <li key={step} className="flex items-start gap-3">
-                <span className="shrink-0 font-bold text-[#24756f]">
+              <li
+                key={step}
+                className={
+                  offline
+                    ? "flex items-start gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
+                    : "flex items-start gap-3"
+                }
+              >
+                <span
+                  className={
+                    offline
+                      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] text-sm font-bold text-[#006b5a]"
+                      : "shrink-0 font-bold text-[#24756f]"
+                  }
+                >
                   {stepIndex + 1}.
                 </span>
                 <span>{step}</span>
@@ -154,7 +220,7 @@ export function Module3Session1Content({
             (video, videoIndex) =>
               video.url &&
               (videoIndex === 0 ? (
-                <Session1Video key={video.id} video={video} />
+                <Session1Video key={video.id} video={video} offline={offline} />
               ) : (
                 <details key={video.id} className="group border-y border-[#ead2dc]">
                   <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 py-3 font-semibold text-[#24756f]">
@@ -164,11 +230,17 @@ export function Module3Session1Content({
                       className="h-5 w-5 shrink-0 group-open:rotate-180"
                     />
                   </summary>
-                  <Session1Video video={video} />
+                  <Session1Video video={video} offline={offline} />
                 </details>
               ))
           )}
-          <div className="space-y-3 border-t border-[#ead2dc] pt-4">
+          <div
+            className={
+              offline
+                ? "space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
+                : "space-y-3 border-t border-[#ead2dc] pt-4"
+            }
+          >
             <h3 className="flex items-center gap-2 font-bold text-[#202b29]">
               <FileText aria-hidden="true" className="h-5 w-5 shrink-0 text-[#24756f]" />
               Guía paso a paso
@@ -176,6 +248,13 @@ export function Module3Session1Content({
             {guide?.description && (
               <p className="text-sm">
                 {guide.description}
+                {guide.size ? ` · ${formatBytes(guide.size)}` : ""}
+              </p>
+            )}
+            {offline && guide?.url && (
+              <p className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]">
+                <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
+                PDF guardado en este dispositivo
                 {guide.size ? ` · ${formatBytes(guide.size)}` : ""}
               </p>
             )}
@@ -289,7 +368,11 @@ export function Module3Session1Content({
 
           <nav
             aria-label="Navegación de temas"
-            className="grid gap-3 min-[390px]:grid-cols-2"
+            className={
+              offline
+                ? "grid grid-cols-2 gap-3 border-t border-[#ddbfc6] pt-5"
+                : "grid gap-3 min-[390px]:grid-cols-2"
+            }
           >
             {index > 0 && (
               <button
@@ -323,12 +406,14 @@ export function Module3Session1Content({
         </div>
       </section>
       <Sheet open={selectorOpen} onOpenChange={setSelectorOpen}>
-        <SheetTrigger asChild>
-          <button type="button" className={`${linkStyle} w-full`}>
-            <List aria-hidden="true" className="h-5 w-5" />
-            Ver todos los temas
-          </button>
-        </SheetTrigger>
+        {!offline && (
+          <SheetTrigger asChild>
+            <button type="button" className={`${linkStyle} w-full`}>
+              <List aria-hidden="true" className="h-5 w-5" />
+              Ver todos los temas
+            </button>
+          </SheetTrigger>
+        )}
         <SheetContent
           side="bottom"
           className="max-h-[85dvh] overflow-y-auto rounded-t-xl pb-[calc(1.5rem+env(safe-area-inset-bottom))] [&>button]:flex [&>button]:h-12 [&>button]:w-12 [&>button]:items-center [&>button]:justify-center"
@@ -419,9 +504,21 @@ export function Module3Session1Content({
   );
 }
 
-function Session1Video({ video }: { video: Session1Resource }) {
+function Session1Video({
+  video,
+  offline = false
+}: {
+  video: Session1Resource;
+  offline?: boolean;
+}) {
   return (
-    <div className="space-y-2">
+    <div
+      className={
+        offline
+          ? "space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
+          : "space-y-2"
+      }
+    >
       <p className="flex items-start gap-2 font-semibold">
         <PlayCircle aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#24756f]" />
         {video.title}
@@ -436,6 +533,12 @@ function Session1Video({ video }: { video: Session1Resource }) {
       >
         <a href={video.url}>Abrir video</a>
       </video>
+      {offline && (
+        <p className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]">
+          <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
+          Video disponible sin conexión
+        </p>
+      )}
     </div>
   );
 }

@@ -270,7 +270,7 @@ export function OfflineLearning() {
                     {snapshotProgressLabel(progress.completed, progress.total)}
                   </p>
                 )}
-                {!ownNavigation && (
+                {!ownNavigation && lesson.id !== MODULE3_SESSION1_ID && (
                   <LearningLessonHeader
                     courseHref={courseHref}
                     moduleTitle={moduleTitle}

@@ -1,5 +1,30 @@
 # Offline del Modulo 3
 
+## Diseño offline de Sesión 1 — octubre de 2026
+
+Los siete temas conservan su contenido y recursos en `Module3Session1Content`.
+La variante `offline` incorpora el diseño de referencia de Stitch: encabezado
+compacto con retorno explícito al Módulo 3, selector de temas, indicador del tema
+activo, pasos numerados en tarjetas y presentación de MP4/PDF locales. La variante
+online conserva el mismo render anterior. El indicador representa la posición del
+tema y no acredita avance educativo ni completa sesiones.
+
+Se reutilizan `SpeechButton`, el selector Sheet, el visor PDF interno, la exportación
+del PDF local y el salto de Facebook a Marketplace. No se incorporan CDN, fuentes,
+imágenes externas ni los ejemplos ficticios del prototipo. Las fuentes y los iconos
+siguen siendo los de la aplicación. La navegación queda en el flujo del documento
+para evitar superposiciones con la barra inferior y el crecimiento del texto.
+
+La prueba `tests/module3-session1-offline-design.browser.mjs` compara el HTML online
+con el commit `a2c44fb` y recorre los siete temas offline en 360, 390, 430 y 1024 px;
+comprueba selector, anterior, salto a Marketplace, guardia de enlaces externos,
+apertura/cierre de un PDF local y el control de descarga. El visor de esta prueba
+usa un PDF existente cargado como Blob de prueba; no verifica una exportación nativa
+ni constituye una prueba de entrega desde Cloudinary. La prueba aislada existente
+`tests/offline-learning.browser.mjs` cubre el paquete, Service Worker, reapertura,
+recursos locales, reconexión y eliminación. Las pruebas automatizadas de escritorio
+no sustituyen la revisión en un Android físico ni garantizan voces instaladas.
+
 ## Regla vigente — 7 de octubre de 2026
 
 **Actualmente el único módulo descargable para uso offline es Módulo 3.** M1, M2 y M4 conservan acceso online, sin acción de descarga. La capacidad se centraliza por ID en `shared/learning/program.ts`; `isOfflineModule` gobierna los controles del curso, los manifiestos del servicio, la autorización de archivos y el inicio de descarga en el cliente.

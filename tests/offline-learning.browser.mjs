@@ -284,8 +284,7 @@ try {
   await context.close();
   page = await openBrowser(false);
   await page.goto(`${origin}/artesana/aprender`);
-  await page.getByRole("link", { name: "Continuar mi aprendizaje", exact: true }).click();
-  await page.getByText(snapshot.title, { exact: true }).waitFor();
+  await page.locator("[data-offline-module-overview]").waitFor();
   if (
     await page
       .locator("details:not([open]) > summary")
@@ -293,7 +292,11 @@ try {
       .count()
   )
     await page.getByText("Todas las sesiones", { exact: true }).click();
-  await page.getByRole("link", { name: "1. Primera lección" }).click();
+  await page
+    .getByRole("navigation", { name: "Sesiones descargadas", exact: true })
+    .getByRole("link")
+    .first()
+    .click();
   assert.equal(
     await page.locator("[data-offline-lesson-text]").evaluate((el) => el.open),
     false

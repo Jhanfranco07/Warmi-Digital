@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { assertOfflineImages } from "./helpers/offline-visuals.mjs";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 import { mkdir } from "node:fs/promises";
@@ -53,13 +54,13 @@ const { build } = require(
 );
 const previous = execFileSync(
   "git",
-  ["show", "6d55cab:features/artisan/learning/module3-journey-content.tsx"],
+  ["show", "dfc8b4d:features/artisan/learning/module3-journey-content.tsx"],
   { encoding: "utf8" }
 );
 const bundle = await build({
   stdin: {
     contents: `import React from'react';import{renderToStaticMarkup}from'react-dom/server';import{Module3JourneyContent as Current}from'./features/artisan/learning/module3-journey-content';import{Module3JourneyContent as Previous}from'baseline';import{MODULE3_ID,MODULE3_SESSIONS}from'./shared/learning/module3-journey';import{MODULE3_CONTENT_VERSION}from'./shared/learning/module3-version';import{downloadModule}from'./shared/offline/module3-storage';import{isOfflineModule}from'./shared/offline/module3-types';import{LEARNING_PROGRAM}from'./shared/learning/program';
-  const resources=${JSON.stringify(resources)};const courseId=LEARNING_PROGRAM.id;const props={courseId,resources:[],completedIds:[]};window.regression=MODULE3_SESSIONS.slice(1).flatMap(s=>[false,true].filter(offline=>!offline||s.order!==4).map(offline=>{const p={...props,lessonId:s.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);window.downloadable=LEARNING_PROGRAM.modules.filter(m=>isOfflineModule(m.id)).map(m=>m.order);window.downloadSession4=()=>downloadModule({userId:'isolated-session4-test',courseId,courseTitle:LEARNING_PROGRAM.title,moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===4?resources:[]}))},()=>{});`,
+  const resources=${JSON.stringify(resources)};const courseId=LEARNING_PROGRAM.id;const props={courseId,resources:[],completedIds:[]};window.regression=MODULE3_SESSIONS.slice(1).flatMap(s=>[false].map(offline=>{const p={...props,lessonId:s.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);window.downloadable=LEARNING_PROGRAM.modules.filter(m=>isOfflineModule(m.id)).map(m=>m.order);window.downloadSession4=()=>downloadModule({userId:'isolated-session4-test',courseId,courseTitle:LEARNING_PROGRAM.title,moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===4?resources:[]}))},()=>{});`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -155,7 +156,7 @@ try {
   assert.equal(
     await page.evaluate(() => window.regression),
     true,
-    "All online renders and S2/S3 offline unchanged"
+    "All online session renders unchanged"
   );
   assert.deepEqual(await page.evaluate(() => window.downloadable), [3]);
   await page.evaluate(() => window.downloadSession4());
@@ -182,6 +183,7 @@ try {
         .click();
       await page.getByRole("dialog").waitFor({ state: "hidden" });
       await page.locator(`[data-session4-step="${index + 1}"]`).waitFor();
+      await assertOfflineImages(page, "[data-module3-session4-offline]");
       const checks = page.getByRole("checkbox");
       assert.equal(await checks.count(), index === 0 ? 5 : 4);
       await checks.first().check();
@@ -193,6 +195,7 @@ try {
         true,
         `overflow ${width}/${index}`
       );
+      await page.evaluate(() => window.scrollTo(0, 0));
       if (width === 390)
         await page.screenshot({
           path: join(output, `step-${index + 1}.png`),
@@ -219,6 +222,7 @@ try {
     .getByRole("button", { name: "Ver logros del Módulo 3", exact: true })
     .click();
   await page.locator("[data-module3-closing]").waitFor();
+  await assertOfflineImages(page, "[data-module3-closing]");
   assert.equal(await page.locator("[data-module3-closing] li").count(), 4);
   assert.equal(await page.locator("[data-m3-step]").count(), 0);
   await page.getByRole("button", { name: "Escuchar mis logros", exact: true }).click();
@@ -229,6 +233,7 @@ try {
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       true
     );
+    await page.evaluate(() => window.scrollTo(0, 0));
     if (width === 390)
       await page.screenshot({ path: join(output, "outcomes.png"), fullPage: true });
   }
@@ -269,7 +274,7 @@ try {
   await context.setOffline(false);
   assert.equal(JSON.stringify(await read()), before, "S4 and File/LessonFile unchanged");
   console.log(
-    `PASS: S4 four steps/checklists/voice API/real cached PDF/close-reopen/outcomes/returns/no false completion/delete/reconnect; mobile 360/390/430/1024; other sessions and online unchanged; only M3 downloadable. Screenshots: ${output}`
+    `PASS: S4 four steps/checklists/voice API/real cached PDF/close-reopen/outcomes/returns/no false completion/delete/reconnect; mobile 360/390/430/1024; online sessions unchanged; only M3 downloadable. Screenshots: ${output}`
   );
 } finally {
   await browser.close();

@@ -5,13 +5,13 @@ import { useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   ChevronDown,
   Download,
   ExternalLink,
   FileText,
-  List,
-  Store
+  MousePointer2,
+  BookOpen,
+  Sprout
 } from "lucide-react";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import {
@@ -29,6 +29,18 @@ import {
 } from "@/shared/learning/module3-journey";
 import { learningLinkStyle } from "@/features/artisan/learning/learning-content";
 import type { JourneyResource } from "@/features/artisan/learning/module3-journey-content";
+import {
+  IconSequence,
+  LearningPhoto,
+  ProductExample,
+  offlineAudioStyle,
+  offlineGuideStyle,
+  OfflineSessionHeader,
+  platformIcons,
+  platformTones,
+  questionIcons,
+  storefrontBenefits
+} from "@/features/artisan/offline/module3-visuals";
 
 export const SESSION2_OFFLINE_TOPICS = [
   "¿Qué son las tiendas virtuales?",
@@ -114,44 +126,17 @@ export function Module3Session2Offline({
       data-session2-topic={topic + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
-        <p className="flex items-center gap-2 text-xs font-bold text-[#006b5a]">
-          <CheckCircle2 aria-hidden="true" className="h-4 w-4" /> Disponible sin conexión
-        </p>
-        <a
-          href={`${courseHref}?module=${MODULE3_ID}`}
-          className="inline-flex min-h-12 items-center gap-2 font-bold text-[#800041]"
-        >
-          <ArrowLeft aria-hidden="true" className="h-5 w-5" /> Volver al módulo 3
-        </a>
-        <p className="text-sm font-bold text-[#006b5a]">Módulo 3 · Sesión 2</p>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-serif text-xl font-bold text-[#1c1c19]">
-            {MODULE3_SESSIONS[1].title}
-          </h1>
-          <button
-            ref={selector}
-            onClick={() => setSelectorOpen(true)}
-            aria-haspopup="dialog"
-            aria-expanded={selectorOpen}
-            className="inline-flex min-h-12 items-center gap-2 rounded-md bg-[#f0ede9] px-4 font-bold text-[#800041]"
-          >
-            <List aria-hidden="true" className="h-5 w-5" /> Temas{" "}
-            <ChevronDown aria-hidden="true" className="h-4 w-4" />
-          </button>
-        </div>
-        <p role="status" className="text-xs font-bold text-[#006b5a]">
-          Tema activo: {topic + 1} de 4
-        </p>
-        <div aria-hidden="true" className="grid grid-cols-4 gap-1.5">
-          {SESSION2_OFFLINE_TOPICS.map((title, index) => (
-            <span
-              key={title}
-              className={`h-2 rounded-full ${index === topic ? "bg-[#006b5a]" : "bg-[#e5e2dd]"}`}
-            />
-          ))}
-        </div>
-      </header>
+      <OfflineSessionHeader
+        href={`${courseHref}?module=${MODULE3_ID}`}
+        session={2}
+        title={MODULE3_SESSIONS[1].title}
+        active={topic}
+        total={4}
+        mode="Temas"
+        selectorRef={selector}
+        open={selectorOpen}
+        onOpen={() => setSelectorOpen(true)}
+      />
       <section
         key={topic}
         className="space-y-4"
@@ -166,6 +151,7 @@ export function Module3Session2Offline({
           {SESSION2_OFFLINE_TOPICS[topic]}
         </h2>
         <SpeechButton
+          className={offlineAudioStyle}
           preferDefaultVoice
           text={`${SESSION2_OFFLINE_TOPICS[topic]}. ${summary}`}
           label="Escuchar este tema"
@@ -174,32 +160,16 @@ export function Module3Session2Offline({
         {topic === 0 && (
           <>
             <p>{summary}</p>
-            <figure className="space-y-3 rounded-lg border border-[#ddbfc6] bg-white p-5">
-              <figcaption className="text-sm font-bold text-[#006b5a]">
-                Ejemplo educativo de vitrina digital
-              </figcaption>
-              <div className="flex items-center gap-4 border-y border-[#ead2dc] py-5">
-                <Store aria-hidden="true" className="h-12 w-12 shrink-0 text-[#800041]" />
-                <p className="font-serif text-xl font-bold">
-                  Tu artesanía
-                  <br />
-                  <span className="font-sans text-sm font-normal">
-                    Fotos · Descripción · Contacto
-                  </span>
-                </p>
-              </div>
-              <p className="text-sm">
-                Prepara una pieza, sus fotos y una descripción clara.
-              </p>
-            </figure>
+            <ProductExample mode="store" />
             <div className="grid gap-3 sm:grid-cols-2">
-              {MODULE3_PLATFORMS.map((item) => (
+              {storefrontBenefits.map(({ title, detail, icon: Icon }) => (
                 <article
-                  key={item.name}
-                  className="rounded-lg border border-[#ddbfc6]/50 bg-white p-4"
+                  key={title}
+                  className="rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
                 >
-                  <h3 className="font-bold text-[#006b5a]">{item.name}</h3>
-                  <p className="mt-2 text-sm">{item.purpose}</p>
+                  <Icon aria-hidden="true" className="mb-3 h-7 w-7 text-[#006b5a]" />
+                  <h3 className="font-bold text-[#006b5a]">{title}</h3>
+                  <p className="mt-2 text-sm">{detail}</p>
                 </article>
               ))}
             </div>
@@ -207,44 +177,57 @@ export function Module3Session2Offline({
         )}
         {topic === 1 && (
           <ol className="space-y-3">
-            {questions.map(([question, explanation], index) => (
-              <li
-                key={question}
-                className="flex items-start gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] font-bold text-[#006b5a]">
-                  {index + 1}
-                </span>
-                <div>
-                  <h3 className="font-bold">{question}</h3>
-                  <p className="mt-2 text-sm text-[#574147]">{explanation}</p>
-                </div>
-              </li>
-            ))}
+            {questions.map(([question, explanation], index) => {
+              const Icon = questionIcons[index];
+              return (
+                <li
+                  key={question}
+                  className="flex items-start gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] font-bold text-[#006b5a]">
+                    <Icon aria-hidden="true" className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold text-[#006b5a]">
+                      Pregunta {index + 1}
+                    </p>
+                    <h3 className="font-bold">{question}</h3>
+                    <p className="mt-2 text-sm text-[#574147]">{explanation}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         )}
         {topic === 2 && (
           <>
             <div className="grid gap-4 sm:grid-cols-2">
-              {MODULE3_PLATFORMS.map((item) => (
-                <article
-                  key={item.name}
-                  className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-                >
-                  <Store aria-hidden="true" className="h-6 w-6 text-[#006b5a]" />
-                  <h3 className="font-serif text-xl font-bold">{item.name}</h3>
-                  <p>{item.description}</p>
-                  <p className="text-sm">{item.purpose}</p>
-                  <p className="text-sm text-[#574147]">{item.consideration}</p>
-                  <button
-                    className={`${learningLinkStyle} w-full whitespace-normal`}
-                    onClick={() => onExternal(item.url)}
+              {MODULE3_PLATFORMS.map((item, index) => {
+                const Icon = platformIcons[index];
+                return (
+                  <article
+                    key={item.name}
+                    className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
                   >
-                    <ExternalLink aria-hidden="true" className="h-5 w-5 shrink-0" />
-                    {item.cta}
-                  </button>
-                </article>
-              ))}
+                    <div
+                      className={`-mx-4 -mt-4 flex items-center gap-3 rounded-t-lg p-4 ${platformTones[index]}`}
+                    >
+                      <Icon aria-hidden="true" className="h-8 w-8 shrink-0" />
+                      <h3 className="font-serif text-xl font-bold">{item.name}</h3>
+                    </div>
+                    <p>{item.description}</p>
+                    <p className="text-sm">{item.purpose}</p>
+                    <p className="text-sm text-[#574147]">{item.consideration}</p>
+                    <button
+                      className={`${learningLinkStyle} w-full whitespace-normal`}
+                      onClick={() => onExternal(item.url)}
+                    >
+                      <ExternalLink aria-hidden="true" className="h-5 w-5 shrink-0" />
+                      {item.cta}
+                    </button>
+                  </article>
+                );
+              })}
             </div>
             {videos.length > 0 && (
               <details className="group border-y border-[#ddbfc6]">
@@ -277,19 +260,16 @@ export function Module3Session2Offline({
               No tengo que estar en todas. Empiezo por una, aprendo cómo funciona y recién
               sumo otra.
             </blockquote>
-            <ol className="space-y-3">
-              {route.map((item, index) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] font-bold text-[#006b5a]">
-                    {index + 1}
-                  </span>
-                  <span className="font-bold">{item}</span>
-                </li>
-              ))}
-            </ol>
+            <IconSequence
+              items={route.map((title, index) => ({
+                title,
+                icon: [MousePointer2, BookOpen, Sprout][index]
+              }))}
+            />
+            <LearningPhoto
+              kind="together"
+              caption="Puedo aprender y practicar acompañada."
+            />
             <p className="text-sm">
               Puedes preparar fotos y textos sin internet. Para publicar necesitas
               conexión.
@@ -300,10 +280,7 @@ export function Module3Session2Offline({
           </>
         )}
       </section>
-      <section
-        aria-label="Guía de la sesión 2"
-        className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-      >
+      <section aria-label="Guía de la sesión 2" className={offlineGuideStyle}>
         <h2 className="flex items-start gap-2 font-bold">
           <FileText aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#006b5a]" />
           {guide?.title ?? "Guía para elegir dónde vender"}

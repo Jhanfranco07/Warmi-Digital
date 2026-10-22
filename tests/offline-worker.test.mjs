@@ -56,6 +56,7 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v5",
     "warmi-offline-shell-v6",
     "warmi-offline-shell-v7",
+    "warmi-offline-shell-v8",
     "warmi-module3-old",
     "warmi-learning-module-m3-generation",
     "warmi-learning-module-m4-generation"
@@ -77,8 +78,32 @@ test("shell upgrade removes only previous public shells and preserves every down
   assert.deepEqual(removed, [
     "warmi-offline-shell-v4",
     "warmi-offline-shell-v5",
-    "warmi-offline-shell-v6"
+    "warmi-offline-shell-v6",
+    "warmi-offline-shell-v7"
   ]);
+});
+
+test("public shell precaches the three original Warmi teaching photos without authenticated requests", async () => {
+  const { handlers, context, entries } = worker();
+  const requests = [];
+  context.fetch = async (url, options) => {
+    requests.push({ url, options });
+    return new Response(url === "/offline-learning" ? "<html></html>" : "image");
+  };
+  context.self.skipWaiting = async () => {};
+  let done;
+  handlers.install({
+    waitUntil: (promise) => {
+      done = promise;
+    }
+  });
+  await done;
+  for (const name of ["tejidos", "entrega", "bolso"]) {
+    const path = `/images/learning/module4/${name}.webp`;
+    assert.ok(entries.has(path), `Missing pedagogical photo ${path}`);
+  }
+  assert.ok(requests.every(({ options }) => options.credentials === "omit"));
+  assert.ok(requests.every(({ url }) => !url.startsWith("/api/")));
 });
 
 test("offline shell preserves entry and learning URLs, without caching auth or other modules", async () => {

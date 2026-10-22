@@ -1,5 +1,31 @@
 # Offline del Modulo 3
 
+## Fidelidad integral Stitch — octubre de 2026
+
+La implementación actual amplía los diseños históricos descritos abajo. La matriz,
+el inventario de fuentes, las decisiones de contenido y la procedencia de imágenes
+están en [MODULE3_STITCH_AUDIT.md](MODULE3_STITCH_AUDIT.md).
+
+`module3-visuals.tsx` comparte cabecera compacta, banda de voz, consejos,
+comparaciones, perfil, catálogo, estado, chat educativo, secuencias y esquema de
+respaldo de envío. Las cuatro sesiones y sus logros los usan exclusivamente
+offline. Los esquemas son ejemplos identificados, sin simular servicios operativos.
+Los callbacks de PDF/MP4, Sheet, casillas temporales y progreso no cambian.
+
+El shell público v8 precarga tres fotografías originales ya presentes en Warmi
+(102 372 bytes adicionales), sin habilitar el Módulo 4. Se mantiene IndexedDB v1
+y cada generación de medios: actualizar el shell no elimina los PDF ni MP4
+descargados. La cabecera institucional redundante se omite solo en lecciones
+modernas del Módulo 3; el aviso global de conexión y la navegación siguen activos.
+
+Las pruebas visuales recorren 19 vistas (7 + 4 + 3 + 4 + logros), comprueban imágenes
+locales y anchos 360/390/430/1024. La comparación online usa `dfc8b4d` para S2–S4
+y la referencia anterior de S1. Los anteriores alcances de comparación offline
+documentados abajo son históricos: ahora las cuatro sesiones offline se rediseñan.
+`module3-session1-media.browser.mjs` verifica en solo lectura los seis MP4 reales,
+los siete PDF de posiciones 10–16 y sus relaciones, descargándolos únicamente en
+un contexto temporal de prueba. No crea usuarios, File ni LessonFile.
+
 ## Diseño offline de Sesión 4 y logros — octubre de 2026
 
 `Module3Session4Offline` presenta los cuatro pasos de entrega y una vista separada

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { assertOfflineImages } from "./helpers/offline-visuals.mjs";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 import { mkdir } from "node:fs/promises";
@@ -51,7 +52,7 @@ const { build } = require(
 );
 const previous = execFileSync(
   "git",
-  ["show", "6d55cab:features/artisan/learning/module3-journey-content.tsx"],
+  ["show", "dfc8b4d:features/artisan/learning/module3-journey-content.tsx"],
   { encoding: "utf8" }
 );
 const resources = links
@@ -67,7 +68,7 @@ const resources = links
 const bundle = await build({
   stdin: {
     contents: `import React from 'react';import{renderToStaticMarkup}from'react-dom/server';import{Module3JourneyContent as Current}from'./features/artisan/learning/module3-journey-content';import{Module3JourneyContent as Previous}from'baseline';import{MODULE3_ID,MODULE3_SESSIONS}from'./shared/learning/module3-journey';import{MODULE3_CONTENT_VERSION}from'./shared/learning/module3-version';import{downloadModule}from'./shared/offline/module3-storage';
-  const resources=${JSON.stringify(resources)};const courseId='93dc7355-d746-4acd-87df-29f71d16a955';const props={courseId,lessonId:MODULE3_SESSIONS[2].id,resources:resources.map(r=>({id:r.id,title:r.title,mimeType:r.file.mimeType,publicId:r.externalUrl,url:'/unused'})),completedIds:[]};window.unchanged=MODULE3_SESSIONS.slice(1).flatMap(s=>[false,true].filter(offline=>!offline||s.order!==4).map(offline=>{const p={...props,lessonId:s.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);window.downloadSession3=()=>downloadModule({userId:'isolated-session3-test',courseId,courseTitle:'Aprender para crecer',moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===3?resources:[]}))},()=>{});`,
+  const resources=${JSON.stringify(resources)};const courseId='93dc7355-d746-4acd-87df-29f71d16a955';const props={courseId,lessonId:MODULE3_SESSIONS[2].id,resources:resources.map(r=>({id:r.id,title:r.title,mimeType:r.file.mimeType,publicId:r.externalUrl,url:'/unused'})),completedIds:[]};window.unchanged=MODULE3_SESSIONS.slice(1).flatMap(s=>[false].map(offline=>{const p={...props,lessonId:s.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);window.downloadSession3=()=>downloadModule({userId:'isolated-session3-test',courseId,courseTitle:'Aprender para crecer',moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===3?resources:[]}))},()=>{});`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -169,6 +170,7 @@ try {
         .click();
       await reopened.getByRole("dialog").waitFor({ state: "hidden" });
       await reopened.locator(`[data-session3-step="${index + 1}"]`).waitFor();
+      await assertOfflineImages(reopened, "[data-module3-session3-offline]");
       assert.equal(
         await reopened.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         true,
@@ -179,6 +181,7 @@ try {
           await reopened.locator("[data-module3-session3-offline] ol li").count(),
           4
         );
+      await reopened.evaluate(() => window.scrollTo(0, 0));
       if (width === 390)
         await reopened.screenshot({
           path: join(output, `step-${index + 1}.png`),
@@ -237,7 +240,7 @@ try {
   await context.setOffline(false);
   assert.equal(JSON.stringify(await read()), before, "File/LessonFile remain intact");
   console.log(
-    `PASS: real Yape/Plin MP4 offline playback and switching; cached real PDF; three steps; five accordions; mobile 360/390/430/1024; close/reopen; S4 navigation; progress preserved; return/delete/reconnect; online and other sessions unchanged. Screenshots: ${output}`
+    `PASS: real Yape/Plin MP4 offline playback and switching; cached real PDF; three steps; five accordions; mobile 360/390/430/1024; close/reopen; S4 navigation; progress preserved; return/delete/reconnect; online sessions unchanged. Screenshots: ${output}`
   );
 } finally {
   await browser.close();

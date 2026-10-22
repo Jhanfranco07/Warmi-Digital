@@ -5,13 +5,9 @@ import { useRef, useState, type RefObject } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
-  ChevronDown,
   Download,
   FileText,
-  List,
   MessageCircle,
-  Package,
   Truck,
   Wallet
 } from "lucide-react";
@@ -32,6 +28,17 @@ import {
   MODULE3_SESSIONS
 } from "@/shared/learning/module3-journey";
 import type { JourneyResource } from "@/features/artisan/learning/module3-journey-content";
+import {
+  deliverySequences,
+  IconSequence,
+  LearningPhoto,
+  LearningTip,
+  offlineAudioStyle,
+  offlineGuideStyle,
+  OfflineSessionHeader,
+  PracticeChat,
+  ReceiptExample
+} from "@/features/artisan/offline/module3-visuals";
 
 const introductions = [
   "Dónde lo recibe, qué día llega y quién paga el envío. Lo escribo en el chat para que quede.",
@@ -106,51 +113,18 @@ export function Module3Session4Offline({
       data-session4-step={closing ? undefined : step + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
-        <p className="flex items-center gap-2 text-xs font-bold text-[#006b5a]">
-          <CheckCircle2 aria-hidden="true" className="h-4 w-4" />
-          Disponible sin conexión
-        </p>
-        <a
-          href={moduleHref}
-          className="inline-flex min-h-12 items-center gap-2 font-bold text-[#800041]"
-        >
-          <ArrowLeft aria-hidden="true" className="h-5 w-5" />
-          Volver al módulo 3
-        </a>
-        {!closing && (
-          <>
-            <p className="text-sm font-bold text-[#006b5a]">Módulo 3 · Sesión 4</p>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-serif text-xl font-bold text-[#1c1c19]">
-                {MODULE3_SESSIONS[3].title}
-              </h1>
-              <button
-                ref={selector}
-                onClick={() => setSelectorOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={selectorOpen}
-                className="inline-flex min-h-12 items-center gap-2 rounded-md bg-[#f0ede9] px-4 font-bold text-[#800041]"
-              >
-                <List aria-hidden="true" className="h-5 w-5" />
-                Pasos
-                <ChevronDown aria-hidden="true" className="h-4 w-4" />
-              </button>
-            </div>
-            <p role="status" className="text-xs font-bold text-[#006b5a]">
-              Paso {step + 1} de 4
-            </p>
-            <div aria-hidden="true" className="grid grid-cols-4 gap-1.5">
-              {MODULE3_DELIVERY_STEPS.map((item, index) => (
-                <span
-                  key={item.title}
-                  className={`h-2 rounded-full ${step === index ? "bg-[#006b5a]" : "bg-[#e5e2dd]"}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </header>
+      <OfflineSessionHeader
+        href={moduleHref}
+        session={4}
+        title={MODULE3_SESSIONS[3].title}
+        active={step}
+        total={4}
+        mode="Pasos"
+        selectorRef={selector}
+        open={selectorOpen}
+        onOpen={() => setSelectorOpen(true)}
+        closing={closing}
+      />
       {closing ? (
         <section data-module3-closing className="space-y-5">
           <div className="space-y-3 border-b border-[#ddbfc6] pb-5">
@@ -170,6 +144,7 @@ export function Module3Session4Offline({
             </p>
           </div>
           <SpeechButton
+            className={offlineAudioStyle}
             preferDefaultVoice
             text={`${MODULE3_OUTCOMES.map((item, index) => `${item.title}. ${outcomeDescriptions[index]}`).join(". ")}. ${solidarity}`}
             label="Escuchar mis logros"
@@ -187,7 +162,16 @@ export function Module3Session4Offline({
                   key={item.title}
                   className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-5 shadow-sm"
                 >
-                  <Icon aria-hidden="true" className="h-8 w-8 text-[#006b5a]" />
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${index % 2 ? "bg-[#ffdcbc] text-[#800041]" : "bg-[#e2f2ec] text-[#006b5a]"}`}
+                    >
+                      <Icon aria-hidden="true" className="h-6 w-6" />
+                    </span>
+                    <p className="text-xs font-bold uppercase text-[#006b5a]">
+                      Aprendizaje {index + 1}
+                    </p>
+                  </div>
                   <h2 className="font-serif text-xl font-bold text-[#1c1c19]">
                     {item.title}
                   </h2>
@@ -196,6 +180,10 @@ export function Module3Session4Offline({
               );
             })}
           </ul>
+          <LearningPhoto
+            kind="together"
+            caption="Comparto lo que aprendí y practico con mi comunidad."
+          />
           <blockquote className="border-l-4 border-[#006b5a] bg-[#e2f2ec] p-5 font-serif text-xl leading-8">
             {solidarity}
           </blockquote>
@@ -235,6 +223,7 @@ export function Module3Session4Offline({
               Esta es una práctica. No envía pedidos ni mensajes reales.
             </p>
             <SpeechButton
+              className={offlineAudioStyle}
               preferDefaultVoice
               text={`${current.title}. ${introductions[step]}. ${current.items.join(". ")}. ${reminders[step]}`}
               label="Escuchar este paso"
@@ -243,6 +232,13 @@ export function Module3Session4Offline({
             <blockquote className="border-l-4 border-[#006b5a] bg-[#e2f2ec] p-4">
               {introductions[step]}
             </blockquote>
+            {step === 1 && (
+              <LearningPhoto
+                kind="delivery"
+                caption="Preparo mi pieza y el empaque antes de cerrar la bolsa."
+              />
+            )}
+            <IconSequence items={deliverySequences[step]} />
             <div className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm">
               <LearningChecklist
                 items={step === 0 ? agreementQuestions : current.items}
@@ -261,25 +257,26 @@ export function Module3Session4Offline({
                 la pantalla. Marcarlas no guarda el avance de la sesión.
               </p>
             </div>
-            <aside className="space-y-2 border-y border-[#ddbfc6] py-4">
-              <h3 className="flex items-center gap-2 font-bold text-[#006b5a]">
-                {step === 1 ? (
-                  <Package aria-hidden="true" className="h-5 w-5 shrink-0" />
-                ) : (
-                  <MessageCircle aria-hidden="true" className="h-5 w-5 shrink-0" />
-                )}
-                {step === 0 || step === 3 ? "Simulación de mensaje" : "Ejemplo educativo"}
-              </h3>
-              <p>{current.example}</p>
-            </aside>
-            <p className="border-l-4 border-[#b5245b] pl-4 font-semibold">
+            {step === 0 || step === 3 ? (
+              <PracticeChat message={current.example} />
+            ) : step === 2 ? (
+              <>
+                <ReceiptExample />
+                <p className="text-sm">{current.example}</p>
+              </>
+            ) : (
+              <p className="text-sm">{current.example}</p>
+            )}
+            <LearningTip
+              strong={step === 3}
+              title={
+                step === 3 ? "Mi trabajo también es cuidar la entrega" : "Para recordar"
+              }
+            >
               {reminders[step]}
-            </p>
+            </LearningTip>
           </section>
-          <section
-            aria-label="Guía de entrega"
-            className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-          >
+          <section aria-label="Guía de entrega" className={offlineGuideStyle}>
             <h2 className="flex items-start gap-2 font-bold">
               <FileText
                 aria-hidden="true"

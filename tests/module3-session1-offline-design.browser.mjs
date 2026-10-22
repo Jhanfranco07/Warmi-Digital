@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFile, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { assertOfflineImages, prepareVisualShell } from "./helpers/offline-visuals.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
@@ -77,6 +78,7 @@ try {
   page.on("pageerror", (error) => console.error(error.message));
   await page.goto(`${origin}/offline-learning`);
   await page.waitForLoadState("networkidle");
+  await prepareVisualShell(page);
   await page.addScriptTag({ content: bundle.outputFiles[0].text });
   await page.evaluate(() => window.mountDesign(true));
   await page.locator("[data-module3-session1]").waitFor();
@@ -98,11 +100,13 @@ try {
       await page.getByRole("dialog").waitFor({ state: "hidden" });
       await page.getByRole("heading", { name: topic.title, exact: true }).waitFor();
       assert.equal(await page.locator("[data-session1-topic]").count(), 1);
+      await assertOfflineImages(page, "[data-module3-session1]");
       assert.equal(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         true,
         `overflow ${width} topic ${i + 1}`
       );
+      await page.evaluate(() => window.scrollTo(0, 0));
       if (width === 390)
         await page.screenshot({
           path: join(output, `topic-${i + 1}.png`),

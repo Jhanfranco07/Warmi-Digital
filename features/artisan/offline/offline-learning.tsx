@@ -152,6 +152,14 @@ export function OfflineLearning() {
     (l) => !lesson?.resources.some((r) => r.internalLessonId === l.id)
   );
   const progress = download && offlineProgress(download);
+  const compactModule3Lesson = Boolean(
+    !home &&
+    validCourse &&
+    lesson &&
+    download?.moduleId === LEARNING_PROGRAM.modules[2].id &&
+    download.contentVersion === MODULE3_CONTENT_VERSION &&
+    MODULE3_SESSIONS.some((session) => session.id === lesson.id)
+  );
   function navigate(event: MouseEvent<HTMLElement>) {
     const anchor = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
     if (
@@ -210,40 +218,44 @@ export function OfflineLearning() {
       onClick={navigate}
       className="min-h-screen bg-[#fffaf8] text-[#344441] [&_a]:scroll-mb-32 [&_button]:scroll-mb-32"
     >
-      <header className="border-b border-[#ead2dc] bg-white px-4 py-2 sm:px-6">
-        {online === false && (
-          <div className="-mx-4 mb-2 flex min-h-10 items-center justify-center gap-2 border-b border-[#ead2dc] bg-[#fff1f5] px-4 text-center text-xs font-semibold text-[#6b3850] sm:-mx-6">
-            <WifiOff aria-hidden="true" className="h-4 w-4 shrink-0 text-[#b5245b]" />
-            Sin conexión. Tus contenidos descargados siguen disponibles.
-          </div>
-        )}
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2">
-          <a
-            href={OFFLINE_HOME}
-            className="inline-flex min-h-12 items-center gap-2 font-serif font-bold text-[#b5245b]"
-            aria-label="Inicio Warmi"
-          >
-            <img
-              src={OFFLINE_LOGO}
-              alt=""
-              width={40}
-              height={40}
-              className="h-10 w-10 object-contain"
-            />
-            Warmi Digital
-          </a>
-          {!home && (
+      {!compactModule3Lesson && (
+        <header className="border-b border-[#ead2dc] bg-white px-4 py-2 sm:px-6">
+          {online === false && (
+            <div className="-mx-4 mb-2 flex min-h-10 items-center justify-center gap-2 border-b border-[#ead2dc] bg-[#fff1f5] px-4 text-center text-xs font-semibold text-[#6b3850] sm:-mx-6">
+              <WifiOff aria-hidden="true" className="h-4 w-4 shrink-0 text-[#b5245b]" />
+              Sin conexión. Tus contenidos descargados siguen disponibles.
+            </div>
+          )}
+          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2">
             <a
               href={OFFLINE_HOME}
-              className="inline-flex min-h-12 items-center gap-2 text-sm font-bold text-[#b5245b]"
+              className="inline-flex min-h-12 items-center gap-2 font-serif font-bold text-[#b5245b]"
+              aria-label="Inicio Warmi"
             >
-              <Home aria-hidden="true" className="h-4 w-4" />
-              Inicio Warmi
+              <img
+                src={OFFLINE_LOGO}
+                alt=""
+                width={40}
+                height={40}
+                className="h-10 w-10 object-contain"
+              />
+              Warmi Digital
             </a>
-          )}
-        </div>
-      </header>
-      <main className="mx-auto w-full max-w-5xl space-y-6 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-5 sm:px-6">
+            {!home && (
+              <a
+                href={OFFLINE_HOME}
+                className="inline-flex min-h-12 items-center gap-2 text-sm font-bold text-[#b5245b]"
+              >
+                <Home aria-hidden="true" className="h-4 w-4" />
+                Inicio Warmi
+              </a>
+            )}
+          </div>
+        </header>
+      )}
+      <main
+        className={`mx-auto w-full max-w-5xl space-y-6 pb-[calc(7rem+env(safe-area-inset-bottom))] ${compactModule3Lesson ? "px-1 pt-2 sm:px-6" : "px-4 pt-5 sm:px-6"}`}
+      >
         {home ? (
           <OfflineHome downloads={downloads} loading={loading} />
         ) : loading ? (
@@ -265,7 +277,7 @@ export function OfflineLearning() {
               )}
             {lesson ? (
               <>
-                {progress && progress.total > 0 && (
+                {!compactModule3Lesson && progress && progress.total > 0 && (
                   <p className="text-sm text-[#24756f]">
                     {snapshotProgressLabel(progress.completed, progress.total)}
                   </p>
@@ -282,6 +294,11 @@ export function OfflineLearning() {
                   lesson={lesson}
                   download={download}
                 />
+                {compactModule3Lesson && progress && progress.total > 0 && (
+                  <p className="px-3 text-xs text-[#24756f]">
+                    {snapshotProgressLabel(progress.completed, progress.total)}
+                  </p>
+                )}
                 {!ownNavigation && (
                   <>
                     {nextLesson && lesson.id !== MODULE3_SESSION1_ID && (

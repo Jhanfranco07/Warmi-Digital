@@ -27,6 +27,12 @@ import {
 } from "@/shared/components/ui/sheet";
 import { formatBytes } from "@/shared/offline/module3-storage";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import {
+  offlineAudioStyle,
+  offlineGuideStyle,
+  OfflineSessionHeader,
+  Session1TopicVisual
+} from "@/features/artisan/offline/module3-visuals";
 
 export function Module3Session1Content({
   title,
@@ -122,46 +128,16 @@ export function Module3Session1Content({
         .join(" ")}
     >
       {offline && (
-        <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
-          <p className="flex items-center gap-2 text-xs font-bold text-[#006b5a]">
-            <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
-            Disponible sin conexión
-          </p>
-          <a
-            href={`/artesana/aprender/${LEARNING_PROGRAM.id}?module=${LEARNING_PROGRAM.modules[2].id}`}
-            className="inline-flex min-h-12 items-center gap-2 text-sm font-bold text-[#800041]"
-          >
-            <ArrowLeft aria-hidden="true" className="h-5 w-5 shrink-0" />
-            Volver al módulo 3
-          </a>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h1 className="min-w-0 font-serif text-xl font-bold text-[#1c1c19]">
-              {title}
-            </h1>
-            <button
-              type="button"
-              onClick={() => setSelectorOpen(true)}
-              aria-haspopup="dialog"
-              aria-expanded={selectorOpen}
-              className="inline-flex min-h-12 items-center gap-2 rounded-md bg-[#f0ede9] px-4 font-bold text-[#800041]"
-            >
-              <List aria-hidden="true" className="h-5 w-5" />
-              Temas
-              <ChevronDown aria-hidden="true" className="h-4 w-4" />
-            </button>
-          </div>
-          <p className="text-xs font-bold text-[#006b5a]">
-            Tema activo: {index + 1} de {MODULE3_SESSION1_TOPICS.length}
-          </p>
-          <div className="grid grid-cols-7 gap-1.5" aria-hidden="true">
-            {MODULE3_SESSION1_TOPICS.map((item, number) => (
-              <span
-                key={item.key}
-                className={`h-2 rounded-full ${number === index ? "bg-[#006b5a]" : "bg-[#e5e2dd]"}`}
-              />
-            ))}
-          </div>
-        </header>
+        <OfflineSessionHeader
+          href={`/artesana/aprender/${LEARNING_PROGRAM.id}?module=${LEARNING_PROGRAM.modules[2].id}`}
+          session={1}
+          title={title}
+          active={index}
+          total={MODULE3_SESSION1_TOPICS.length}
+          mode="Temas"
+          open={selectorOpen}
+          onOpen={() => setSelectorOpen(true)}
+        />
       )}
       <section
         key={topic.key}
@@ -188,11 +164,13 @@ export function Module3Session1Content({
         <div data-session1-active className="space-y-4">
           <p className={offline ? "text-[#574147]" : undefined}>{topic.description}</p>
           <SpeechButton
+            className={offline ? offlineAudioStyle : undefined}
             preferDefaultVoice
             text={`${topic.title}. ${topic.description}. ${topic.steps.join(". ")}`}
             label="Escuchar este tema"
             compact
           />
+          {offline && <Session1TopicVisual index={index} />}
           <ol className={offline ? "space-y-3" : "space-y-2"}>
             {topic.steps.map((step, stepIndex) => (
               <li
@@ -236,9 +214,7 @@ export function Module3Session1Content({
           )}
           <div
             className={
-              offline
-                ? "space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-                : "space-y-3 border-t border-[#ead2dc] pt-4"
+              offline ? offlineGuideStyle : "space-y-3 border-t border-[#ead2dc] pt-4"
             }
           >
             <h3 className="flex items-center gap-2 font-bold text-[#202b29]">

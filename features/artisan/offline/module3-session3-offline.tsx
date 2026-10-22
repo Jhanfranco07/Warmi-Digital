@@ -9,7 +9,6 @@ import {
   ChevronDown,
   Download,
   FileText,
-  List,
   ShieldCheck,
   TriangleAlert
 } from "lucide-react";
@@ -30,6 +29,15 @@ import {
   MODULE3_PAYMENT_ALERTS
 } from "@/shared/learning/module3-journey";
 import type { JourneyResource } from "@/features/artisan/learning/module3-journey-content";
+import {
+  IconSequence,
+  LearningPhoto,
+  LearningTip,
+  offlineAudioStyle,
+  offlineGuideStyle,
+  OfflineSessionHeader,
+  paymentIcons
+} from "@/features/artisan/offline/module3-visuals";
 
 export const SESSION3_OFFLINE_STEPS = [
   "Elige cómo cobrar",
@@ -43,11 +51,11 @@ const verificationDetails = [
   "Solo después de verificar el dinero, entrego la artesanía."
 ];
 const alertDetails = [
-  "Si algo no coincide, me detengo, verifico en mi aplicación y pido ayuda.",
-  MODULE3_PAYMENT_RULE,
-  `${MODULE3_PAYMENT_CHECKLIST[1]} ${MODULE3_PAYMENT_CHECKLIST[2]}`,
-  MODULE3_PAYMENT_RULE,
-  "Si algo no coincide, me detengo, verifico en mi aplicación y pido ayuda."
+  "Aunque me apuren, tomo el tiempo necesario para abrir mi aplicación y revisar mis movimientos. No entrego solo por la presión del mensaje.",
+  `Una imagen enviada por chat no demuestra que recibí dinero. ${MODULE3_PAYMENT_RULE}`,
+  "Comparo el movimiento y el monto con la venta que acordé. Si algo no coincide, me detengo y pido ayuda.",
+  "No entrego por una promesa de pago. Espero a comprobar que el dinero ingresó en mi propia aplicación.",
+  "Antes de devolver cualquier dinero, verifico el ingreso y el monto en mi aplicación. Si tengo dudas, pido ayuda antes de actuar."
 ];
 
 export function Module3Session3Offline({
@@ -100,47 +108,17 @@ export function Module3Session3Offline({
       data-session3-step={step + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
-        <p className="flex items-center gap-2 text-xs font-bold text-[#006b5a]">
-          <CheckCircle2 aria-hidden="true" className="h-4 w-4" />
-          Disponible sin conexión
-        </p>
-        <a
-          href={`${courseHref}?module=${MODULE3_ID}`}
-          className="inline-flex min-h-12 items-center gap-2 font-bold text-[#800041]"
-        >
-          <ArrowLeft aria-hidden="true" className="h-5 w-5" />
-          Volver al módulo 3
-        </a>
-        <p className="text-sm font-bold text-[#006b5a]">Módulo 3 · Sesión 3</p>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-serif text-xl font-bold text-[#1c1c19]">
-            {MODULE3_SESSIONS[2].title}
-          </h1>
-          <button
-            ref={selectorRef}
-            onClick={() => setSelectorOpen(true)}
-            aria-haspopup="dialog"
-            aria-expanded={selectorOpen}
-            className="inline-flex min-h-12 items-center gap-2 rounded-md bg-[#f0ede9] px-4 font-bold text-[#800041]"
-          >
-            <List aria-hidden="true" className="h-5 w-5" />
-            Pasos
-            <ChevronDown aria-hidden="true" className="h-4 w-4" />
-          </button>
-        </div>
-        <p role="status" className="text-xs font-bold text-[#006b5a]">
-          Paso {step + 1} de 3
-        </p>
-        <div aria-hidden="true" className="grid grid-cols-3 gap-1.5">
-          {SESSION3_OFFLINE_STEPS.map((title, index) => (
-            <span
-              key={title}
-              className={`h-2 rounded-full ${step === index ? "bg-[#006b5a]" : "bg-[#e5e2dd]"}`}
-            />
-          ))}
-        </div>
-      </header>
+      <OfflineSessionHeader
+        href={`${courseHref}?module=${MODULE3_ID}`}
+        session={3}
+        title={MODULE3_SESSIONS[2].title}
+        active={step}
+        total={3}
+        mode="Pasos"
+        selectorRef={selectorRef}
+        open={selectorOpen}
+        onOpen={() => setSelectorOpen(true)}
+      />
       <section key={step} aria-labelledby={`${id}-heading`} className="space-y-4">
         <h2
           id={`${id}-heading`}
@@ -151,6 +129,7 @@ export function Module3Session3Offline({
           {SESSION3_OFFLINE_STEPS[step]}
         </h2>
         <SpeechButton
+          className={offlineAudioStyle}
           preferDefaultVoice
           text={`${SESSION3_OFFLINE_STEPS[step]}. ${narration}`}
           label="Escuchar este paso"
@@ -172,7 +151,7 @@ export function Module3Session3Offline({
                   key={method}
                   aria-pressed={payment === method}
                   onClick={() => onPayment(method)}
-                  className="flex min-h-20 items-center justify-center gap-2 rounded-lg border border-[#ddbfc6] bg-white p-4 text-lg font-bold text-[#800041] aria-pressed:border-[#006b5a] aria-pressed:bg-[#e2f2ec] aria-pressed:text-[#006b5a]"
+                  className={`flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border-2 p-4 text-lg font-bold shadow-sm aria-pressed:ring-2 aria-pressed:ring-[#006b5a] aria-pressed:ring-offset-2 ${method === "Yape" ? "border-[#7b3a85] bg-[#f4e8f4] text-[#692572]" : "border-[#007d84] bg-[#e0f5f3] text-[#006569]"}`}
                 >
                   {payment === method && (
                     <CheckCircle2 aria-hidden="true" className="h-5 w-5 shrink-0" />
@@ -185,7 +164,7 @@ export function Module3Session3Offline({
               selectedVideo?.url ? (
                 <section
                   aria-label={`Video de ${payment}`}
-                  className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
+                  className="space-y-3 overflow-hidden rounded-lg border border-[#ddbfc6] bg-white p-4 shadow-sm"
                 >
                   <h3 className="font-bold">{selectedVideo.title}</h3>
                   <video
@@ -227,25 +206,20 @@ export function Module3Session3Offline({
         )}
         {step === 1 && (
           <>
-            <blockquote className="border-l-4 border-[#006b5a] bg-[#e2f2ec] p-5 font-serif text-xl font-bold leading-8 text-[#005143]">
+            <LearningTip strong title="Mi regla de seguridad">
               La captura no es el pago. El pago se confirma en mi aplicación.
-            </blockquote>
-            <ol className="ml-4 space-y-3 border-l-2 border-[#9dd9c8] pl-5">
-              {MODULE3_PAYMENT_CHECKLIST.map((item, index) => (
-                <li
-                  key={item}
-                  className="relative rounded-lg border border-[#ddbfc6]/50 bg-white p-4"
-                >
-                  <span className="absolute -left-10 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#006b5a] text-sm font-bold text-white">
-                    {index + 1}
-                  </span>
-                  <h3 className="font-bold">{item}</h3>
-                  <p className="mt-2 text-sm text-[#574147]">
-                    {verificationDetails[index]}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            </LearningTip>
+            <LearningPhoto
+              kind="delivery"
+              caption="Reviso mi celular antes de entregar mi trabajo."
+            />
+            <IconSequence
+              items={MODULE3_PAYMENT_CHECKLIST.map((title, index) => ({
+                title,
+                detail: verificationDetails[index],
+                icon: paymentIcons[index]
+              }))}
+            />
             <p className="border-y border-[#9dd9c8] py-4 font-bold text-[#006b5a]">
               Primero el dinero en mi cuenta. Después entrego el producto.
             </p>
@@ -301,6 +275,10 @@ export function Module3Session3Offline({
               Si tengo dudas, no entrego el producto hasta verificar el dinero o pedir
               ayuda.
             </aside>
+            <LearningPhoto
+              kind="together"
+              caption="Si algo no me queda claro, lo reviso con mi promotora."
+            />
             <details className="border-y border-[#ddbfc6]">
               <summary className="min-h-12 cursor-pointer py-3 font-bold text-[#006b5a]">
                 Consultar información oficial
@@ -323,10 +301,7 @@ export function Module3Session3Offline({
           </>
         )}
       </section>
-      <section
-        aria-label="Guía de cobros seguros"
-        className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-      >
+      <section aria-label="Guía de cobros seguros" className={offlineGuideStyle}>
         <h2 className="flex items-start gap-2 font-bold">
           <FileText aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#006b5a]" />
           {guide?.title ?? "Guía de cobros seguros con Yape y Plin"}

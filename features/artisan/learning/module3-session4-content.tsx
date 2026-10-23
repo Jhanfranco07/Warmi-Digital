@@ -1,4 +1,5 @@
 "use client";
+import { PdfViewer } from "@/shared/components/media/pdf-viewer";
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The offline shell intercepts these local routes. */
 import { useRef, useState, type RefObject } from "react";
@@ -33,12 +34,12 @@ import {
   IconSequence,
   LearningPhoto,
   LearningTip,
-  offlineAudioStyle,
-  offlineGuideStyle,
-  OfflineSessionHeader,
+  module3AudioStyle,
+  module3GuideStyle,
+  Module3SessionHeader,
   PracticeChat,
   ReceiptExample
-} from "@/features/artisan/offline/module3-visuals";
+} from "@/features/artisan/learning/module3-visuals";
 
 const introductions = [
   "Dónde lo recibe, qué día llega y quién paga el envío. Lo escribo en el chat para que quede.",
@@ -69,7 +70,7 @@ const outcomeIcons = [MessageCircle, MessageCircle, Wallet, Truck];
 const solidarity =
   "Si algo de esto todavía no me sale, lo practico con mi promotora antes de seguir. Ninguna avanza sola.";
 
-export function Module3Session4Offline({
+export function Module3Session4Content({
   courseHref,
   step,
   closing,
@@ -80,7 +81,10 @@ export function Module3Session4Offline({
   onGuide,
   onCloseGuide,
   onShowOutcomes,
-  onReturnToSession
+  onReturnToSession,
+  offline = false,
+  pending = false,
+  saved = false
 }: {
   courseHref: string;
   step: number;
@@ -93,6 +97,9 @@ export function Module3Session4Offline({
   onCloseGuide: () => void;
   onShowOutcomes: () => void;
   onReturnToSession: () => void;
+  offline?: boolean;
+  pending?: boolean;
+  saved?: boolean;
 }) {
   const [selectorOpen, setSelectorOpen] = useState(false);
   const selector = useRef<HTMLButtonElement>(null);
@@ -109,11 +116,13 @@ export function Module3Session4Offline({
   }
   return (
     <div
-      data-module3-session4-offline
+      data-module3-session4
+      data-module3-session4-offline={offline || undefined}
       data-session4-step={closing ? undefined : step + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <OfflineSessionHeader
+      <Module3SessionHeader
+        offline={offline}
         href={moduleHref}
         session={4}
         title={MODULE3_SESSIONS[3].title}
@@ -144,7 +153,7 @@ export function Module3Session4Offline({
             </p>
           </div>
           <SpeechButton
-            className={offlineAudioStyle}
+            className={module3AudioStyle}
             preferDefaultVoice
             text={`${MODULE3_OUTCOMES.map((item, index) => `${item.title}. ${outcomeDescriptions[index]}`).join(". ")}. ${solidarity}`}
             label="Escuchar mis logros"
@@ -181,14 +190,18 @@ export function Module3Session4Offline({
             })}
           </ul>
           <LearningPhoto
-            kind="together"
+            kind="community"
             caption="Comparto lo que aprendí y practico con mi comunidad."
           />
           <blockquote className="border-l-4 border-[#006b5a] bg-[#e2f2ec] p-5 font-serif text-xl leading-8">
             {solidarity}
           </blockquote>
-          <p role="status" className="text-sm text-[#574147]">
-            Para guardar tu avance, vuelve con conexión y completa la sesión.
+          <p data-mode-detail role="status" className="text-sm text-[#574147]">
+            {offline
+              ? "Para guardar tu avance, vuelve con conexión y completa la sesión."
+              : saved
+                ? "Tu avance de esta sesión está guardado."
+                : "Completa la sesión con conexión para guardar tu avance."}
           </p>
           <nav
             aria-label="Navegación de logros"
@@ -223,7 +236,7 @@ export function Module3Session4Offline({
               Esta es una práctica. No envía pedidos ni mensajes reales.
             </p>
             <SpeechButton
-              className={offlineAudioStyle}
+              className={module3AudioStyle}
               preferDefaultVoice
               text={`${current.title}. ${introductions[step]}. ${current.items.join(". ")}. ${reminders[step]}`}
               label="Escuchar este paso"
@@ -234,7 +247,7 @@ export function Module3Session4Offline({
             </blockquote>
             {step === 1 && (
               <LearningPhoto
-                kind="delivery"
+                kind="packing"
                 caption="Preparo mi pieza y el empaque antes de cerrar la bolsa."
               />
             )}
@@ -276,7 +289,7 @@ export function Module3Session4Offline({
               {reminders[step]}
             </LearningTip>
           </section>
-          <section aria-label="Guía de entrega" className={offlineGuideStyle}>
+          <section aria-label="Guía de entrega" className={module3GuideStyle}>
             <h2 className="flex items-start gap-2 font-bold">
               <FileText
                 aria-hidden="true"
@@ -286,8 +299,8 @@ export function Module3Session4Offline({
             </h2>
             {guide?.url ? (
               <>
-                <p className="text-xs font-semibold text-[#006b5a]">
-                  PDF disponible sin conexión
+                <p data-mode-detail className="text-xs font-semibold text-[#006b5a]">
+                  {offline ? "PDF disponible sin conexión" : "Guía PDF"}
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <button onClick={() => onGuide(false)} className={learningLinkStyle}>
@@ -303,11 +316,7 @@ export function Module3Session4Offline({
                     <button onClick={onCloseGuide} className={learningLinkStyle}>
                       Volver a la sesión
                     </button>
-                    <iframe
-                      src={guide.url}
-                      title={guide.title}
-                      className="h-[70dvh] min-h-[420px] w-full border"
-                    />
+                    <PdfViewer key={guide.url} src={guide.url} title={guide.title} />
                   </section>
                 )}
               </>
@@ -342,9 +351,15 @@ export function Module3Session4Offline({
             ) : (
               <button
                 onClick={onShowOutcomes}
-                className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white"
+                data-mode-detail
+                disabled={pending}
+                className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white disabled:opacity-60"
               >
-                Ver logros del Módulo 3
+                {pending
+                  ? "Guardando tu avance…"
+                  : offline || saved
+                    ? "Ver logros del Módulo 3"
+                    : "Completar sesión y ver logros"}
               </button>
             )}
           </nav>

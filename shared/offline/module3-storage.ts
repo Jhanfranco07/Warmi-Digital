@@ -8,6 +8,13 @@ import {
   type OfflineModule
 } from "@/shared/offline/module3-types";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { clearReadingPositions } from "@/shared/learning/reading-position";
+import {
+  downloadSignature,
+  fileSignature,
+  isMatchingCheckpoint,
+  type DownloadCheckpoint
+} from "@/shared/offline/download-checkpoint";
 
 const defaultModuleId = LEARNING_PROGRAM.modules[2].id;
 const downloadKey = (moduleId: string) => `module:${moduleId}`;
@@ -91,6 +98,62 @@ export async function verifiedDownloads() {
   return verified.filter((item): item is ModuleDownload => Boolean(item));
 }
 
+export async function readDownloadAttempt(module: OfflineModule) {
+  const complete = await readDownload(module.moduleId);
+  const files = [
+    ...new Map(
+      [...module.lessons, ...(module.supportLessons ?? [])]
+        .flatMap((lesson) => lesson.resources)
+        .filter((resource) => isDownloadableFile(resource.file))
+        .map((resource) => [resource.file!.id, resource.file!])
+    ).values()
+  ];
+  for (const name of await caches.keys()) {
+    if (!belongsToModule(name, module.moduleId) || name === complete?.cacheName) continue;
+    const cache = await caches.open(name);
+    const checkpoint: unknown = await (
+      await cache.match("/__warmi_offline__/download-checkpoint")
+    )
+      ?.json()
+      .catch(() => null);
+    if (
+      !isMatchingCheckpoint(checkpoint, module) ||
+      name !== `${moduleCachePrefix(module.moduleId)}${checkpoint.generation}`
+    )
+      continue;
+    let bytes = 0;
+    for (const file of files) {
+      const response = await cache.match(
+        `/__warmi_offline__/${checkpoint.generation}/${file.id}`
+      );
+      if (response) bytes += (await response.blob()).size;
+    }
+    return {
+      status:
+        checkpoint.state === "paused" ? ("paused" as const) : ("incomplete" as const),
+      bytes
+    };
+  }
+  return null;
+}
+
+export async function hasForeignDownloads(userId: string) {
+  const records = await readDownloads();
+  if (records.some((record) => record.userId !== userId)) return true;
+  const complete = new Set(records.map((record) => record.cacheName));
+  for (const name of await caches.keys()) {
+    if (!isLearningCache(name) || complete.has(name)) continue;
+    const cache = await caches.open(name);
+    const checkpoint = await (
+      await cache.match("/__warmi_offline__/download-checkpoint")
+    )
+      ?.json()
+      .catch(() => null);
+    if (checkpoint?.userId !== userId) return true;
+  }
+  return false;
+}
+
 function changed() {
   window.dispatchEvent(new Event("warmi-offline-download-change"));
 }
@@ -108,6 +171,7 @@ async function removeDownloadUnlocked(moduleId?: string) {
     if (moduleId ? belongsToModule(name, moduleId) : isLearningCache(name))
       await caches.delete(name);
   }
+  if (!moduleId || moduleId === defaultModuleId) clearReadingPositions();
   changed();
 }
 
@@ -170,8 +234,26 @@ async function downloadModuleUnlocked(
   signal?.throwIfAborted();
   await prepareOfflineShell();
   const previous = await readDownload(module.moduleId);
-  const generation = crypto.randomUUID();
-  const cacheName = `${moduleCachePrefix(module.moduleId)}${generation}`;
+  const checkpointUrl = "/__warmi_offline__/download-checkpoint";
+  let generation = crypto.randomUUID() as string;
+  let cacheName = `${moduleCachePrefix(module.moduleId)}${generation}`;
+  for (const name of await caches.keys()) {
+    if (!belongsToModule(name, module.moduleId) || name === previous?.cacheName) continue;
+    const candidate = await caches.open(name);
+    const saved: unknown = await (
+      await candidate.match(checkpointUrl)
+    )
+      ?.json()
+      .catch(() => null);
+    if (
+      isMatchingCheckpoint(saved, module) &&
+      name === `${moduleCachePrefix(module.moduleId)}${saved.generation}`
+    ) {
+      cacheName = name;
+      generation = saved.generation;
+      break;
+    }
+  }
   const assets: Record<string, string> = {};
   const files = [
     ...new Map(
@@ -182,23 +264,83 @@ async function downloadModuleUnlocked(
     ).values()
   ];
   const expectedBytes = files.reduce((total, file) => total + file.size, 0);
-  const estimate = await navigator.storage?.estimate().catch(() => undefined);
-  if (estimate?.quota && expectedBytes > estimate.quota - (estimate.usage ?? 0)) {
-    throw new Error(
-      "No hay espacio suficiente. Libera espacio en tu dispositivo e intenta nuevamente."
-    );
-  }
   // Remove abandoned generations left by a closed browser, preserving a complete download.
   for (const name of await caches.keys()) {
-    if (belongsToModule(name, module.moduleId) && name !== previous?.cacheName) {
+    if (
+      belongsToModule(name, module.moduleId) &&
+      name !== previous?.cacheName &&
+      name !== cacheName
+    ) {
       await caches.delete(name);
     }
   }
   const cache = await caches.open(cacheName);
+  const checkpoint: DownloadCheckpoint = {
+    userId: module.userId,
+    courseId: module.courseId,
+    moduleId: module.moduleId,
+    generation,
+    signature: downloadSignature(module),
+    state: "incomplete"
+  };
+  await cache.put(checkpointUrl, Response.json(checkpoint));
+  const previousCache =
+    previous?.userId === module.userId && (await caches.has(previous.cacheName))
+      ? await caches.open(previous.cacheName)
+      : undefined;
+  const previousFiles = new Map(
+    [...(previous?.lessons ?? []), ...(previous?.supportLessons ?? [])]
+      .flatMap((lesson) => lesson.resources)
+      .filter((r) => r.file)
+      .map((r) => [r.file!.id, r.file!])
+  );
   let bytes = 0;
   let complete = 0;
   try {
     for (const file of files) {
+      signal?.throwIfAborted();
+      const url = `/__warmi_offline__/${generation}/${file.id}`;
+      let cached = await cache.match(url);
+      const oldFile = previousFiles.get(file.id);
+      if (
+        !cached &&
+        previousCache &&
+        file.revision &&
+        oldFile &&
+        fileSignature(oldFile) === fileSignature(file)
+      ) {
+        const oldUrl = previous?.assets[file.id];
+        if (oldUrl) {
+          const response = await previousCache.match(oldUrl);
+          if (response) {
+            await cache.put(url, response.clone());
+            cached = response;
+          }
+        }
+      }
+      if (cached) {
+        bytes += (await cached.blob()).size;
+        assets[file.id] = url;
+        complete++;
+        onProgress(
+          Math.min(
+            99,
+            Math.round(
+              expectedBytes
+                ? (bytes / expectedBytes) * 100
+                : (complete / Math.max(files.length, 1)) * 100
+            )
+          ),
+          bytes
+        );
+        continue;
+      }
+      const estimate = await navigator.storage?.estimate().catch(() => undefined);
+      if (estimate?.quota && file.size > estimate.quota - (estimate.usage ?? 0)) {
+        throw new Error(
+          "No hay espacio suficiente. Libera espacio en tu dispositivo e intenta nuevamente."
+        );
+      }
       const response = await fetch(
         `/api/learning/offline/${encodeURIComponent(module.courseId)}/files/${encodeURIComponent(file.id)}`,
         { cache: "no-store", signal }
@@ -210,7 +352,6 @@ async function downloadModuleUnlocked(
       const contentType = response.headers.get("Content-Type")?.split(";")[0];
       if (contentType !== file.mimeType)
         throw new Error("El formato de un recurso no es compatible con la descarga.");
-      const url = `/__warmi_offline__/${generation}/${file.id}`;
       const body = response.body.pipeThrough(
         new TransformStream({
           transform(chunk, controller) {
@@ -250,12 +391,16 @@ async function downloadModuleUnlocked(
     if (previous && previous.cacheName !== cacheName)
       await caches.delete(previous.cacheName).catch(() => false);
     onProgress(100, bytes);
+    await cache.delete(checkpointUrl).catch(() => false);
     changed();
     // A best-effort request; browsers may still evict site storage.
     void navigator.storage?.persist?.().catch(() => false);
     return download;
   } catch (error) {
-    await caches.delete(cacheName);
+    // Cache.put commits complete responses only; keep them for a later retry.
+    checkpoint.state =
+      signal?.reason === "warmi-download-paused" ? "paused" : "incomplete";
+    await cache.put(checkpointUrl, Response.json(checkpoint)).catch(() => undefined);
     throw error;
   }
 }

@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  List,
   ChevronDown,
   Download,
   ExternalLink,
@@ -22,17 +21,20 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
-  SheetTrigger
+  SheetDescription
 } from "@/shared/components/ui/sheet";
 import { formatBytes } from "@/shared/offline/module3-storage";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
+import { PdfViewer } from "@/shared/components/media/pdf-viewer";
+import { useReadingPosition } from "@/shared/learning/use-reading-position";
+import { useVisitedModule3Session } from "@/shared/learning/use-module3-resume";
+import { MODULE3_SESSION1_ID } from "@/shared/learning/module3-session1";
 import {
-  offlineAudioStyle,
-  offlineGuideStyle,
-  OfflineSessionHeader,
+  module3AudioStyle,
+  module3GuideStyle,
+  Module3SessionHeader,
   Session1TopicVisual
-} from "@/features/artisan/offline/module3-visuals";
+} from "@/features/artisan/learning/module3-visuals";
 
 export function Module3Session1Content({
   title,
@@ -40,7 +42,8 @@ export function Module3Session1Content({
   resources,
   relatedResources = [],
   offline = false,
-  nextSessionHref
+  nextSessionHref,
+  courseHref = `/artesana/aprender/${LEARNING_PROGRAM.id}`
 }: {
   title: string;
   content: string | null;
@@ -48,8 +51,13 @@ export function Module3Session1Content({
   relatedResources?: Session1Resource[];
   offline?: boolean;
   nextSessionHref?: string;
+  courseHref?: string;
 }) {
-  const [active, setActive] = useState(0);
+  useVisitedModule3Session(MODULE3_SESSION1_ID);
+  const [active, setActive] = useReadingPosition(
+    `${courseHref}/session-1`,
+    MODULE3_SESSION1_TOPICS.length - 1
+  );
   const [message, setMessage] = useState("");
   const id = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -122,33 +130,28 @@ export function Module3Session1Content({
       data-module3-session1
       className={[
         "mx-auto w-full min-w-0 max-w-3xl space-y-5 text-base leading-7 text-[#344441] [&_a]:scroll-mb-28 [&_button]:scroll-mb-28",
-        offline ? "rounded-lg bg-[#fcf9f4] p-3 sm:p-5" : ""
+        "rounded-lg bg-[#fcf9f4] p-3 sm:p-5"
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {offline && (
-        <OfflineSessionHeader
-          href={`/artesana/aprender/${LEARNING_PROGRAM.id}?module=${LEARNING_PROGRAM.modules[2].id}`}
-          session={1}
-          title={title}
-          active={index}
-          total={MODULE3_SESSION1_TOPICS.length}
-          mode="Temas"
-          open={selectorOpen}
-          onOpen={() => setSelectorOpen(true)}
-        />
-      )}
+      <Module3SessionHeader
+        offline={offline}
+        href={`${courseHref}?module=${LEARNING_PROGRAM.modules[2].id}`}
+        session={1}
+        title={title}
+        active={index}
+        total={MODULE3_SESSION1_TOPICS.length}
+        mode="Temas"
+        open={selectorOpen}
+        onOpen={() => setSelectorOpen(true)}
+      />
       <section
         key={topic.key}
         data-session1-topic={topic.key}
         aria-labelledby={`${id}-topic`}
       >
-        <div
-          className={
-            offline ? "mb-4 space-y-2 border-b border-[#ddbfc6] pb-4" : "mb-4 space-y-2"
-          }
-        >
+        <div className="mb-4 space-y-2 border-b border-[#ddbfc6] pb-4">
           <p role="status" className="text-sm font-bold text-[#24756f]">
             Tema {index + 1} de {MODULE3_SESSION1_TOPICS.length} · {topic.group}
           </p>
@@ -162,32 +165,22 @@ export function Module3Session1Content({
           </h2>
         </div>
         <div data-session1-active className="space-y-4">
-          <p className={offline ? "text-[#574147]" : undefined}>{topic.description}</p>
+          <p className="text-[#574147]">{topic.description}</p>
           <SpeechButton
-            className={offline ? offlineAudioStyle : undefined}
+            className={module3AudioStyle}
             preferDefaultVoice
             text={`${topic.title}. ${topic.description}. ${topic.steps.join(". ")}`}
             label="Escuchar este tema"
             compact
           />
-          {offline && <Session1TopicVisual index={index} />}
-          <ol className={offline ? "space-y-3" : "space-y-2"}>
+          <Session1TopicVisual index={index} />
+          <ol className="space-y-3">
             {topic.steps.map((step, stepIndex) => (
               <li
                 key={step}
-                className={
-                  offline
-                    ? "flex items-start gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-                    : "flex items-start gap-3"
-                }
+                className="flex items-start gap-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
               >
-                <span
-                  className={
-                    offline
-                      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] text-sm font-bold text-[#006b5a]"
-                      : "shrink-0 font-bold text-[#24756f]"
-                  }
-                >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e2f2ec] text-sm font-bold text-[#006b5a]">
                   {stepIndex + 1}.
                 </span>
                 <span>{step}</span>
@@ -212,11 +205,7 @@ export function Module3Session1Content({
                 </details>
               ))
           )}
-          <div
-            className={
-              offline ? offlineGuideStyle : "space-y-3 border-t border-[#ead2dc] pt-4"
-            }
-          >
+          <div className={module3GuideStyle}>
             <h3 className="flex items-center gap-2 font-bold text-[#202b29]">
               <FileText aria-hidden="true" className="h-5 w-5 shrink-0 text-[#24756f]" />
               Guía paso a paso
@@ -228,7 +217,10 @@ export function Module3Session1Content({
               </p>
             )}
             {offline && guide?.url && (
-              <p className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]">
+              <p
+                data-mode-detail
+                className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]"
+              >
                 <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
                 PDF guardado en este dispositivo
                 {guide.size ? ` · ${formatBytes(guide.size)}` : ""}
@@ -298,10 +290,10 @@ export function Module3Session1Content({
                     Volver a la lección
                   </button>
                 </div>
-                <iframe
+                <PdfViewer
+                  key={guideViewerUrl}
                   src={guideViewerUrl}
-                  title={`Guía PDF: ${topic.title}`}
-                  className="h-[70dvh] min-h-[420px] w-full border"
+                  title={topic.title}
                 />
               </section>
             )}
@@ -344,11 +336,7 @@ export function Module3Session1Content({
 
           <nav
             aria-label="Navegación de temas"
-            className={
-              offline
-                ? "grid grid-cols-2 gap-3 border-t border-[#ddbfc6] pt-5"
-                : "grid gap-3 min-[390px]:grid-cols-2"
-            }
+            className="grid grid-cols-2 gap-3 border-t border-[#ddbfc6] pt-5"
           >
             {index > 0 && (
               <button
@@ -382,14 +370,6 @@ export function Module3Session1Content({
         </div>
       </section>
       <Sheet open={selectorOpen} onOpenChange={setSelectorOpen}>
-        {!offline && (
-          <SheetTrigger asChild>
-            <button type="button" className={`${linkStyle} w-full`}>
-              <List aria-hidden="true" className="h-5 w-5" />
-              Ver todos los temas
-            </button>
-          </SheetTrigger>
-        )}
         <SheetContent
           side="bottom"
           className="max-h-[85dvh] overflow-y-auto rounded-t-xl pb-[calc(1.5rem+env(safe-area-inset-bottom))] [&>button]:flex [&>button]:h-12 [&>button]:w-12 [&>button]:items-center [&>button]:justify-center"
@@ -488,13 +468,7 @@ function Session1Video({
   offline?: boolean;
 }) {
   return (
-    <div
-      className={
-        offline
-          ? "space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm"
-          : "space-y-2"
-      }
-    >
+    <div className="space-y-3 rounded-lg border border-[#ddbfc6]/50 bg-white p-4 shadow-sm">
       <p className="flex items-start gap-2 font-semibold">
         <PlayCircle aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#24756f]" />
         {video.title}
@@ -510,7 +484,10 @@ function Session1Video({
         <a href={video.url}>Abrir video</a>
       </video>
       {offline && (
-        <p className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]">
+        <p
+          data-mode-detail
+          className="flex items-center gap-2 text-xs font-semibold text-[#006b5a]"
+        >
           <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" />
           Video disponible sin conexión
         </p>

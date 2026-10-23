@@ -1,0 +1,78 @@
+{
+  "purpose": "Ejemplos educativos ficticios; no son productos reales ni capturas oficiales",
+  "bytes": 523172,
+  "assets": [
+    {
+      "key": "catalog",
+      "file": "catalogo-bolso.webp",
+      "alt": "Bolso tejido completo sobre una tela clara, ejemplo de fotografía para catálogo",
+      "prompt": "Create one landscape 3:2 educational editorial product photograph for Warmi Digital, a practical smartphone learning platform for rural women artisans in Cajamarca, Peru. Subject: one beautifully handmade small Andean cotton shoulder bag with woven geometric magenta, teal and natural fiber details, on a clean light neutral cloth, entire bag and strap visible, crisp stitching and texture, soft natural daylight, authentic handmade appearance, eye-level three-quarter composition with breathing space for mobile cropping. This image teaches what a clear product photo for a WhatsApp Business catalog looks like. Fictional illustrative product, not a real seller. No people, no phone, no UI, no text, no price, no logos, no watermark, no collage. The bag must be clearly inspectable, not obscured or dark. Save the generated asset for use in the local Warmi Digital project.",
+      "url": "/images/learning/module3/examples/catalogo-bolso.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 111188,
+      "sha256": "730bdd495a153372ea6a6b45623c53f26ca45eef50b7b4f0d058f3f05ad2ba21"
+    },
+    {
+      "key": "status",
+      "file": "estado-chal.webp",
+      "alt": "Chal magenta extendido con sus diseños y flecos visibles, ejemplo para un estado",
+      "prompt": "Use case: educational editorial product photograph for Warmi Digital learning to promote craft products in WhatsApp states. Generate ONE landscape 3:2 image. Subject: a single beautiful handwoven magenta shawl with teal and ivory woven borders, spread neatly across a simple wooden display rail in a bright artisan workshop in Cajamarca, Peru. Show the complete textile design and fringe clearly, natural window light and visible woven texture, uncluttered setting, closer framing on the shawl, realistic high-quality educational illustration. This should look like an attractive, honest photo an artisan could take to share in a status update, not an advertisement. No people, no smartphone, no screen, no text, no logos, no price, no fake app interface, no collage. No blur over the product, no dark atmospheric effect. Fictional illustrative handmade object. Distinct subject from a catalog shoulder bag.",
+      "url": "/images/learning/module3/examples/estado-chal.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 147498,
+      "sha256": "6af40b2cb1c871ee5301bdf4f124439f3dd4e3cf479e6aef216e5be48d8d10bb"
+    },
+    {
+      "key": "market",
+      "file": "marketplace-ceramica.webp",
+      "alt": "Jarrón artesanal completo junto a una cinta de medir, ejemplo de foto para una publicación",
+      "prompt": "Generate one landscape 3:2 educational editorial product photograph for Warmi Digital, teaching how to present an artisan piece in a Marketplace listing. Subject: ONE handmade ceramic vase from an illustrative Cajamarca artisan workshop, full object visible on a simple clean pale tabletop, matte ivory clay with small geometric dark teal and magenta hand-painted bands, honest handmade surface and clearly visible opening and foot. Include a simple unmarked measuring tape alongside to suggest showing dimensions, but no legible numbers required. Soft daylight, neutral background, crisp detailed focus on the entire vase, plausible real object. This is a fictional educational example, not an actual product listing. No price, no text, no logos, no phone, no interface, no badges, no people, no collage. Composition should distinguish it from woven textile examples in adjacent lessons.",
+      "url": "/images/learning/module3/examples/marketplace-ceramica.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 35108,
+      "sha256": "fdedc5b5d93bdc5352abee673c31eb6943ec2e5a828aa427103aa2a3e49dbdb7"
+    },
+    {
+      "key": "payment",
+      "file": "verificar-cobro.webp",
+      "alt": "Artesana revisando su propio celular mientras conserva la pieza sobre su mesa",
+      "prompt": "Create ONE landscape 3:2 realistic educational editorial photograph for Warmi Digital about checking a payment before handing over craft work. Scene: a fictional adult Peruvian Andean woman artisan in a bright simple Cajamarca workshop, seated at a clean table with a small finished woven item still clearly on HER side of the table. She calmly checks her own smartphone, held naturally with the screen facing her so there is NO visible UI or readable financial information. The key action is pausing to verify before delivery, not showing a successful payment. Mid shot with artisan's face, natural hands, phone and unhanded product visible together. Contemporary everyday clothing with a modest traditional woven detail, respectful non-stereotyped portrayal, daylight, sharp purposeful composition. No buyer reaching for the product, no cash, no bank logos, no Yape/Plin logos, no check marks, no amounts, no text, no fake banking interface, no collage. A fictional illustrative scene, not a documentary claim.",
+      "url": "/images/learning/module3/examples/verificar-cobro.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 77274,
+      "sha256": "2f434219fa633a60f96b24bdd448701ca049c2db31fae890f5fd9ad4a03e970e"
+    },
+    {
+      "key": "packing",
+      "file": "proteger-empaque.webp",
+      "alt": "Manos protegiendo una prenda doblada con papel limpio dentro de una caja",
+      "prompt": "Create ONE landscape 3:2 realistic educational editorial photograph for Warmi Digital, about packing a handmade textile safely for delivery. Close three-quarter view of a fictional adult Andean Peruvian artisan's two natural hands carefully wrapping a neatly folded magenta-and-teal woven scarf in clean protective paper inside a sturdy open shipping box on a clean work table. The folded piece must be clearly visible and supported, with room around it, clean dry materials, no handover and no courier. Show the actual action of preparing and protecting the craft, not a person merely posing with a phone. Bright soft daylight, clear textile and paper textures, dignified practical artisan workshop setting, no excessive props. No addresses, no phone numbers, no labels, no logos, no text, no shipping receipt, no fake tracking codes, no collage. A fictional illustration for a practical learning guide.",
+      "url": "/images/learning/module3/examples/proteger-empaque.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 74770,
+      "sha256": "6d365c45b671669cb45d130b7e4d328e69519cf4bff6091abb707ed1bbf7f4dc"
+    },
+    {
+      "key": "support",
+      "file": "apoyo-promotora.webp",
+      "alt": "Artesana consultando una duda del celular con una facilitadora, sin entregar su dispositivo",
+      "prompt": "Generate ONE landscape 3:2 realistic educational editorial photograph for Warmi Digital about asking a trusted facilitator for help when a payment message raises doubts. Two fictional adult women in a bright modest community artisan workspace in the Peruvian Andes: an artisan aged about 50 and a facilitator aged about 35, seated beside one another, attentively discussing the artisan's own smartphone. Artisan keeps the phone in her hand, screen turned toward both women and away from camera. Facilitator listens and explains with one simple natural gesture, supportive equal relationship, not taking control of the device. A finished woven craft rests safely on the table, no exchange or delivery. Contemporary everyday clothing with restrained traditional woven details, daylight, clear faces and natural hands. Purposeful close mid shot, no text, no logos, no badges, no bank UI, no numbers, no money, no check marks, no collage. An illustrative fictional scene, not a real documentary photograph or a promise of financial safety.",
+      "url": "/images/learning/module3/examples/apoyo-promotora.webp",
+      "generator": "built-in image_gen",
+      "width": 960,
+      "height": 640,
+      "bytes": 77334,
+      "sha256": "d5bdffabb191203183462ac9ade6b0fbb0794563672867e96edf2d5f51a09147"
+    }
+  ]
+}

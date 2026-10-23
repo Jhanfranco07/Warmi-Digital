@@ -1,5 +1,25 @@
 import assert from "node:assert/strict";
 
+export async function assertPdfRendered(page) {
+  const viewer = page.locator("[data-pdf-viewer]");
+  await viewer.locator("canvas").waitFor({ state: "visible" });
+  assert.equal(await viewer.locator("iframe").count(), 0);
+  const pixels = await viewer.locator("canvas").evaluate((canvas) => {
+    const data = canvas
+      .getContext("2d")
+      .getImageData(0, 0, canvas.width, canvas.height).data;
+    let ink = 0;
+    for (let i = 0; i < data.length; i += 64) {
+      if (data[i + 3] > 0 && Math.min(data[i], data[i + 1], data[i + 2]) < 220) ink++;
+    }
+    return ink;
+  });
+  assert.ok(
+    pixels > 20,
+    "PDF canvas must contain actual document pixels, not a blank native viewer"
+  );
+}
+
 export async function prepareVisualShell(page) {
   await page.evaluate(async () => {
     await navigator.serviceWorker.register("/warmi-sw.js", { scope: "/" });

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { logout } from "@/shared/actions/auth/logout";
+import { LogoutForm } from "@/shared/components/auth/logout-form";
 import {
   markAllNotificationsReadAction,
   markNotificationReadAction
@@ -387,7 +387,7 @@ function NavigationContent({ role, badges }: { role: UserRole; badges?: Navigati
       {isAdmin ? (
         <div className="relative z-10 mt-auto space-y-4 border-t border-[#ead4ca] pt-5">
           <p className="text-xs leading-4 text-[#7a5b4a]">{meta.description}</p>
-          <form action={logout}>
+          <LogoutForm>
             <Button
               type="submit"
               variant="outline"
@@ -396,7 +396,7 @@ function NavigationContent({ role, badges }: { role: UserRole; badges?: Navigati
               <LogOut className="h-5 w-5" />
               Cerrar sesión
             </Button>
-          </form>
+          </LogoutForm>
         </div>
       ) : isFacilitator ? (
         <div className="relative z-10 mt-auto flex items-center gap-3 border-t border-[#ead4ca] pt-5 text-sm text-[#7a5b4a]">

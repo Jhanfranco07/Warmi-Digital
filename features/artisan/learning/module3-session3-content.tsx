@@ -1,4 +1,5 @@
 "use client";
+import { PdfViewer } from "@/shared/components/media/pdf-viewer";
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The offline shell handles these routes locally. */
 import { useId, useRef, useState, type RefObject } from "react";
@@ -33,11 +34,11 @@ import {
   IconSequence,
   LearningPhoto,
   LearningTip,
-  offlineAudioStyle,
-  offlineGuideStyle,
-  OfflineSessionHeader,
+  module3AudioStyle,
+  module3GuideStyle,
+  Module3SessionHeader,
   paymentIcons
-} from "@/features/artisan/offline/module3-visuals";
+} from "@/features/artisan/learning/module3-visuals";
 
 export const SESSION3_OFFLINE_STEPS = [
   "Elige cómo cobrar",
@@ -58,7 +59,7 @@ const alertDetails = [
   "Antes de devolver cualquier dinero, verifico el ingreso y el monto en mi aplicación. Si tengo dudas, pido ayuda antes de actuar."
 ];
 
-export function Module3Session3Offline({
+export function Module3Session3Content({
   courseHref,
   step,
   payment,
@@ -72,7 +73,10 @@ export function Module3Session3Offline({
   onGuide,
   onCloseGuide,
   onNextSession,
-  onExternal
+  onExternal,
+  offline = false,
+  pending = false,
+  saved = false
 }: {
   courseHref: string;
   step: number;
@@ -88,6 +92,9 @@ export function Module3Session3Offline({
   onCloseGuide: () => void;
   onNextSession: () => void;
   onExternal: (url: string) => void;
+  offline?: boolean;
+  pending?: boolean;
+  saved?: boolean;
 }) {
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [openAlerts, setOpenAlerts] = useState<number[]>([]);
@@ -104,11 +111,13 @@ export function Module3Session3Offline({
   }
   return (
     <div
-      data-module3-session3-offline
+      data-module3-session3
+      data-module3-session3-offline={offline || undefined}
       data-session3-step={step + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <OfflineSessionHeader
+      <Module3SessionHeader
+        offline={offline}
         href={`${courseHref}?module=${MODULE3_ID}`}
         session={3}
         title={MODULE3_SESSIONS[2].title}
@@ -129,7 +138,7 @@ export function Module3Session3Offline({
           {SESSION3_OFFLINE_STEPS[step]}
         </h2>
         <SpeechButton
-          className={offlineAudioStyle}
+          className={module3AudioStyle}
           preferDefaultVoice
           text={`${SESSION3_OFFLINE_STEPS[step]}. ${narration}`}
           label="Escuchar este paso"
@@ -176,8 +185,8 @@ export function Module3Session3Offline({
                     preload="metadata"
                     className="aspect-video w-full rounded-md bg-black"
                   />
-                  <p className="text-xs font-semibold text-[#006b5a]">
-                    Video disponible sin conexión
+                  <p data-mode-detail className="text-xs font-semibold text-[#006b5a]">
+                    {offline ? "Video disponible sin conexión" : "Video de apoyo"}
                   </p>
                 </section>
               ) : (
@@ -210,7 +219,7 @@ export function Module3Session3Offline({
               La captura no es el pago. El pago se confirma en mi aplicación.
             </LearningTip>
             <LearningPhoto
-              kind="delivery"
+              kind="payment"
               caption="Reviso mi celular antes de entregar mi trabajo."
             />
             <IconSequence
@@ -276,7 +285,7 @@ export function Module3Session3Offline({
               ayuda.
             </aside>
             <LearningPhoto
-              kind="together"
+              kind="support"
               caption="Si algo no me queda claro, lo reviso con mi promotora."
             />
             <details className="border-y border-[#ddbfc6]">
@@ -301,15 +310,15 @@ export function Module3Session3Offline({
           </>
         )}
       </section>
-      <section aria-label="Guía de cobros seguros" className={offlineGuideStyle}>
+      <section aria-label="Guía de cobros seguros" className={module3GuideStyle}>
         <h2 className="flex items-start gap-2 font-bold">
           <FileText aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#006b5a]" />
           {guide?.title ?? "Guía de cobros seguros con Yape y Plin"}
         </h2>
         {guide?.url ? (
           <>
-            <p className="text-xs font-semibold text-[#006b5a]">
-              PDF disponible sin conexión
+            <p data-mode-detail className="text-xs font-semibold text-[#006b5a]">
+              {offline ? "PDF disponible sin conexión" : "Guía PDF"}
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <button onClick={() => onGuide(false)} className={learningLinkStyle}>
@@ -325,11 +334,7 @@ export function Module3Session3Offline({
                 <button onClick={onCloseGuide} className={learningLinkStyle}>
                   Volver a la sesión
                 </button>
-                <iframe
-                  src={guide.url}
-                  title={guide.title}
-                  className="h-[70dvh] min-h-[420px] w-full border"
-                />
+                <PdfViewer key={guide.url} src={guide.url} title={guide.title} />
               </section>
             )}
           </>
@@ -364,9 +369,15 @@ export function Module3Session3Offline({
         ) : (
           <button
             onClick={onNextSession}
-            className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white"
+            data-mode-detail
+            disabled={pending}
+            className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white disabled:opacity-60"
           >
-            Continuar a la sesión 4
+            {pending
+              ? "Guardando tu avance…"
+              : offline || saved
+                ? "Continuar a la sesión 4"
+                : "Completar sesión y continuar"}
           </button>
         )}
       </nav>

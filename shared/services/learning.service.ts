@@ -63,6 +63,9 @@ export class LearningService {
                 }
               : null,
             id: enrollment.course.id,
+            module3LessonIds: modules
+              .filter((module) => module.id === LEARNING_PROGRAM.modules[2].id)
+              .flatMap((module) => module.lessons.map((lesson) => lesson.id)),
             title: enrollment.course.title,
             description: enrollment.course.description,
             level: enrollment.course.level,

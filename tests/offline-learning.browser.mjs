@@ -191,7 +191,9 @@ try {
   await page.evaluate((value) => window.offlineTest.mount(value), snapshot);
   const button = page.getByRole("button", { name: "Descargar para usar sin internet" });
   await button.click();
-  await page.getByText("Error de descarga", { exact: true }).waitFor({ timeout: 90000 });
+  await page
+    .getByText("Descarga incompleta", { exact: true })
+    .waitFor({ timeout: 90000 });
   assert.equal(
     await page.evaluate(async () =>
       Boolean(
@@ -206,10 +208,11 @@ try {
         (await caches.keys()).filter((name) => name.startsWith("warmi-learning-module-"))
           .length
     ),
-    0
+    1,
+    "An incomplete package retains completed files for retry but is not available in IndexedDB"
   );
   failPdf = false;
-  await button.click();
+  await page.getByRole("button", { name: "Continuar descarga", exact: true }).click();
   await page
     .getByText("Disponible sin conexión", { exact: true })
     .waitFor({ timeout: 90000 });

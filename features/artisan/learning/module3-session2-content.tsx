@@ -1,4 +1,7 @@
 "use client";
+import { PdfViewer } from "@/shared/components/media/pdf-viewer";
+import { useReadingPosition } from "@/shared/learning/use-reading-position";
+import { useVisitedModule3Session } from "@/shared/learning/use-module3-resume";
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The offline shell handles these routes locally. */
 import { useRef, useState } from "react";
@@ -33,14 +36,14 @@ import {
   IconSequence,
   LearningPhoto,
   ProductExample,
-  offlineAudioStyle,
-  offlineGuideStyle,
-  OfflineSessionHeader,
+  module3AudioStyle,
+  module3GuideStyle,
+  Module3SessionHeader,
   platformIcons,
   platformTones,
   questionIcons,
   storefrontBenefits
-} from "@/features/artisan/offline/module3-visuals";
+} from "@/features/artisan/learning/module3-visuals";
 
 export const SESSION2_OFFLINE_TOPICS = [
   "¿Qué son las tiendas virtuales?",
@@ -69,14 +72,17 @@ const questions = [
 ] as const;
 const route = ["Elijo una opción", "Aprendo cómo funciona", "Después puedo probar otra"];
 
-export function Module3Session2Offline({
+export function Module3Session2Content({
   courseHref,
   resources,
   onGuide,
   guideViewerOpen,
   onCloseGuide,
   onExternal,
-  onNextSession
+  onNextSession,
+  offline = false,
+  pending = false,
+  saved = false
 }: {
   courseHref: string;
   resources: JourneyResource[];
@@ -85,8 +91,15 @@ export function Module3Session2Offline({
   onCloseGuide: () => void;
   onExternal: (url: string) => void;
   onNextSession: () => void;
+  offline?: boolean;
+  pending?: boolean;
+  saved?: boolean;
 }) {
-  const [topic, setTopic] = useState(0);
+  useVisitedModule3Session(MODULE3_SESSIONS[1].id);
+  const [topic, setTopic] = useReadingPosition(
+    `${courseHref}/session-2`,
+    SESSION2_OFFLINE_TOPICS.length - 1
+  );
   const [selectorOpen, setSelectorOpen] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const selector = useRef<HTMLButtonElement>(null);
@@ -122,11 +135,13 @@ export function Module3Session2Offline({
   }
   return (
     <div
-      data-module3-session2-offline
+      data-module3-session2
+      data-module3-session2-offline={offline || undefined}
       data-session2-topic={topic + 1}
       className="mx-auto max-w-3xl space-y-5 rounded-lg bg-[#fcf9f4] p-3 text-base leading-7 text-[#344441] sm:p-5"
     >
-      <OfflineSessionHeader
+      <Module3SessionHeader
+        offline={offline}
         href={`${courseHref}?module=${MODULE3_ID}`}
         session={2}
         title={MODULE3_SESSIONS[1].title}
@@ -151,7 +166,7 @@ export function Module3Session2Offline({
           {SESSION2_OFFLINE_TOPICS[topic]}
         </h2>
         <SpeechButton
-          className={offlineAudioStyle}
+          className={module3AudioStyle}
           preferDefaultVoice
           text={`${SESSION2_OFFLINE_TOPICS[topic]}. ${summary}`}
           label="Escuchar este tema"
@@ -232,7 +247,7 @@ export function Module3Session2Offline({
             {videos.length > 0 && (
               <details className="group border-y border-[#ddbfc6]">
                 <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 py-3 font-bold text-[#006b5a]">
-                  Videos descargados de Marketplace
+                  Videos de Marketplace
                   <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0" />
                 </summary>
                 <div className="space-y-4 pb-4">
@@ -280,15 +295,15 @@ export function Module3Session2Offline({
           </>
         )}
       </section>
-      <section aria-label="Guía de la sesión 2" className={offlineGuideStyle}>
+      <section aria-label="Guía de la sesión 2" className={module3GuideStyle}>
         <h2 className="flex items-start gap-2 font-bold">
           <FileText aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-[#006b5a]" />
           {guide?.title ?? "Guía para elegir dónde vender"}
         </h2>
         {guide?.url ? (
           <>
-            <p className="text-xs font-semibold text-[#006b5a]">
-              PDF disponible sin conexión
+            <p data-mode-detail className="text-xs font-semibold text-[#006b5a]">
+              {offline ? "PDF disponible sin conexión" : "Guía PDF"}
             </p>
             <div className="grid gap-3 min-[390px]:grid-cols-2">
               <button onClick={() => onGuide(false)} className={learningLinkStyle}>
@@ -304,11 +319,7 @@ export function Module3Session2Offline({
                 <button onClick={onCloseGuide} className={learningLinkStyle}>
                   Volver a la sesión
                 </button>
-                <iframe
-                  src={guide.url}
-                  title={guide.title}
-                  className="h-[70dvh] min-h-[420px] w-full border"
-                />
+                <PdfViewer key={guide.url} src={guide.url} title={guide.title} />
               </section>
             )}
           </>
@@ -343,9 +354,15 @@ export function Module3Session2Offline({
         ) : (
           <button
             onClick={onNextSession}
-            className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white"
+            data-mode-detail
+            disabled={pending}
+            className="min-h-12 flex-1 rounded-md bg-[#b5245b] px-4 py-3 font-bold text-white disabled:opacity-60"
           >
-            Continuar a la sesión 3
+            {pending
+              ? "Guardando tu avance…"
+              : offline || saved
+                ? "Continuar a la sesión 3"
+                : "Completar sesión y continuar"}
           </button>
         )}
       </nav>

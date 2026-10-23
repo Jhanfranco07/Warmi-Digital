@@ -57,6 +57,10 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v6",
     "warmi-offline-shell-v7",
     "warmi-offline-shell-v8",
+    "warmi-offline-shell-v9",
+    "warmi-offline-shell-v10",
+    "warmi-offline-shell-v11",
+    "warmi-offline-shell-v12",
     "warmi-module3-old",
     "warmi-learning-module-m3-generation",
     "warmi-learning-module-m4-generation"
@@ -79,7 +83,11 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v4",
     "warmi-offline-shell-v5",
     "warmi-offline-shell-v6",
-    "warmi-offline-shell-v7"
+    "warmi-offline-shell-v7",
+    "warmi-offline-shell-v8",
+    "warmi-offline-shell-v9",
+    "warmi-offline-shell-v10",
+    "warmi-offline-shell-v11"
   ]);
 });
 
@@ -88,6 +96,10 @@ test("public shell precaches the three original Warmi teaching photos without au
   const requests = [];
   context.fetch = async (url, options) => {
     requests.push({ url, options });
+    if (url === "/pdfjs/manifest.json")
+      return Response.json({
+        assets: ["/pdfjs/6.4.299/pdf.min.mjs", "/pdfjs/6.4.299/pdf.worker.min.mjs"]
+      });
     return new Response(url === "/offline-learning" ? "<html></html>" : "image");
   };
   context.self.skipWaiting = async () => {};
@@ -104,6 +116,8 @@ test("public shell precaches the three original Warmi teaching photos without au
   }
   assert.ok(requests.every(({ options }) => options.credentials === "omit"));
   assert.ok(requests.every(({ url }) => !url.startsWith("/api/")));
+  assert.ok(entries.has("/pdfjs/6.4.299/pdf.min.mjs"));
+  assert.ok(entries.has("/pdfjs/6.4.299/pdf.worker.min.mjs"));
 });
 
 test("offline shell preserves entry and learning URLs, without caching auth or other modules", async () => {
@@ -125,6 +139,23 @@ test("offline shell preserves entry and learning URLs, without caching auth or o
     await request("/artesana/aprender?_rsc=test", { mode: "cors" }),
     undefined
   );
+});
+
+test("PDF engine preparation rejects external or traversal assets before announcing offline readiness", async () => {
+  for (const asset of ["https://example.test/worker.mjs", "/pdfjs/version/../secret"]) {
+    const { handlers, context } = worker();
+    context.fetch = async (url) =>
+      url === "/pdfjs/manifest.json"
+        ? Response.json({ assets: [asset] })
+        : new Response("<html></html>");
+    let done;
+    handlers.install({
+      waitUntil: (promise) => {
+        done = promise;
+      }
+    });
+    await assert.rejects(done, /Invalid PDF engine manifest/);
+  }
 });
 
 test("MP4 and PDF full responses and byte ranges work without network", async () => {

@@ -1,5 +1,57 @@
 # Offline del Modulo 3
 
+## Diseño compartido online/offline
+
+La presentación actual de las cuatro sesiones y sus logros es compartida con el
+modo online. Consulta [MODULE3_SHARED_EXPERIENCE.md](MODULE3_SHARED_EXPERIENCE.md)
+para componentes, imágenes propias, diferencias de conexión y pruebas de paridad.
+La limitación visual exclusivamente offline de las secciones históricas siguientes
+queda reemplazada por esta nueva solicitud. El shell v12 incluye las seis imágenes
+de ejemplo sin duplicar PDF ni MP4 o modificar los registros existentes.
+
+## Visor PDF integrado — octubre de 2026
+
+Las guías de las cuatro sesiones usan `shared/components/media/pdf-viewer.tsx`
+en lugar del visor nativo del navegador. PDF.js dibuja una página por vez en
+canvas: anterior/siguiente, ampliar/reducir, ajustar al ancho y texto extraído
+desplegable. El regreso y la exportación PDF conservan sus manejadores actuales.
+No abre otra aplicación ni necesita el botón nativo «Abrir» de Android.
+
+PDF.js se carga solamente al abrir una guía. Su motor, worker, fuentes, CMaps,
+perfiles de color y decodificadores son archivos locales versionados, no un CDN.
+`scripts/prepare-pdfjs.mjs` los copia desde la dependencia fijada antes de
+`pnpm dev` y `pnpm build`. `public/pdfjs/` es generado e ignorado en Git; el
+despliegue los reconstruye. Se conserva la licencia del paquete.
+
+El Service Worker v9 precarga esos recursos antes de declarar listo el shell,
+en grupos limitados de seis peticiones. Las cachés de medios e IndexedDB no cambian;
+File, LessonFile, URLs y posiciones tampoco. Una instalación anterior necesita
+abrir Warmi con conexión para instalar el nuevo shell y su visor; el visor no puede
+aparecer en una descarga antigua que nunca recibió esta actualización. El motor
+añade aproximadamente 5,4 MB al shell, no otra copia de los PDF.
+
+Las pruebas del visor comprueban píxeles del documento en canvas, no solamente
+HTTP 200: siete guías reales, navegación, ampliación, distintos anchos y cierre
+completo/reapertura offline. `tests/pdf-viewer.browser.mjs` consulta PostgreSQL en
+solo lectura y usa un perfil temporal. Las pruebas previas de sesiones ahora
+también esperan el canvas renderizado. La prueba en Android físico sigue siendo
+necesaria; una emulación de Android no sustituye esa revisión.
+
+Validación ejecutada: 22 páginas de las siete guías renderizadas sin red tras
+reiniciar el navegador completo; anterior/siguiente, zoom/ajuste al ancho,
+360/390/430/1024 px sin desbordamiento, retorno/reapertura, reconexión y
+error/reintento. Las cuatro pruebas de sesiones pasan con canvas no vacío;
+las 66 pruebas unitarias, typecheck, lint, build y Prisma validate también pasan.
+La sesión de la cuenta aislada se simula en la prueba de reconexión: no se crean
+usuarios ni se escribe en PostgreSQL. No representa una validación de login real.
+La prueba de medios conserva reproducción de los seis MP4 originales y las guías;
+la prueba general de reinicio/rollback/eliminación también pasa usando un MP4 real
+temporal. El MP4 generado con MediaRecorder en el primer intento no fue reproducible
+en este entorno; no se modificó la lógica de video para ocultar ese fallo de fixture.
+Se verificó además HTTP 200 y lectura CORS del PDF Cloudinary desde el navegador online.
+
+Referencia de la biblioteca: [ejemplos oficiales de PDF.js](https://mozilla.github.io/pdf.js/examples/).
+
 ## Fidelidad integral Stitch — octubre de 2026
 
 La implementación actual amplía los diseños históricos descritos abajo. La matriz,
@@ -203,7 +255,7 @@ La conexion se observa mediante `navigator.onLine` y eventos `online`/`offline`.
 
 La voz reutiliza `SpeechButton` y `useSpeech` de `shared/accessibility`. Sin red selecciona voces `localService` y avisa si el dispositivo no tiene ninguna instalada. No descarga voces ni agrega otro motor.
 
-`Eliminar descarga` borra la ficha de IndexedDB y todas las caches de recursos del modulo, incluyendo generaciones incompletas. El shell publico permanece para mostrar el aviso de contenido no disponible. Cuando la app confirma una sesion online cerrada o una cuenta diferente, elimina la descarga anterior. Los datos descargados son accesibles a quien tenga acceso al perfil del navegador: en dispositivos compartidos debe eliminarse la descarga al terminar.
+`Eliminar descarga` borra la ficha de IndexedDB, los marcadores de lectura del Módulo 3 y todas las caches de recursos del modulo, incluyendo generaciones incompletas. El shell publico permanece para mostrar el aviso de contenido no disponible. Vencer la sesión no borra la descarga. El cierre voluntario y el acceso con otra cuenta sí limpian el material anterior. Los datos descargados son accesibles a quien tenga acceso al perfil del navegador: en dispositivos compartidos debe eliminarse la descarga al terminar.
 
 ## Incorporar los MP4 propios
 

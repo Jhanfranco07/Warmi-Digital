@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { WifiOff } from "lucide-react";
 import { isOfflineHomePath } from "@/shared/offline/offline-presentation";
-import { readDownloads, removeDownload } from "@/shared/offline/module3-storage";
+import {
+  hasForeignDownloads,
+  readDownloads,
+  removeDownload
+} from "@/shared/offline/module3-storage";
+import { setReadingOwner } from "@/shared/learning/reading-position";
 
 export function OfflineRuntime() {
   const [online, setOnline] = useState(true);
@@ -63,17 +68,23 @@ export function OfflineRuntime() {
       return;
     let cancelled = false;
     async function checkOwner() {
-      const downloads = await readDownloads();
-      if (!downloads.length || cancelled) return;
+      if (status === "authenticated" && session?.user.id) {
+        setReadingOwner(session.user.id);
+        setMessage("");
+      }
       if (status === "authenticated") {
-        if (downloads.some((download) => download.userId !== session?.user.id))
+        if (
+          session?.user.id &&
+          (await hasForeignDownloads(session.user.id)) &&
+          !cancelled
+        )
           await removeDownload();
       } else {
-        // A failed network request is not proof that the user signed out.
-        const response = await fetch("/api/auth/session", { cache: "no-store" });
-        if (!response.ok) return;
-        const confirmedSession = await response.json();
-        if (!confirmedSession?.user && !cancelled) await removeDownload();
+        const downloads = await readDownloads();
+        if (!downloads.length || cancelled) return;
+        setMessage(
+          "Tu sesión terminó. Tus descargas siguen disponibles en este dispositivo. Inicia sesión para guardar tu avance."
+        );
       }
     }
     void checkOwner().catch(() => undefined);
@@ -98,6 +109,14 @@ export function OfflineRuntime() {
         </p>
       )}
       {message && <p>{message}</p>}
+      {online && status === "unauthenticated" && message && (
+        <a
+          href="/offline-learning"
+          className="inline-flex min-h-11 items-center font-bold underline"
+        >
+          Ver mis descargas
+        </a>
+      )}
     </aside>
   );
 }

@@ -17,6 +17,8 @@ import {
   type MobileLearningCourse
 } from "@/features/artisan/mobile-learning-tabs";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
+import { ResumeLearning } from "@/features/artisan/learning/resume-learning";
+import { LEARNING_PROGRAM } from "@/shared/learning/program";
 import { buildLearningPageNarration } from "@/shared/accessibility/narration";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -32,6 +34,14 @@ export default async function ArtisanLearningPage() {
     new ArtisanDashboardService().getLearningOverview(session.user.id)
   ]);
   const enrolled = learning.enrolledCourses;
+  const program = enrolled.find((course) => course.id === LEARNING_PROGRAM.id);
+  const resume = program ? (
+    <ResumeLearning
+      courseHref={program.href}
+      allowedLessonIds={program.module3LessonIds}
+      userId={session.user.id}
+    />
+  ) : null;
   const currentCourse = enrolled.find((course) => course.progress < 100) ?? enrolled[0];
   const averageProgress = enrolled.length
     ? Math.round(
@@ -71,6 +81,7 @@ export default async function ArtisanLearningPage() {
             <SpeechButton text={pageNarration} label="Escuchar esta pantalla" compact />
           </div>
 
+          {resume}
           <MobileLearningTabs
             availableCourses={availableMobileCourses}
             completedCourses={completedCourses}
@@ -205,6 +216,7 @@ export default async function ArtisanLearningPage() {
             </div>
           </header>
 
+          {resume}
           <section className="mt-10 grid gap-8 xl:grid-cols-[1.35fr_0.95fr]">
             <article className="relative overflow-hidden rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
               <div className="flex flex-wrap items-start justify-between gap-4">

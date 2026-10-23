@@ -58,7 +58,7 @@ export type OfflineResource = {
   type: string;
   externalUrl: string | null;
   internalLessonId?: string;
-  file: { id: string; mimeType: string; size: number } | null;
+  file: { id: string; mimeType: string; size: number; revision?: string } | null;
 };
 
 export type OfflineLesson = {

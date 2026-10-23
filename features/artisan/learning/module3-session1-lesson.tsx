@@ -1,6 +1,4 @@
 import type { Route } from "next";
-import { LearningLessonHeader } from "@/features/artisan/learning/learning-lesson-header";
-import { moduleCapability } from "@/shared/learning/program";
 import { ArtisanShell } from "@/features/artisan/artisan-panel";
 import { LessonCompletionButton } from "@/features/artisan/lesson-completion-button";
 import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
@@ -56,12 +54,8 @@ export async function Module3Session1Lesson({
   return (
     <ArtisanShell>
       <div className="mx-auto max-w-3xl space-y-5">
-        <LearningLessonHeader
-          courseHref={href}
-          moduleTitle={moduleCapability(lesson.module.id)?.title ?? lesson.module.title}
-          title={lesson.title}
-        />
         <Module3Session1Content
+          courseHref={href}
           nextSessionHref={
             support ? `/artesana/aprender/${courseId}/lecciones/${support.id}` : undefined
           }

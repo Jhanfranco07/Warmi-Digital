@@ -17,7 +17,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { logout } from "@/shared/actions/auth/logout";
+import { LogoutForm } from "@/shared/components/auth/logout-form";
 import { requireRole } from "@/shared/server/auth/helpers";
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -260,14 +260,14 @@ export default async function FacilitatorProfilePage() {
                   </span>
                 </div>
               </div>
-              <form action={logout} className="mt-7">
+            <LogoutForm className="mt-7">
                 <button
                   type="submit"
                   className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-[#d89b06] font-ui font-bold text-white"
                 >
                   <LogOut className="h-5 w-5" /> Cerrar sesión
                 </button>
-              </form>
+            </LogoutForm>
             </article>
           </aside>
         </section>

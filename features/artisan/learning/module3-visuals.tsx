@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element, @next/next/no-html-link-for-pages -- Offline assets and routes are handled by the local shell. */
 import type { ReactNode, RefObject } from "react";
+import { MODULE3_SESSIONS } from "@/shared/learning/module3-journey";
+import { MODULE3_ILLUSTRATIONS } from "@/shared/learning/module3-illustrations";
 import {
   Camera,
   ArrowLeft,
@@ -22,11 +24,11 @@ import {
   type LucideIcon
 } from "lucide-react";
 
-export const offlineAudioStyle = "rounded-lg bg-[#f0ede9] p-3";
-export const offlineGuideStyle =
+export const module3AudioStyle = "rounded-lg bg-[#f0ede9] p-3";
+export const module3GuideStyle =
   "space-y-3 rounded-lg border border-[#ddbfc6] border-t-4 border-t-[#006b5a] bg-white p-4 shadow-sm";
 
-export function OfflineSessionHeader({
+export function Module3SessionHeader({
   href,
   session,
   title,
@@ -36,7 +38,8 @@ export function OfflineSessionHeader({
   open,
   onOpen,
   selectorRef,
-  closing = false
+  closing = false,
+  offline = false
 }: {
   href: string;
   session: number;
@@ -48,6 +51,7 @@ export function OfflineSessionHeader({
   onOpen: () => void;
   selectorRef?: RefObject<HTMLButtonElement | null>;
   closing?: boolean;
+  offline?: boolean;
 }) {
   return (
     <header className="space-y-3 border-b border-[#ddbfc6] pb-4">
@@ -58,12 +62,15 @@ export function OfflineSessionHeader({
         >
           <ArrowLeft aria-hidden="true" className="h-5 w-5 shrink-0" /> Volver al módulo 3
         </a>
-        <span
-          aria-label="Disponible sin conexión"
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#006b5a]"
-        >
-          <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" /> Descargado
-        </span>
+        {offline && (
+          <span
+            data-mode-detail
+            aria-label="Disponible sin conexión"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#006b5a]"
+          >
+            <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0" /> Descargado
+          </span>
+        )}
       </div>
       {!closing && (
         <>
@@ -85,6 +92,23 @@ export function OfflineSessionHeader({
           <h1 className="font-serif text-xl font-bold leading-tight text-[#1c1c19]">
             {title}
           </h1>
+          <nav
+            aria-label="Sesiones del Módulo 3"
+            className="flex flex-wrap items-center gap-2"
+          >
+            <span className="mr-1 text-xs font-bold text-[#006b5a]">Sesiones</span>
+            {MODULE3_SESSIONS.map((item) => (
+              <a
+                key={item.id}
+                href={`${new URL(href, "https://warmi.invalid").pathname}/lecciones/${item.id}`}
+                aria-current={item.order === session ? "step" : undefined}
+                aria-label={`Sesión ${item.order}: ${item.title}`}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-[#ddbfc6] text-sm font-bold text-[#800041] aria-[current=step]:bg-[#800041] aria-[current=step]:text-white"
+              >
+                {item.order}
+              </a>
+            ))}
+          </nav>
           <p role="status" className="text-xs font-bold text-[#006b5a]">
             {mode === "Temas" ? "Tema activo:" : "Paso"} {active + 1} de {total}
           </p>
@@ -131,35 +155,38 @@ export function LearningPhoto({
   kind,
   caption
 }: {
-  kind: "product" | "delivery" | "together";
+  kind: "payment" | "packing" | "support" | "together" | "community";
   caption: string;
 }) {
   const photos = {
-    product: [
-      "/images/learning/module4/tejidos.webp",
-      "Tejidos artesanales doblados que muestran sus colores y diseños"
-    ],
-    delivery: [
-      "/images/learning/module4/entrega.webp",
-      "Artesana revisando su celular junto a una pieza y una bolsa de entrega"
-    ],
-    together: [
-      "/images/offline/taller.webp",
-      "Artesanas participando juntas en una actividad de Warmi"
-    ]
+    payment: MODULE3_ILLUSTRATIONS.payment,
+    packing: MODULE3_ILLUSTRATIONS.packing,
+    support: MODULE3_ILLUSTRATIONS.support,
+    together: {
+      src: "/images/offline/taller.webp",
+      alt: "Artesana aprendiendo con una facilitadora de Warmi"
+    },
+    community: {
+      src: "/images/offline/aprende.webp",
+      alt: "Grupo de artesanas practicando con sus celulares alrededor de una mesa"
+    }
   } as const;
-  const [src, alt] = photos[kind];
+  const { src, alt } = photos[kind];
+  const illustration = kind === "payment" || kind === "packing" || kind === "support";
   return (
     <figure className="overflow-hidden rounded-lg bg-[#f0ede9]">
       <img
         src={src}
         alt={alt}
-        width={400}
-        height={kind === "delivery" ? 512 : 267}
-        className={`w-full ${kind === "delivery" ? "max-h-72 object-contain" : "aspect-[3/2] max-h-64 object-cover"}`}
+        width={illustration ? 960 : 440}
+        height={illustration ? 640 : 330}
+        className="aspect-[3/2] max-h-80 w-full object-contain"
       />
       <figcaption className="px-4 py-3 text-sm font-semibold text-[#005143]">
         {caption}
+        {illustration && (
+          <span className="mt-1 block text-xs font-normal">Ilustración educativa</span>
+        )}
       </figcaption>
     </figure>
   );
@@ -191,6 +218,19 @@ export function ProductExample({
 }: {
   mode?: "catalog" | "market" | "store";
 }) {
+  const image =
+    mode === "store"
+      ? {
+          src: "/images/learning/module4/tejidos.webp",
+          alt: "Tejidos artesanales doblados, ejemplo de vitrina digital"
+        }
+      : MODULE3_ILLUSTRATIONS[mode];
+  const title =
+    mode === "catalog"
+      ? "Bolso tejido a mano"
+      : mode === "market"
+        ? "Jarrón artesanal"
+        : "Tejidos de mi comunidad";
   return (
     <figure className="overflow-hidden rounded-lg border border-[#ddbfc6] bg-white shadow-sm">
       <figcaption className="flex items-center gap-2 bg-[#006b5a] px-4 py-3 text-sm font-bold text-white">
@@ -203,16 +243,14 @@ export function ProductExample({
         <span className="ml-auto text-xs font-normal">Ejemplo educativo</span>
       </figcaption>
       <img
-        src="/images/learning/module4/tejidos.webp"
-        width={400}
-        height={267}
-        alt="Detalle de tejidos artesanales, ejemplo de fotografía de producto"
-        className="aspect-[3/2] max-h-64 w-full object-cover"
+        src={image.src}
+        width={mode === "store" ? 400 : 960}
+        height={mode === "store" ? 267 : 640}
+        alt={image.alt}
+        className="aspect-[3/2] max-h-80 w-full bg-white object-contain"
       />
       <div className="space-y-3 p-4">
-        <h3 className="font-serif text-xl font-bold text-[#1c1c19]">
-          Tejido hecho a mano
-        </h3>
+        <h3 className="font-serif text-xl font-bold text-[#1c1c19]">{title}</h3>
         <p className="text-sm">
           Una pieza de mi comunidad. Describo sus materiales, medidas y técnica.
         </p>
@@ -226,6 +264,11 @@ export function ProductExample({
             <dd>La reviso antes de publicar</dd>
           </div>
         </dl>
+        {mode !== "store" && (
+          <p className="text-xs text-[#574147]">
+            Ilustración educativa; no es un producto en venta.
+          </p>
+        )}
       </div>
     </figure>
   );
@@ -377,17 +420,17 @@ export function Session1TopicVisual({ index }: { index: number }) {
           Mi estado · ejemplo educativo
         </figcaption>
         <img
-          src="/images/learning/module4/tejidos.webp"
-          alt="Tejidos artesanales que pueden mostrarse en un estado"
-          width={400}
-          height={267}
-          className="aspect-[3/2] max-h-64 w-full object-cover"
+          src={MODULE3_ILLUSTRATIONS.status.src}
+          alt={MODULE3_ILLUSTRATIONS.status.alt}
+          width={960}
+          height={640}
+          className="aspect-[3/2] max-h-80 w-full object-contain"
         />
         <blockquote className="p-5 text-center font-serif text-xl">
           Hecho a mano en mi comunidad. Escríbeme para conocer mis piezas.
         </blockquote>
         <p className="border-t border-white/20 px-4 py-3 text-sm">
-          Foto clara + frase breve + cómo consultarme
+          Foto clara + frase breve + cómo consultarme · Ilustración educativa
         </p>
       </figure>
     );

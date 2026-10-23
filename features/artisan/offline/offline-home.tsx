@@ -7,6 +7,7 @@ import { LEARNING_PROGRAM, moduleCapability } from "@/shared/learning/program";
 import type { ModuleDownload } from "@/shared/offline/module3-types";
 import { Footer } from "@/shared/components/layout/footer";
 import { offlineProgress } from "@/shared/offline/offline-presentation";
+import { ResumeLearning } from "@/features/artisan/learning/resume-learning";
 import { WarmiPublicHeader } from "@/app/(public)/_components/warmi-public-header";
 import { WarmiWelcomeContent } from "@/shared/components/landing/welcome-content";
 import { WarmiProgrammeContent } from "@/shared/components/landing/programa-content";
@@ -34,6 +35,12 @@ export function DownloadedModuleCard({ download }: { download: ModuleDownload })
         <p className="text-sm text-[#24756f]">
           {snapshotProgressLabel(progress.completed, progress.total)}
         </p>
+      )}
+      {download.moduleId === LEARNING_PROGRAM.modules[2].id && (
+        <ResumeLearning
+          courseHref={`/artesana/aprender/${LEARNING_PROGRAM.id}`}
+          allowedLessonIds={download.lessons.map((lesson) => lesson.id)}
+        />
       )}
       <a
         href={href}

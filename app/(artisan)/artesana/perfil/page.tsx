@@ -2,7 +2,7 @@ import Image from "next/image";
 import { CheckCircle2, LogOut, Mail, MapPin, ShieldCheck, UserRound } from "lucide-react";
 
 import { ProfileForm } from "@/features/artisan/profile-form";
-import { logout } from "@/shared/actions/auth/logout";
+import { LogoutForm } from "@/shared/components/auth/logout-form";
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { AccessibilitySettingsPanel } from "@/shared/accessibility/speech-controls";
 import { Button } from "@/shared/components/ui/button";
@@ -42,12 +42,12 @@ export default async function ArtisanProfilePage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <SpeechButton text={profileNarration} label="Escuchar" compact />
-            <form action={logout}>
+            <LogoutForm>
               <Button type="submit" variant="outline" className="rounded-full">
                 <LogOut className="h-5 w-5" />
                 Cerrar sesion
               </Button>
-            </form>
+            </LogoutForm>
           </div>
         </header>
 
@@ -97,12 +97,12 @@ export default async function ArtisanProfilePage() {
                 </p>
               </div>
             </div>
-            <form action={logout} className="mt-6">
+            <LogoutForm className="mt-6">
               <Button type="submit" className="w-full bg-[#b5245b] text-white">
                 <LogOut className="h-5 w-5" />
                 Cerrar sesion
               </Button>
-            </form>
+            </LogoutForm>
           </article>
         </section>
 

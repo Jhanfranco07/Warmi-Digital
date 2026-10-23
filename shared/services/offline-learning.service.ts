@@ -65,7 +65,8 @@ function snapshotLesson(
           ? {
               id: resource.file.id,
               mimeType: resource.file.mimeType,
-              size: resource.file.size
+              size: resource.file.size,
+              revision: resource.file.updatedAt?.toISOString()
             }
           : null
       };

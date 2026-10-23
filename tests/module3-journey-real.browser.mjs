@@ -183,7 +183,9 @@ try {
   assert.equal(await (await guideDownload).failure(), null);
   await page.locator('[data-session-order="2"]').waitFor();
   await page.getByRole("link", { name: "Volver a mis módulos", exact: true }).click();
-  await page.getByRole("heading", { name: /Herramientas digitales para vender/ }).waitFor();
+  await page
+    .getByRole("heading", { name: /Herramientas digitales para vender/ })
+    .waitFor();
   await openLesson(page, 2);
   console.log(
     "PASS navigation: session buttons skip without completion; PDF downloads without leaving the lesson."
@@ -347,6 +349,9 @@ try {
       q.onsuccess = () => res(q.result);
     });
     delete value.contentVersion;
+    for (const lesson of [...value.lessons, ...(value.supportLessons ?? [])])
+      for (const resource of lesson.resources)
+        if (resource.file) delete resource.file.revision;
     value.lessons = value.lessons.slice(0, 2);
     value.lessons[1].resources = value.lessons[1].resources.filter(
       (r) => r.type !== "PDF"
@@ -390,12 +395,12 @@ try {
     route.fulfill({ status: 503, body: "test failure" })
   );
   await page.getByRole("button", { name: "Actualizar descarga", exact: true }).click();
-  await page.getByText("Error de descarga", { exact: true }).waitFor();
+  await page.getByText("Descarga incompleta", { exact: true }).waitFor();
   assert.equal((await read()).cacheName, legacy.cacheName);
   await page.unroute(`**/api/learning/offline/${courseId}/files/*`);
   await page
     .locator(`#modulo-${MODULE3_ID}`)
-    .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
+    .getByRole("button", { name: "Continuar descarga", exact: true })
     .click();
   await page
     .locator(`#modulo-${MODULE3_ID}`)

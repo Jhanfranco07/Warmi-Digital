@@ -1,4 +1,4 @@
-const SHELL_CACHE = "warmi-offline-shell-v8";
+const SHELL_CACHE = "warmi-offline-shell-v12";
 const SHELL_URL = "/offline-learning";
 
 async function prepareShell() {
@@ -19,17 +19,28 @@ async function prepareShell() {
     "/images/learning/module4/tejidos.webp",
     "/images/learning/module4/entrega.webp",
     "/images/learning/module4/bolso.webp",
+    "/images/learning/module3/examples/catalogo-bolso.webp",
+    "/images/learning/module3/examples/estado-chal.webp",
+    "/images/learning/module3/examples/marketplace-ceramica.webp",
+    "/images/learning/module3/examples/verificar-cobro.webp",
+    "/images/learning/module3/examples/proteger-empaque.webp",
+    "/images/learning/module3/examples/apoyo-promotora.webp",
     "/images/hero/warmi-hero.png",
     "/icons/faviconWarmi.png",
     "/images/accessibility/warmi-voice-guide1.png",
     "/images/accessibility/warmi-voice-guide2.png"
   ]);
+  const pdfManifest = await fetch("/pdfjs/manifest.json", { cache: "reload", credentials: "omit" });
+  if (!pdfManifest.ok) throw new Error("PDF engine unavailable");
+  const { assets } = await pdfManifest.json();
+  if (!Array.isArray(assets) || !assets.length || assets.some(path => typeof path !== "string" || !/^\/pdfjs\/[\w.-]+\/[\w./-]+$/.test(path) || path.includes(".."))) throw new Error("Invalid PDF engine manifest");
+  for (const path of assets) urls.add(path);
   // Only public build assets are saved, never authenticated HTML or RSC payloads.
   for (const match of html.matchAll(/(?:src|href)="([^"<>]+)"/g)) {
     const url = new URL(match[1].replace(/&amp;/g, "&"), self.location.origin);
     if (url.origin === self.location.origin && url.pathname.startsWith("/_next/static/")) urls.add(url.href);
   }
-  for (const url of urls) {
+  async function cacheAsset(url) {
     const asset = await fetch(url, { cache: "reload", credentials: "omit" });
     if (!asset.ok) throw new Error("Asset unavailable");
     await cache.put(url, asset.clone());
@@ -42,6 +53,10 @@ async function prepareShell() {
         }
       }
     }
+  }
+  const pending = [...urls];
+  for (let index = 0; index < pending.length; index += 6) {
+    await Promise.all(pending.slice(index, index + 6).map(cacheAsset));
   }
   await cache.put(SHELL_URL, response);
 }
@@ -118,7 +133,7 @@ self.addEventListener("fetch", (event) => {
     }));
     return;
   }
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/") || url.pathname.startsWith("/images/offline/") || ["/images/hero/warmi-hero.png", "/images/learning/module4/tejidos.webp", "/images/learning/module4/entrega.webp", "/images/learning/module4/bolso.webp"].includes(url.pathname)) {
+  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/pdfjs/") || url.pathname.startsWith("/icons/") || url.pathname.startsWith("/images/offline/") || url.pathname.startsWith("/images/learning/module3/examples/") || ["/images/hero/warmi-hero.png", "/images/learning/module4/tejidos.webp", "/images/learning/module4/entrega.webp", "/images/learning/module4/bolso.webp"].includes(url.pathname)) {
     event.respondWith(caches.match(request).then((cached) => cached || fetch(request)));
     return;
   }

@@ -715,6 +715,10 @@ try {
     });
     delete row.contentVersion;
     delete row.progress;
+    // Legacy downloads predate per-file revisions and must fetch resources again.
+    for (const lesson of [...row.lessons, ...(row.supportLessons ?? [])])
+      for (const resource of lesson.resources)
+        if (resource.file) delete resource.file.revision;
     await new Promise((res) => {
       const tx = db.transaction("downloads", "readwrite");
       tx.objectStore("downloads").put(row, key);
@@ -748,15 +752,13 @@ try {
     r.fulfill({ status: 503, body: "test failure" })
   );
   await card.getByRole("button", { name: "Actualizar descarga", exact: true }).click();
-  await card.getByText("Error de descarga", { exact: true }).waitFor();
+  await card.getByText("Descarga incompleta", { exact: true }).waitFor();
   assert.equal(
     (await read(page)).find((d) => d.moduleId === m3.id).cacheName,
     originalDownload.cacheName
   );
   await page.unroute(`**/api/learning/offline/${courseId}/files/*`);
-  await card
-    .getByRole("button", { name: "Descargar para usar sin internet", exact: true })
-    .click();
+  await card.getByRole("button", { name: "Continuar descarga", exact: true }).click();
   await card
     .getByText("Disponible sin conexión", { exact: true })
     .waitFor({ timeout: 300000 });

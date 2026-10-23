@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
-import { assertOfflineImages } from "./helpers/offline-visuals.mjs";
+import { assertOfflineImages, assertPdfRendered } from "./helpers/offline-visuals.mjs";
 import { createRequire } from "node:module";
-import { execFileSync } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -50,11 +49,6 @@ const { chromium } = require(process.env.WARMI_PLAYWRIGHT_PATH || "playwright");
 const { build } = require(
   require.resolve("esbuild", { paths: [require.resolve("tsx/package.json")] })
 );
-const previous = execFileSync(
-  "git",
-  ["show", "dfc8b4d:features/artisan/learning/module3-journey-content.tsx"],
-  { encoding: "utf8" }
-);
 const resources = links
   .filter((r) => r.file)
   .map((r) => ({
@@ -67,8 +61,8 @@ const resources = links
   }));
 const bundle = await build({
   stdin: {
-    contents: `import React from 'react';import{renderToStaticMarkup}from'react-dom/server';import{Module3JourneyContent as Current}from'./features/artisan/learning/module3-journey-content';import{Module3JourneyContent as Previous}from'baseline';import{MODULE3_ID,MODULE3_SESSIONS}from'./shared/learning/module3-journey';import{MODULE3_CONTENT_VERSION}from'./shared/learning/module3-version';import{downloadModule}from'./shared/offline/module3-storage';
-  const resources=${JSON.stringify(resources)};const courseId='93dc7355-d746-4acd-87df-29f71d16a955';const props={courseId,lessonId:MODULE3_SESSIONS[2].id,resources:resources.map(r=>({id:r.id,title:r.title,mimeType:r.file.mimeType,publicId:r.externalUrl,url:'/unused'})),completedIds:[]};window.unchanged=MODULE3_SESSIONS.slice(1).flatMap(s=>[false].map(offline=>{const p={...props,lessonId:s.id,offline};return renderToStaticMarkup(React.createElement(Current,p))===renderToStaticMarkup(React.createElement(Previous,p))})).every(Boolean);window.downloadSession3=()=>downloadModule({userId:'isolated-session3-test',courseId,courseTitle:'Aprender para crecer',moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===3?resources:[]}))},()=>{});`,
+    contents: `import{sameModeContent}from'./tests/helpers/module3-parity.mjs';import React from 'react';import{renderToStaticMarkup}from'react-dom/server';import{Module3JourneyContent as Current}from'./features/artisan/learning/module3-journey-content';import{MODULE3_ID,MODULE3_SESSIONS}from'./shared/learning/module3-journey';import{MODULE3_CONTENT_VERSION}from'./shared/learning/module3-version';import{downloadModule}from'./shared/offline/module3-storage';
+  const resources=${JSON.stringify(resources)};const courseId='93dc7355-d746-4acd-87df-29f71d16a955';const props={courseId,lessonId:MODULE3_SESSIONS[2].id,resources:resources.map(r=>({id:r.id,title:r.title,mimeType:r.file.mimeType,publicId:r.externalUrl,url:'/unused'})),completedIds:[]};window.unchanged=MODULE3_SESSIONS.slice(1).every(s=>sameModeContent(Current,{...props,lessonId:s.id}));window.downloadSession3=()=>downloadModule({userId:'isolated-session3-test',courseId,courseTitle:'Aprender para crecer',moduleId:MODULE3_ID,title:'Módulo 3',description:null,contentVersion:MODULE3_CONTENT_VERSION,progress:{completedLessonIds:[],capturedAt:new Date().toISOString()},lessons:MODULE3_SESSIONS.map(s=>({id:s.id,title:s.title,content:null,resources:s.order===3?resources:[]}))},()=>{});`,
     resolveDir: process.cwd(),
     loader: "tsx"
   },
@@ -86,15 +80,6 @@ const bundle = await build({
     {
       name: "baseline",
       setup(builder) {
-        builder.onResolve({ filter: /^baseline$/ }, () => ({
-          path: "baseline",
-          namespace: "comparison"
-        }));
-        builder.onLoad({ filter: /.*/, namespace: "comparison" }, () => ({
-          contents: previous,
-          loader: "tsx",
-          resolveDir: join(process.cwd(), "features/artisan/learning")
-        }));
         builder.onResolve({ filter: /actions\/artisan\/complete-lesson$/ }, () => ({
           path: "action",
           namespace: "test"
@@ -110,6 +95,7 @@ const bundle = await build({
 });
 const browser = await chromium.launch({
   headless: true,
+  args: ["--disable-gpu"],
   channel: process.env.WARMI_BROWSER_CHANNEL || "msedge"
 });
 const output = join(tmpdir(), "warmi-session3-offline-design");
@@ -202,13 +188,14 @@ try {
   await reopened
     .getByRole("button", { name: "Ver guía de cobros seguros", exact: true })
     .click();
-  const pdfUrl = await reopened.locator("iframe").getAttribute("src");
+  await assertPdfRendered(reopened);
+  const pdfUrl = await reopened.locator("[data-pdf-viewer]").getAttribute("data-pdf-src");
   assert.equal(
     await reopened.evaluate(async (url) => (await fetch(url)).status, pdfUrl),
     200
   );
   await reopened.getByRole("button", { name: "Volver a la sesión", exact: true }).click();
-  assert.equal(await reopened.locator("iframe").count(), 0);
+  assert.equal(await reopened.locator("[data-pdf-viewer]").count(), 0);
   await reopened.getByRole("button", { name: "Anterior", exact: true }).click();
   await reopened.locator('[data-session3-step="2"]').waitFor();
   await reopened.getByRole("button", { name: "Siguiente", exact: true }).click();
@@ -240,7 +227,7 @@ try {
   await context.setOffline(false);
   assert.equal(JSON.stringify(await read()), before, "File/LessonFile remain intact");
   console.log(
-    `PASS: real Yape/Plin MP4 offline playback and switching; cached real PDF; three steps; five accordions; mobile 360/390/430/1024; close/reopen; S4 navigation; progress preserved; return/delete/reconnect; online sessions unchanged. Screenshots: ${output}`
+    `PASS: real Yape/Plin MP4 offline playback and switching; cached real PDF; three steps; five accordions; mobile 360/390/430/1024; close/reopen; S4 navigation; progress preserved; return/delete/reconnect; online/offline content parity. Screenshots: ${output}`
   );
 } finally {
   await browser.close();

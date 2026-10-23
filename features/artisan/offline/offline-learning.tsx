@@ -19,6 +19,7 @@ import {
 import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Button } from "@/shared/components/ui/button";
 import { Module3Session1Content } from "@/features/artisan/learning/module3-session1-content";
+import { ResumeLearning } from "@/features/artisan/learning/resume-learning";
 import { Module4Content } from "@/features/artisan/learning/module4-content";
 import { LearningLessonHeader } from "@/features/artisan/learning/learning-lesson-header";
 import {
@@ -460,6 +461,13 @@ function OfflineModuleOverview({
           <p className="max-w-2xl leading-7">{download.description}</p>
         )}
       </header>
+
+      {download.moduleId === LEARNING_PROGRAM.modules[2].id && (
+        <ResumeLearning
+          courseHref={courseHref}
+          allowedLessonIds={download.lessons.map((lesson) => lesson.id)}
+        />
+      )}
 
       <section
         aria-label="Progreso del módulo"

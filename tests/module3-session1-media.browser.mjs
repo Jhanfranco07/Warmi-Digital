@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
-import { assertOfflineImages } from "./helpers/offline-visuals.mjs";
+import { assertOfflineImages, assertPdfRendered } from "./helpers/offline-visuals.mjs";
 
 const require = createRequire(import.meta.url);
 require(require.resolve("@next/env", { paths: [require.resolve("next")] })).loadEnvConfig(
@@ -83,6 +83,7 @@ try {
   });
   browser = await chromium.launch({
     headless: true,
+    args: ["--disable-gpu"],
     channel: process.env.WARMI_BROWSER_CHANNEL || "msedge"
   });
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -135,7 +136,8 @@ try {
       played++;
     }
     await page.getByRole("button", { name: /^Abrir guía PDF:/ }).click();
-    const url = await page.locator("iframe").getAttribute("src");
+    await assertPdfRendered(page);
+    const url = await page.locator("[data-pdf-viewer]").getAttribute("data-pdf-src");
     assert.ok(url.startsWith("/__warmi_offline__/"));
     assert.equal(
       await page.evaluate(async (path) => (await fetch(path)).status, url),

@@ -11,6 +11,7 @@ jobs:
     timeout-minutes: 20
     env:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/warmi
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/warmi
       AUTH_SECRET: local-ci-placeholder-not-a-production-secret
     steps:
       - uses: actions/checkout@v4

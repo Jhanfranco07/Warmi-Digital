@@ -14,6 +14,10 @@ export class OpportunityService {
     return this.announcementRepository.findOpportunities(communityId);
   }
 
+  getDashboardOpportunities(communityId?: string | null) {
+    return this.announcementRepository.findDashboardOpportunities(communityId);
+  }
+
   getAvailableForArtisan(artisanId: string, communityId?: string | null) {
     return this.announcementRepository.findAvailableForArtisan(artisanId, communityId);
   }
@@ -89,12 +93,11 @@ export class OpportunityService {
   }
 
   async apply(announcementId: string, artisanId: string, communityId?: string | null) {
-    const opportunity =
-      await this.announcementRepository.findAvailableDetailForArtisan(
-        announcementId,
-        artisanId,
-        communityId
-      );
+    const opportunity = await this.announcementRepository.findAvailableDetailForArtisan(
+      announcementId,
+      artisanId,
+      communityId
+    );
 
     if (!opportunity) {
       throw new Error("Esta convocatoria no esta disponible para postular.");
@@ -142,7 +145,9 @@ export class OpportunityService {
     );
   }
 
-  private toAnnouncementData(input: OpportunityFormInput): Prisma.AnnouncementUncheckedCreateInput {
+  private toAnnouncementData(
+    input: OpportunityFormInput
+  ): Prisma.AnnouncementUncheckedCreateInput {
     return {
       title: input.title,
       body: input.body,

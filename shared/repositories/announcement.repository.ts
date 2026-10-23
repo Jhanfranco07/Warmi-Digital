@@ -11,27 +11,41 @@ type ManagedOpportunityFilters = {
   query?: string;
 };
 
+function publishedOpportunities(
+  communityId?: string | null
+): Prisma.AnnouncementWhereInput {
+  const now = new Date();
+  return {
+    status: AnnouncementStatus.PUBLISHED,
+    publishedAt: { not: null, lte: now },
+    AND: [
+      { OR: [{ communityId: null }, { communityId: communityId ?? undefined }] },
+      { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }
+    ]
+  };
+}
+
 export class AnnouncementRepository {
   constructor(protected readonly db = prisma) {}
 
   findOpportunities(communityId?: string | null) {
-    const now = new Date();
-
     return this.db.announcement.findMany({
-      where: {
-        status: AnnouncementStatus.PUBLISHED,
-        publishedAt: { not: null, lte: now },
-        AND: [
-          { OR: [{ communityId: null }, { communityId: communityId ?? undefined }] },
-          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }
-        ]
-      },
+      where: publishedOpportunities(communityId),
       include: {
         community: true,
         author: { include: { profile: true } },
         workshop: true
       },
       orderBy: [{ endsAt: "asc" }, { createdAt: "desc" }]
+    });
+  }
+
+  findDashboardOpportunities(communityId?: string | null) {
+    return this.db.announcement.findMany({
+      where: publishedOpportunities(communityId),
+      select: { id: true, title: true, endsAt: true },
+      orderBy: [{ endsAt: "asc" }, { createdAt: "desc" }],
+      take: 3
     });
   }
 

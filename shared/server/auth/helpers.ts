@@ -1,5 +1,6 @@
 import type { UserRole } from "@prisma/client";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 import { auth } from "@/shared/server/auth/auth";
 import { prisma } from "@/shared/server/db/prisma";
@@ -36,7 +37,8 @@ export function hasPermission(
   return checkPermission(user, permission);
 }
 
-export async function requireAuth() {
+// React memoization is scoped to this server render, never shared between users.
+export const requireAuth = cache(async function requireAuth() {
   const session = await auth();
 
   if (!session?.user?.email || !session.user.id) {
@@ -78,7 +80,7 @@ export async function requireAuth() {
       roles: activeUser.userRoles.map((assignment) => assignment.role.name)
     }
   };
-}
+});
 
 export async function requireRole(role: UserRole | UserRole[]) {
   const session = await requireAuth();

@@ -81,21 +81,22 @@ export class ConversationRepository {
   }
 
   async countUnreadForUser(userId: string) {
-    const conversations = await this.findForUser(userId);
-
-    return conversations.filter((conversation) => {
-      const currentParticipant = conversation.participants.find(
-        (participant) => participant.userId === userId
-      );
-      const lastMessage = conversation.messages[0];
-
-      return Boolean(
-        lastMessage &&
-          lastMessage.senderId !== userId &&
-          (!currentParticipant?.lastReadAt ||
-            lastMessage.createdAt > currentParticipant.lastReadAt)
-      );
-    }).length;
+    // Count conversations by their latest message without loading profiles or history.
+    const [result] = await this.db.$queryRaw<{ count: number }[]>`
+      SELECT COUNT(*)::int AS "count"
+      FROM "Participant" AS participant
+      JOIN LATERAL (
+        SELECT "senderId", "createdAt"
+        FROM "Message"
+        WHERE "conversationId" = participant."conversationId"
+        ORDER BY "createdAt" DESC
+        LIMIT 1
+      ) AS latest ON TRUE
+      WHERE participant."userId" = ${userId}
+        AND latest."senderId" <> ${userId}
+        AND (participant."lastReadAt" IS NULL OR latest."createdAt" > participant."lastReadAt")
+    `;
+    return result?.count ?? 0;
   }
 
   async findOrCreateDirect(createdById: string, otherUserId: string) {

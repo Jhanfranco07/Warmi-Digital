@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { format } from "date-fns";
@@ -21,6 +22,8 @@ import { SpeechButton } from "@/shared/accessibility/speech-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { OpportunityService } from "@/shared/services/opportunity.service";
 import { isSupportedImageUrl } from "@/shared/lib/image-url";
 import { ArtisanDashboardService } from "@/shared/services/artisan-dashboard.service";
 import { requireRole } from "@/shared/server/auth/helpers";
@@ -371,24 +374,17 @@ export default async function ArtisanDashboardPage() {
               iconClassName="text-[#b5245b]"
               href="/artesana/convocatorias"
             >
-              <div className="grid gap-4">
-                {data.opportunities.length ? (
-                  data.opportunities.map((item) => (
-                    <DashboardRow
-                      key={item.id}
-                      href={`/artesana/convocatorias/${item.id}`}
-                      title={item.title}
-                      description={
-                        item.endsAt
-                          ? `Cierra el ${format(item.endsAt, "dd/MM/yyyy")}`
-                          : "Fecha abierta"
-                      }
-                    />
-                  ))
-                ) : (
-                  <EmptyState title="Sin convocatorias por ahora" />
-                )}
-              </div>
+              <Suspense
+                fallback={
+                  <div aria-label="Cargando convocatorias" className="grid gap-4">
+                    <Skeleton className="h-16" />
+                    <Skeleton className="h-16" />
+                    <Skeleton className="h-16" />
+                  </div>
+                }
+              >
+                <DashboardOpportunities communityId={profile?.communityId} />
+              </Suspense>
             </DashboardBlock>
 
             <DashboardBlock
@@ -559,6 +555,32 @@ function AchievementRow({
         <ChevronRight className="h-5 w-5" />
       </span>
     </Link>
+  );
+}
+
+async function DashboardOpportunities({ communityId }: { communityId?: string | null }) {
+  const opportunities = await new OpportunityService().getDashboardOpportunities(
+    communityId
+  );
+  return (
+    <div className="grid gap-4">
+      {opportunities.length ? (
+        opportunities.map((item) => (
+          <DashboardRow
+            key={item.id}
+            href={`/artesana/convocatorias/${item.id}`}
+            title={item.title}
+            description={
+              item.endsAt
+                ? `Cierra el ${format(item.endsAt, "dd/MM/yyyy")}`
+                : "Fecha abierta"
+            }
+          />
+        ))
+      ) : (
+        <EmptyState title="Sin convocatorias por ahora" />
+      )}
+    </div>
   );
 }
 

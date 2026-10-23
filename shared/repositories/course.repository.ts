@@ -1,6 +1,35 @@
 import { prisma } from "@/shared/server/db/prisma";
 import type { Prisma } from "@prisma/client";
 
+const courseSummary = {
+  id: true,
+  title: true,
+  description: true,
+  level: true,
+  imageUrl: true,
+  durationMin: true,
+  modules: {
+    select: {
+      id: true,
+      durationMin: true,
+      title: true,
+      order: true,
+      lessons: { select: { id: true, durationMin: true }, orderBy: { order: "asc" } }
+    },
+    orderBy: { order: "asc" }
+  }
+} satisfies Prisma.CourseSelect;
+
+const enrollmentSummary = {
+  id: true,
+  status: true,
+  lastActivityAt: true,
+  courseProgress: { select: { percentage: true } },
+  lessonProgresses: {
+    select: { completed: true, lessonId: true, startedAt: true, progress: true }
+  }
+} satisfies Prisma.EnrollmentSelect;
+
 export class CourseRepository {
   constructor(protected readonly db = prisma) {}
 
@@ -48,44 +77,28 @@ export class CourseRepository {
     return this.db.enrollment.findMany({
       where: { userId },
       select: {
-        id: true,
-        status: true,
-        lastActivityAt: true,
+        ...enrollmentSummary,
         course: {
           select: {
-            id: true,
-            title: true,
-            description: true,
-            level: true,
-            imageUrl: true,
-            durationMin: true,
+            ...courseSummary,
             facilitator: {
               select: {
                 id: true,
                 name: true,
                 profile: { select: { displayName: true, avatarUrl: true } }
               }
-            },
-            modules: {
-              select: {
-                id: true,
-                durationMin: true,
-                title: true,
-                order: true,
-                lessons: {
-                  select: { id: true, durationMin: true },
-                  orderBy: { order: "asc" }
-                }
-              },
-              orderBy: { order: "asc" }
             }
           }
-        },
-        courseProgress: { select: { percentage: true } },
-        lessonProgresses: {
-          select: { completed: true, lessonId: true, startedAt: true, progress: true }
         }
       },
+      orderBy: { enrolledAt: "desc" }
+    });
+  }
+
+  findDashboardCourseSummaries(userId: string, courseId: string) {
+    return this.db.enrollment.findMany({
+      where: { userId, courseId },
+      select: { ...enrollmentSummary, course: { select: courseSummary } },
       orderBy: { enrolledAt: "desc" }
     });
   }
@@ -176,12 +189,7 @@ export class CourseRepository {
     const enrollment = await this.db.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },
       include: {
-        course: {
-          include: {
-            facilitator: { include: { profile: true } }
-          }
-        },
-        courseProgress: true,
+        course: { select: { id: true, title: true, imageUrl: true } },
         lessonProgresses: true
       }
     });
@@ -205,6 +213,32 @@ export class CourseRepository {
     });
 
     return lesson ? { enrollment, lesson } : null;
+  }
+
+  findLessonSupport(
+    userId: string,
+    courseId: string,
+    moduleId: string,
+    lessonId: string
+  ) {
+    return this.db.lesson.findFirst({
+      where: {
+        id: lessonId,
+        module: {
+          id: moduleId,
+          courseId,
+          course: { deletedAt: null, enrollments: { some: { userId } } }
+        }
+      },
+      select: {
+        id: true,
+        lessonFiles: {
+          where: { file: { mimeType: "video/mp4" } },
+          include: { file: true },
+          orderBy: { position: "asc" }
+        }
+      }
+    });
   }
 
   findManagedCourses(facilitatorId: string) {

@@ -214,4 +214,8 @@ export class LearningService {
       )
     };
   }
+
+  getLessonSupport(userId: string, courseId: string, moduleId: string, lessonId: string) {
+    return this.courseRepository.findLessonSupport(userId, courseId, moduleId, lessonId);
+  }
 }

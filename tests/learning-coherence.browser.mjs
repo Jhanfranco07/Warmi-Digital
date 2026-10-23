@@ -122,6 +122,10 @@ window.mountCoherence=async(kind,data)=>{
               "export class ArtisanDashboardService {async getDashboard(){return window.coherenceFixture.dashboard} async getLearningOverview(){return {artisan:null,workshops:{upcoming:[],completed:[]},nextWorkshop:null}}}"
           })
         );
+        b.onLoad({ filter: /shared[\\/]services[\\/]opportunity\.service\.ts$/ }, () => ({
+          contents:
+            "export class OpportunityService {async getDashboardOpportunities(){return []}}"
+        }));
         b.onLoad(
           { filter: /shared[\\/]actions[\\/]artisan[\\/]complete-lesson\.ts$/ },
           () => ({
@@ -264,6 +268,7 @@ try {
     const repo = new CourseRepository();
     repo.findEnrollmentCourse = async () => fixtureEnrollment;
     repo.findEnrolledCourseSummaries = async () => [fixtureEnrollment];
+    repo.findDashboardCourseSummaries = async () => [fixtureEnrollment];
     repo.findAvailableCourseSummaries = async () => [];
     const service = new LearningService(repo);
     const detail = await service.getCourseDetail(account.id, course.id);
@@ -271,12 +276,7 @@ try {
     const dashboard = await new ArtisanDashboardService(
       { findDashboardProfile: async () => null },
       repo,
-      { getWorkshops: async () => ({ upcoming: [], completed: [] }) },
-      { getOpportunities: async () => [] },
-      { findByUser: async () => null },
-      { findSummaryByArtisan: async () => [] },
-      { findRecentSummaryForArtisan: async () => [] },
-      { findRecentForUser: async () => [], countUnread: async () => 0 }
+      { getWorkshops: async () => ({ upcoming: [], completed: [] }) }
     ).getDashboard(account.id);
     const data = {
       scenario,

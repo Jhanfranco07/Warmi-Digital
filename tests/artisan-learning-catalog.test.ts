@@ -70,6 +70,9 @@ class CatalogRepository extends CourseRepository {
       CourseRepository["findAvailableCourseSummaries"]
     >;
   }
+  findDashboardCourseSummaries() {
+    return this.findEnrolledCourseSummaries();
+  }
 }
 
 function dashboard(repository: CourseRepository) {
@@ -79,15 +82,7 @@ function dashboard(repository: CourseRepository) {
     repository,
     {
       getWorkshops: async () => ({ upcoming: [], completed: [] })
-    } as unknown as Dependencies[2],
-    { getOpportunities: async () => [] } as unknown as Dependencies[3],
-    { findByUser: async () => null } as unknown as Dependencies[4],
-    { findSummaryByArtisan: async () => [] } as unknown as Dependencies[5],
-    { findRecentSummaryForArtisan: async () => [] } as unknown as Dependencies[6],
-    {
-      findRecentForUser: async () => [],
-      countUnread: async () => 0
-    } as unknown as Dependencies[7]
+    } as unknown as Dependencies[2]
   );
 }
 

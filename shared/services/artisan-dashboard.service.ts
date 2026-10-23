@@ -5,11 +5,6 @@ import {
 } from "@/shared/learning/program";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { CourseRepository } from "@/shared/repositories/course.repository";
-import { NotificationRepository } from "@/shared/repositories/notification.repository";
-import { OrderRepository } from "@/shared/repositories/order.repository";
-import { ProductRepository } from "@/shared/repositories/product.repository";
-import { StoryRepository } from "@/shared/repositories/story.repository";
-import { OpportunityService } from "@/shared/services/opportunity.service";
 import { WorkshopService } from "@/shared/services/workshop.service";
 
 function average(values: number[]) {
@@ -21,12 +16,7 @@ export class ArtisanDashboardService {
   constructor(
     private readonly artisanRepository = new ArtisanRepository(),
     private readonly courseRepository = new CourseRepository(),
-    private readonly workshopService = new WorkshopService(),
-    private readonly opportunityService = new OpportunityService(),
-    private readonly storyRepository = new StoryRepository(),
-    private readonly productRepository = new ProductRepository(),
-    private readonly orderRepository = new OrderRepository(),
-    private readonly notificationRepository = new NotificationRepository()
+    private readonly workshopService = new WorkshopService()
   ) {}
 
   async getLearningOverview(userId: string) {
@@ -43,28 +33,11 @@ export class ArtisanDashboardService {
   }
 
   async getDashboard(userId: string) {
-    const [
-      artisan,
-      enrollments,
-      workshops,
-      story,
-      products,
-      orders,
-      notifications,
-      unreadNotifications
-    ] = await Promise.all([
+    const [artisan, enrollments, workshops] = await Promise.all([
       this.artisanRepository.findDashboardProfile(userId),
-      this.courseRepository.findEnrolledCourseSummaries(userId),
-      this.workshopService.getWorkshops(userId),
-      this.storyRepository.findByUser(userId),
-      this.productRepository.findSummaryByArtisan(userId),
-      this.orderRepository.findRecentSummaryForArtisan(userId),
-      this.notificationRepository.findRecentForUser(userId),
-      this.notificationRepository.countUnread(userId)
+      this.courseRepository.findDashboardCourseSummaries(userId, LEARNING_PROGRAM.id),
+      this.workshopService.getWorkshops(userId)
     ]);
-    const opportunities = await this.opportunityService.getOpportunities(
-      artisan?.profile?.communityId
-    );
 
     const visibleEnrollments = enrollments.filter((enrollment) =>
       isArtisanLearningCourse(enrollment.course.id)
@@ -107,18 +80,12 @@ export class ArtisanDashboardService {
 
     return {
       artisan,
-      story,
       generalProgress,
       enrollments: learningEnrollments,
       currentEnrollment,
       currentBadge,
       nextWorkshop: workshops.upcoming[0] ?? null,
       workshops,
-      opportunities: opportunities.slice(0, 3),
-      products,
-      recentOrders: orders,
-      notifications,
-      unreadNotifications,
       recentBadges: artisan?.userBadges ?? [],
       nextObjective:
         generalProgress < 40

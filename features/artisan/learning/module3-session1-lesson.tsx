@@ -46,10 +46,12 @@ export async function Module3Session1Lesson({
   lesson: Detail["lesson"];
   completed: boolean;
 }) {
-  const course = await new LearningService().getCourseDetail(userId, courseId);
-  const support = course.enrollment.course.modules
-    .find((item) => item.id === lesson.module.id)
-    ?.lessons.find((item) => item.id === MODULE3_SESSION2_ID);
+  const support = await new LearningService().getLessonSupport(
+    userId,
+    courseId,
+    lesson.module.id,
+    MODULE3_SESSION2_ID
+  );
   const href = `/artesana/aprender/${courseId}` as Route;
   return (
     <ArtisanShell>

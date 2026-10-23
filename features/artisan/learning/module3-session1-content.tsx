@@ -25,7 +25,7 @@ import {
 } from "@/shared/components/ui/sheet";
 import { formatBytes } from "@/shared/offline/module3-storage";
 import { LEARNING_PROGRAM } from "@/shared/learning/program";
-import { PdfViewer } from "@/shared/components/media/pdf-viewer";
+import { PdfGuideDialog } from "@/shared/components/media/pdf-guide-dialog";
 import { useReadingPosition } from "@/shared/learning/use-reading-position";
 import { useVisitedModule3Session } from "@/shared/learning/use-module3-resume";
 import { MODULE3_SESSION1_ID } from "@/shared/learning/module3-session1";
@@ -276,26 +276,12 @@ export function Module3Session1Content({
               )}
             </div>
             {guideViewerUrl && guide?.url && (
-              <section
-                aria-label={`Guía abierta: ${topic.title}`}
-                className="space-y-3 rounded-md border border-[#ead2dc] bg-white p-3"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-bold text-[#202b29]">Guía abierta</p>
-                  <button
-                    type="button"
-                    onClick={() => setGuideViewerUrl(null)}
-                    className={linkStyle}
-                  >
-                    Volver a la lección
-                  </button>
-                </div>
-                <PdfViewer
-                  key={guideViewerUrl}
-                  src={guideViewerUrl}
-                  title={topic.title}
-                />
-              </section>
+              <PdfGuideDialog
+                key={guideViewerUrl}
+                src={guideViewerUrl}
+                title={topic.title}
+                onClose={() => setGuideViewerUrl(null)}
+              />
             )}
           </div>
           {index === 4 && (

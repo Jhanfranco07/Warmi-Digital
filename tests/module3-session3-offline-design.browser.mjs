@@ -194,7 +194,9 @@ try {
     await reopened.evaluate(async (url) => (await fetch(url)).status, pdfUrl),
     200
   );
-  await reopened.getByRole("button", { name: "Volver a la sesión", exact: true }).click();
+  await reopened
+    .getByRole("button", { name: "Volver a la lección", exact: true })
+    .click();
   assert.equal(await reopened.locator("[data-pdf-viewer]").count(), 0);
   await reopened.getByRole("button", { name: "Anterior", exact: true }).click();
   await reopened.locator('[data-session3-step="2"]').waitFor();

@@ -1,5 +1,5 @@
 "use client";
-import { PdfViewer } from "@/shared/components/media/pdf-viewer";
+import { PdfGuideDialog } from "@/shared/components/media/pdf-guide-dialog";
 import { useReadingPosition } from "@/shared/learning/use-reading-position";
 import { useVisitedModule3Session } from "@/shared/learning/use-module3-resume";
 
@@ -315,12 +315,11 @@ export function Module3Session2Content({
               </button>
             </div>
             {guideViewerOpen && (
-              <section aria-label="Guía abierta" className="space-y-3">
-                <button onClick={onCloseGuide} className={learningLinkStyle}>
-                  Volver a la sesión
-                </button>
-                <PdfViewer key={guide.url} src={guide.url} title={guide.title} />
-              </section>
+              <PdfGuideDialog
+                src={guide.url}
+                title={guide.title}
+                onClose={onCloseGuide}
+              />
             )}
           </>
         ) : (

@@ -90,10 +90,10 @@ async function checkSession1(page, offline, withGuides = verifyGuides) {
       });
       await openGuide.click();
       const viewer = page
-        .getByRole("region", { name: `Guía abierta: ${topic.title}`, exact: true })
-        .locator("iframe");
-      await viewer.waitFor();
-      const href = await viewer.getAttribute("src");
+        .getByRole("dialog", { name: topic.title, exact: true })
+        .locator("[data-pdf-viewer]");
+      await viewer.locator("canvas").waitFor({ state: "visible" });
+      const href = await viewer.getAttribute("data-pdf-src");
       const data = await page.evaluate(async (url) => {
         const response = await fetch(url);
         const bytes = await response.arrayBuffer();

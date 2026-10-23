@@ -62,6 +62,7 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v11",
     "warmi-offline-shell-v12",
     "warmi-offline-shell-v13",
+    "warmi-offline-shell-v14",
     "warmi-module3-old",
     "warmi-learning-module-m3-generation",
     "warmi-learning-module-m4-generation"
@@ -89,7 +90,8 @@ test("shell upgrade removes only previous public shells and preserves every down
     "warmi-offline-shell-v9",
     "warmi-offline-shell-v10",
     "warmi-offline-shell-v11",
-    "warmi-offline-shell-v12"
+    "warmi-offline-shell-v12",
+    "warmi-offline-shell-v13"
   ]);
 });
 

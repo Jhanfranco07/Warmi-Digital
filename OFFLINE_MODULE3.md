@@ -1,8 +1,23 @@
 # Offline del Modulo 3
 
+## Guias a pantalla completa
+
+Las cuatro sesiones comparten `PdfGuideDialog`. Abrir una guia muestra el visor
+en un portal accesible que ocupa el viewport completo, por encima de la cabecera
+y la navegacion inferior. No se incrusta dentro de la tarjeta de recursos. El
+titulo, el boton "Volver a la leccion" y los controles permanecen visibles; solo
+el documento tiene desplazamiento vertical/horizontal. Escape tambien cierra el
+lector y el foco regresa al elemento que lo abrio, sin reiniciar el tema.
+
+Se conserva el mismo motor, los marcadores, los PDF y la lectura directa de Cache
+Storage tanto online como offline. El shell v14 incorpora esta presentacion sin
+borrar los paquetes existentes. La prueba del visor comprueba limites completos
+del viewport, ancho del documento y boton de regreso sin elementos superpuestos,
+ademas de renderizado, cierre/reapertura, zoom y reconexion.
+
 ## Recuperacion del visor con archivos ya guardados
 
-El shell v13 conserva las descargas anteriores y actualiza solamente la interfaz
+El shell v14 conserva las descargas anteriores y actualiza solamente la interfaz
 publica y sus dependencias. El lector consulta Cache Storage directamente para
 las URL locales `/__warmi_offline__/...`; las solicitudes online autenticadas y
 los enlaces externos mantienen su entrega normal. Si el almacenamiento esta
@@ -268,7 +283,7 @@ Las indicaciones sobre catalogos y espacios de venta se contrastaron con la docu
 
 - Service Worker nativo: `public/warmi-sw.js`, registrado al iniciar la primera descarga. Guarda el shell publico `/offline-learning`, sus JS, CSS, fuentes y las imagenes de la guia de voz.
 - IndexedDB: base `warmi-learning-offline`, store `downloads`, clave `module:<moduleId>`. Mantiene lectura de la clave antigua `module3`. Guarda textos, titulos, orden de lecciones, metadatos, referencias locales e ID de propietaria. No guarda sesiones, contrasenas ni tokens.
-- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v13` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
+- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v14` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
 - PostgreSQL conserva los registros `File` y `LessonFile`; los binarios permanecen en Cloudinary y en el dispositivo tras descargarlos. No requiere migracion ni dependencias nuevas.
 - Descarga por streaming, progreso por bytes y tamano aproximado a partir de `File.size`. El registro local se confirma al terminar todos los archivos. Un fallo elimina esa generacion y conserva la descarga anterior. Web Locks coordina operaciones entre pestanas cuando esta disponible.
 

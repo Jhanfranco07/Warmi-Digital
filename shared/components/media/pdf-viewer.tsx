@@ -23,7 +23,15 @@ import {
 const controlStyle =
   "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[#dfc7d2] bg-white text-[#9c174e] hover:bg-[#fff0f5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9c174e] disabled:cursor-default disabled:opacity-40";
 
-export function PdfViewer({ src, title }: { src: string; title: string }) {
+export function PdfViewer({
+  src,
+  title,
+  fullScreen = false
+}: {
+  src: string;
+  title: string;
+  fullScreen?: boolean;
+}) {
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
@@ -109,7 +117,10 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
         if (cancelled) return;
         const base = page.getViewport({ scale: 1 });
         const viewport = page.getViewport({
-          scale: (Math.max(1, width - 16) / base.width) * zoom
+          scale:
+            (Math.max(1, fullScreen ? Math.min(960, width - 16) : width - 16) /
+              base.width) *
+            zoom
         });
         // Bound bitmap size on phones while allowing horizontal scrolling at higher zoom.
         const pixels = Math.min(
@@ -150,7 +161,7 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
       cancelled = true;
       render?.cancel();
     };
-  }, [document, pageNumber, width, zoom, title]);
+  }, [document, pageNumber, width, zoom, title, fullScreen]);
 
   function control(
     label: string,
@@ -180,13 +191,17 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
       data-pdf-viewer
       data-pdf-src={src}
       aria-label={`Visor PDF: ${title}`}
-      className="min-w-0 space-y-3"
+      className={
+        fullScreen
+          ? "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
+          : "min-w-0 space-y-3"
+      }
     >
       <TooltipProvider delayDuration={300}>
         <div
           role="toolbar"
           aria-label="Controles del PDF"
-          className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-[#f5efec] p-2"
+          className={`flex shrink-0 flex-wrap items-center justify-between gap-2 bg-[#f5efec] p-2 ${fullScreen ? "border-b border-[#dfc7d2] sm:px-6" : "rounded-md"}`}
         >
           <div className="flex items-center gap-1">
             {control(
@@ -232,7 +247,11 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
       </TooltipProvider>
       <div
         ref={container}
-        className="relative min-h-64 w-full overflow-auto rounded-md border border-[#dfc7d2] bg-[#eeeae7] p-2"
+        className={
+          fullScreen
+            ? "relative min-h-0 w-full flex-1 overflow-auto overscroll-contain bg-[#eeeae7] p-2 sm:p-4"
+            : "relative min-h-64 w-full overflow-auto rounded-md border border-[#dfc7d2] bg-[#eeeae7] p-2"
+        }
         aria-busy={!ready && !error}
       >
         {!ready && !error && (
@@ -268,7 +287,9 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
         )}
       </div>
       {text && (
-        <details className="border-y border-[#dfc7d2] text-sm">
+        <details
+          className={`border-y border-[#dfc7d2] text-sm ${fullScreen ? "max-h-40 shrink-0 overflow-auto px-4" : ""}`}
+        >
           <summary className="min-h-11 cursor-pointer py-3 font-bold text-[#006b5a]">
             Texto de esta página
           </summary>

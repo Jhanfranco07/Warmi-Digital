@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
-export async function assertPdfRendered(page) {
-  const viewer = page.locator("[data-pdf-viewer]");
+export async function assertPdfRendered(page, selector = "[data-pdf-viewer]") {
+  const viewer = page.locator(selector);
   await viewer.locator("canvas").waitFor({ state: "visible" });
   assert.equal(await viewer.locator("iframe").count(), 0);
   const pixels = await viewer.locator("canvas").evaluate((canvas) => {

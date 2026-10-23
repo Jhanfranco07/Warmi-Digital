@@ -532,10 +532,7 @@ try {
     "%PDF-"
   );
   await page.getByRole("button", { name: /Abrir guía PDF:/ }).click();
-  await page
-    .getByRole("region", { name: /Guía abierta:/ })
-    .locator("iframe")
-    .waitFor();
+  await page.locator("[data-pdf-guide-dialog] canvas").waitFor({ state: "visible" });
   await page.getByRole("button", { name: "Volver a la lección", exact: true }).click();
   await play(page);
   await selectTopic(page, MODULE3_SESSION1_TOPICS[6].title);

@@ -111,6 +111,42 @@ try {
   fail = false;
   await page.getByRole("button", { name: "Reintentar", exact: true }).click();
   await assertPdfRendered(page);
+  const dialogBundle = await build({
+    stdin: {
+      contents: `import React from 'react';
+        import {createRoot} from 'react-dom/client';
+        import {PdfGuideDialog} from './shared/components/media/pdf-guide-dialog';
+        const host=document.createElement('div');document.body.append(host);
+        const root=createRoot(host);
+        const opener=document.createElement('button');opener.textContent='Abrir PDF de prueba';
+        opener.style.cssText='position:fixed;top:12px;left:12px;z-index:60;background:white;padding:12px';
+        opener.onclick=()=>root.render(React.createElement(PdfGuideDialog,{
+          src:'/test-guide.pdf',title:'Guía de prueba online',onClose:()=>root.render(null)
+        }));document.body.append(opener);`,
+      resolveDir: process.cwd(),
+      loader: "tsx"
+    },
+    bundle: true,
+    write: false,
+    platform: "browser",
+    format: "iife",
+    jsx: "automatic",
+    define: { "process.env.NODE_ENV": '"production"' }
+  });
+  await page.addScriptTag({ content: dialogBundle.outputFiles[0].text });
+  await page.getByRole("button", { name: "Abrir PDF de prueba", exact: true }).click();
+  await assertPdfRendered(page, "[data-pdf-guide-dialog]");
+  await assertFullScreen(page);
+  await page.screenshot({ path: join(output, "online-fullscreen.png") });
+  await page.keyboard.press("Escape");
+  await page.locator("[data-pdf-guide-dialog]").waitFor({ state: "hidden" });
+  await page.waitForFunction(
+    () => document.activeElement?.textContent === "Abrir PDF de prueba"
+  );
+  await page.getByRole("button", { name: "Abrir PDF de prueba", exact: true }).click();
+  await assertPdfRendered(page, "[data-pdf-guide-dialog]");
+  await page.getByRole("button", { name: "Volver a la lección", exact: true }).click();
+  await page.locator("[data-pdf-guide-dialog]").waitFor({ state: "hidden" });
   const topics = await page.evaluate(() => window.topics);
   await page.evaluate(() => window.downloadPdfGuides());
   // Offline must depend on Warmi's caches, not a previously warmed HTTP cache.
@@ -178,6 +214,7 @@ try {
         label
       );
       await assertPdfRendered(page);
+      await assertFullScreen(page);
     }
     const previous = page.getByRole("button", { name: "Página anterior", exact: true });
     if (await previous.isEnabled()) {
@@ -196,7 +233,7 @@ try {
       );
       if (width === 390) {
         await page
-          .locator("[data-pdf-viewer]")
+          .locator("[data-pdf-guide-dialog]")
           .screenshot({ path: join(output, `guide-${index + 1}.png`) });
       }
     }
@@ -219,4 +256,39 @@ try {
 } finally {
   await context?.close();
   await db.$disconnect();
+}
+
+async function assertFullScreen(page) {
+  const bounds = await page.locator("[data-pdf-guide-dialog]").evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return {
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
+      vw: innerWidth,
+      vh: innerHeight
+    };
+  });
+  assert.equal(bounds.x, 0);
+  assert.equal(bounds.y, 0);
+  assert.equal(bounds.width, bounds.vw);
+  assert.equal(bounds.height, bounds.vh);
+  const back = page.getByRole("button", { name: "Volver a la lección", exact: true });
+  assert.ok(await back.isVisible());
+  assert.ok(
+    await back.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      return element.contains(
+        document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)
+      );
+    })
+  );
+  const width = await page
+    .locator("[data-pdf-guide-dialog] canvas")
+    .evaluate((canvas) => canvas.getBoundingClientRect().width);
+  assert.ok(
+    width >= Math.min(960, bounds.vw * 0.85),
+    "PDF must use the screen width, not a nested card"
+  );
 }

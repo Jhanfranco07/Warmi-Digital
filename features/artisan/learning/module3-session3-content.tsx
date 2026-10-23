@@ -1,5 +1,5 @@
 "use client";
-import { PdfViewer } from "@/shared/components/media/pdf-viewer";
+import { PdfGuideDialog } from "@/shared/components/media/pdf-guide-dialog";
 
 /* eslint-disable @next/next/no-html-link-for-pages -- The offline shell handles these routes locally. */
 import { useId, useRef, useState, type RefObject } from "react";
@@ -330,12 +330,11 @@ export function Module3Session3Content({
               </button>
             </div>
             {guideViewerOpen && (
-              <section aria-label="Guía abierta" className="space-y-3">
-                <button onClick={onCloseGuide} className={learningLinkStyle}>
-                  Volver a la sesión
-                </button>
-                <PdfViewer key={guide.url} src={guide.url} title={guide.title} />
-              </section>
+              <PdfGuideDialog
+                src={guide.url}
+                title={guide.title}
+                onClose={onCloseGuide}
+              />
             )}
           </>
         ) : (

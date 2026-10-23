@@ -116,7 +116,7 @@ try {
     .waitFor();
   await page.getByRole("button", { name: "Abrir guía PDF", exact: true }).click();
   await assertPdfRendered(page);
-  await page.getByRole("button", { name: "Volver a la sesión", exact: true }).click();
+  await page.getByRole("button", { name: "Volver a la lección", exact: true }).click();
   assert.equal(await page.locator("[data-pdf-viewer]").count(), 0);
   await page.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.locator('[data-session2-topic="4"]').waitFor();
@@ -152,7 +152,9 @@ try {
     await reopened.evaluate(async (url) => (await fetch(url)).status, localUrl),
     200
   );
-  await reopened.getByRole("button", { name: "Volver a la sesión", exact: true }).click();
+  await reopened
+    .getByRole("button", { name: "Volver a la lección", exact: true })
+    .click();
   await reopened.getByRole("link", { name: "Volver al módulo 3", exact: true }).click();
   await reopened.locator("[data-offline-module-overview]").waitFor();
   await reopened.getByRole("button", { name: "Eliminar descarga", exact: true }).click();

@@ -200,7 +200,7 @@ try {
     await page.evaluate(async (url) => (await fetch(url)).status, localUrl),
     200
   );
-  await page.getByRole("button", { name: "Volver a la sesión", exact: true }).click();
+  await page.getByRole("button", { name: "Volver a la lección", exact: true }).click();
   await page.getByRole("button", { name: "Escuchar este paso", exact: true }).click();
   await page.waitForFunction(() =>
     window.testSpoken?.includes("Aviso y hago seguimiento")

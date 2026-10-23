@@ -1,5 +1,34 @@
 # Offline del Modulo 3
 
+## Recuperacion del visor con archivos ya guardados
+
+El shell v13 conserva las descargas anteriores y actualiza solamente la interfaz
+publica y sus dependencias. El lector consulta Cache Storage directamente para
+las URL locales `/__warmi_offline__/...`; las solicitudes online autenticadas y
+los enlaces externos mantienen su entrega normal. Si el almacenamiento esta
+bloqueado, conserva como alternativa la URL existente.
+
+El motor sigue cargandose bajo demanda. Si falla su importacion por URL, intenta
+importar los mismos bytes guardados mediante una URL Blob temporal. El worker
+tambien arranca desde los bytes locales, con MIME JavaScript explicito, sin
+necesitar la cache HTTP. No se agrega un segundo motor ni otra copia de los PDF.
+Las fuentes, CMaps y decodificadores siguen precargados en el shell.
+
+Pruebas: 79 casos unitarios; siete PDF reales y 22 paginas con pixeles no vacios,
+cierre y reapertura offline, cache HTTP vaciada, entrega por URL deshabilitada
+para el lector, worker Blob, anterior/siguiente, zoom, retorno y reconexion.
+`tests/pdf-cache.test.ts` cubre lectura sin red/SW, aislamiento de URL online,
+almacenamiento bloqueado y cancelacion. El test de navegador consulta la BD en
+solo lectura y usa autenticacion simulada en su perfil aislado.
+
+El error exacto de la captura no se reprodujo en Edge actualizado; esta entrega
+refuerza la recuperacion local y no confirma una causa especifica del celular.
+La validacion final en ese dispositivo sigue pendiente. Tras publicar, abrir
+Warmi con internet para recibir el shell actualizado, cerrar y volver a abrir
+antes de probar sin red. No borrar las descargas para actualizar el visor. Si el
+navegador elimino archivos del sitio, esos bytes necesitan descargarse de nuevo
+con conexion; no pueden reconstruirse offline.
+
 ## Diseño compartido online/offline
 
 La presentación actual de las cuatro sesiones y sus logros es compartida con el
@@ -239,7 +268,7 @@ Las indicaciones sobre catalogos y espacios de venta se contrastaron con la docu
 
 - Service Worker nativo: `public/warmi-sw.js`, registrado al iniciar la primera descarga. Guarda el shell publico `/offline-learning`, sus JS, CSS, fuentes y las imagenes de la guia de voz.
 - IndexedDB: base `warmi-learning-offline`, store `downloads`, clave `module:<moduleId>`. Mantiene lectura de la clave antigua `module3`. Guarda textos, titulos, orden de lecciones, metadatos, referencias locales e ID de propietaria. No guarda sesiones, contrasenas ni tokens.
-- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v4` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
+- Cache Storage: cache `warmi-learning-module-<moduleId>-<UUID>` para imagenes, PDF y MP4. Las caches antiguas `warmi-module3-*` siguen siendo compatibles. La cache `warmi-offline-shell-v13` contiene solo la interfaz publica, sin HTML autenticado ni respuestas RSC privadas.
 - PostgreSQL conserva los registros `File` y `LessonFile`; los binarios permanecen en Cloudinary y en el dispositivo tras descargarlos. No requiere migracion ni dependencias nuevas.
 - Descarga por streaming, progreso por bytes y tamano aproximado a partir de `File.size`. El registro local se confirma al terminar todos los archivos. Un fallo elimina esa generacion y conserva la descarga anterior. Web Locks coordina operaciones entre pestanas cuando esta disponible.
 
@@ -249,7 +278,7 @@ El endpoint `GET /api/learning/offline/[courseId]/files/[fileId]` exige rol ARTE
 
 Al abrir `/`, `/artesana/dashboard`, Mi aprendizaje o sus URLs de curso/leccion sin red, el Service Worker responde con el shell. La barra de direcciones conserva la ruta solicitada. Si la URL apunta a una leccion que ya fue descargada, el shell la abre directamente sin depender del historial del navegador; si no hay descarga, muestra una salida segura al inicio. El shell carga la descarga completa desde IndexedDB, comprueba sus archivos y navega localmente entre las lecciones con las rutas existentes. No consulta PostgreSQL ni necesita una sesion online para leer los contenidos ya guardados.
 
-Los archivos se sirven bajo `/__warmi_offline__/<generacion>/<fileId>`. PDF y MP4 admiten rangos de bytes con respuestas 206; el PDF tiene enlace para abrir el visor del navegador y el MP4 usa `<video controls playsInline>`. Los enlaces externos y YouTube requieren internet y muestran el aviso correspondiente sin red.
+Los archivos se sirven bajo `/__warmi_offline__/<generacion>/<fileId>`. PDF y MP4 admiten rangos de bytes con respuestas 206; el PDF se abre en el visor interno y puede leerse directamente desde Cache Storage, y el MP4 usa `<video controls playsInline>`. Los enlaces externos y YouTube requieren internet y muestran el aviso correspondiente sin red.
 
 La conexion se observa mediante `navigator.onLine` y eventos `online`/`offline`. Los fallos de red durante una descarga se muestran como error. El shell ofrece `Volver con conexion` al recuperar la red. Desde las pantallas online, los enlaces de aprendizaje pasan a navegacion documental sin red para evitar depender de RSC no guardado.
 

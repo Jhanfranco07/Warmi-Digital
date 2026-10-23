@@ -11,7 +11,7 @@ import {
   Maximize
 } from "lucide-react";
 import type { PDFDocumentProxy, PDFDocumentLoadingTask, RenderTask } from "pdfjs-dist";
-import { loadPdfEngine, PDFJS_BASE } from "@/shared/lib/pdfjs";
+import { loadPdfEngine, PDFJS_BASE, readPdfResponse } from "@/shared/lib/pdfjs";
 import { readPosition, writePosition } from "@/shared/learning/reading-position";
 import {
   Tooltip,
@@ -61,7 +61,7 @@ export function PdfViewer({ src, title }: { src: string; title: string }) {
       try {
         const [library, response] = await Promise.all([
           loadPdfEngine(),
-          fetch(src, { signal: abort.signal, credentials: "same-origin" })
+          readPdfResponse(src, abort.signal)
         ]);
         if (!response.ok) throw new Error("PDF unavailable");
         const data = new Uint8Array(await response.arrayBuffer());

@@ -113,6 +113,10 @@ try {
   await assertPdfRendered(page);
   const topics = await page.evaluate(() => window.topics);
   await page.evaluate(() => window.downloadPdfGuides());
+  // Offline must depend on Warmi's caches, not a previously warmed HTTP cache.
+  const network = await context.newCDPSession(page);
+  await network.send("Network.clearBrowserCache");
+  await network.detach();
   await context.close();
   context = await chromium.launchPersistentContext(profile, {
     ...options,
@@ -121,8 +125,32 @@ try {
   await context.route("**/api/auth/session", authenticated);
   page = context.pages()[0];
   page.on("pageerror", (error) => errors.push(error.message));
+  const readerWorkers = [];
+  page.on("worker", (worker) => readerWorkers.push(worker.url()));
   await page.goto(`${origin}/artesana/aprender/${courseId}/lecciones/${lessonId}`);
   await page.locator("[data-module3-session1]").waitFor();
+  // The viewer can read downloaded bytes even if SW interception is unavailable.
+  const coldReader = await context.newCDPSession(page);
+  await coldReader.send("Network.setCacheDisabled", { cacheDisabled: true });
+  await coldReader.send("Network.setBypassServiceWorker", { bypass: true });
+  await page.evaluate(() => {
+    const original = window.fetch;
+    window.restorePdfTestFetch = () => {
+      window.fetch = original;
+    };
+    window.fetch = (input, init) => {
+      const url = new URL(
+        typeof input === "string" ? input : (input.url ?? input),
+        location.href
+      );
+      if (
+        url.pathname.startsWith("/__warmi_offline__/") ||
+        url.pathname.startsWith("/pdfjs/")
+      )
+        return Promise.reject(new TypeError("Simulated offline URL delivery failure"));
+      return original(input, init);
+    };
+  });
   let pages = 0;
   for (const [index, topic] of topics.entries()) {
     await page.getByRole("button", { name: "Temas", exact: true }).click();
@@ -177,11 +205,16 @@ try {
   }
   assert.equal(JSON.stringify(await read()), before);
   assert.deepEqual(errors, []);
+  assert.ok(readerWorkers.length >= 7);
+  assert.ok(readerWorkers.every((url) => url.startsWith("blob:")));
+  await page.evaluate(() => window.restorePdfTestFetch());
+  await coldReader.send("Network.setBypassServiceWorker", { bypass: false });
+  await coldReader.detach();
   await context.setOffline(false);
   await page.getByRole("button", { name: /^Abrir guía PDF:/ }).click();
   await assertPdfRendered(page);
   console.log(
-    `PASS: seven real PDFs, ${pages} rendered pages with nonblank pixels; full browser restart offline; no iframe/native viewer; next/previous/zoom/fit; 360/390/430/1024; error/retry online; return/reopen/reconnect; DB untouched. Android emulation, not a physical device. Screenshots: ${output}`
+    `PASS: seven real PDFs, ${pages} rendered pages with nonblank pixels; full browser restart offline and cleared HTTP cache; direct saved bytes with offline URL delivery disabled; blob worker bootstrap; no iframe/native viewer; next/previous/zoom/fit; 360/390/430/1024; error/retry online; return/reopen/reconnect; DB untouched. Android emulation, not a physical device. Screenshots: ${output}`
   );
 } finally {
   await context?.close();

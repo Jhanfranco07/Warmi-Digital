@@ -58,3 +58,21 @@ test("roadmap animations respect reduced-motion preferences", () => {
   assert.ok(css.includes(".monthCard:hover"));
   assert.ok(css.includes(".photoFrame:hover .photoImage"));
 });
+
+test("mes 1 enseña Zoom y Google Meet en lugar de catálogos de WhatsApp Business", () => {
+  const firstMonth = WORKSHOP_MONTHS[0];
+  assert.equal(firstMonth.month, 1);
+  assert.ok(firstMonth.topics.some((topic) => topic.includes("Zoom y Google Meet")));
+  assert.equal(firstMonth.topics.some((topic) => topic.includes("WhatsApp Business")), false);
+});
+
+test("la descripción de Talleres menciona servicios públicos y la artesanía en Qallwa", () => {
+  const source = readFileSync(
+    new URL("../app/(artisan)/artesana/talleres/page.tsx", import.meta.url),
+    "utf8"
+  );
+  assert.ok(source.includes("capacitaciones, concursos y ferias"));
+  assert.ok(source.includes("artesanía tejida en Qallwa"));
+  assert.equal(source.includes("tu vitrina cultural"), false);
+  assert.ok(source.includes("${WORKSHOPS_INTRO} Los talleres presenciales"));
+});

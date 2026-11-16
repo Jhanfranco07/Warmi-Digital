@@ -162,12 +162,6 @@ export function WorkshopRoadmap() {
             );
           })}
         </ol>
-        <p className="mt-4 flex items-start gap-2 text-sm leading-6 text-[#6f5448]">
-          <CalendarDays aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#b5245b]" />
-          Esta es la secuencia de temas por mes, no un calendario con fechas
-          confirmadas. Tu facilitadora comunicará los días y horarios de cada
-          taller.
-        </p>
       </div>
 
       <div className="mt-7 grid gap-4 rounded-[22px] border border-[#ecd0bd] bg-[#fff4ec] p-5 md:grid-cols-3 md:p-7">

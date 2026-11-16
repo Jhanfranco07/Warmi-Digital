@@ -67,7 +67,10 @@ test("YouTube tutorials are external, temporary and configurable by URL", () => 
 
 test("institution links are not internal offline lessons and M1 stays online only", () => {
   assert.equal(isOfflineModule(MODULE1_ID), false);
-  assert.equal(MODULE1_INSTITUTIONS.length, 4);
+  assert.deepEqual(
+    MODULE1_INSTITUTIONS.map((item) => item.key),
+    ["mincetur", "dircetur", "municipalidad"]
+  );
   for (const item of MODULE1_INSTITUTIONS) {
     assert.equal(
       getReferencedLessonId("program", {

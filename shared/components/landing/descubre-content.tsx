@@ -12,19 +12,23 @@ import { WORKSHOPS_PRESENTATION } from "@/shared/learning/workshops";
 const discoveryImages = [
   {
     image: "/images/discover/aprende.png",
-    alt: "Artesanas participando juntas en una capacitación"
+    alt: "Artesanas participando juntas en una capacitación",
+    position: "object-center"
   },
   {
     image: "/images/discover/emprende.png",
-    alt: "Artesanas practicando el uso de un celular en una actividad"
+    alt: "Artesanas practicando el uso de un celular en una actividad",
+    position: "object-[center_18%]"
   },
   {
     image: "/images/discover/taller.png",
-    alt: "Acompañamiento a una artesana mientras usa su celular"
+    alt: "Acompañamiento a una artesana mientras usa su celular",
+    position: "object-[center_18%]"
   },
   {
     image: "/images/discover/recursos.png",
-    alt: "Grupo de artesanas mostrando sus teléfonos durante una capacitación"
+    alt: "Grupo de artesanas mostrando sus teléfonos durante una capacitación",
+    position: "object-center"
   }
 ] as const;
 
@@ -69,26 +73,19 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
           </p>
         </div>
 
-        <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 gap-0 overflow-hidden rounded-2xl bg-[#f8f1ec] shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
+        <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 gap-0 overflow-hidden rounded-2xl shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
           {discoveryImages.map((item) => (
             <figure
               key={item.image}
-              className="group relative aspect-[4/3] min-w-0 overflow-hidden bg-[#e9dfd5] sm:aspect-[5/4] lg:aspect-[3/2]"
+              className="group relative aspect-[4/3] min-w-0 overflow-hidden sm:aspect-[5/4] lg:aspect-[3/2]"
             >
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 scale-110 bg-cover bg-center opacity-30 blur-xl"
-                style={{
-                  backgroundImage: `url("${landingImage(item.image, offline)}")`
-                }}
-              />
               <Image
                 src={landingImage(item.image, offline)}
                 alt={item.alt}
                 fill
                 unoptimized={offline}
                 sizes="(min-width: 768px) 25vw, 50vw"
-                className="z-10 object-contain object-center transition-transform duration-500 ease-out motion-reduce:transform-none motion-reduce:transition-none group-hover:scale-[1.015]"
+                className={`z-10 object-cover ${item.position} transition-transform duration-500 ease-out motion-reduce:transform-none motion-reduce:transition-none group-hover:scale-[1.015]`}
               />
             </figure>
           ))}

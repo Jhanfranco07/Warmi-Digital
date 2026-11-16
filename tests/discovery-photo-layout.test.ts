@@ -19,6 +19,10 @@ test("Descubre muestra las cuatro fotos completas y en marcos del mismo tamaño"
   assert.ok(source.includes("unoptimized={offline}"));
   assert.ok(source.includes("alt={item.alt}"));
   assert.ok(source.includes("motion-reduce:transition-none"));
+  assert.ok(source.includes("grid-cols-2 gap-0 overflow-hidden rounded-2xl"));
+  assert.ok(source.includes("md:grid-cols-4"));
+  assert.equal(source.includes("md:gap-3 md:p-3"), false);
+  assert.equal(source.includes("overflow-hidden rounded-xl bg-[#e9dfd5]"), false);
 });
 
 test("Talleres no repite la nota de planificación bajo los cuatro meses", () => {

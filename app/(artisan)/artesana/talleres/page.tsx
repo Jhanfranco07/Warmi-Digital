@@ -91,11 +91,11 @@ export default async function ArtisanWorkshopsPage() {
         <WorkshopRoadmap />
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
-          <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
+          <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-5 shadow-[0_22px_58px_rgba(122,49,0,0.08)] sm:p-8">
             <h2 className="font-serif text-3xl font-bold text-[#b5245b]">
               Resumen de participación
             </h2>
-            <div className="mt-12 grid gap-10 md:grid-cols-3">
+            <div className="mt-8 grid gap-6 sm:grid-cols-3 sm:gap-4 xl:mt-12">
               <SummaryStat
                 icon={CalendarDays}
                 label="Próximos talleres"
@@ -143,7 +143,7 @@ export default async function ArtisanWorkshopsPage() {
               </h2>
               <Link
                 href="/artesana/aprender"
-                className="font-ui text-sm font-bold text-[#b5245b]"
+                className="inline-flex items-center rounded-md font-ui text-sm font-bold text-[#b5245b] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b5245b]"
               >
                 Volver a cursos <ChevronRight className="inline h-4 w-4" />
               </Link>
@@ -225,13 +225,13 @@ function SummaryStat({
 function CalendarRow({ registration }: { registration: WorkshopRegistration }) {
   const { workshop } = registration;
   return (
-    <div className="grid grid-cols-[64px_1fr_auto] items-center gap-4 border-b border-[#f1ddcf] py-3 last:border-0">
+    <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 border-b border-[#f1ddcf] py-3 last:border-0 sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:gap-4">
       <WorkshopDate startsAt={workshop.startsAt} />
       <div>
         <p className="font-ui text-sm font-extrabold text-[#1b1c1a]">{workshop.title}</p>
         <p className="mt-1 text-sm text-[#5b4a42]">{formatWorkshopTime(workshop)}</p>
       </div>
-      <Badge className="bg-[#fff0d6] text-[#a95511] hover:bg-[#fff0d6]">
+      <Badge className="col-start-2 w-fit bg-[#fff0d6] text-[#a95511] hover:bg-[#fff0d6] sm:col-start-auto">
         {registration.status}
       </Badge>
     </div>

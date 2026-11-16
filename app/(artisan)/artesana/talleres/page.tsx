@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  HandHeart,
   MapPin,
   Users
 } from "lucide-react";
@@ -17,7 +16,7 @@ import { Button } from "@/shared/components/ui/button";
 import { ArtisanRepository } from "@/shared/repositories/artisan.repository";
 import { WorkshopService } from "@/shared/services/workshop.service";
 import { requireRole } from "@/shared/server/auth/helpers";
-import { WORKSHOPS_PRESENTATION } from "@/shared/learning/workshops";
+import { WorkshopRoadmap } from "@/features/artisan/workshops/workshop-roadmap";
 
 type WorkshopRegistration = Awaited<
   ReturnType<WorkshopService["getWorkshops"]>
@@ -89,7 +88,7 @@ export default async function ArtisanWorkshopsPage() {
           compact
         />
 
-        <WorkshopComingSoon />
+        <WorkshopRoadmap />
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
           <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
@@ -122,7 +121,8 @@ export default async function ArtisanWorkshopsPage() {
           </article>
 
           <article className="rounded-[20px] border border-[#ecd0bd] bg-white p-8 shadow-[0_22px_58px_rgba(122,49,0,0.08)]">
-            <h2 className="font-serif text-3xl font-bold text-[#b5245b]">Calendario</h2>
+            <h2 className="font-serif text-3xl font-bold text-[#b5245b]">Calendario de sesiones</h2>
+            <p className="mt-2 text-sm text-[#5b4a42]">Fechas registradas por tu facilitadora.</p>
             {upcoming.length ? (
               <div className="mt-6 grid gap-4">
                 {upcoming.slice(0, 4).map((registration) => (
@@ -192,79 +192,6 @@ export default async function ArtisanWorkshopsPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-function WorkshopComingSoon() {
-  return (
-    <section
-      aria-labelledby="talleres-proximamente"
-      className="mt-8 border border-[#ecd0bd] bg-[#fff7fa] p-6 shadow-[0_18px_40px_rgba(122,49,0,0.06)] md:p-8"
-    >
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#ead2dc] pb-5">
-        <div>
-          <p className="font-ui text-sm font-extrabold uppercase text-[#b5245b]">
-            Próximamente
-          </p>
-          <h2
-            id="talleres-proximamente"
-            className="mt-1 font-serif text-3xl font-bold text-[#b5245b]"
-          >
-            Talleres presenciales
-          </h2>
-          <p className="mt-2 text-base text-[#5b4a42]">
-            Paralelo al uso de la plataforma Warmi.
-          </p>
-        </div>
-        <Badge className="bg-[#ffe8ef] text-[#b5245b] hover:bg-[#ffe8ef]">
-          Próximamente
-        </Badge>
-      </div>
-      <dl className="mt-6 grid gap-6 md:grid-cols-2">
-        <WorkshopInfo
-          icon={MapPin}
-          title="Dónde se realizan"
-          text={WORKSHOPS_PRESENTATION.location}
-        />
-        <WorkshopInfo
-          icon={Clock}
-          title="Duración"
-          text={WORKSHOPS_PRESENTATION.duration}
-        />
-        <WorkshopInfo
-          icon={HandHeart}
-          title="Metodología participativa"
-          text={WORKSHOPS_PRESENTATION.methodology}
-        />
-        <WorkshopInfo
-          icon={Users}
-          title="Acompañamiento"
-          text={`${WORKSHOPS_PRESENTATION.accompaniment} ${WORKSHOPS_PRESENTATION.promoters}`}
-        />
-      </dl>
-    </section>
-  );
-}
-
-function WorkshopInfo({
-  icon: Icon,
-  title,
-  text
-}: {
-  icon: typeof MapPin;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="flex gap-3">
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#ffe8ef] text-[#b5245b]">
-        <Icon aria-hidden="true" className="h-5 w-5" />
-      </span>
-      <div>
-        <dt className="font-ui font-extrabold text-[#1b1c1a]">{title}</dt>
-        <dd className="mt-1 text-sm leading-6 text-[#5b4a42]">{text}</dd>
-      </div>
-    </div>
   );
 }
 

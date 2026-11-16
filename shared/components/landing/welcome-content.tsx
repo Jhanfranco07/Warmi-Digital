@@ -35,7 +35,11 @@ export function WarmiWelcomeContent({ offline = false }: { offline?: boolean }) 
 
           <div className="group relative min-h-[280px] overflow-hidden border border-[#ead4ca] bg-[#fffaf8] shadow-[0_18px_42px_rgba(122,49,0,0.08)] md:min-h-[420px]">
             <Image
-              src={landingImage("/images/home/bienvenida-warmi.png", offline)}
+              src={
+                offline
+                  ? landingImage("/images/home/bienvenida-warmi.png", true)
+                  : "https://res.cloudinary.com/szhwzy4q/image/upload/v1794845365/warmi-landing-fotolanding-2026-11.jpg"
+              }
               unoptimized={offline}
               alt="Artesanas Warmi"
               fill

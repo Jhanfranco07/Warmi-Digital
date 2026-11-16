@@ -28,9 +28,9 @@ test("M1 and M2 have exactly four sessions; M2 steps have the approved order", (
   assert.match(module2SessionText(3), /Chal de lana de oveja/);
   assert.match(module2SessionText(4), /comprobante/);
 });
-test("only relevant real MP4s are selected; alternate PDF is secondary", () => {
-  assert.equal(MODULE2_VIDEOS.length, 4);
-  assert.equal(new Set(MODULE2_VIDEOS.map((item) => item.publicId)).size, 4);
+test("only authorized real MP4s are selected; complementary videos keep their order", () => {
+  assert.equal(MODULE2_VIDEOS.length, 7);
+  assert.equal(new Set(MODULE2_VIDEOS.map((item) => item.publicId)).size, 7);
   assert.equal(
     MODULE2_VIDEOS.some((item) => String(item.publicId) === MODULE2_EXCLUDED_VIDEO),
     false
@@ -39,6 +39,21 @@ test("only relevant real MP4s are selected; alternate PDF is secondary", () => {
     MODULE2_VIDEOS.filter((item) => item.role === "additional").map((item) => item.key),
     ["M2-S3-01"]
   );
+  assert.deepEqual(
+    MODULE2_VIDEOS.filter((item) => item.role === "complementary").map(
+      (item) => item.key
+    ),
+    ["M2-S2-02", "M2-S2-03"]
+  );
+  assert.equal(
+    MODULE2_VIDEOS.find((item) => item.key === "M2-S2-03")?.layout,
+    "portrait"
+  );
+  assert.equal(MODULE2_SESSIONS[0].steps[0].videoKey, "M2-S1-01");
+  assert.deepEqual(MODULE2_SESSIONS[1].steps[2].complementaryVideoKeys, [
+    "M2-S2-02",
+    "M2-S2-03"
+  ]);
   assert.equal(MODULE2_VIDEOS.find((item) => item.key === "M2-S3-02")?.role, "main");
   for (const session of MODULE2_SESSIONS) {
     const positions = MODULE2_VIDEOS.filter((item) => item.session === session.order).map(

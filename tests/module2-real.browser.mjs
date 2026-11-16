@@ -86,8 +86,8 @@ try {
     MODULE2_SESSIONS.map((item) => [item.id, item.order])
   );
   const links = module.lessons.flatMap((item) => item.lessonFiles);
-  assert.equal(links.length, 4);
-  assert.equal(new Set(links.map((item) => item.fileId)).size, 4);
+  assert.equal(links.length, 7);
+  assert.equal(new Set(links.map((item) => item.fileId)).size, 7);
   for (const link of links)
     assert.equal(
       await prisma.file.count({
@@ -246,6 +246,7 @@ try {
         );
       };
       if (step.videoKey) await play(step.videoKey);
+      for (const key of step.complementaryVideoKeys ?? []) await play(key);
       if (step.kind === "pdf") {
         const additional = page.getByRole("button", {
           name: "Material adicional",
@@ -333,7 +334,7 @@ try {
     JSON.stringify(
       {
         result:
-          "PASS M2: 4 sessions, 17 steps, 4 real MP4, single active block, disclosure, decision, checklist, forms, speech API, responsive 320/390/1365, progress 40%, return and M1/M3 DB unchanged",
+          "PASS M2: 4 sessions, 17 steps, 7 real MP4, single active block, disclosure, decision, checklist, forms, speech API, responsive 320/390/1365, progress 40%, return and M1/M3 DB unchanged",
         played,
         shots
       },

@@ -1,6 +1,6 @@
 # Auditoría de recursos audiovisuales
 
-Fecha de revisión: 12 de octubre de 2026.
+Fecha de revisión: 16 de noviembre de 2026.
 
 Esta auditoría revisa el programa `Aprender para crecer` sin cambiar los objetivos
 pedagógicos, los recursos propios ni la regla de descargas. Los enlaces de YouTube
@@ -10,10 +10,11 @@ reproductor bajo demanda.
 
 ## Resultado
 
-No se agregaron enlaces nuevos. Los cuatro casos inicialmente señalados del Módulo 1
-ya cuentan con recursos externos pertinentes; las demostraciones necesarias del
-Módulo 2 ya son videos propios. Añadir otro video a las actividades de decisión,
-checklist y simulación no mejora el recorrido guiado. El Módulo 3 conserva sus
+No se agregaron enlaces externos nuevos. Los cuatro casos inicialmente señalados del
+Módulo 1 ya cuentan con recursos externos pertinentes. El Módulo 2 incorpora tres
+videos propios proporcionados por la cliente: introducción a oportunidades en S1 y
+dos explicaciones complementarias de modalidades en S2. Las actividades de decisión,
+checklist y simulación no reciben videos adicionales. El Módulo 3 conserva sus
 recursos propios y offline; el Módulo 4 conserva imágenes, ejemplos y prácticas.
 
 ## Matriz por módulo y sesión
@@ -24,8 +25,8 @@ recursos propios y offline; el Módulo 4 conserva imágenes, ejemplos y práctic
 | M1     | 2      | Instituciones y oportunidades      | MP4 propio sobre convocatorias y tutorial de Artesanías del Perú                | Adecuado. El tutorial externo cubre el registro en la plataforma.                                    |
 | M1     | 3      | RNA, RUC y cuenta bancaria         | MP4 propios para RNA/RUC y YouTube de BBVA Perú para abrir cuenta desde celular | Adecuado. Se mantiene la nota para consultar condiciones vigentes en cada entidad.                   |
 | M1     | 4      | Zoom y Google Meet                 | Tutoriales YouTube para móvil                                                   | Adecuado. Son demostraciones concretas y se mantiene la advertencia de que la interfaz puede variar. |
-| M2     | 1      | Ferias, concursos y capacitaciones | Explicación, ejemplos y elección guiada                                         | No falta una demostración; es una actividad de comprensión.                                          |
-| M2     | 2      | Leer convocatoria y requisitos     | MP4 propio de Somos Artesanía y preguntas guiadas                               | Adecuado; la convocatoria se presenta como ejemplo histórico, no como inscripción abierta.           |
+| M2     | 1      | Ferias, concursos y capacitaciones | MP4 propio de oportunidades, explicación, ejemplos y elección guiada            | El video abre bajo demanda y acompaña la comprensión sin sustituir la actividad.                     |
+| M2     | 2      | Leer convocatoria y requisitos     | MP4 de requisitos y dos MP4 complementarios sobre modalidades                   | Se presentan como material educativo de una edición anterior, no como inscripción abierta.           |
 | M2     | 3      | Documentos, fotos y formularios    | MP4 propios para foto a PDF y fotografía de producto                            | Adecuado; el formulario se practica dentro de la sesión.                                             |
 | M2     | 4      | Simulación de postulación          | Checklist y simulación paso a paso                                              | No requiere video: la práctica necesita decisiones de la artesana, no una reproducción pasiva.       |
 | M3     | 1      | Publicar arte en redes             | Videos propios existentes                                                       | Se conservan sin cambios.                                                                            |

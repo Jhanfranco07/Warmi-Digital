@@ -4,7 +4,7 @@ Entrega del 7 de octubre de 2026. Programa `Aprender para crecer` (`93dc7355-d74
 
 ## Experiencia compartida
 
-`LearningSession` muestra encabezado compacto, sesión X de 4, navegación entre sesiones y un solo paso principal a la vez. Hay avance, paso anterior, foco en el nuevo encabezado, logros al final y acción existente de completar/continuar. Cambiar de paso desmonta reproductores y contenido secundario; no quedan videos escondidos reproduciéndose. `LearningDisclosure` tiene aria-expanded/aria-controls y recursos colapsados; `LearningVideo` se carga bajo demanda y usa un grupo nativo de details para que no haya dos reproductores abiertos en el mismo paso. Los CTAs tienen al menos 48 px y los videos relación 16:9 responsive.
+`LearningSession` muestra encabezado compacto, sesión X de 4, navegación entre sesiones y un solo paso principal a la vez. Hay avance, paso anterior, foco en el nuevo encabezado, logros al final y acción existente de completar/continuar. Cambiar de paso desmonta reproductores y contenido secundario; no quedan videos escondidos reproduciéndose. `LearningDisclosure` tiene aria-expanded/aria-controls y recursos colapsados; `LearningVideo` se carga bajo demanda y usa un grupo nativo de details para que no haya dos reproductores abiertos en el mismo paso. Los CTAs tienen al menos 48 px. Los videos horizontales usan relación 16:9 responsive; el recurso vertical M2-S2-03 usa 9:16 y un ancho máximo reducido en escritorio.
 
 Componentes compartidos: `learning-session.tsx`, `learning-video.tsx`, `learning-session-complete.tsx`, `learning-content.tsx`. `learning-choice.tsx` es la práctica simple de selección de oportunidades M2. El contenido principal se compone en Server Components; solo navegación, decisiones, desplegables, reproducción y mutación requieren cliente. La voz sigue usando SpeechButton y shared/accessibility; no se crea otro TTS.
 
@@ -23,13 +23,16 @@ ID `c156c5d5-8c81-48f8-85d4-234ecb21ec0e`, Module.order = 2, título `Módulo 2:
 
 Hay 17 pasos pedagógicos, no 17 lecciones. El cierre está dentro de sesión 4, sin quinta sesión. La simulación es un ejemplo educativo: no envía postulaciones reales, no pide DNI ni guarda documentos personales. Los checklists son ayudas visuales, no requisitos universales ni certificaciones; sus marcas no se persisten. El precio S/ 180 y los demás datos del chal de María son ejemplos del material, no recomendaciones de precio.
 
-## Videos reales reutilizados
+## Videos reales del módulo
 
-Cuenta Cloudinary `szhwzy4q`, carpeta `Warmi/MODULO 2`, video/upload/mp4. Sin uploads ni cambios en Cloudinary. Las cuatro referencias únicas suman **49351962 bytes** (49,35 MB decimales), incluyendo una alternativa. No es un paquete offline.
+Cuenta Cloudinary `szhwzy4q`, carpeta `Warmi/MODULO 2`, video/upload/mp4. Las cuatro referencias publicadas suman **49351962 bytes** (49,35 MB decimales), incluyendo una alternativa. La integración de noviembre de 2026 autoriza tres recursos adicionales, que suman **62490689 bytes** y no forman parte del paquete offline. Los tres MP4 se subieron a Cloudinary el 16 de noviembre de 2026, con los public_id esperados; su vinculación en PostgreSQL permanece pendiente hasta ejecutar dry-run y autorizar --apply.
 
 | Video    | Jerarquía                                     | LessonFile.position | File ID                              | LessonFile ID                        |
 | -------- | --------------------------------------------- | ------------------- | ------------------------------------ | ------------------------------------ |
 | M2-S2-01 | Principal: Somos Artesanía                    | 10                  | 7f417a39-e65a-461a-a9f8-035d47fe86f1 | 647a3e64-9086-476e-8b26-0a6fa55389c5 |
+| M2-S1-01 | Principal: oportunidades                      | 10                  | Pendiente                            | Pendiente                            |
+| M2-S2-02 | Complementario: dos modalidades               | 20                  | Pendiente                            | Pendiente                            |
+| M2-S2-03 | Complementario vertical: elegir modalidad     | 30                  | Pendiente                            | Pendiente                            |
 | M2-S3-02 | Principal: foto a PDF desde celular           | 10                  | c928d94c-7185-4579-927a-efe155cabf5d | dc57ecda-5c2c-4889-860d-13c23356f43d |
 | M2-S3-03 | Principal: fotografía                         | 20                  | dae598fe-8d09-48e1-bb6d-4fed7be274e3 | f558ce15-4ca3-44e4-bd95-022b2f5c7dd9 |
 | M2-S3-01 | Material adicional: JPG a PDF desde navegador | 30                  | 34472d1f-8c0a-4333-97d6-675cc97105f2 | 926274a3-32e0-4b4c-895f-926d5cd3108e |
@@ -41,7 +44,15 @@ public_id completos en `shared/learning/module2.ts`; secure_url obtenidos median
 - https://res.cloudinary.com/szhwzy4q/video/upload/v1791387047/M2-S3-03_-_Tomar_buenas_fotos_de_productos.mp4
 - https://res.cloudinary.com/szhwzy4q/video/upload/v1791387049/M2-S3-01_-_Convertir_imagen_JPG_a_PDF.mp4
 
-Se inspeccionaron fotogramas de los dos tutoriales PDF: S3-02 muestra un celular; S3-01 muestra navegador de escritorio/iLovePDF. Por eso S3-02 es principal. La ayuda explica que algunos dispositivos usan Compartir/Imprimir → Guardar como PDF y advierte no subir documentos privados a páginas desconocidas. No se incluyó M2-S2-01B (copia alternativa, duración casi igual y sin aporte distinto confirmado). No se agregó YouTube para rellenar bloques. VIDEO_UPLOAD sigue deshabilitado en el editor general.
+Recursos incorporados a Cloudinary (pendientes de vinculación a File/LessonFile):
+
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842335/M2-S1-01_-_Warmi_Digital_Oportunidades.mp4
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842340/M2-S2-02_-_Las_dos_modalidades.mp4
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842302/M2-S2-03_-_Elegir_modalidad.mp4
+
+El control de duración contrasta el dato del contenedor devuelto por Cloudinary (393.622333, 262.917333 y 63.272333 segundos, respectivamente); no la duración de la pista de video devuelta por ffprobe, que puede diferir ligeramente.
+
+Se inspeccionaron visualmente los tres recursos nuevos y se verificaron SHA-256, bytes, duración y dimensiones antes de integrarlos al catálogo autorizado. M2-S1-01 y M2-S2-02 son 1280×720; M2-S2-03 es 720×1280. También se inspeccionaron fotogramas de los dos tutoriales PDF: S3-02 muestra un celular; S3-01 muestra navegador de escritorio/iLovePDF. Por eso S3-02 es principal. La ayuda explica que algunos dispositivos usan Compartir/Imprimir → Guardar como PDF y advierte no subir documentos privados a páginas desconocidas. No se incluyó M2-S2-01B (copia alternativa, duración casi igual y sin aporte distinto confirmado). No se agregó YouTube para rellenar bloques. VIDEO_UPLOAD sigue deshabilitado en el editor general.
 
 ## Fuentes y precisión pedagógica
 
@@ -60,13 +71,13 @@ pnpm exec tsx scripts/publish-module2.ts --dry-run
 pnpm exec tsx scripts/publish-module2.ts --apply
 ```
 
-Sin --apply solo inspecciona API/HEAD/BD y muestra el plan. Script → servicio → repository → Prisma. La transacción serializable bloquea el curso, rechaza módulo/IDs/recursos inesperados o duplicados y crea/reutiliza solo M2. Compara M1/M3/M4 con sus LessonFile/File y LessonProgress antes/después. Primera publicación: un módulo, cuatro Lesson, cuatro File y cuatro LessonFile; repetición **writes: 0**. Respeta Module.order, Lesson.order y LessonFile.position; no usa LessonFile.order ni cambia schema.
+Sin --apply solo inspecciona API/HEAD/BD y muestra el plan. Script → servicio → repository → Prisma. La transacción serializable bloquea el curso, rechaza módulo/IDs/recursos inesperados o duplicados y crea/reutiliza solo M2. Compara M1/M3/M4 con sus LessonFile/File y LessonProgress antes/después. La actualización añade como máximo tres File y tres LessonFile; una repetición correcta produce **writes: 0**. Respeta Module.order, Lesson.order y LessonFile.position; no usa LessonFile.order ni cambia schema.
 
 `learningProgress` no cambió: filtra módulos available por catálogo. Ahora cuenta M1(4) + M2(4) + M3(2) = 10; M4 preparing no cuenta. Completar solo M1 o M2 da 40%, ambos 80%. Se recalculan CourseProgress existentes sin borrar LessonProgress; las inscripciones que ya no alcanzan 100% vuelven a ACTIVE. M3 conserva sus seis File/LessonFile/posiciones y offline; Service Worker, IndexedDB, Cache Storage y compatibilidad legacy no se modifican.
 
 ## Validación reproducible
 
-`tests/module2-content.test.ts` cubre estructura, selección única, alternativo, ejemplos y disponibilidad/progreso. `tests/module2-real.browser.mjs` crea y elimina una cuenta temporal, recorre los 17 pasos, reproduce cuatro MP4, abre ayudas, decide una oportunidad, marca checklists, revisa ficha, valida layouts 320/390/1365, CTAs libres de navegación inferior, voz y progreso. Con WARMI_TEST_MODULE3=1 ejecuta regresión real M3 y compatibilidad de descarga legacy tras reinicio completo sin red. No guarda credenciales ni capturas en Git.
+`tests/module2-content.test.ts` cubre estructura, selección única, recursos complementarios, orientación vertical, ejemplos y disponibilidad/progreso. `tests/module2-real.browser.mjs` crea y elimina una cuenta temporal, recorre los 17 pasos, reproduce siete MP4, abre ayudas, decide una oportunidad, marca checklists, revisa ficha, valida layouts 320/390/1365, CTAs libres de navegación inferior, voz y progreso. Con WARMI_TEST_MODULE3=1 ejecuta regresión real M3 y compatibilidad de descarga legacy tras reinicio completo sin red. No guarda credenciales ni capturas en Git.
 
 Resultados en build de producción local, usando Edge/Playwright y PostgreSQL real:
 

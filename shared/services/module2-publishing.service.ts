@@ -38,6 +38,14 @@ export class Module2PublishingService {
         !url.pathname.startsWith("/szhwzy4q/video/upload/")
       )
         throw new Error("Identidad de asset inesperada.");
+      if (
+        "source" in video &&
+        (asset.bytes !== video.source.bytes ||
+          asset.width !== video.source.width ||
+          asset.height !== video.source.height ||
+          Math.abs(asset.duration - video.source.durationSeconds) > 0.01)
+      )
+        throw new Error(`El asset no coincide con el archivo verificado: ${video.key}`);
       const response = await fetch(url, {
         method: "HEAD",
         redirect: "error",
@@ -62,7 +70,7 @@ export class Module2PublishingService {
       assets.length !== MODULE2_VIDEOS.length ||
       assets.some((asset, index) => asset.public_id !== MODULE2_VIDEOS[index].publicId)
     )
-      throw new Error("Solo se permiten los cuatro MP4 seleccionados del Módulo 2.");
+      throw new Error("Solo se permiten los MP4 autorizados del Módulo 2.");
     return this.repository.publish(assets);
   }
 }

@@ -161,6 +161,7 @@ export class Module2PublishingRepository {
                 metadata: {
                   assetId: asset.asset_id,
                   durationSeconds: asset.duration,
+                  ...("source" in video ? { sourceSha256: video.source.sha256 } : {}),
                   learningModuleId: MODULE2_ID,
                   role: video.role
                 }
@@ -194,7 +195,9 @@ export class Module2PublishingRepository {
             description:
               video.role === "additional"
                 ? "Material adicional: alternativa desde navegador."
-                : "Video principal de este paso.",
+                : video.role === "complementary"
+                  ? "Material educativo complementario de este paso."
+                  : "Video principal de este paso.",
             provider: "cloudinary",
             externalId: asset.public_id,
             originalUrl: asset.secure_url

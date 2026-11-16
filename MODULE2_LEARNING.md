@@ -52,7 +52,6 @@ Recursos incorporados a Cloudinary (pendientes de vinculación a File/LessonFile
 
 El control de duración contrasta el dato del contenedor devuelto por Cloudinary (393.622333, 262.917333 y 63.272333 segundos, respectivamente); no la duración de la pista de video devuelta por ffprobe, que puede diferir ligeramente.
 
-
 Se inspeccionaron visualmente los tres recursos nuevos y se verificaron SHA-256, bytes, duración y dimensiones antes de integrarlos al catálogo autorizado. M2-S1-01 y M2-S2-02 son 1280×720; M2-S2-03 es 720×1280. También se inspeccionaron fotogramas de los dos tutoriales PDF: S3-02 muestra un celular; S3-01 muestra navegador de escritorio/iLovePDF. Por eso S3-02 es principal. La ayuda explica que algunos dispositivos usan Compartir/Imprimir → Guardar como PDF y advierte no subir documentos privados a páginas desconocidas. No se incluyó M2-S2-01B (copia alternativa, duración casi igual y sin aporte distinto confirmado). No se agregó YouTube para rellenar bloques. VIDEO_UPLOAD sigue deshabilitado en el editor general.
 
 ## Fuentes y precisión pedagógica

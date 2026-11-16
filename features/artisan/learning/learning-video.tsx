@@ -10,9 +10,17 @@ type Props = {
   title: string;
   action: string;
   author?: string;
+  layout?: "landscape" | "portrait";
 };
 
-export function LearningVideo({ sourceType, url, title, action, author }: Props) {
+export function LearningVideo({
+  sourceType,
+  url,
+  title,
+  action,
+  author,
+  layout = "landscape"
+}: Props) {
   const [open, setOpen] = useState(false);
   return (
     <details
@@ -33,16 +41,22 @@ export function LearningVideo({ sourceType, url, title, action, author }: Props)
       {open && (
         <div className="mt-4 space-y-3">
           {sourceType === "CLOUDINARY" ? (
-            <video
-              src={url}
-              controls
-              playsInline
-              preload="metadata"
-              aria-label={title}
-              className="aspect-video w-full rounded-lg bg-black"
-            >
-              <a href={url}>Abrir video</a>
-            </video>
+            <div className={layout === "portrait" ? "mx-auto w-full max-w-sm" : ""}>
+              <video
+                src={url}
+                controls
+                playsInline
+                preload="metadata"
+                aria-label={title}
+                className={
+                  layout === "portrait"
+                    ? "aspect-[9/16] w-full rounded-lg bg-black object-contain"
+                    : "aspect-video w-full rounded-lg bg-black"
+                }
+              >
+                <a href={url}>Abrir video</a>
+              </video>
+            </div>
           ) : (
             <>
               <p className="text-sm text-[#526361]">Video de apoyo · {author}</p>

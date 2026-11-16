@@ -50,6 +50,7 @@ export function Module2Lesson({
         url={file.url}
         title={mapping.title}
         action={mapping.action}
+        layout={"layout" in mapping ? mapping.layout : undefined}
       />
     ) : (
       <p role="status">Este video todavía no está disponible.</p>
@@ -158,6 +159,18 @@ export function Module2Lesson({
               </ul>
             ))}
           {step.videoKey && video(step.videoKey)}
+          {step.complementaryVideoKeys && (
+            <div className="mt-4 rounded-lg border border-[#dfc7d2] bg-[#fffaf5] p-4">
+              <p className="font-bold text-[#24756f]">Material complementario</p>
+              <p className="mt-1 text-sm text-[#526361]">
+                Estos videos explican una edición anterior. Úsalos para aprender a
+                comparar modalidades y consulta siempre las bases vigentes.
+              </p>
+              {step.complementaryVideoKeys.map((key) => (
+                <div key={key}>{video(key)}</div>
+              ))}
+            </div>
+          )}
           {step.kind === "pdf" && (
             <>
               <LearningDisclosure label="Si mi celular no muestra Guardar como PDF">

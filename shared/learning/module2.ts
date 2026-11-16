@@ -15,6 +15,22 @@ export const MODULE2_SOURCES = {
 } as const;
 export const MODULE2_VIDEOS = [
   {
+    key: "M2-S1-01",
+    session: 1,
+    position: 10,
+    role: "main",
+    publicId: "M2-S1-01_-_Warmi_Digital_Oportunidades",
+    title: "Warmi Digital: oportunidades para mi negocio",
+    action: "Conocer las oportunidades",
+    source: {
+      bytes: 30571267,
+      width: 1280,
+      height: 720,
+      durationSeconds: 393.541667,
+      sha256: "1a9b51f78aead36695e5ecb52cbb40702de7bc7ca74e6168cdfb7d4c1e1e5080"
+    }
+  },
+  {
     key: "M2-S2-01",
     session: 2,
     position: 10,
@@ -22,6 +38,39 @@ export const MODULE2_VIDEOS = [
     publicId: "M2-S2-01_-_Somos_Artesania_2026_requisitos_y_registro_virtual",
     title: "Ejemplo: requisitos para participar en Somos Artesanía",
     action: "Ver ejemplo de postulación"
+  },
+  {
+    key: "M2-S2-02",
+    session: 2,
+    position: 20,
+    role: "complementary",
+    publicId: "M2-S2-02_-_Las_dos_modalidades",
+    title: "Las dos modalidades de Somos Artesanía",
+    action: "Conocer las dos modalidades",
+    source: {
+      bytes: 24051558,
+      width: 1280,
+      height: 720,
+      durationSeconds: 262.833333,
+      sha256: "bfb4e167af00e737c69e74ad05876803327b39a9e9bba9fa315b45d226aeaab2"
+    }
+  },
+  {
+    key: "M2-S2-03",
+    session: 2,
+    position: 30,
+    role: "complementary",
+    publicId: "M2-S2-03_-_Elegir_modalidad",
+    title: "Cómo elegir una modalidad",
+    action: "Revisar cómo elegir una modalidad",
+    layout: "portrait",
+    source: {
+      bytes: 7867764,
+      width: 720,
+      height: 1280,
+      durationSeconds: 63.2,
+      sha256: "ad6fbd30c00c95812bc9e416a117c27b22c81a65b6cb83bfcad2a79468a6bc90"
+    }
   },
   {
     key: "M2-S3-02",
@@ -68,6 +117,7 @@ export type Module2Step = {
     | "checklist";
   bullets?: readonly string[];
   videoKey?: string;
+  complementaryVideoKeys?: readonly string[];
   examples?: readonly { title: string; url?: string; note?: string }[];
 };
 export const MODULE2_QUESTIONS = [
@@ -166,7 +216,8 @@ export const MODULE2_SESSIONS: readonly {
       {
         title: "¿Qué oportunidades existen?",
         text: "Hay oportunidades para vender, mostrar tu trabajo y seguir aprendiendo.",
-        kind: "opportunities"
+        kind: "opportunities",
+        videoKey: "M2-S1-01"
       },
       {
         title: "¿Qué es una feria?",
@@ -259,6 +310,7 @@ export const MODULE2_SESSIONS: readonly {
         title: "Ejemplo real: Somos Artesanía 2026",
         text: "Este video es un ejemplo de una edición anterior. No es una inscripción abierta; consulta las bases y fechas vigentes en MINCETUR.",
         videoKey: "M2-S2-01",
+        complementaryVideoKeys: ["M2-S2-02", "M2-S2-03"],
         examples: [
           {
             title: "Consultar la convocatoria oficial de Somos Artesanía 2026",

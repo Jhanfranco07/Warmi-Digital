@@ -36,7 +36,7 @@ async function main() {
       console.log(JSON.stringify(await service.publish(inspection.assets), null, 2));
     else
       console.log(
-        "Solo lectura: crear/reutilizar M2, cuatro sesiones y cuatro MP4. M1/M3/M4 y sus recursos no se alteran. Usar --apply para publicar."
+        "Solo lectura: crear/reutilizar M2, cuatro sesiones y siete MP4. M1/M3/M4 y sus recursos no se alteran. Usar --apply para publicar."
       );
   } finally {
     await prisma.$disconnect();

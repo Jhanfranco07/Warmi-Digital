@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -32,4 +33,28 @@ test("roadmap is descriptive and never invents scheduled workshop dates", () => 
   }
   assert.match(WORKSHOPS_PRESENTATION.duration, /2 horas por sesión/);
   assert.match(WORKSHOPS_PRESENTATION.duration, /4 meses/);
+});
+
+test("workshop cover uses verified client photo with responsive and accessible text", () => {
+  const component = readFileSync(
+    new URL("../features/artisan/workshops/workshop-roadmap.tsx", import.meta.url),
+    "utf8"
+  );
+  assert.match(component, /warmi-talleres-fototaller-2026-11\\.jpg/);
+  assert.match(component, /alt="Artesanas reunidas/);
+  assert.match(component, /sizes="\\(min-width: 1024px\\)/);
+  assert.match(component, /sm:aspect-\\[4\\/3\\]/);
+  assert.match(component, /ClipboardCheck/);
+  assert.match(component, /ShoppingCart/);
+});
+
+test("roadmap animations respect reduced-motion preferences", () => {
+  const css = readFileSync(
+    new URL("../features/artisan/workshops/workshop-roadmap.module.css", import.meta.url),
+    "utf8"
+  );
+  assert.match(css, /prefers-reduced-motion: no-preference/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
+  assert.match(css, /\\.monthCard:hover/);
+  assert.match(css, /\\.photoFrame:hover \\.photoImage/);
 });

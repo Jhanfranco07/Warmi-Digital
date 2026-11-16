@@ -40,12 +40,12 @@ test("workshop cover uses verified client photo with responsive and accessible t
     new URL("../features/artisan/workshops/workshop-roadmap.tsx", import.meta.url),
     "utf8"
   );
-  assert.match(component, /warmi-talleres-fototaller-2026-11\\.jpg/);
-  assert.match(component, /alt="Artesanas reunidas/);
-  assert.match(component, /sizes="\\(min-width: 1024px\\)/);
-  assert.match(component, /sm:aspect-\\[4\\/3\\]/);
-  assert.match(component, /ClipboardCheck/);
-  assert.match(component, /ShoppingCart/);
+  assert.ok(component.includes("warmi-talleres-fototaller-2026-11.jpg"));
+  assert.ok(component.includes('alt="Artesanas reunidas'));
+  assert.ok(component.includes('sizes="(min-width: 1024px)'));
+  assert.ok(component.includes("sm:aspect-[4/3]"));
+  assert.ok(component.includes("ClipboardCheck"));
+  assert.ok(component.includes("ShoppingCart"));
 });
 
 test("roadmap animations respect reduced-motion preferences", () => {
@@ -53,8 +53,8 @@ test("roadmap animations respect reduced-motion preferences", () => {
     new URL("../features/artisan/workshops/workshop-roadmap.module.css", import.meta.url),
     "utf8"
   );
-  assert.match(css, /prefers-reduced-motion: no-preference/);
-  assert.match(css, /prefers-reduced-motion: reduce/);
-  assert.match(css, /\\.monthCard:hover/);
-  assert.match(css, /\\.photoFrame:hover \\.photoImage/);
+  assert.ok(css.includes("prefers-reduced-motion: no-preference"));
+  assert.ok(css.includes("prefers-reduced-motion: reduce"));
+  assert.ok(css.includes(".monthCard:hover"));
+  assert.ok(css.includes(".photoFrame:hover .photoImage"));
 });

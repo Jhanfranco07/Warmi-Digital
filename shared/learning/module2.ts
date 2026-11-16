@@ -26,7 +26,7 @@ export const MODULE2_VIDEOS = [
       bytes: 30571267,
       width: 1280,
       height: 720,
-      durationSeconds: 393.541667,
+      durationSeconds: 393.622333,
       sha256: "1a9b51f78aead36695e5ecb52cbb40702de7bc7ca74e6168cdfb7d4c1e1e5080"
     }
   },
@@ -51,7 +51,7 @@ export const MODULE2_VIDEOS = [
       bytes: 24051558,
       width: 1280,
       height: 720,
-      durationSeconds: 262.833333,
+      durationSeconds: 262.917333,
       sha256: "bfb4e167af00e737c69e74ad05876803327b39a9e9bba9fa315b45d226aeaab2"
     }
   },
@@ -68,7 +68,7 @@ export const MODULE2_VIDEOS = [
       bytes: 7867764,
       width: 720,
       height: 1280,
-      durationSeconds: 63.2,
+      durationSeconds: 63.272333,
       sha256: "ad6fbd30c00c95812bc9e416a117c27b22c81a65b6cb83bfcad2a79468a6bc90"
     }
   },

@@ -25,7 +25,7 @@ Hay 17 pasos pedagógicos, no 17 lecciones. El cierre está dentro de sesión 4,
 
 ## Videos reales del módulo
 
-Cuenta Cloudinary `szhwzy4q`, carpeta `Warmi/MODULO 2`, video/upload/mp4. Las cuatro referencias publicadas suman **49351962 bytes** (49,35 MB decimales), incluyendo una alternativa. La integración de noviembre de 2026 autoriza tres recursos adicionales, que suman **62490689 bytes** y no forman parte del paquete offline. Su subida y publicación en PostgreSQL siguen pendientes hasta contar con acceso válido para ejecutar el dry-run.
+Cuenta Cloudinary `szhwzy4q`, carpeta `Warmi/MODULO 2`, video/upload/mp4. Las cuatro referencias publicadas suman **49351962 bytes** (49,35 MB decimales), incluyendo una alternativa. La integración de noviembre de 2026 autoriza tres recursos adicionales, que suman **62490689 bytes** y no forman parte del paquete offline. Los tres MP4 se subieron a Cloudinary el 16 de noviembre de 2026, con los public_id esperados; su vinculación en PostgreSQL permanece pendiente hasta ejecutar dry-run y autorizar --apply.
 
 | Video    | Jerarquía                                     | LessonFile.position | File ID                              | LessonFile ID                        |
 | -------- | --------------------------------------------- | ------------------- | ------------------------------------ | ------------------------------------ |
@@ -43,6 +43,15 @@ public_id completos en `shared/learning/module2.ts`; secure_url obtenidos median
 - https://res.cloudinary.com/szhwzy4q/video/upload/v1791387049/M2-S3-02_-_Convertir_foto_a_PDF_desde_celular.mp4
 - https://res.cloudinary.com/szhwzy4q/video/upload/v1791387047/M2-S3-03_-_Tomar_buenas_fotos_de_productos.mp4
 - https://res.cloudinary.com/szhwzy4q/video/upload/v1791387049/M2-S3-01_-_Convertir_imagen_JPG_a_PDF.mp4
+
+Recursos incorporados a Cloudinary (pendientes de vinculación a File/LessonFile):
+
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842335/M2-S1-01_-_Warmi_Digital_Oportunidades.mp4
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842340/M2-S2-02_-_Las_dos_modalidades.mp4
+- https://res.cloudinary.com/szhwzy4q/video/upload/v1794842302/M2-S2-03_-_Elegir_modalidad.mp4
+
+El control de duración contrasta el dato del contenedor devuelto por Cloudinary (393.622333, 262.917333 y 63.272333 segundos, respectivamente); no la duración de la pista de video devuelta por ffprobe, que puede diferir ligeramente.
+
 
 Se inspeccionaron visualmente los tres recursos nuevos y se verificaron SHA-256, bytes, duración y dimensiones antes de integrarlos al catálogo autorizado. M2-S1-01 y M2-S2-02 son 1280×720; M2-S2-03 es 720×1280. También se inspeccionaron fotogramas de los dos tutoriales PDF: S3-02 muestra un celular; S3-01 muestra navegador de escritorio/iLovePDF. Por eso S3-02 es principal. La ayuda explica que algunos dispositivos usan Compartir/Imprimir → Guardar como PDF y advierte no subir documentos privados a páginas desconocidas. No se incluyó M2-S2-01B (copia alternativa, duración casi igual y sin aporte distinto confirmado). No se agregó YouTube para rellenar bloques. VIDEO_UPLOAD sigue deshabilitado en el editor general.
 

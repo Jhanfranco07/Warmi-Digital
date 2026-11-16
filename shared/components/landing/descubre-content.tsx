@@ -1,6 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-html-link-for-pages -- Offline links use the existing local router. */
+import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { Clock3, HandHeart, MapPin, UsersRound } from "lucide-react";
@@ -10,16 +11,20 @@ import { WORKSHOPS_PRESENTATION } from "@/shared/learning/workshops";
 
 const discoveryImages = [
   {
-    image: "/images/discover/aprende.png"
+    image: "/images/discover/aprende.png",
+    alt: "Artesanas participando juntas en una capacitación"
   },
   {
-    image: "/images/discover/emprende.png"
+    image: "/images/discover/emprende.png",
+    alt: "Artesanas practicando el uso de un celular en una actividad"
   },
   {
-    image: "/images/discover/taller.png"
+    image: "/images/discover/taller.png",
+    alt: "Acompañamiento a una artesana mientras usa su celular"
   },
   {
-    image: "/images/discover/recursos.png"
+    image: "/images/discover/recursos.png",
+    alt: "Grupo de artesanas mostrando sus teléfonos durante una capacitación"
   }
 ] as const;
 
@@ -64,19 +69,28 @@ export function WarmiDiscoveryContent({ offline = false }: { offline?: boolean }
           </p>
         </div>
 
-        <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 overflow-hidden bg-white shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4">
+        <div className="warmi-scroll-reveal mt-8 grid grid-cols-2 gap-2 rounded-2xl bg-[#f8f1ec] p-2 shadow-[0_18px_42px_rgba(18,63,120,0.08)] md:grid-cols-4 md:gap-3 md:p-3">
           {discoveryImages.map((item) => (
-            <div
+            <figure
               key={item.image}
-              className="group min-h-[120px] overflow-hidden sm:min-h-[160px] md:min-h-[220px]"
+              className="group relative aspect-[4/3] min-w-0 overflow-hidden rounded-xl bg-[#e9dfd5] sm:aspect-[5/4] lg:aspect-[3/2]"
             >
               <div
-                className="h-full min-h-[120px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 sm:min-h-[160px] md:min-h-[220px]"
+                aria-hidden="true"
+                className="absolute inset-0 scale-110 bg-cover bg-center opacity-30 blur-xl"
                 style={{
-                  backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.16), rgba(255,255,255,0.03)), url(${landingImage(item.image, offline)})`
+                  backgroundImage: `url("${landingImage(item.image, offline)}")`
                 }}
               />
-            </div>
+              <Image
+                src={landingImage(item.image, offline)}
+                alt={item.alt}
+                fill
+                unoptimized={offline}
+                sizes="(min-width: 768px) 25vw, 50vw"
+                className="z-10 object-contain object-center transition-transform duration-500 ease-out motion-reduce:transform-none motion-reduce:transition-none group-hover:scale-[1.015]"
+              />
+            </figure>
           ))}
         </div>
 

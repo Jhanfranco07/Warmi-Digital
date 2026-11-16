@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-test("Descubre muestra las cuatro fotos completas y en marcos del mismo tamaño", () => {
+test("Descubre muestra cuatro fotos sin franjas y con marcos del mismo tamaño", () => {
   const source = readFileSync(
     new URL("../shared/components/landing/descubre-content.tsx", import.meta.url),
     "utf8"
@@ -12,7 +12,11 @@ test("Descubre muestra las cuatro fotos completas y en marcos del mismo tamaño"
     assert.ok(source.includes(image), `Falta la imagen ${image}`);
   }
 
-  assert.ok(source.includes("object-contain object-center"));
+  assert.ok(source.includes("object-cover ${item.position}"));
+  assert.ok(source.includes('position: "object-[center_18%]"'));
+  assert.equal(source.includes("object-contain"), false);
+  assert.equal(source.includes("opacity-30 blur-xl"), false);
+  assert.equal(source.includes('bg-[#e9dfd5]'), false);
   assert.ok(source.includes("aspect-[4/3]"));
   assert.ok(source.includes("sm:aspect-[5/4]"));
   assert.ok(source.includes("lg:aspect-[3/2]"));

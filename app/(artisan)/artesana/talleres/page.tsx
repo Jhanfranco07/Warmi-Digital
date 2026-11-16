@@ -18,6 +18,9 @@ import { WorkshopService } from "@/shared/services/workshop.service";
 import { requireRole } from "@/shared/server/auth/helpers";
 import { WorkshopRoadmap } from "@/features/artisan/workshops/workshop-roadmap";
 
+const WORKSHOPS_INTRO =
+  "Fortalece habilidades digitales para acceder a servicios que brinda el Estado, como capacitaciones, concursos y ferias. Mejora tu comunicación y conoce el valor de la artesanía tejida en Qallwa.";
+
 type WorkshopRegistration = Awaited<
   ReturnType<WorkshopService["getWorkshops"]>
 >["upcoming"][number];
@@ -39,7 +42,7 @@ export default async function ArtisanWorkshopsPage() {
       total + Math.max(1, Math.round((endsAt.getTime() - startsAt.getTime()) / 3600000))
     );
   }, 0);
-  const workshopsNarration = `Estás en Talleres. Los talleres presenciales estarán disponibles próximamente y se desarrollarán en locales comunales o talleres artesanales de cada asociación. Cada sesión durará 2 horas durante 4 meses. La metodología tendrá una explicación breve, práctica guiada en la plataforma o el celular y ejercicios individuales. Tendrás acompañamiento constante de tu facilitadora. Tienes ${upcoming.length} talleres próximos, ${completed.length} talleres completados y ${totalHours} horas de aprendizaje registradas.`;
+  const workshopsNarration = `Estás en Talleres. ${WORKSHOPS_INTRO} Los talleres presenciales estarán disponibles próximamente y se desarrollarán en locales comunales o talleres artesanales de cada asociación. Cada sesión durará 2 horas durante 4 meses. La metodología tendrá una explicación breve, práctica guiada en la plataforma o el celular y ejercicios individuales. Tendrás acompañamiento constante de tu facilitadora. Tienes ${upcoming.length} talleres próximos, ${completed.length} talleres completados y ${totalHours} horas de aprendizaje registradas.`;
 
   return (
     <main className="min-h-screen bg-[#fffaf6] px-4 py-5 pb-24 md:px-8 lg:px-10 lg:py-10 xl:px-14 2xl:px-20">
@@ -50,8 +53,7 @@ export default async function ArtisanWorkshopsPage() {
               Talleres <span className="text-4xl text-[#b5245b]">*</span>
             </h1>
             <p className="mt-4 max-w-4xl text-lg leading-8 text-[#5b4a42]">
-              Descubre, participa y fortalece habilidades digitales simples para tus
-              trámites, tu comunicación y tu vitrina cultural.
+              {WORKSHOPS_INTRO}
             </p>
           </div>
 

@@ -217,15 +217,6 @@ export const MODULE1_INSTITUTIONS = [
     logo: "/images/learning/module1/gore.jpg"
   },
   {
-    key: "gore",
-    name: "Gobierno Regional de Cajamarca",
-    description: "Programas y capacitaciones disponibles en la región.",
-    opportunity: "Programas regionales",
-    action: "Visitar Gobierno Regional",
-    url: "https://www.regioncajamarca.gob.pe",
-    logo: "/images/learning/module1/gore.jpg"
-  },
-  {
     key: "municipalidad",
     name: "Municipalidad Provincial de San Miguel",
     description: "Ferias, asistencia técnica y actividades locales.",

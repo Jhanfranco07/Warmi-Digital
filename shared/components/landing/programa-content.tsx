@@ -38,7 +38,7 @@ export function WarmiProgrammeContent({ offline = false }: { offline?: boolean }
               <div
                 className="h-full min-h-[440px] bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 md:min-h-[700px]"
                 style={{
-                  backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(${landingImage("/images/programa/programa-warmi.png", offline)})`
+                  backgroundImage: `linear-gradient(to top, rgba(27,28,26,0.08), rgba(255,255,255,0)), url(${offline ? landingImage("/images/programa/programa-warmi.png", true) : "https://res.cloudinary.com/szhwzy4q/image/upload/v1794845369/warmi-programa-fotoobjetivo-2026-11.jpg"})`
                 }}
               />
             </div>

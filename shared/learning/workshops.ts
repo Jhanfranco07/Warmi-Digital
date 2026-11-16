@@ -23,7 +23,7 @@ export const WORKSHOP_MONTHS = [
       "Crear una cuenta Gmail y enviar correos con adjuntos",
       "Explorar convocatorias oficiales y portales de capacitación del Estado",
       "Revisar requisitos generales antes de postular",
-      "Configurar WhatsApp Business y catálogos básicos"
+      "Aprender a usar Zoom y Google Meet para participar en reuniones y capacitaciones virtuales"
     ]
   },
   {

@@ -18,7 +18,7 @@ export const WORKSHOPS_PRESENTATION = {
 export const WORKSHOP_MONTHS = [
   {
     month: 1,
-    title: "Mi celular como herramienta de negocio",
+    title: "Mi celular como herramienta de acceso al Estado",
     topics: [
       "Crear una cuenta Gmail y enviar correos con adjuntos",
       "Explorar convocatorias oficiales y portales de capacitación del Estado",

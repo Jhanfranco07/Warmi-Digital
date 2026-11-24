@@ -15,7 +15,7 @@ test("workshop roadmap has four ordered months and the agreed thematic titles", 
   assert.deepEqual(
     WORKSHOP_MONTHS.map((item) => item.title),
     [
-      "Mi celular como herramienta de negocio",
+      "Mi celular como herramienta de acceso al Estado",
       "Oportunidades para mi negocio",
       "Herramientas digitales para vender",
       "Estrategias de venta y autonomía digital"
